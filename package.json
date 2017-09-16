@@ -1,0 +1,19 @@
+{
+  "name": "sbolgraph",
+  "version": "0.1.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/udp/sbolgraph.git"
+  },
+  "author": "James Alastair McLaughlin",
+  "license": "BSD-2-Clause",
+  "bugs": {
+    "url": "https://github.com/udp/sbolgraph/issues"
+  },
+  "homepage": "https://github.com/udp/sbolgraph#readme"
+}
