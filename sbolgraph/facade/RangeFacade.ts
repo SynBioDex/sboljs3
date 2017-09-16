@@ -3,7 +3,7 @@ import IdentifiedFacade from './IdentifiedFacade'
 import OrientedLocationFacade from './OrientedLocationFacade'
 
 import * as triple from '../triple'
-import { Types, Predicates, Specifiers } from 'terms'
+import { Types, Predicates, Specifiers } from 'sbolterms'
 import SbolGraph from "../SbolGraph";
 
 export default class RangeFacade extends OrientedLocationFacade {

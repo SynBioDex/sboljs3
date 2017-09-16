@@ -2,11 +2,11 @@
 import IdentifiedFacade from './IdentifiedFacade'
 
 import * as triple from '../triple'
-import { Types, Predicates, Specifiers } from 'terms'
+import { Types, Predicates, Specifiers } from 'sbolterms'
 import SbolGraph from "../SbolGraph";
-import SequenceAnnotationFacade from "sbolgraph/facade/SequenceAnnotationFacade";
-import ComponentDefinitionFacade from "sbolgraph/facade/ComponentDefinitionFacade";
-import ComponentInstanceFacade from "sbolgraph/facade/ComponentInstanceFacade";
+import SequenceAnnotationFacade from "./SequenceAnnotationFacade";
+import ComponentDefinitionFacade from "./ComponentDefinitionFacade";
+import ComponentInstanceFacade from "./ComponentInstanceFacade";
 
 export default abstract class LocationFacade extends IdentifiedFacade {
 

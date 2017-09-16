@@ -1,6 +1,6 @@
 
 import request = require('request')
-import SbolGraph from "sbolgraph/SbolGraph";
+import SbolGraph from "./SbolGraph";
 
 export class SearchQuery {
 

@@ -2,9 +2,9 @@
 import * as triple from '../triple'
 import * as node from '../node'
 
-import { Predicates } from 'terms'
+import { Predicates } from 'sbolterms'
 import SbolGraph from "../SbolGraph";
-import { Watcher } from "sbolgraph/Graph";
+import { Watcher } from "../Graph";
 
 export default abstract class Facade {
 

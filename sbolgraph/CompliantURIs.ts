@@ -1,12 +1,12 @@
 
 import SbolGraph from "./SbolGraph";
 import ComponentInstanceFacade from "./facade/ComponentInstanceFacade";
-import * as triple from 'sbolgraph/triple'
-import ComponentDefinitionFacade from "sbolgraph/facade/ComponentDefinitionFacade";
-import { Predicates, Types, Specifiers } from "terms";
+import * as triple from './triple'
+import ComponentDefinitionFacade from "./facade/ComponentDefinitionFacade";
+import { Predicates, Types, Specifiers } from "sbolterms";
 import assert from 'power-assert'
-import SequenceAnnotationFacade from "sbolgraph/facade/SequenceAnnotationFacade";
-import LocationFacade from "sbolgraph/facade/LocationFacade";
+import SequenceAnnotationFacade from "./facade/SequenceAnnotationFacade";
+import LocationFacade from "./facade/LocationFacade";
 
 export default class CompliantURIs {
 

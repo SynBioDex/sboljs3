@@ -3,7 +3,7 @@ import { Graph as RdfGraphArray, Triple } from 'rdf-graph-array'
 
 import * as triple from './triple'
 import * as node from './node'
-import { Predicates } from 'terms'
+import { Predicates } from 'sbolterms'
 
 import uuid from 'uuid/v4'
 

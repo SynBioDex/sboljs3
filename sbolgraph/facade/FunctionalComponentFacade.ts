@@ -1,4 +1,4 @@
-import SbolGraph from 'sbolgraph';
+import SbolGraph from '../SbolGraph';
 
 import IdentifiedFacade from './IdentifiedFacade'
 import ComponentDefinitionFacade from './ComponentDefinitionFacade'
@@ -7,7 +7,7 @@ import MapsToFacade from './MapsToFacade'
 import ParticipationFacade from './ParticipationFacade'
 
 import * as triple from '../triple'
-import { Types, Predicates, Specifiers } from 'terms'
+import { Types, Predicates, Specifiers } from 'sbolterms'
 import InteractionFacade from "./InteractionFacade";
 
 export default class FunctionalComponentFacade extends IdentifiedFacade {

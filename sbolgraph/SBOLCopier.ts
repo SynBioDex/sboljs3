@@ -1,6 +1,6 @@
 
 
-import { Types, Predicates, Specifiers } from 'terms'
+import { Types, Predicates, Specifiers } from 'sbolterms'
 import SbolGraph from "./SbolGraph";
 
 import * as node from './node'

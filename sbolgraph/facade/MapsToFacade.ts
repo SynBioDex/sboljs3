@@ -1,10 +1,10 @@
 
 import IdentifiedFacade from './IdentifiedFacade'
 
-import { Types, Predicates, Specifiers } from 'terms'
+import { Types, Predicates, Specifiers } from 'sbolterms'
 import SbolGraph from "../SbolGraph";
 
-import * as triple from 'sbolgraph/triple'
+import * as triple from '../triple'
 
 export default class MapsToFacade extends IdentifiedFacade {
 

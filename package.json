@@ -24,6 +24,7 @@
     "rdf-parser-rdfxml": "^0.3.1",
     "rdf-serializer-xml": "^0.1.0",
     "request": "^2.81.0",
+    "sbolterms": "^0.2.0",
     "shortid": "^2.2.8"
   }
 }

@@ -1,4 +1,4 @@
-import SbolGraph from 'sbolgraph';
+import SbolGraph from '../SbolGraph';
 
 import IdentifiedFacade from './IdentifiedFacade'
 import ComponentInstanceFacade from './ComponentInstanceFacade'
@@ -8,8 +8,8 @@ import SequenceConstraintFacade from './SequenceConstraintFacade'
 
 import * as triple from '../triple'
 import * as node from '../node'
-import { Types, Predicates, Specifiers } from 'terms'
-import CompliantURIs from "sbolgraph/CompliantURIs";
+import { Types, Predicates, Specifiers } from 'sbolterms'
+import CompliantURIs from "../CompliantURIs";
 
 export default class ComponentDefinitionFacade extends IdentifiedFacade {
 

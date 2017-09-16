@@ -3,7 +3,7 @@ import IdentifiedFacade from './IdentifiedFacade'
 import ModuleDefinitionFacade from './ModuleDefinitionFacade'
 
 import * as triple from '../triple'
-import { Types, Predicates, Specifiers } from 'terms'
+import { Types, Predicates, Specifiers } from 'sbolterms'
 import SbolGraph from "../SbolGraph";
 
 export default class ModuleInstanceFacade extends IdentifiedFacade {

@@ -1,10 +1,10 @@
 
 import * as triple from '../triple'
-import { Types, Predicates, Specifiers } from 'terms'
+import { Types, Predicates, Specifiers } from 'sbolterms'
 
 import Facade from './Facade'
 
-import SbolGraph from 'sbolgraph'
+import SbolGraph from '../SbolGraph'
 
 export default abstract class IdentifiedFacade extends Facade {
 

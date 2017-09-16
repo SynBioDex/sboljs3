@@ -7,7 +7,7 @@ import InteractionFacade from './InteractionFacade'
 import SbolGraph from '../SbolGraph'
 
 import * as triple from '../triple'
-import { Predicates, Types } from 'terms'
+import { Predicates, Types } from 'sbolterms'
 
 export default class ModuleDefinitionFacade extends IdentifiedFacade {
 
