@@ -22,12 +22,12 @@ import XMLSerializer = require('rdf-serializer-xml')
 import request = require('request')
 
 import assert from 'power-assert'
-import InteractionFacade from "sbolgraph/facade/InteractionFacade";
-import SequenceAnnotationFacade from "sbolgraph/facade/SequenceAnnotationFacade";
-import ParticipationFacade from "sbolgraph/facade/ParticipationFacade";
-import MapsToFacade from "sbolgraph/facade/MapsToFacade";
+import InteractionFacade from "./facade/InteractionFacade";
+import SequenceAnnotationFacade from "./facade/SequenceAnnotationFacade";
+import ParticipationFacade from "./facade/ParticipationFacade";
+import MapsToFacade from "./facade/MapsToFacade";
 
-import GenericLocationFacade from "sbolgraph/facade/GenericLocationFacade";
+import GenericLocationFacade from "./facade/GenericLocationFacade";
 
 export default class SbolGraph extends Graph {
 
@@ -47,6 +47,13 @@ export default class SbolGraph extends Graph {
     clone():SbolGraph {
 
         return new SbolGraph(new RdfGraphArray(this.graph.toArray()))
+
+    }
+
+    get sequences():Array<SequenceFacade> {
+
+        return this.instancesOfType(Types.SBOL2.Sequence)
+                    .map((uri) => new SequenceFacade(this, uri))
 
     }
 
