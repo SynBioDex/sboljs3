@@ -10,6 +10,7 @@ import SequenceAnnotationFacade from './facade/SequenceAnnotationFacade'
 import FunctionalComponentFacade from './facade/FunctionalComponentFacade'
 import SequenceFacade from './facade/SequenceFacade'
 import RangeFacade from './facade/RangeFacade'
+import * as node from './node'
 
 export {
     IdentifiedFacade,
@@ -20,7 +21,8 @@ export {
     SequenceAnnotationFacade,
     FunctionalComponentFacade,
     SequenceFacade,
-    RangeFacade
+    RangeFacade,
+    node
 }
 
 export default SbolGraph
