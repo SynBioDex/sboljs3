@@ -1,7 +1,7 @@
 
 import Graph from './Graph'
 
-import { Types, Predicates, Specifiers } from 'terms'
+import { Types, Predicates, Specifiers } from 'sbolterms'
 
 import * as triple from './triple'
 import * as node from './node'
