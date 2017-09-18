@@ -1,7 +1,7 @@
 
 import Graph from './Graph'
 
-import { Types, Predicates, Specifiers } from 'sbolterms'
+import { Types, Predicates, Specifiers } from 'terms'
 
 import * as triple from './triple'
 import * as node from './node'
@@ -22,12 +22,12 @@ import XMLSerializer = require('rdf-serializer-xml')
 import request = require('request')
 
 import assert from 'power-assert'
-import InteractionFacade from "./facade/InteractionFacade";
-import SequenceAnnotationFacade from "./facade/SequenceAnnotationFacade";
-import ParticipationFacade from "./facade/ParticipationFacade";
-import MapsToFacade from "./facade/MapsToFacade";
+import InteractionFacade from "sbolgraph/facade/InteractionFacade";
+import SequenceAnnotationFacade from "sbolgraph/facade/SequenceAnnotationFacade";
+import ParticipationFacade from "sbolgraph/facade/ParticipationFacade";
+import MapsToFacade from "sbolgraph/facade/MapsToFacade";
 
-import GenericLocationFacade from "./facade/GenericLocationFacade";
+import GenericLocationFacade from "sbolgraph/facade/GenericLocationFacade";
 
 export default class SbolGraph extends Graph {
 
@@ -190,6 +190,18 @@ export default class SbolGraph extends Graph {
                 return Promise.resolve(new SbolGraph(graph))
 
             })
+
+        })
+
+    }
+
+    static loadString(data:string, mimeType:string):Promise<SbolGraph> {
+
+        const parser = new RdfParserXml()
+
+        return parser.parse(data).then((graph) => {
+
+            return Promise.resolve(new SbolGraph(graph))
 
         })
 
