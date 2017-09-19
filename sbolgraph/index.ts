@@ -11,6 +11,7 @@ import FunctionalComponentFacade from './facade/FunctionalComponentFacade'
 import SequenceFacade from './facade/SequenceFacade'
 import RangeFacade from './facade/RangeFacade'
 import * as node from './node'
+import CompliantURIs from './CompliantURIs'
 
 export {
     IdentifiedFacade,
@@ -22,7 +23,8 @@ export {
     FunctionalComponentFacade,
     SequenceFacade,
     RangeFacade,
-    node
+    node,
+    CompliantURIs
 }
 
 export default SbolGraph
