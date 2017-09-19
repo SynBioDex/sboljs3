@@ -234,6 +234,7 @@ export default class Graph {
 
             var uri:string =
                 template.split('$rand$').join(shortid.generate())
+                        .split('$^n$').join('' + n)
                         .split('$n$').join('_' + n)
                         .split('$n?$').join(n > 1 ? ('_' + n) : '')
 
