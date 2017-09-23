@@ -11,6 +11,7 @@ import FunctionalComponentFacade from './facade/FunctionalComponentFacade'
 import SequenceFacade from './facade/SequenceFacade'
 import RangeFacade from './facade/RangeFacade'
 import * as node from './node'
+import * as triple from './triple'
 import CompliantURIs from './CompliantURIs'
 
 export {
@@ -24,6 +25,7 @@ export {
     SequenceFacade,
     RangeFacade,
     node,
+    triple,
     CompliantURIs
 }
 
