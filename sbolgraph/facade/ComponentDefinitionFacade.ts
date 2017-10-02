@@ -53,6 +53,14 @@ export default class ComponentDefinitionFacade extends IdentifiedFacade {
         return this.graph.hasMatch(this.uri, Predicates.SBOL2.role, role)
     }
 
+    addRole(role:string):void {
+        this.graph.insert(node.createUriNode(this.uri), node.createUriNode(Predicates.SBOL2.role), node.createUriNode(role))
+    }
+
+    removeRole(role:string):void {
+        this.graph.removeMatches(this.uri, Predicates.SBOL2.role, role)
+    }
+
     get sequences():Array<SequenceFacade> {
 
         return this.getUriProperties(Predicates.SBOL2.sequence)
