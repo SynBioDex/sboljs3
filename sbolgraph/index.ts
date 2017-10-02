@@ -9,10 +9,12 @@ import ModuleDefinitionFacade from './facade/ModuleDefinitionFacade'
 import SequenceAnnotationFacade from './facade/SequenceAnnotationFacade'
 import FunctionalComponentFacade from './facade/FunctionalComponentFacade'
 import SequenceFacade from './facade/SequenceFacade'
+import LocationFacade from './facade/LocationFacade'
 import RangeFacade from './facade/RangeFacade'
 import * as node from './node'
 import * as triple from './triple'
 import CompliantURIs from './CompliantURIs'
+import SBOLCopier from './SBOLCopier'
 
 export {
     IdentifiedFacade,
@@ -23,10 +25,12 @@ export {
     SequenceAnnotationFacade,
     FunctionalComponentFacade,
     SequenceFacade,
+    LocationFacade,
     RangeFacade,
     node,
     triple,
-    CompliantURIs
+    CompliantURIs,
+    SBOLCopier
 }
 
 export default SbolGraph
