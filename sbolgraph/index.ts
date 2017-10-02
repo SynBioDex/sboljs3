@@ -10,6 +10,7 @@ import SequenceAnnotationFacade from './facade/SequenceAnnotationFacade'
 import FunctionalComponentFacade from './facade/FunctionalComponentFacade'
 import SequenceFacade from './facade/SequenceFacade'
 import LocationFacade from './facade/LocationFacade'
+import OrientedLocationFacade from './facade/OrientedLocationFacade'
 import RangeFacade from './facade/RangeFacade'
 import * as node from './node'
 import * as triple from './triple'
@@ -25,6 +26,7 @@ export {
     SequenceAnnotationFacade,
     FunctionalComponentFacade,
     SequenceFacade,
+    OrientedLocationFacade,
     LocationFacade,
     RangeFacade,
     node,
