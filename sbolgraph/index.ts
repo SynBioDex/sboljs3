@@ -17,6 +17,9 @@ import * as triple from './triple'
 import CompliantURIs from './CompliantURIs'
 import SBOLCopier from './SBOLCopier'
 
+import Repository from './Repository'
+import { SearchQuery, SearchResult } from './Repository'
+
 export {
     IdentifiedFacade,
     ComponentInstanceFacade,
@@ -32,7 +35,10 @@ export {
     node,
     triple,
     CompliantURIs,
-    SBOLCopier
+    SBOLCopier,
+    Repository,
+    SearchQuery,
+    SearchResult
 }
 
 export default SbolGraph
