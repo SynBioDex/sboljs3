@@ -1,16 +1,16 @@
-import SbolGraph from '../SbolGraph';
+import SBOLGraph from '../SBOLGraph';
 
-import IdentifiedFacade from './IdentifiedFacade'
-import ComponentDefinitionFacade from './ComponentDefinitionFacade'
-import SequenceAnnotationFacade from './SequenceAnnotationFacade'
-import SequenceConstraintFacade from './SequenceConstraintFacade'
+import S2Identified from './S2Identified'
+import S2ComponentDefinition from './S2ComponentDefinition'
+import S2SequenceAnnotation from './S2SequenceAnnotation'
+import S2SequenceConstraint from './S2SequenceConstraint'
 
 import * as triple from '../triple'
 import { Types, Predicates, Specifiers } from 'sbolterms'
 
-export default class ComponentInstanceFacade extends IdentifiedFacade {
+export default class S2ComponentInstance extends S2Identified {
 
-    constructor(graph:SbolGraph, uri:string) {
+    constructor(graph:SBOLGraph, uri:string) {
 
         super(graph, uri)
 
@@ -27,7 +27,7 @@ export default class ComponentInstanceFacade extends IdentifiedFacade {
         if(name)
             return name
 
-        const def:ComponentDefinitionFacade = this.definition
+        const def:S2ComponentDefinition = this.definition
 
         const defName:string|undefined = def.name
         
@@ -37,7 +37,7 @@ export default class ComponentInstanceFacade extends IdentifiedFacade {
         return this.displayId || ''
     }
 
-    get definition():ComponentDefinitionFacade {
+    get definition():S2ComponentDefinition {
 
         const uri = this.getUriProperty(Predicates.SBOL2.definition)
 
@@ -45,24 +45,24 @@ export default class ComponentInstanceFacade extends IdentifiedFacade {
             throw new Error('Component ' + this.uri + ' has no definition')
         }
 
-        return new ComponentDefinitionFacade(this.graph, uri)
+        return new S2ComponentDefinition(this.graph, uri)
     }
 
-    get sequenceAnnotations():Array<SequenceAnnotationFacade> {
+    get sequenceAnnotations():Array<S2SequenceAnnotation> {
 
         return this.graph.match(null, Predicates.SBOL2.component, this.uri)
                    .map(triple.subjectUri)
                    .filter((uri:string) => this.graph.getType(uri) === Types.SBOL2.SequenceAnnotation)
-                   .map((uri:string) => new SequenceAnnotationFacade(this.graph, uri))
+                   .map((uri:string) => new S2SequenceAnnotation(this.graph, uri))
 
     }
 
-    get sequenceConstraints():Array<SequenceConstraintFacade> {
+    get sequenceConstraints():Array<S2SequenceConstraint> {
 
         return this.graph.match(null, Predicates.SBOL2.subject, this.uri)
                    .map(triple.subjectUri)
                    .filter((uri:string) => this.graph.getType(uri) === Types.SBOL2.SequenceConstraint)
-                   .map((uri:string) => new SequenceConstraintFacade(this.graph, uri))
+                   .map((uri:string) => new S2SequenceConstraint(this.graph, uri))
 
     }
 
@@ -70,7 +70,7 @@ export default class ComponentInstanceFacade extends IdentifiedFacade {
         return this.definition ? this.definition.hasRole(role) : false
     }
 
-    get containingComponentDefinition():ComponentDefinitionFacade {
+    get containingComponentDefinition():S2ComponentDefinition {
             
         const uri:string|undefined = this.graph.match(
             null, Predicates.SBOL2.component, this.uri
@@ -82,10 +82,10 @@ export default class ComponentInstanceFacade extends IdentifiedFacade {
             throw new Error('component not contained by definition?')
         }
 
-        return new ComponentDefinitionFacade(this.graph, uri)
+        return new S2ComponentDefinition(this.graph, uri)
     }
 
-    get containingObject():IdentifiedFacade|undefined {
+    get containingObject():S2Identified|undefined {
 
         return this.containingComponentDefinition
 

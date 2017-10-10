@@ -6,14 +6,14 @@ import { Types, Predicates, Specifiers } from 'sbolterms'
 import * as triple from './triple'
 import * as node from './node'
 
-import ComponentDefinitionFacade from './facade/ComponentDefinitionFacade'
-import ComponentInstanceFacade from './facade/ComponentInstanceFacade'
-import ModuleDefinitionFacade from './facade/ModuleDefinitionFacade'
-import ModuleInstanceFacade from './facade/ModuleInstanceFacade'
-import IdentifiedFacade from './facade/IdentifiedFacade'
-import FunctionalComponentFacade from './facade/FunctionalComponentFacade'
-import RangeFacade from './facade/RangeFacade'
-import SequenceFacade from './facade/SequenceFacade'
+import S2ComponentDefinition from './sbol2/S2ComponentDefinition'
+import S2ComponentInstance from './sbol2/S2ComponentInstance'
+import S2ModuleDefinition from './sbol2/S2ModuleDefinition'
+import S2ModuleInstance from './sbol2/S2ModuleInstance'
+import S2Identified from './sbol2/S2Identified'
+import S2FunctionalComponent from './sbol2/S2FunctionalComponent'
+import S2Range from './sbol2/S2Range'
+import S2Sequence from './sbol2/S2Sequence'
 
 import RdfGraphArray = require('rdf-graph-array')
 import RdfParserXml = require('rdf-parser-rdfxml')
@@ -22,14 +22,14 @@ import XMLSerializer = require('rdf-serializer-xml')
 import request = require('request')
 
 import assert from 'power-assert'
-import InteractionFacade from "./facade/InteractionFacade";
-import SequenceAnnotationFacade from "./facade/SequenceAnnotationFacade";
-import ParticipationFacade from "./facade/ParticipationFacade";
-import MapsToFacade from "./facade/MapsToFacade";
+import S2Interaction from "./sbol2/S2Interaction";
+import S2SequenceAnnotation from "./sbol2/S2SequenceAnnotation";
+import S2Participation from "./sbol2/S2Participation";
+import S2MapsTo from "./sbol2/S2MapsTo";
 
-import GenericLocationFacade from "./facade/GenericLocationFacade";
+import S2GenericLocation from "./sbol2/S2GenericLocation";
 
-export default class SbolGraph extends Graph {
+export default class SBOLGraph extends Graph {
 
     depthCache: Object
     _cachedUriPrefixes: Array<string>|null
@@ -44,74 +44,74 @@ export default class SbolGraph extends Graph {
 
     }
 
-    clone():SbolGraph {
+    clone():SBOLGraph {
 
-        return new SbolGraph(new RdfGraphArray(this.graph.toArray()))
+        return new SBOLGraph(new RdfGraphArray(this.graph.toArray()))
 
     }
 
-    get sequences():Array<SequenceFacade> {
+    get sequences():Array<S2Sequence> {
 
         return this.instancesOfType(Types.SBOL2.Sequence)
-                    .map((uri) => new SequenceFacade(this, uri))
+                    .map((uri) => new S2Sequence(this, uri))
 
     }
 
-    get componentDefinitions():Array<ComponentDefinitionFacade> {
+    get componentDefinitions():Array<S2ComponentDefinition> {
 
         return this.instancesOfType(Types.SBOL2.ComponentDefinition)
-                    .map((uri) => new ComponentDefinitionFacade(this, uri))
+                    .map((uri) => new S2ComponentDefinition(this, uri))
 
     }
 
-    componentDefinition(uri):ComponentDefinitionFacade  {
-        return new ComponentDefinitionFacade(this, uri)
+    componentDefinition(uri):S2ComponentDefinition  {
+        return new S2ComponentDefinition(this, uri)
     }
 
-    getComponentDefinition(uri):ComponentDefinitionFacade|null {
+    getComponentDefinition(uri):S2ComponentDefinition|null {
 
         if(this.getType(uri) !== Types.SBOL2.ComponentDefinition)
             return null
 
-        return new ComponentDefinitionFacade(this, uri)
+        return new S2ComponentDefinition(this, uri)
     }
 
-    get componentInstances():Array<ComponentInstanceFacade> {
+    get componentInstances():Array<S2ComponentInstance> {
 
         return this.instancesOfType(Types.SBOL2.Component)
-                    .map((uri) => new ComponentInstanceFacade(this, uri))
+                    .map((uri) => new S2ComponentInstance(this, uri))
 
     }
 
-    moduleDefinition(uri):ModuleDefinitionFacade {
-        return new ModuleDefinitionFacade(this, uri)
+    moduleDefinition(uri):S2ModuleDefinition {
+        return new S2ModuleDefinition(this, uri)
     }
 
-    get moduleDefinitions():Array<ModuleDefinitionFacade> {
+    get moduleDefinitions():Array<S2ModuleDefinition> {
 
         return this.instancesOfType(Types.SBOL2.ModuleDefinition)
-                    .map((uri) => new ModuleDefinitionFacade(this, uri))
+                    .map((uri) => new S2ModuleDefinition(this, uri))
 
     }
 
-    getModuleDefinition(uri):ModuleDefinitionFacade|null {
+    getModuleDefinition(uri):S2ModuleDefinition|null {
 
         if(this.getType(uri) !== Types.SBOL2.ModuleDefinition)
             return null
 
-        return new ModuleDefinitionFacade(this, uri)
+        return new S2ModuleDefinition(this, uri)
 
     }
 
-    get rootComponentDefinitions():Array<ComponentDefinitionFacade> {
+    get rootComponentDefinitions():Array<S2ComponentDefinition> {
 
         return this.instancesOfType(Types.SBOL2.ComponentDefinition).filter((uri) => {
             return !this.hasMatch(null, Predicates.SBOL2.definition, uri)
-        }).map((uri) => new ComponentDefinitionFacade(this, uri))
+        }).map((uri) => new S2ComponentDefinition(this, uri))
 
     }
 
-    get structurallyRootComponentDefinitions():Array<ComponentDefinitionFacade> {
+    get structurallyRootComponentDefinitions():Array<S2ComponentDefinition> {
 
         return this.instancesOfType(Types.SBOL2.ComponentDefinition).filter((uri) => {
 
@@ -137,15 +137,15 @@ export default class SbolGraph extends Graph {
 
             return true
 
-        }).map((uri) => new ComponentDefinitionFacade(this, uri))
+        }).map((uri) => new S2ComponentDefinition(this, uri))
 
     }
 
-    get rootModuleDefinitions():Array<ModuleDefinitionFacade> {
+    get rootModuleDefinitions():Array<S2ModuleDefinition> {
 
         return this.instancesOfType(Types.SBOL2.ModuleDefinition).filter((uri) => {
             return !this.hasMatch(null, Predicates.SBOL2.definition, uri)
-        }).map((uri) => new ModuleDefinitionFacade(this, uri))
+        }).map((uri) => new S2ModuleDefinition(this, uri))
 
     }
 
@@ -182,7 +182,7 @@ export default class SbolGraph extends Graph {
 
             var { data, mimeType } = res
 
-            console.log('SbolGraph::loadURL: mimetype is ' + mimeType)
+            console.log('SBOLGraph::loadURL: mimetype is ' + mimeType)
 
             if(mimeType === 'text/xml')
                 mimeType = 'application/rdf+xml'
@@ -194,7 +194,7 @@ export default class SbolGraph extends Graph {
 
             return parser.parse(data).then((graph) => {
 
-                return Promise.resolve(new SbolGraph(graph))
+                return Promise.resolve(new SBOLGraph(graph))
 
             })
 
@@ -202,13 +202,13 @@ export default class SbolGraph extends Graph {
 
     }
 
-    static loadString(data:string, mimeType:string):Promise<SbolGraph> {
+    static loadString(data:string, mimeType:string):Promise<SBOLGraph> {
 
         const parser = new RdfParserXml()
 
         return parser.parse(data).then((graph) => {
 
-            return Promise.resolve(new SbolGraph(graph))
+            return Promise.resolve(new SBOLGraph(graph))
 
         })
 
@@ -223,7 +223,7 @@ export default class SbolGraph extends Graph {
 
     // TODO
     //
-    get topLevels():IdentifiedFacade[] {
+    get topLevels():S2Identified[] {
 
         const topLevels = []
 
@@ -239,7 +239,7 @@ export default class SbolGraph extends Graph {
             this.match(null, Predicates.a, Types.SBOL2.Sequence)
                 .map(triple.subjectUri))
 
-        return topLevels.map((topLevel) => this.uriToFacade(topLevel) as IdentifiedFacade)
+        return topLevels.map((topLevel) => this.uriToFacade(topLevel) as S2Identified)
     }
 
 
@@ -277,7 +277,7 @@ export default class SbolGraph extends Graph {
         })
     }
 
-    uriToFacade(uri:string):IdentifiedFacade|undefined {
+    uriToFacade(uri:string):S2Identified|undefined {
 
         if(!uri)
             return undefined
@@ -285,47 +285,47 @@ export default class SbolGraph extends Graph {
         const type = this.getType(uri)
 
         if(type === Types.SBOL2.ComponentDefinition)
-            return new ComponentDefinitionFacade(this, uri)
+            return new S2ComponentDefinition(this, uri)
 
         if(type === Types.SBOL2.Component)
-            return new ComponentInstanceFacade(this, uri)
+            return new S2ComponentInstance(this, uri)
 
         if(type === Types.SBOL2.FunctionalComponent)
-            return new FunctionalComponentFacade(this, uri)
+            return new S2FunctionalComponent(this, uri)
 
         if(type === Types.SBOL2.Interaction)
-            return new InteractionFacade(this, uri)
+            return new S2Interaction(this, uri)
 
         if(type === Types.SBOL2.MapsTo)
-            return new MapsToFacade(this, uri)
+            return new S2MapsTo(this, uri)
 
         if(type === Types.SBOL2.ModuleDefinition)
-            return new ModuleDefinitionFacade(this, uri)
+            return new S2ModuleDefinition(this, uri)
 
         if(type === Types.SBOL2.Module)
-            return new ModuleInstanceFacade(this, uri)
+            return new S2ModuleInstance(this, uri)
 
         if(type === Types.SBOL2.Participation)
-            return new ParticipationFacade(this, uri)
+            return new S2Participation(this, uri)
 
         if(type === Types.SBOL2.Range)
-            return new RangeFacade(this, uri)
+            return new S2Range(this, uri)
 
         if(type === Types.SBOL2.GenericLocation)
-            return new GenericLocationFacade(this, uri)
+            return new S2GenericLocation(this, uri)
 
         if(type === Types.SBOL2.SequenceAnnotation)
-            return new SequenceAnnotationFacade(this, uri)
+            return new S2SequenceAnnotation(this, uri)
 
         if(type === Types.SBOL2.Sequence)
-            return new SequenceFacade(this, uri)
+            return new S2Sequence(this, uri)
 
         throw new Error('unknown type: ' + uri)
 
         //return undefined
     }
 
-    addAll(otherGraph:SbolGraph) {
+    addAll(otherGraph:SBOLGraph) {
 
         this.graph.addAll(otherGraph.graph)
 
@@ -361,7 +361,7 @@ export default class SbolGraph extends Graph {
 
         while(!isTopLevel()) {
 
-            let identified:IdentifiedFacade|undefined = this.uriToFacade(subject)
+            let identified:S2Identified|undefined = this.uriToFacade(subject)
 
             if(identified === undefined)
                 throw new Error('???')

@@ -1,14 +1,14 @@
 
-import IdentifiedFacade from './IdentifiedFacade'
+import S2Identified from './S2Identified'
 
 import { Types, Predicates, Specifiers } from 'sbolterms'
-import SbolGraph from "../SbolGraph";
+import SBOLGraph from "../SBOLGraph";
 
 import * as triple from '../triple'
 
-export default class MapsToFacade extends IdentifiedFacade {
+export default class S2MapsTo extends S2Identified {
 
-    constructor(graph:SbolGraph, uri:string) {
+    constructor(graph:SBOLGraph, uri:string) {
 
         super(graph, uri)
     }
@@ -17,7 +17,7 @@ export default class MapsToFacade extends IdentifiedFacade {
         return Types.SBOL2.MapsTo
     }
 
-    get local():IdentifiedFacade|undefined {
+    get local():S2Identified|undefined {
 
         const localUri:string|undefined = this.getUriProperty(Predicates.SBOL2.local)
 
@@ -28,7 +28,7 @@ export default class MapsToFacade extends IdentifiedFacade {
 
     }
 
-    get remote():IdentifiedFacade|undefined {
+    get remote():S2Identified|undefined {
 
         const remoteUri:string|undefined = this.getUriProperty(Predicates.SBOL2.remote)
 
@@ -39,7 +39,7 @@ export default class MapsToFacade extends IdentifiedFacade {
 
     }
 
-    get containingObject():IdentifiedFacade|undefined {
+    get containingObject():S2Identified|undefined {
 
         const uri = triple.subjectUri(
             this.graph.matchOne(null, Predicates.SBOL2.mapsTo, this.uri)

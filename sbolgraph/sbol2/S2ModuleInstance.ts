@@ -1,14 +1,14 @@
 
-import IdentifiedFacade from './IdentifiedFacade'
-import ModuleDefinitionFacade from './ModuleDefinitionFacade'
+import S2Identified from './S2Identified'
+import S2ModuleDefinition from './S2ModuleDefinition'
 
 import * as triple from '../triple'
 import { Types, Predicates, Specifiers } from 'sbolterms'
-import SbolGraph from "../SbolGraph";
+import SBOLGraph from "../SBOLGraph";
 
-export default class ModuleInstanceFacade extends IdentifiedFacade {
+export default class S2ModuleInstance extends S2Identified {
 
-    constructor(graph:SbolGraph, uri:string) {
+    constructor(graph:SBOLGraph, uri:string) {
 
         super(graph, uri)
     }
@@ -17,7 +17,7 @@ export default class ModuleInstanceFacade extends IdentifiedFacade {
         return Types.SBOL2.Module
     }
 
-    get definition():ModuleDefinitionFacade {
+    get definition():S2ModuleDefinition {
 
         const uri:string|undefined = this.getUriProperty(Predicates.SBOL2.definition)
 
@@ -25,10 +25,10 @@ export default class ModuleInstanceFacade extends IdentifiedFacade {
             throw new Error('module has no definition?')
         }
 
-        return new ModuleDefinitionFacade(this.graph, uri)
+        return new S2ModuleDefinition(this.graph, uri)
     }
 
-    get containingObject():IdentifiedFacade|undefined {
+    get containingObject():S2Identified|undefined {
 
         const uri = triple.subjectUri(
             this.graph.matchOne(null, Predicates.SBOL2.module, this.uri)

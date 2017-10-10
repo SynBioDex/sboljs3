@@ -7,8 +7,6 @@
 		"alwaysStrict": true,
 		"strictNullChecks": true,
 		"module": "commonjs",
-		"allowJs": true,
-		"checkJs": true,
 		"paths": {
 		}
 	},

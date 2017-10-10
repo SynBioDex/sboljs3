@@ -1,17 +1,17 @@
 
-import * as triple from '../triple'
-import * as node from '../node'
+import * as triple from './triple'
+import * as node from './node'
 
 import { Predicates } from 'sbolterms'
-import SbolGraph from "../SbolGraph";
-import { Watcher } from "../Graph";
+import SBOLGraph from "./SBOLGraph";
+import { Watcher } from "./Graph";
 
 export default abstract class Facade {
 
-    graph: SbolGraph
+    graph: SBOLGraph
     uri: string
 
-    constructor(graph:SbolGraph, uri:string) {
+    constructor(graph:SBOLGraph, uri:string) {
 
         this.graph = graph
         this.uri = uri

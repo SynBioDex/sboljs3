@@ -1,14 +1,14 @@
 
-import IdentifiedFacade from './IdentifiedFacade'
+import S2Identified from './S2Identified'
 
 import * as triple from '../triple'
 import { Types, Predicates, Specifiers } from 'sbolterms'
-import SbolGraph from "../SbolGraph";
-import LocationFacade from "./LocationFacade";
+import SBOLGraph from "../SBOLGraph";
+import S2Location from "./S2Location";
 
-export default abstract class OrientedLocationFacade extends LocationFacade {
+export default abstract class S2OrientedLocation extends S2Location {
 
-    constructor(graph:SbolGraph, uri:string) {
+    constructor(graph:SBOLGraph, uri:string) {
 
         super(graph, uri)
 

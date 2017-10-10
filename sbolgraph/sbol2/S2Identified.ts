@@ -2,13 +2,13 @@
 import * as triple from '../triple'
 import { Types, Predicates, Specifiers } from 'sbolterms'
 
-import Facade from './Facade'
+import Facade from '../Facade'
 
-import SbolGraph from '../SbolGraph'
+import SBOLGraph from '../SBOLGraph'
 
-export default abstract class IdentifiedFacade extends Facade {
+export default abstract class S2Identified extends Facade {
 
-    constructor(graph:SbolGraph, uri:string) {
+    constructor(graph:SBOLGraph, uri:string) {
         super(graph, uri)
     }
 
@@ -85,12 +85,12 @@ export default abstract class IdentifiedFacade extends Facade {
 
 
 
-    abstract get containingObject():IdentifiedFacade|undefined
+    abstract get containingObject():S2Identified|undefined
 
 
     get uriChain():string {
 
-        const containingObject:IdentifiedFacade|undefined = this.containingObject
+        const containingObject:S2Identified|undefined = this.containingObject
 
         if(containingObject !== undefined) {
             return containingObject.uriChain + ';' + this.uri

@@ -1,16 +1,16 @@
 
-import SbolGraph from "./SbolGraph";
-import ComponentInstanceFacade from "./facade/ComponentInstanceFacade";
+import SBOLGraph from "./SBOLGraph";
+import S2ComponentInstance from "./sbol2/S2ComponentInstance";
 import * as triple from './triple'
-import ComponentDefinitionFacade from "./facade/ComponentDefinitionFacade";
+import S2ComponentDefinition from "./sbol2/S2ComponentDefinition";
 import { Predicates, Types, Specifiers } from "sbolterms";
 import assert from 'power-assert'
-import SequenceAnnotationFacade from "./facade/SequenceAnnotationFacade";
-import LocationFacade from "./facade/LocationFacade";
+import S2SequenceAnnotation from "./sbol2/S2SequenceAnnotation";
+import S2Location from "./sbol2/S2Location";
 
 export default class CompliantURIs {
 
-    static getComponentDefinitionUri(graphA:SbolGraph, uri:string, topLevelPrefix:string, withVersion:boolean) {
+    static getComponentDefinitionUri(graphA:SBOLGraph, uri:string, topLevelPrefix:string, withVersion:boolean) {
 
         if(!graphA.hasMatch(uri, null, null))
             return uri
@@ -19,15 +19,15 @@ export default class CompliantURIs {
 
     }
 
-    static getComponentUri(graphA:SbolGraph, uri:string, topLevelPrefix:string, withVersion:boolean) {
+    static getComponentUri(graphA:SBOLGraph, uri:string, topLevelPrefix:string, withVersion:boolean) {
 
         if(!graphA.hasMatch(uri, null, null))
             return uri
 
         const existingComponent =
-            new ComponentInstanceFacade(graphA, uri)
+            new S2ComponentInstance(graphA, uri)
 
-        const containingComponentDefinition:ComponentDefinitionFacade =
+        const containingComponentDefinition:S2ComponentDefinition =
             existingComponent.containingComponentDefinition
 
         if(containingComponentDefinition === undefined) {
@@ -45,15 +45,15 @@ export default class CompliantURIs {
 
     }
 
-    static getSequenceAnnotationUri(graphA:SbolGraph, uri:string, topLevelPrefix:string, withVersion:boolean) {
+    static getSequenceAnnotationUri(graphA:SBOLGraph, uri:string, topLevelPrefix:string, withVersion:boolean) {
 
         if(!graphA.hasMatch(uri, null, null))
             return uri
 
         const existingSA =
-            new SequenceAnnotationFacade(graphA, uri)
+            new S2SequenceAnnotation(graphA, uri)
 
-        const containingComponentDefinition:ComponentDefinitionFacade =
+        const containingComponentDefinition:S2ComponentDefinition =
             existingSA.containingComponentDefinition
 
         if(existingSA === undefined) {
@@ -71,19 +71,19 @@ export default class CompliantURIs {
 
     }
 
-    static getLocationUri(graphA:SbolGraph, uri:string, topLevelPrefix:string, withVersion:boolean) {
+    static getLocationUri(graphA:SBOLGraph, uri:string, topLevelPrefix:string, withVersion:boolean) {
 
         if(!graphA.hasMatch(uri, null, null))
             return uri
 
         const existingLocation = graphA.uriToFacade(uri)
 
-        if(! (existingLocation instanceof LocationFacade)) {
+        if(! (existingLocation instanceof S2Location)) {
             throw new Error('???')
         }
 
-        const containingSA:SequenceAnnotationFacade =
-            (existingLocation as LocationFacade).containingSequenceAnnotation
+        const containingSA:S2SequenceAnnotation =
+            (existingLocation as S2Location).containingSequenceAnnotation
 
         if(containingSA === undefined) {
 
@@ -100,7 +100,7 @@ export default class CompliantURIs {
 
     }
 
-    static getFunctionalComponentUri(graphA:SbolGraph, uri:string, topLevelPrefix:string, withVersion:boolean) {
+    static getFunctionalComponentUri(graphA:SBOLGraph, uri:string, topLevelPrefix:string, withVersion:boolean) {
 
         if(!graphA.hasMatch(uri, null, null))
             return uri
@@ -124,7 +124,7 @@ export default class CompliantURIs {
 
     }
 
-    static getInteractionUri(graphA:SbolGraph, uri:string, topLevelPrefix:string, withVersion:boolean) {
+    static getInteractionUri(graphA:SBOLGraph, uri:string, topLevelPrefix:string, withVersion:boolean) {
 
         if(!graphA.hasMatch(uri, null, null))
             return uri
@@ -148,7 +148,7 @@ export default class CompliantURIs {
 
     }
 
-    static getModuleDefinitionUri(graphA:SbolGraph, uri:string, topLevelPrefix:string, withVersion:boolean) {
+    static getModuleDefinitionUri(graphA:SBOLGraph, uri:string, topLevelPrefix:string, withVersion:boolean) {
 
         if(!graphA.hasMatch(uri, null, null))
             return uri
@@ -157,7 +157,7 @@ export default class CompliantURIs {
 
     }
 
-    static getModuleUri(graphA:SbolGraph, uri:string, topLevelPrefix:string, withVersion:boolean) {
+    static getModuleUri(graphA:SBOLGraph, uri:string, topLevelPrefix:string, withVersion:boolean) {
 
         if(!graphA.hasMatch(uri, null, null))
             return uri
@@ -181,7 +181,7 @@ export default class CompliantURIs {
 
     }
 
-    static getParticipationUri(graphA:SbolGraph, uri:string, topLevelPrefix:string, withVersion:boolean) {
+    static getParticipationUri(graphA:SBOLGraph, uri:string, topLevelPrefix:string, withVersion:boolean) {
 
         if(!graphA.hasMatch(uri, null, null))
             return uri
@@ -235,7 +235,7 @@ export default class CompliantURIs {
     
     }
 
-    static removePrefix(graph:SbolGraph, uri:string, keepVersion:boolean) {
+    static removePrefix(graph:SBOLGraph, uri:string, keepVersion:boolean) {
 
         const prefix = CompliantURIs.getPrefix(uri)
 
@@ -269,7 +269,7 @@ export default class CompliantURIs {
 
     }
 
-    static getTopLevelPrefixFromSubject(graph:SbolGraph, subject:string) {
+    static getTopLevelPrefixFromSubject(graph:SBOLGraph, subject:string) {
 
         const closestTopLevel:string|undefined = graph.findClosestTopLevel(subject)
 
@@ -279,7 +279,7 @@ export default class CompliantURIs {
         return CompliantURIs.getPrefix(closestTopLevel)
     }
 
-    static checkCompliance(graph:SbolGraph) {
+    static checkCompliance(graph:SBOLGraph) {
 
         const diff:any[] = []
 

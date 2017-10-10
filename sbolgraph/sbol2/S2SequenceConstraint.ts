@@ -1,18 +1,18 @@
 
-import SbolGraph, { ComponentDefinitionFacade } from '..';
+import SBOLGraph, { S2ComponentDefinition } from '..';
 
-import IdentifiedFacade from './IdentifiedFacade'
-import ComponentInstanceFacade from './ComponentInstanceFacade'
-import RangeFacade from './RangeFacade'
+import S2Identified from './S2Identified'
+import S2ComponentInstance from './S2ComponentInstance'
+import S2Range from './S2Range'
 
 import * as triple from '../triple'
 import * as node from '../node'
 import { Types, Predicates, Specifiers } from 'sbolterms'
 import CompliantURIs from "../CompliantURIs";
 
-export default class SequenceConstraintFacade extends IdentifiedFacade {
+export default class S2SequenceConstraint extends S2Identified {
 
-    constructor(graph:SbolGraph, uri:string) {
+    constructor(graph:SBOLGraph, uri:string) {
 
         super(graph, uri)
 
@@ -22,7 +22,7 @@ export default class SequenceConstraintFacade extends IdentifiedFacade {
         return Types.SBOL2.SequenceConstraint
     }
 
-    get containingObject():IdentifiedFacade|undefined {
+    get containingObject():S2Identified|undefined {
 
         const uri = triple.subjectUri(
             this.graph.matchOne(null, Predicates.SBOL2.sequenceConstraint, this.uri)
@@ -47,7 +47,7 @@ export default class SequenceConstraintFacade extends IdentifiedFacade {
         return restriction
     }
 
-    get subject():ComponentInstanceFacade {
+    get subject():S2ComponentInstance {
 
         const subject:string|undefined = this.getUriProperty(Predicates.SBOL2.subject)
 
@@ -55,10 +55,10 @@ export default class SequenceConstraintFacade extends IdentifiedFacade {
             throw new Error('SeqCons has no subject?')
         }
 
-        return new ComponentInstanceFacade(this.graph, subject)
+        return new S2ComponentInstance(this.graph, subject)
     }
 
-    get object():ComponentInstanceFacade {
+    get object():S2ComponentInstance {
 
         const object:string|undefined = this.getUriProperty(Predicates.SBOL2.object)
 
@@ -66,7 +66,7 @@ export default class SequenceConstraintFacade extends IdentifiedFacade {
             throw new Error('SeqCons has no object?')
         }
 
-        return new ComponentInstanceFacade(this.graph, object)
+        return new S2ComponentInstance(this.graph, object)
     }
 
 }

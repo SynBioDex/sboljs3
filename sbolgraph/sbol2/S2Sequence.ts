@@ -1,18 +1,18 @@
-import SbolGraph from '..';
+import SBOLGraph from '..';
 
-import IdentifiedFacade from './IdentifiedFacade'
+import S2Identified from './S2Identified'
 
 import { Types, Predicates, Specifiers } from 'sbolterms'
 
 import * as triple from '../triple' 
-import ComponentDefinitionFacade from "../facade/ComponentDefinitionFacade";
-import SequenceAnnotationFacade from "../facade/SequenceAnnotationFacade";
-import LocationFacade from "../facade/LocationFacade";
-import RangeFacade from "../facade/RangeFacade";
+import S2ComponentDefinition from "../sbol2/S2ComponentDefinition";
+import S2SequenceAnnotation from "../sbol2/S2SequenceAnnotation";
+import S2Location from "../sbol2/S2Location";
+import S2Range from "../sbol2/S2Range";
 
-export default class SequenceFacade extends IdentifiedFacade {
+export default class S2Sequence extends S2Identified {
 
-    constructor(graph:SbolGraph, uri:string) {
+    constructor(graph:SBOLGraph, uri:string) {
 
         super(graph, uri)
 
@@ -47,20 +47,20 @@ export default class SequenceFacade extends IdentifiedFacade {
         if(pos < 0 || pos >= elements.length)
             return
 
-        const containingCDs:Array<ComponentDefinitionFacade> =
+        const containingCDs:Array<S2ComponentDefinition> =
             this.graph.match(null, Predicates.SBOL2.sequence, this.uri)
                 .map(triple.subjectUri)
-                .map((uri:string) => new ComponentDefinitionFacade(this.graph, uri))
+                .map((uri:string) => new S2ComponentDefinition(this.graph, uri))
 
-        containingCDs.forEach((cd:ComponentDefinitionFacade) => {
+        containingCDs.forEach((cd:S2ComponentDefinition) => {
 
-            cd.sequenceAnnotations.forEach((sa:SequenceAnnotationFacade) => {
+            cd.sequenceAnnotations.forEach((sa:S2SequenceAnnotation) => {
 
-                sa.locations.forEach((location:LocationFacade) => {
+                sa.locations.forEach((location:S2Location) => {
 
-                    if(location instanceof RangeFacade) {
+                    if(location instanceof S2Range) {
 
-                        const range:RangeFacade = location as RangeFacade
+                        const range:S2Range = location as S2Range
 
                         const start:number|undefined = range.start
                         const end:number|undefined = range.end
@@ -107,20 +107,20 @@ export default class SequenceFacade extends IdentifiedFacade {
         if(pos < 0 || pos >= elements.length)
             return
 
-        const containingCDs:Array<ComponentDefinitionFacade> =
+        const containingCDs:Array<S2ComponentDefinition> =
             this.graph.match(null, Predicates.SBOL2.sequence, this.uri)
                 .map(triple.subjectUri)
-                .map((uri:string) => new ComponentDefinitionFacade(this.graph, uri))
+                .map((uri:string) => new S2ComponentDefinition(this.graph, uri))
 
-        containingCDs.forEach((cd:ComponentDefinitionFacade) => {
+        containingCDs.forEach((cd:S2ComponentDefinition) => {
 
-            cd.sequenceAnnotations.forEach((sa:SequenceAnnotationFacade) => {
+            cd.sequenceAnnotations.forEach((sa:S2SequenceAnnotation) => {
 
-                sa.locations.forEach((location:LocationFacade) => {
+                sa.locations.forEach((location:S2Location) => {
 
-                    if(location instanceof RangeFacade) {
+                    if(location instanceof S2Range) {
 
-                        const range:RangeFacade = location as RangeFacade
+                        const range:S2Range = location as S2Range
 
                         const start:number|undefined = range.start
                         const end:number|undefined = range.end
@@ -167,7 +167,7 @@ export default class SequenceFacade extends IdentifiedFacade {
         }
     }
 
-    get containingObject():IdentifiedFacade|undefined {
+    get containingObject():S2Identified|undefined {
         return undefined
     }
 }

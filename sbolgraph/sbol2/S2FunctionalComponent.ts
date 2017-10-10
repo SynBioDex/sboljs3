@@ -1,18 +1,18 @@
-import SbolGraph from '../SbolGraph';
+import SBOLGraph from '../SBOLGraph';
 
-import IdentifiedFacade from './IdentifiedFacade'
-import ComponentDefinitionFacade from './ComponentDefinitionFacade'
-import ModuleDefinitionFacade from './ModuleDefinitionFacade'
-import MapsToFacade from './MapsToFacade'
-import ParticipationFacade from './ParticipationFacade'
+import S2Identified from './S2Identified'
+import S2ComponentDefinition from './S2ComponentDefinition'
+import S2ModuleDefinition from './S2ModuleDefinition'
+import S2MapsTo from './S2MapsTo'
+import S2Participation from './S2Participation'
 
 import * as triple from '../triple'
 import { Types, Predicates, Specifiers } from 'sbolterms'
-import InteractionFacade from "./InteractionFacade";
+import S2Interaction from "./S2Interaction";
 
-export default class FunctionalComponentFacade extends IdentifiedFacade {
+export default class S2FunctionalComponent extends S2Identified {
 
-    constructor(graph:SbolGraph, uri:string) {
+    constructor(graph:SBOLGraph, uri:string) {
 
         super(graph, uri)
 
@@ -39,7 +39,7 @@ export default class FunctionalComponentFacade extends IdentifiedFacade {
         return this.displayId || ''
     }
 
-    get definition():ComponentDefinitionFacade {
+    get definition():S2ComponentDefinition {
 
         const uri = this.getUriProperty(Predicates.SBOL2.definition)
 
@@ -47,21 +47,21 @@ export default class FunctionalComponentFacade extends IdentifiedFacade {
             throw new Error('fc ' + this.uri + ' has no def?')
         }
 
-        return new ComponentDefinitionFacade(this.graph, uri)
+        return new S2ComponentDefinition(this.graph, uri)
     }
 
-    get mappings():Array<MapsToFacade> {
+    get mappings():Array<S2MapsTo> {
 
         return this.graph.match(null, Predicates.SBOL2.local, this.uri).map(triple.subjectUri)
                 .concat(
                     this.graph.match(null, Predicates.SBOL2.remote, this.uri).map(triple.subjectUri)
                 )
                 .filter((el) => !!el)
-                .map((mapsToUri) => new MapsToFacade(this.graph, mapsToUri as string))
+                .map((mapsToUri) => new S2MapsTo(this.graph, mapsToUri as string))
     }
 
 
-    get containingModuleDefinition():ModuleDefinitionFacade {
+    get containingModuleDefinition():S2ModuleDefinition {
 
         const uri = triple.subjectUri(
             this.graph.matchOne(null, Predicates.SBOL2.functionalComponent, this.uri)
@@ -71,25 +71,25 @@ export default class FunctionalComponentFacade extends IdentifiedFacade {
             throw new Error('FC ' + this.uri + ' not contained by a MD?')
         }
 
-        return new ModuleDefinitionFacade(this.graph, uri)
+        return new S2ModuleDefinition(this.graph, uri)
     }
 
 
 
-    get participations():Array<ParticipationFacade> {
+    get participations():Array<S2Participation> {
 
         return this.graph.match(null, Predicates.SBOL2.participant, this.uri)
                    .map(triple.subjectUri)
-                   .map((uri) => uri ? new ParticipationFacade(this.graph, uri): undefined)
-                   .filter((el) => !!el) as Array<ParticipationFacade>
+                   .map((uri) => uri ? new S2Participation(this.graph, uri): undefined)
+                   .filter((el) => !!el) as Array<S2Participation>
     }
 
-    get interactions():Array<InteractionFacade> {
+    get interactions():Array<S2Interaction> {
 
-        return this.participations.map((participation) => participation.interaction).filter((el) => !!el) as Array<InteractionFacade>
+        return this.participations.map((participation) => participation.interaction).filter((el) => !!el) as Array<S2Interaction>
     }
 
-    get containingObject():IdentifiedFacade|undefined {
+    get containingObject():S2Identified|undefined {
 
         return this.containingModuleDefinition
 

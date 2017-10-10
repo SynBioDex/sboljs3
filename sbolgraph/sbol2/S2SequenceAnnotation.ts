@@ -1,18 +1,18 @@
-import SbolGraph, { ComponentDefinitionFacade } from '..';
+import SBOLGraph, { S2ComponentDefinition } from '..';
 
-import IdentifiedFacade from './IdentifiedFacade'
-import ComponentInstanceFacade from './ComponentInstanceFacade'
-import RangeFacade from './RangeFacade'
+import S2Identified from './S2Identified'
+import S2ComponentInstance from './S2ComponentInstance'
+import S2Range from './S2Range'
 
 import * as triple from '../triple'
 import * as node from '../node'
 import { Types, Predicates, Specifiers } from 'sbolterms'
 import CompliantURIs from "../CompliantURIs";
-import LocationFacade from "./LocationFacade";
+import S2Location from "./S2Location";
 
-export default class SequenceAnnotationFacade extends IdentifiedFacade {
+export default class S2SequenceAnnotation extends S2Identified {
 
-    constructor(graph:SbolGraph, uri:string) {
+    constructor(graph:SBOLGraph, uri:string) {
 
         super(graph, uri)
 
@@ -22,18 +22,18 @@ export default class SequenceAnnotationFacade extends IdentifiedFacade {
         return Types.SBOL2.SequenceAnnotation
     }
 
-    get locations():Array<LocationFacade> {
+    get locations():Array<S2Location> {
 
         return this.getUriProperties(Predicates.SBOL2.location)
-                   .map((uri:string) => this.graph.uriToFacade(uri) as LocationFacade)
+                   .map((uri:string) => this.graph.uriToFacade(uri) as S2Location)
     }
 
-    get rangeLocations():Array<RangeFacade> {
+    get rangeLocations():Array<S2Range> {
 
-        return this.locations.filter((location:IdentifiedFacade) => {
+        return this.locations.filter((location:S2Identified) => {
             return location.objectType === Types.SBOL2.Range
-        }).map((identified:IdentifiedFacade) => {
-            return new RangeFacade(this.graph, identified.uri)
+        }).map((identified:S2Identified) => {
+            return new S2Range(this.graph, identified.uri)
         })
 
     }
@@ -42,7 +42,7 @@ export default class SequenceAnnotationFacade extends IdentifiedFacade {
 
         var n:number = Number.MAX_VALUE
 
-        this.rangeLocations.forEach((range:RangeFacade) => {
+        this.rangeLocations.forEach((range:S2Range) => {
 
             const start:number|undefined = range.start
             const end:number|undefined = range.end
@@ -61,7 +61,7 @@ export default class SequenceAnnotationFacade extends IdentifiedFacade {
 
         var n:number = Number.MIN_VALUE
 
-        this.rangeLocations.forEach((range:RangeFacade) => {
+        this.rangeLocations.forEach((range:S2Range) => {
 
             const start:number|undefined = range.start
             const end:number|undefined = range.end
@@ -90,7 +90,7 @@ export default class SequenceAnnotationFacade extends IdentifiedFacade {
         return false
     }
 
-    get containingComponentDefinition():ComponentDefinitionFacade {
+    get containingComponentDefinition():S2ComponentDefinition {
 
         const uri:string|undefined = triple.subjectUri(
             this.graph.matchOne(null, Predicates.SBOL2.sequenceAnnotation, this.uri)
@@ -100,15 +100,15 @@ export default class SequenceAnnotationFacade extends IdentifiedFacade {
             throw new Error('SA not contained by a CD??')
         }
 
-        return new ComponentDefinitionFacade(this.graph, uri)
+        return new S2ComponentDefinition(this.graph, uri)
     }
 
-    get component():ComponentInstanceFacade|undefined {
+    get component():S2ComponentInstance|undefined {
 
         const uri = this.getUriProperty(Predicates.SBOL2.component)
 
         if(uri)
-            return new ComponentInstanceFacade(this.graph, uri)
+            return new S2ComponentInstance(this.graph, uri)
     }
 
     get displayName():string {
@@ -134,16 +134,16 @@ export default class SequenceAnnotationFacade extends IdentifiedFacade {
         return this.graph.hasMatch(this.uri, Predicates.SBOL2.role, role)
     }
 
-    static fromIdentified(identified:IdentifiedFacade):SequenceAnnotationFacade {
+    static fromIdentified(identified:S2Identified):S2SequenceAnnotation {
 
         const type:string|undefined = identified.objectType
 
         if(type === Types.SBOL2.SequenceAnnotation)
-            return new SequenceAnnotationFacade(identified.graph, identified.uri)
+            return new S2SequenceAnnotation(identified.graph, identified.uri)
 
         if(type === Types.SBOL2.Component) {
             
-            const sa:SequenceAnnotationFacade|undefined = (new ComponentInstanceFacade(identified.graph, identified.uri)).sequenceAnnotations[0]
+            const sa:S2SequenceAnnotation|undefined = (new S2ComponentInstance(identified.graph, identified.uri)).sequenceAnnotations[0]
 
             if(sa === undefined) {
                 throw new Error('cannot get sequence annotation from ' + identified.uri)
@@ -156,7 +156,7 @@ export default class SequenceAnnotationFacade extends IdentifiedFacade {
 
     }
 
-    get containingObject():IdentifiedFacade|undefined {
+    get containingObject():S2Identified|undefined {
 
         const uri = triple.subjectUri(
             this.graph.matchOne(null, Predicates.SBOL2.sequenceAnnotation, this.uri)
@@ -173,7 +173,7 @@ export default class SequenceAnnotationFacade extends IdentifiedFacade {
 
     clearLocations():void {
 
-        this.locations.forEach((location:IdentifiedFacade) => {
+        this.locations.forEach((location:S2Identified) => {
             this.graph.purgeSubject(location.uri)
         })
 

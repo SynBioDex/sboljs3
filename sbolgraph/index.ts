@@ -1,17 +1,17 @@
 
-import SbolGraph from './SbolGraph'
+import SBOLGraph from './SBOLGraph'
 
-import IdentifiedFacade from './facade/IdentifiedFacade'
-import ComponentInstanceFacade from './facade/ComponentInstanceFacade'
-import ModuleInstanceFacade from './facade/ModuleInstanceFacade'
-import ComponentDefinitionFacade from './facade/ComponentDefinitionFacade'
-import ModuleDefinitionFacade from './facade/ModuleDefinitionFacade'
-import SequenceAnnotationFacade from './facade/SequenceAnnotationFacade'
-import FunctionalComponentFacade from './facade/FunctionalComponentFacade'
-import SequenceFacade from './facade/SequenceFacade'
-import LocationFacade from './facade/LocationFacade'
-import OrientedLocationFacade from './facade/OrientedLocationFacade'
-import RangeFacade from './facade/RangeFacade'
+import S2Identified from './sbol2/S2Identified'
+import S2ComponentInstance from './sbol2/S2ComponentInstance'
+import S2ModuleInstance from './sbol2/S2ModuleInstance'
+import S2ComponentDefinition from './sbol2/S2ComponentDefinition'
+import S2ModuleDefinition from './sbol2/S2ModuleDefinition'
+import S2SequenceAnnotation from './sbol2/S2SequenceAnnotation'
+import S2FunctionalComponent from './sbol2/S2FunctionalComponent'
+import S2Sequence from './sbol2/S2Sequence'
+import S2Location from './sbol2/S2Location'
+import S2OrientedLocation from './sbol2/S2OrientedLocation'
+import S2Range from './sbol2/S2Range'
 import * as node from './node'
 import * as triple from './triple'
 import CompliantURIs from './CompliantURIs'
@@ -21,17 +21,17 @@ import Repository from './Repository'
 import { SearchQuery, SearchResult } from './Repository'
 
 export {
-    IdentifiedFacade,
-    ComponentInstanceFacade,
-    ModuleInstanceFacade,
-    ComponentDefinitionFacade,
-    ModuleDefinitionFacade,
-    SequenceAnnotationFacade,
-    FunctionalComponentFacade,
-    SequenceFacade,
-    OrientedLocationFacade,
-    LocationFacade,
-    RangeFacade,
+    S2Identified,
+    S2ComponentInstance,
+    S2ModuleInstance,
+    S2ComponentDefinition,
+    S2ModuleDefinition,
+    S2SequenceAnnotation,
+    S2FunctionalComponent,
+    S2Sequence,
+    S2OrientedLocation,
+    S2Location,
+    S2Range,
     node,
     triple,
     CompliantURIs,
@@ -41,5 +41,5 @@ export {
     SearchResult
 }
 
-export default SbolGraph
+export default SBOLGraph
 

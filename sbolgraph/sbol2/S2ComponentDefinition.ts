@@ -1,19 +1,19 @@
-import SbolGraph from '../SbolGraph';
+import SBOLGraph from '../SBOLGraph';
 
-import IdentifiedFacade from './IdentifiedFacade'
-import ComponentInstanceFacade from './ComponentInstanceFacade'
-import SequenceFacade from './SequenceFacade'
-import SequenceAnnotationFacade from './SequenceAnnotationFacade'
-import SequenceConstraintFacade from './SequenceConstraintFacade'
+import S2Identified from './S2Identified'
+import S2ComponentInstance from './S2ComponentInstance'
+import S2Sequence from './S2Sequence'
+import S2SequenceAnnotation from './S2SequenceAnnotation'
+import S2SequenceConstraint from './S2SequenceConstraint'
 
 import * as triple from '../triple'
 import * as node from '../node'
 import { Types, Predicates, Specifiers } from 'sbolterms'
 import CompliantURIs from "../CompliantURIs";
 
-export default class ComponentDefinitionFacade extends IdentifiedFacade {
+export default class S2ComponentDefinition extends S2Identified {
 
-    constructor(graph:SbolGraph, uri:string) {
+    constructor(graph:SBOLGraph, uri:string) {
 
         super(graph, uri)
     }
@@ -38,10 +38,10 @@ export default class ComponentDefinitionFacade extends IdentifiedFacade {
 
     }
 
-    get components():Array<ComponentInstanceFacade> {
+    get components():Array<S2ComponentInstance> {
 
         return this.getUriProperties(Predicates.SBOL2.component)
-                   .map((uri:string) => new ComponentInstanceFacade(this.graph, uri))
+                   .map((uri:string) => new S2ComponentInstance(this.graph, uri))
 
     }
 
@@ -61,24 +61,24 @@ export default class ComponentDefinitionFacade extends IdentifiedFacade {
         this.graph.removeMatches(this.uri, Predicates.SBOL2.role, role)
     }
 
-    get sequences():Array<SequenceFacade> {
+    get sequences():Array<S2Sequence> {
 
         return this.getUriProperties(Predicates.SBOL2.sequence)
-                   .map((uri:string) => new SequenceFacade(this.graph, uri))
+                   .map((uri:string) => new S2Sequence(this.graph, uri))
 
     }
 
-    get sequenceAnnotations():Array<SequenceAnnotationFacade> {
+    get sequenceAnnotations():Array<S2SequenceAnnotation> {
 
         return this.getUriProperties(Predicates.SBOL2.sequenceAnnotation)
-                   .map((uri:string) => new SequenceAnnotationFacade(this.graph, uri))
+                   .map((uri:string) => new S2SequenceAnnotation(this.graph, uri))
 
     }
 
-    get sequenceConstraints():Array<SequenceConstraintFacade> {
+    get sequenceConstraints():Array<S2SequenceConstraint> {
 
         return this.getUriProperties(Predicates.SBOL2.sequenceConstraint)
-                   .map((uri:string) => new SequenceConstraintFacade(this.graph, uri))
+                   .map((uri:string) => new S2SequenceConstraint(this.graph, uri))
 
     }
 
@@ -88,12 +88,12 @@ export default class ComponentDefinitionFacade extends IdentifiedFacade {
     
     }
 
-    static fromIdentified(identified:IdentifiedFacade):ComponentDefinitionFacade {
+    static fromIdentified(identified:S2Identified):S2ComponentDefinition {
 
         const type:string|undefined = identified.objectType
 
         if(type === Types.SBOL2.ComponentDefinition) {
-            return new ComponentDefinitionFacade(identified.graph, identified.uri)
+            return new S2ComponentDefinition(identified.graph, identified.uri)
         }
 
         if(type === Types.SBOL2.Component) {
@@ -103,23 +103,23 @@ export default class ComponentDefinitionFacade extends IdentifiedFacade {
             if(def === undefined)
                 throw new Error('component instance with no def?')
 
-            return new ComponentDefinitionFacade(identified.graph, def)
+            return new S2ComponentDefinition(identified.graph, def)
         }
 
         throw new Error('cannot get component definition from ' + identified.uri)
     }
 
-    get containingObject():IdentifiedFacade|undefined {
+    get containingObject():S2Identified|undefined {
         return undefined
     }
 
-    addComponent(component:ComponentInstanceFacade):void {
+    addComponent(component:S2ComponentInstance):void {
 
         this.graph.add(this.uri, Predicates.SBOL2.component, node.createUriNode(component.uri))
 
     }
 
-    addComponentByDefinition(componentDefinition:ComponentDefinitionFacade):ComponentInstanceFacade {
+    addComponentByDefinition(componentDefinition:S2ComponentDefinition):S2ComponentInstance {
 
         const cUri:string = this.graph.generateURI(this.persistentIdentity + '/' + componentDefinition.displayId + '$n?$/1')
 
@@ -133,12 +133,12 @@ export default class ComponentDefinitionFacade extends IdentifiedFacade {
 
         this.graph.add(this.uri, Predicates.SBOL2.component, node.createUriNode(cUri))
 
-        return new ComponentInstanceFacade(this.graph, cUri)
+        return new S2ComponentInstance(this.graph, cUri)
     }
 
 
 
-    addSequenceAnnotationForComponent(componentInstance:ComponentInstanceFacade):SequenceAnnotationFacade {
+    addSequenceAnnotationForComponent(componentInstance:S2ComponentInstance):S2SequenceAnnotation {
 
         const saUri:string = this.graph.generateURI(this.persistentIdentity + '/' + componentInstance.displayId + '_sequenceAnnotation$n?$/1')
 
@@ -151,20 +151,20 @@ export default class ComponentDefinitionFacade extends IdentifiedFacade {
 
         this.graph.add(this.uri, Predicates.SBOL2.component, node.createUriNode(saUri))
 
-        return new SequenceAnnotationFacade(this.graph, saUri)
+        return new S2SequenceAnnotation(this.graph, saUri)
 
     }
 
 
 
-    addSequence(sequence:SequenceFacade):void {
+    addSequence(sequence:S2Sequence):void {
 
         this.graph.insert(this.uri, Predicates.SBOL2.sequence, node.createUriNode(sequence.uri))
     }
 
 
 
-    annotateRange(start:number, end:number, name:string):SequenceAnnotationFacade {
+    annotateRange(start:number, end:number, name:string):S2SequenceAnnotation {
 
         const saUri = this.graph.generateURI(this.persistentIdentity + '/' + this.graph.nameToDisplayId(name) + '$n$/' + this.version)
 
@@ -177,7 +177,7 @@ export default class ComponentDefinitionFacade extends IdentifiedFacade {
             [Predicates.SBOL2.version]: node.createStringNode(CompliantURIs.getVersion(saUri))
         })
 
-        const sa:SequenceAnnotationFacade = new SequenceAnnotationFacade(this.graph, saUri)
+        const sa:S2SequenceAnnotation = new S2SequenceAnnotation(this.graph, saUri)
 
         this.graph.insertProperties(this.uri, {
             [Predicates.SBOL2.sequenceAnnotation]: node.createUriNode(saUri)

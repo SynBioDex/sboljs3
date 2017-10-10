@@ -1,15 +1,15 @@
-import SbolGraph from '..';
+import SBOLGraph from '..';
 
-import IdentifiedFacade from './IdentifiedFacade'
-import FunctionalComponentFacade from './FunctionalComponentFacade'
-import InteractionFacade from './InteractionFacade'
+import S2Identified from './S2Identified'
+import S2FunctionalComponent from './S2FunctionalComponent'
+import S2Interaction from './S2Interaction'
 
 import * as triple from '../triple'
 import { Types, Predicates, Specifiers } from 'sbolterms'
 
-export default class ParticipationFacade extends IdentifiedFacade {
+export default class S2Participation extends S2Identified {
 
-    constructor(graph:SbolGraph, uri:string) {
+    constructor(graph:SBOLGraph, uri:string) {
 
         super(graph, uri)
 
@@ -19,28 +19,28 @@ export default class ParticipationFacade extends IdentifiedFacade {
         return Types.SBOL2.Participation
     }
 
-    get participant():FunctionalComponentFacade|undefined {
+    get participant():S2FunctionalComponent|undefined {
 
         const uri:string|undefined = this.getUriProperty(Predicates.SBOL2.participant)
 
         if(uri) {
-            return new FunctionalComponentFacade(this.graph, uri)
+            return new S2FunctionalComponent(this.graph, uri)
         }
     }
 
-    get interaction():InteractionFacade|undefined {
+    get interaction():S2Interaction|undefined {
 
         const uri:string|undefined = triple.subjectUri(
             this.graph.matchOne(null, Predicates.SBOL2.participation, this.uri)
         )
 
         if(uri) {
-            return new InteractionFacade(this.graph, uri)
+            return new S2Interaction(this.graph, uri)
         }
 
     }
 
-    get containingObject():IdentifiedFacade|undefined {
+    get containingObject():S2Identified|undefined {
 
         const uri = triple.subjectUri(
             this.graph.matchOne(null, Predicates.SBOL2.participation, this.uri)
