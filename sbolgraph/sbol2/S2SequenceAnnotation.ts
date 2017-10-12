@@ -1,4 +1,4 @@
-import SBOLGraph, { S2ComponentDefinition } from '..';
+import { SBOL2Graph, S2ComponentDefinition } from '..';
 
 import S2Identified from './S2Identified'
 import S2ComponentInstance from './S2ComponentInstance'
@@ -12,7 +12,7 @@ import S2Location from "./S2Location";
 
 export default class S2SequenceAnnotation extends S2Identified {
 
-    constructor(graph:SBOLGraph, uri:string) {
+    constructor(graph:SBOL2Graph, uri:string) {
 
         super(graph, uri)
 

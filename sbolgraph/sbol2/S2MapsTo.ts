@@ -2,13 +2,13 @@
 import S2Identified from './S2Identified'
 
 import { Types, Predicates, Specifiers } from 'sbolterms'
-import SBOLGraph from "../SBOLGraph";
+import SBOL2Graph from "../SBOL2Graph";
 
 import * as triple from '../triple'
 
 export default class S2MapsTo extends S2Identified {
 
-    constructor(graph:SBOLGraph, uri:string) {
+    constructor(graph:SBOL2Graph, uri:string) {
 
         super(graph, uri)
     }

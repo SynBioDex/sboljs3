@@ -3,31 +3,51 @@ import * as triple from './triple'
 import * as node from './node'
 
 import { Predicates } from 'sbolterms'
-import SBOLGraph from "./SBOLGraph";
+import Graph from "./Graph";
 import { Watcher } from "./Graph";
 
 export default abstract class Facade {
 
-    graph: SBOLGraph
+    _graph: Graph
     uri: string
 
-    constructor(graph:SBOLGraph, uri:string) {
+    constructor(graph:Graph, uri:string) {
 
-        this.graph = graph
+        this._graph = graph
         this.uri = uri
 
     }
 
     getProperty(predicate) {
-        return this.graph.matchOne(this.uri, predicate, null)
+        return this._graph.matchOne(this.uri, predicate, null)
     }
 
     getUriProperty(predicate):string|undefined {
         return triple.objectUri(this.getProperty(predicate))
     }
 
+    getRequiredUriProperty(predicate):string {
+
+        const prop = triple.objectUri(this.getProperty(predicate))
+
+        if(prop === undefined)
+            throw new Error('missing property ' + predicate)
+
+        return prop
+    }
+
     getStringProperty(predicate):string|undefined {
         return triple.objectString(this.getProperty(predicate))
+    }
+
+    getRequiredStringProperty(predicate):string {
+
+        const prop = triple.objectString(this.getProperty(predicate))
+
+        if(prop === undefined)
+            throw new Error('missing property ' + predicate)
+
+        return prop
     }
 
     getIntProperty(predicate):number|undefined {
@@ -45,7 +65,7 @@ export default abstract class Facade {
 
 
     getProperties(predicate) {
-        return this.graph.match(this.uri, predicate, null)
+        return this._graph.match(this.uri, predicate, null)
     }
 
     getUriProperties(predicate): Array<string> {
@@ -59,12 +79,12 @@ export default abstract class Facade {
 
 
     setProperty(predicate:string, object:any) {
-        this.graph.removeMatches(this.uri, predicate, null)
-        this.graph.insert(this.uri, predicate, object)
+        this._graph.removeMatches(this.uri, predicate, null)
+        this._graph.insert(this.uri, predicate, object)
     }
 
     deleteProperty(predicate:string) {
-        this.graph.removeMatches(this.uri, predicate, null)
+        this._graph.removeMatches(this.uri, predicate, null)
     }
 
     setUriProperty(predicate:string, value:string|undefined) {
@@ -128,7 +148,7 @@ export default abstract class Facade {
 
     watch(cb:() => void):Watcher {
 
-        return this.graph.watchSubject(this.uri, cb)
+        return this._graph.watchSubject(this.uri, cb)
 
     }
 

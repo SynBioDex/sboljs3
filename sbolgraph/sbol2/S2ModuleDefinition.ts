@@ -4,14 +4,14 @@ import S2ModuleInstance from './S2ModuleInstance'
 import S2FunctionalComponent from './S2FunctionalComponent'
 import S2Interaction from './S2Interaction'
 
-import SBOLGraph from '../SBOLGraph'
+import SBOL2Graph from '../SBOL2Graph'
 
 import * as triple from '../triple'
 import { Predicates, Types } from 'sbolterms'
 
 export default class S2ModuleDefinition extends S2Identified {
 
-    constructor(graph:SBOLGraph, uri:string) {
+    constructor(graph:SBOL2Graph, uri:string) {
 
         super(graph, uri)
 

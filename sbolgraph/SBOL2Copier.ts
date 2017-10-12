@@ -1,7 +1,7 @@
 
 
 import { Types, Predicates, Specifiers } from 'sbolterms'
-import SBOLGraph from "./SBOLGraph";
+import SBOL2Graph from "./SBOL2Graph";
 
 import * as node from './node'
 import * as triple from './triple'
@@ -10,7 +10,7 @@ import CompliantURIs from './CompliantURIs'
 
 export default class SBOLCopier {
 
-    static copy(graphA:SBOLGraph, graphB:SBOLGraph, uri:string, newPrefix:string):string {
+    static copy(graphA:SBOL2Graph, graphB:SBOL2Graph, uri:string, newPrefix:string):string {
 
         const copier:SBOLCopier = new SBOLCopier(graphA, graphB, newPrefix)
 
@@ -18,14 +18,14 @@ export default class SBOLCopier {
     }
 
 
-    graphA:SBOLGraph
-    graphB:SBOLGraph
+    graphA:SBOL2Graph
+    graphB:SBOL2Graph
 
     oldToNewUriMap:Map<string,string>
 
     newPrefix:string
 
-    private constructor(graphA:SBOLGraph, graphB:SBOLGraph, newPrefix:string) {
+    private constructor(graphA:SBOL2Graph, graphB:SBOL2Graph, newPrefix:string) {
         this.oldToNewUriMap = new Map<string, string>()
         this.graphA = graphA
         this.graphB = graphB

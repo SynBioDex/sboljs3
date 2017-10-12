@@ -4,11 +4,11 @@ import S2ModuleDefinition from './S2ModuleDefinition'
 
 import * as triple from '../triple'
 import { Types, Predicates, Specifiers } from 'sbolterms'
-import SBOLGraph from "../SBOLGraph";
+import SBOL2Graph from "../SBOL2Graph";
 
 export default class S2ModuleInstance extends S2Identified {
 
-    constructor(graph:SBOLGraph, uri:string) {
+    constructor(graph:SBOL2Graph, uri:string) {
 
         super(graph, uri)
     }

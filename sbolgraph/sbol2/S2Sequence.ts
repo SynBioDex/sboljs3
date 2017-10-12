@@ -1,4 +1,4 @@
-import SBOLGraph from '..';
+import SBOL2Graph from '../SBOL2Graph';
 
 import S2Identified from './S2Identified'
 
@@ -12,7 +12,7 @@ import S2Range from "../sbol2/S2Range";
 
 export default class S2Sequence extends S2Identified {
 
-    constructor(graph:SBOLGraph, uri:string) {
+    constructor(graph:SBOL2Graph, uri:string) {
 
         super(graph, uri)
 

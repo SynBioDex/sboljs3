@@ -1,4 +1,4 @@
-import SBOLGraph from '../SBOLGraph';
+import SBOL2Graph from '../SBOL2Graph';
 
 import S2Identified from './S2Identified'
 import S2ComponentInstance from './S2ComponentInstance'
@@ -13,7 +13,7 @@ import CompliantURIs from "../CompliantURIs";
 
 export default class S2ComponentDefinition extends S2Identified {
 
-    constructor(graph:SBOLGraph, uri:string) {
+    constructor(graph:SBOL2Graph, uri:string) {
 
         super(graph, uri)
     }
@@ -30,6 +30,11 @@ export default class S2ComponentDefinition extends S2Identified {
             throw new Error(this.uri + ' has no type?')
 
         return typeUri
+    }
+
+    get types():Array<string> {
+
+        return this.getUriProperties(Predicates.SBOL2.type)
     }
 
     set type(uri:string) {

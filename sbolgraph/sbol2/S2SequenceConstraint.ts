@@ -1,5 +1,5 @@
 
-import SBOLGraph, { S2ComponentDefinition } from '..';
+import { SBOL2Graph, S2ComponentDefinition } from '..';
 
 import S2Identified from './S2Identified'
 import S2ComponentInstance from './S2ComponentInstance'
@@ -12,7 +12,7 @@ import CompliantURIs from "../CompliantURIs";
 
 export default class S2SequenceConstraint extends S2Identified {
 
-    constructor(graph:SBOLGraph, uri:string) {
+    constructor(graph:SBOL2Graph, uri:string) {
 
         super(graph, uri)
 

@@ -1,4 +1,4 @@
-import SBOLGraph, { S2FunctionalComponent, S2ModuleDefinition } from '..';
+import { SBOL2Graph, S2FunctionalComponent, S2ModuleDefinition } from '..';
 
 import S2Identified from './S2Identified'
 import S2Participation from './S2Participation'
@@ -8,7 +8,7 @@ import { Types, Predicates, Specifiers } from 'sbolterms'
 
 export default class S2Interaction extends S2Identified {
 
-    constructor(graph:SBOLGraph, uri:string) {
+    constructor(graph:SBOL2Graph, uri:string) {
 
         super(graph, uri)
 

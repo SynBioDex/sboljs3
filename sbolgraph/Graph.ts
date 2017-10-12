@@ -20,7 +20,7 @@ export default class Graph {
     graph:RdfGraphArray
     private ignoreWatchers:boolean
 
-    constructor(triples:Array<any>) {
+    constructor(triples?:Array<any>) {
 
         this.graph = triples ? new RdfGraphArray(triples) : new RdfGraphArray([])
 

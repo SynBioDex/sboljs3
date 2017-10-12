@@ -14,6 +14,7 @@ import S2Identified from './sbol2/S2Identified'
 import S2FunctionalComponent from './sbol2/S2FunctionalComponent'
 import S2Range from './sbol2/S2Range'
 import S2Sequence from './sbol2/S2Sequence'
+import S2Collection from './sbol2/S2Collection'
 
 import RdfGraphArray = require('rdf-graph-array')
 import RdfParserXml = require('rdf-parser-rdfxml')
@@ -29,12 +30,12 @@ import S2MapsTo from "./sbol2/S2MapsTo";
 
 import S2GenericLocation from "./sbol2/S2GenericLocation";
 
-export default class SBOLGraph extends Graph {
+export default class SBOL2Graph extends Graph {
 
     depthCache: Object
     _cachedUriPrefixes: Array<string>|null
 
-    constructor(rdfGraph) {
+    constructor(rdfGraph?:any) {
 
         super(rdfGraph)
 
@@ -44,9 +45,9 @@ export default class SBOLGraph extends Graph {
 
     }
 
-    clone():SBOLGraph {
+    clone():SBOL2Graph {
 
-        return new SBOLGraph(new RdfGraphArray(this.graph.toArray()))
+        return new SBOL2Graph(this.graph.toArray())
 
     }
 
@@ -61,6 +62,13 @@ export default class SBOLGraph extends Graph {
 
         return this.instancesOfType(Types.SBOL2.ComponentDefinition)
                     .map((uri) => new S2ComponentDefinition(this, uri))
+
+    }
+
+    get collections():Array<S2Collection> {
+
+        return this.instancesOfType(Types.SBOL2.Collection)
+                    .map((uri) => new S2Collection(this, uri))
 
     }
 
@@ -182,7 +190,7 @@ export default class SBOLGraph extends Graph {
 
             var { data, mimeType } = res
 
-            console.log('SBOLGraph::loadURL: mimetype is ' + mimeType)
+            console.log('SBOL2Graph::loadURL: mimetype is ' + mimeType)
 
             if(mimeType === 'text/xml')
                 mimeType = 'application/rdf+xml'
@@ -194,7 +202,7 @@ export default class SBOLGraph extends Graph {
 
             return parser.parse(data).then((graph) => {
 
-                return Promise.resolve(new SBOLGraph(graph))
+                return Promise.resolve(new SBOL2Graph(graph))
 
             })
 
@@ -202,13 +210,13 @@ export default class SBOLGraph extends Graph {
 
     }
 
-    static loadString(data:string, mimeType:string):Promise<SBOLGraph> {
+    static loadString(data:string, mimeType:string):Promise<SBOL2Graph> {
 
         const parser = new RdfParserXml()
 
         return parser.parse(data).then((graph) => {
 
-            return Promise.resolve(new SBOLGraph(graph))
+            return Promise.resolve(new SBOL2Graph(graph))
 
         })
 
@@ -237,6 +245,10 @@ export default class SBOLGraph extends Graph {
 
         Array.prototype.push.apply(topLevels,
             this.match(null, Predicates.a, Types.SBOL2.Sequence)
+                .map(triple.subjectUri))
+
+        Array.prototype.push.apply(topLevels,
+            this.match(null, Predicates.a, Types.SBOL2.Collection)
                 .map(triple.subjectUri))
 
         return topLevels.map((topLevel) => this.uriToFacade(topLevel) as S2Identified)
@@ -320,12 +332,15 @@ export default class SBOLGraph extends Graph {
         if(type === Types.SBOL2.Sequence)
             return new S2Sequence(this, uri)
 
+        if(type === Types.SBOL2.Collection)
+            return new S2Collection(this, uri)
+
         throw new Error('unknown type: ' + uri)
 
         //return undefined
     }
 
-    addAll(otherGraph:SBOLGraph) {
+    addAll(otherGraph:SBOL2Graph) {
 
         this.graph.addAll(otherGraph.graph)
 

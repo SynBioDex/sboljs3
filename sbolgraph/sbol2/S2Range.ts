@@ -4,11 +4,11 @@ import S2OrientedLocation from './S2OrientedLocation'
 
 import * as triple from '../triple'
 import { Types, Predicates, Specifiers } from 'sbolterms'
-import SBOLGraph from "../SBOLGraph";
+import SBOL2Graph from "../SBOL2Graph";
 
 export default class S2Range extends S2OrientedLocation {
 
-    constructor(graph:SBOLGraph, uri:string) {
+    constructor(graph:SBOL2Graph, uri:string) {
 
         super(graph, uri)
 

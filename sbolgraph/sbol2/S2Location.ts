@@ -3,14 +3,14 @@ import S2Identified from './S2Identified'
 
 import * as triple from '../triple'
 import { Types, Predicates, Specifiers } from 'sbolterms'
-import SBOLGraph from "../SBOLGraph";
+import SBOL2Graph from "../SBOL2Graph";
 import S2SequenceAnnotation from "./S2SequenceAnnotation";
 import S2ComponentDefinition from "./S2ComponentDefinition";
 import S2ComponentInstance from "./S2ComponentInstance";
 
 export default abstract class S2Location extends S2Identified {
 
-    constructor(graph:SBOLGraph, uri:string) {
+    constructor(graph:SBOL2Graph, uri:string) {
 
         super(graph, uri)
 

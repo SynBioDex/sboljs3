@@ -1,5 +1,5 @@
 
-import SBOLGraph from "./SBOLGraph";
+import SBOL2Graph from "./SBOL2Graph";
 import S2ComponentInstance from "./sbol2/S2ComponentInstance";
 import * as triple from './triple'
 import S2ComponentDefinition from "./sbol2/S2ComponentDefinition";
@@ -10,7 +10,7 @@ import S2Location from "./sbol2/S2Location";
 
 export default class CompliantURIs {
 
-    static getComponentDefinitionUri(graphA:SBOLGraph, uri:string, topLevelPrefix:string, withVersion:boolean) {
+    static getComponentDefinitionUri(graphA:SBOL2Graph, uri:string, topLevelPrefix:string, withVersion:boolean) {
 
         if(!graphA.hasMatch(uri, null, null))
             return uri
@@ -19,7 +19,7 @@ export default class CompliantURIs {
 
     }
 
-    static getComponentUri(graphA:SBOLGraph, uri:string, topLevelPrefix:string, withVersion:boolean) {
+    static getComponentUri(graphA:SBOL2Graph, uri:string, topLevelPrefix:string, withVersion:boolean) {
 
         if(!graphA.hasMatch(uri, null, null))
             return uri
@@ -45,7 +45,7 @@ export default class CompliantURIs {
 
     }
 
-    static getSequenceAnnotationUri(graphA:SBOLGraph, uri:string, topLevelPrefix:string, withVersion:boolean) {
+    static getSequenceAnnotationUri(graphA:SBOL2Graph, uri:string, topLevelPrefix:string, withVersion:boolean) {
 
         if(!graphA.hasMatch(uri, null, null))
             return uri
@@ -71,7 +71,7 @@ export default class CompliantURIs {
 
     }
 
-    static getLocationUri(graphA:SBOLGraph, uri:string, topLevelPrefix:string, withVersion:boolean) {
+    static getLocationUri(graphA:SBOL2Graph, uri:string, topLevelPrefix:string, withVersion:boolean) {
 
         if(!graphA.hasMatch(uri, null, null))
             return uri
@@ -100,7 +100,7 @@ export default class CompliantURIs {
 
     }
 
-    static getFunctionalComponentUri(graphA:SBOLGraph, uri:string, topLevelPrefix:string, withVersion:boolean) {
+    static getFunctionalComponentUri(graphA:SBOL2Graph, uri:string, topLevelPrefix:string, withVersion:boolean) {
 
         if(!graphA.hasMatch(uri, null, null))
             return uri
@@ -124,7 +124,7 @@ export default class CompliantURIs {
 
     }
 
-    static getInteractionUri(graphA:SBOLGraph, uri:string, topLevelPrefix:string, withVersion:boolean) {
+    static getInteractionUri(graphA:SBOL2Graph, uri:string, topLevelPrefix:string, withVersion:boolean) {
 
         if(!graphA.hasMatch(uri, null, null))
             return uri
@@ -148,7 +148,7 @@ export default class CompliantURIs {
 
     }
 
-    static getModuleDefinitionUri(graphA:SBOLGraph, uri:string, topLevelPrefix:string, withVersion:boolean) {
+    static getModuleDefinitionUri(graphA:SBOL2Graph, uri:string, topLevelPrefix:string, withVersion:boolean) {
 
         if(!graphA.hasMatch(uri, null, null))
             return uri
@@ -157,7 +157,7 @@ export default class CompliantURIs {
 
     }
 
-    static getModuleUri(graphA:SBOLGraph, uri:string, topLevelPrefix:string, withVersion:boolean) {
+    static getModuleUri(graphA:SBOL2Graph, uri:string, topLevelPrefix:string, withVersion:boolean) {
 
         if(!graphA.hasMatch(uri, null, null))
             return uri
@@ -181,7 +181,7 @@ export default class CompliantURIs {
 
     }
 
-    static getParticipationUri(graphA:SBOLGraph, uri:string, topLevelPrefix:string, withVersion:boolean) {
+    static getParticipationUri(graphA:SBOL2Graph, uri:string, topLevelPrefix:string, withVersion:boolean) {
 
         if(!graphA.hasMatch(uri, null, null))
             return uri
@@ -235,7 +235,7 @@ export default class CompliantURIs {
     
     }
 
-    static removePrefix(graph:SBOLGraph, uri:string, keepVersion:boolean) {
+    static removePrefix(graph:SBOL2Graph, uri:string, keepVersion:boolean) {
 
         const prefix = CompliantURIs.getPrefix(uri)
 
@@ -269,7 +269,7 @@ export default class CompliantURIs {
 
     }
 
-    static getTopLevelPrefixFromSubject(graph:SBOLGraph, subject:string) {
+    static getTopLevelPrefixFromSubject(graph:SBOL2Graph, subject:string) {
 
         const closestTopLevel:string|undefined = graph.findClosestTopLevel(subject)
 
@@ -279,7 +279,7 @@ export default class CompliantURIs {
         return CompliantURIs.getPrefix(closestTopLevel)
     }
 
-    static checkCompliance(graph:SBOLGraph) {
+    static checkCompliance(graph:SBOL2Graph) {
 
         const diff:any[] = []
 

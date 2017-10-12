@@ -2,13 +2,13 @@
 import * as triple from '../triple'
 import { Types, Predicates, Specifiers } from 'sbolterms'
 
-import Facade from '../Facade'
+import S2Facade from './S2Facade'
 
-import SBOLGraph from '../SBOLGraph'
+import SBOL2Graph from '../SBOL2Graph'
 
-export default abstract class S2Identified extends Facade {
+export default abstract class S2Identified extends S2Facade {
 
-    constructor(graph:SBOLGraph, uri:string) {
+    constructor(graph:SBOL2Graph, uri:string) {
         super(graph, uri)
     }
 

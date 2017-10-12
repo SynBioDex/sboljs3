@@ -30,5 +30,10 @@
     "request": "^2.81.0",
     "sbolterms": "^0.2.0",
     "shortid": "^2.2.8"
+  },
+  "devDependencies": {
+    "@types/mz": "0.0.32",
+    "@types/node": "^8.0.34",
+    "mz": "^2.7.0"
   }
 }

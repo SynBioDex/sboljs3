@@ -1,4 +1,4 @@
-import SBOLGraph from '../SBOLGraph';
+import SBOL2Graph from '../SBOL2Graph';
 
 import S2Identified from './S2Identified'
 import S2ComponentDefinition from './S2ComponentDefinition'
@@ -12,7 +12,7 @@ import S2Interaction from "./S2Interaction";
 
 export default class S2FunctionalComponent extends S2Identified {
 
-    constructor(graph:SBOLGraph, uri:string) {
+    constructor(graph:SBOL2Graph, uri:string) {
 
         super(graph, uri)
 
