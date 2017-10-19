@@ -7,7 +7,7 @@ import S2Range from './S2Range'
 import * as triple from '../triple'
 import * as node from '../node'
 import { Types, Predicates, Specifiers } from 'sbolterms'
-import CompliantURIs from "../CompliantURIs";
+import CompliantURIs from "../SBOL2CompliantURIs";
 import S2Location from "./S2Location";
 
 export default class S2SequenceAnnotation extends S2Identified {

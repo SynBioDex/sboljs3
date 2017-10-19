@@ -19,6 +19,12 @@ export default class SXOrientedLocation extends SXLocation {
         return this.getUriProperty(Predicates.SBOLX.orientation)
 
     }
+
+    set orientation(orientation:string|undefined) {
+
+        this.setUriProperty(Predicates.SBOLX.orientation, orientation)
+
+    }
 }
 
 

@@ -17,8 +17,8 @@ import assert from 'power-assert'
 import {
     SXIdentified,
     SXSequence,
-    SXModule,
-    SXSubModule,
+    SXComponent,
+    SXSubComponent,
     SXOrientedLocation,
     SXSequenceFeature,
     SXLocation,
@@ -51,12 +51,12 @@ export default class SBOLXGraph extends Graph {
 
     }
 
-    createModule(uriPrefix:string, id:string, version?:string):SXModule {
+    createComponent(uriPrefix:string, id:string, version?:string):SXComponent {
 
         const identified:SXIdentified =
-            SXIdentifiedFactory.createTopLevel(this, Types.SBOLX.Module, uriPrefix, id, undefined, version)
+            SXIdentifiedFactory.createTopLevel(this, Types.SBOLX.Component, uriPrefix, id, undefined, version)
 
-        return new SXModule(this, identified.uri)
+        return new SXComponent(this, identified.uri)
 
     }
 
@@ -76,18 +76,18 @@ export default class SBOLXGraph extends Graph {
 
     }
 
-    get modules():Array<SXModule> {
+    get modules():Array<SXComponent> {
 
-        return this.instancesOfType(Types.SBOLX.Module)
-                    .map((uri) => new SXModule(this, uri))
+        return this.instancesOfType(Types.SBOLX.Component)
+                    .map((uri) => new SXComponent(this, uri))
 
     }
 
-    get rootModules():Array<SXModule> {
+    get rootComponents():Array<SXComponent> {
 
         return this.instancesOfType(Types.SBOL2.ComponentDefinition).filter((uri) => {
             return !this.hasMatch(null, Predicates.SBOLX.instanceOf, uri)
-        }).map((uri) => new SXModule(this, uri))
+        }).map((uri) => new SXComponent(this, uri))
 
     }
 
@@ -170,7 +170,7 @@ export default class SBOLXGraph extends Graph {
         const topLevels = []
 
         Array.prototype.push.apply(topLevels,
-            this.match(null, Predicates.a, Types.SBOLX.Module)
+            this.match(null, Predicates.a, Types.SBOLX.Component)
                 .map(triple.subjectUri))
 
         Array.prototype.push.apply(topLevels,
@@ -230,11 +230,11 @@ export default class SBOLXGraph extends Graph {
 
             let type = types[i]
 
-            if(type === Types.SBOLX.Module)
-                return new SXModule(this, uri)
+            if(type === Types.SBOLX.Component)
+                return new SXComponent(this, uri)
 
-            if(type === Types.SBOLX.SubModule)
-                return new SXSubModule(this, uri)
+            if(type === Types.SBOLX.SubComponent)
+                return new SXSubComponent(this, uri)
 
             if(type === Types.SBOLX.Interaction)
                 return new SXInteraction(this, uri)
@@ -321,7 +321,7 @@ export default class SBOLXGraph extends Graph {
         function isTopLevel() {
 
            // TODO
-            return subjectTypes.indexOf(Types.SBOLX.Module) !== -1
+            return subjectTypes.indexOf(Types.SBOLX.Component) !== -1
                     || subjectTypes.indexOf(Types.SBOLX.Sequence) !== -1
         }    
 

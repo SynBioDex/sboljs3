@@ -6,7 +6,7 @@ import S2Identified from './S2Identified'
 import * as triple from '../triple'
 import * as node from '../node'
 import { Types, Predicates, Specifiers } from 'sbolterms'
-import CompliantURIs from "../CompliantURIs";
+import CompliantURIs from "../SBOL2CompliantURIs";
 
 export default class S2Collection extends S2Identified {
 
@@ -21,7 +21,7 @@ export default class S2Collection extends S2Identified {
 
     get members():Array<S2Identified> {
 
-        return this.getUriProperties(Predicates.SBOL2.member)
+        return this.getUriProperties(Predicates.SBOLX.hasMember)
                    .map((uri:string) => this.graph.uriToFacade(uri))
                    .filter((r:S2Identified) => r !== undefined) as Array<S2Identified>
 

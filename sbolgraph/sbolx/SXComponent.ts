@@ -1,6 +1,6 @@
 
 import SXIdentified from './SXIdentified'
-import SXSubModule from './SXSubModule'
+import SXSubComponent from './SXSubComponent'
 import SXInteraction from './SXInteraction'
 
 import SBOLXGraph from '../SBOLXGraph'
@@ -12,8 +12,11 @@ import SXSequence from './SXSequence';
 import SXSequenceConstraint from './SXSequenceConstraint';
 import SXSequenceFeature from './SXSequenceFeature'
 import SXIdentifiedFactory from './SXIdentifiedFactory';
+import SXThingWithLocation from './SXThingWithLocation';
+import SXLocation from './SXLocation'
+import SXOrientedLocation from './SXOrientedLocation'
 
-export default class SXModule extends SXIdentified {
+export default class SXComponent extends SXIdentified {
 
     constructor(graph:SBOLXGraph, uri:string) {
 
@@ -22,7 +25,7 @@ export default class SXModule extends SXIdentified {
     }
 
     get facadeType():string {
-        return Types.SBOLX.Module
+        return Types.SBOLX.Component
     }
 
     get types():Array<string> {
@@ -67,10 +70,10 @@ export default class SXModule extends SXIdentified {
         return new SXSequence(this.graph, uri)
     }
 
-    get subModules():Array<SXSubModule> {
+    get subComponents():Array<SXSubComponent> {
 
-        return this.getUriProperties(Predicates.SBOLX.hasSubModule)
-                   .map((uri:string) => new SXSubModule(this.graph, uri))
+        return this.getUriProperties(Predicates.SBOLX.hasSubComponent)
+                   .map((uri:string) => new SXSubComponent(this.graph, uri))
 
     }
 
@@ -99,22 +102,43 @@ export default class SXModule extends SXIdentified {
 
     }
 
+    get annotatedLocations():Array<SXLocation> {
+
+        const all:Array<SXLocation> = []
+
+        this.subComponents.forEach((sc:SXSubComponent) => {
+            Array.prototype.push.apply(all, sc.locations)
+        })
+
+        this.sequenceFeatures.forEach((f:SXSequenceFeature) => {
+            Array.prototype.push.apply(all, f.locations)
+        })
+
+        return all
+    }
+
+    get thingsWithLocations():Array<SXThingWithLocation> {
+
+        return (this.subComponents as Array<SXThingWithLocation>)
+                    .concat(this.sequenceFeatures as Array<SXThingWithLocation>)
+    }
+
     isPlasmidBackbone():boolean {
 
         return this.hasRole(Specifiers.SBOL2.Role.PlasmidBackbone)
     
     }
 
-    createSubModule(definition:SXModule):SXSubModule {
+    createSubComponent(definition:SXComponent):SXSubComponent {
 
         const id:string = 'submodule_' + definition.id
 
         const identified:SXIdentified =
-            SXIdentifiedFactory.createChild(this.graph, Types.SBOLX.SubModule, this, id, undefined, this.version)
+            SXIdentifiedFactory.createChild(this.graph, Types.SBOLX.SubComponent, this, id, undefined, this.version)
 
-        this.graph.add(node.createUriNode(this.uri), node.createUriNode(Predicates.SBOLX.hasSubModule), node.createUriNode(identified.uri))
+        this.graph.add(node.createUriNode(this.uri), node.createUriNode(Predicates.SBOLX.hasSubComponent), node.createUriNode(identified.uri))
 
-        const module:SXSubModule = new SXSubModule(this.graph, identified.uri)
+        const module:SXSubComponent = new SXSubComponent(this.graph, identified.uri)
 
         module.instanceOf = definition
 
@@ -150,6 +174,15 @@ export default class SXModule extends SXIdentified {
         feature.addRange(start, end)
 
         return feature
+    }
+
+    wrap():SXComponent {
+
+        const wrapper:SXComponent = this.graph.createComponent(this.uriPrefix, this.displayName + '_wrapper', this.version)
+
+        wrapper.createSubComponent(this)
+
+        return wrapper
     }
 
 }

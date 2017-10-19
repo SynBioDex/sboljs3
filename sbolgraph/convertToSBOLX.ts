@@ -6,14 +6,14 @@ import {
 
     S2ComponentDefinition,
     S2SequenceAnnotation,
-    SXModule,
+    SXComponent,
     SXSequenceFeature,
     S2Location,
     S2Range,
     S2Identified,
     S2Collection,
 
-    SXSubModule,
+    SXSubComponent,
     S2ComponentInstance,
     SXIdentified,
     SXCollection
@@ -53,12 +53,12 @@ export default function convertToSBOLX(graph:SBOL2Graph):SBOLXGraph {
 
     })
 
-    function cdToModule(cd:S2ComponentDefinition):SXModule {
+    function cdToModule(cd:S2ComponentDefinition):SXComponent {
 
         const existing = map.get(cd.uriChain)
 
         if(existing)
-            return existing as SXModule
+            return existing as SXComponent
 
         var displayId:string|undefined = cd.displayId
         var version:string|undefined = cd.version
@@ -70,7 +70,7 @@ export default function convertToSBOLX(graph:SBOL2Graph):SBOLXGraph {
             version = '1'
         }
 
-        const module:SXModule = xgraph.createModule(cd.uriPrefix, displayId, version)
+        const module:SXComponent = xgraph.createComponent(cd.uriPrefix, displayId, version)
 
         map.set(cd.uriChain, module)
 
@@ -90,9 +90,9 @@ export default function convertToSBOLX(graph:SBOL2Graph):SBOLXGraph {
 
         cd.components.forEach((sc:S2ComponentInstance) => {
 
-            const def:SXModule = cdToModule(sc.definition)
+            const def:SXComponent = cdToModule(sc.definition)
 
-            const subModule:SXSubModule = module.createSubModule(def)
+            const subModule:SXSubComponent = module.createSubComponent(def)
 
             // TODO check sc roles match the def roles
 

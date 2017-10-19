@@ -1,7 +1,7 @@
 import { SBOLXGraph } from '..';
 
 import SXIdentified from './SXIdentified'
-import SXSubModule from './SXSubModule'
+import SXSubComponent from './SXSubComponent'
 import SXInteraction from './SXInteraction'
 
 import * as triple from '../triple'
@@ -19,12 +19,12 @@ export default class SXParticipation extends SXIdentified {
         return Types.SBOLX.Participation
     }
 
-    get participant():SXSubModule|undefined {
+    get participant():SXSubComponent|undefined {
 
         const uri:string|undefined = this.getUriProperty(Predicates.SBOLX.participant)
 
         if(uri) {
-            return new SXSubModule(this.graph, uri)
+            return new SXSubComponent(this.graph, uri)
         }
     }
 

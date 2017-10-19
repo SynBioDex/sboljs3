@@ -1,6 +1,8 @@
 
 import SBOL2Graph from './SBOL2Graph'
 import SBOLXGraph from './SBOLXGraph'
+import Graph from './Graph'
+import { Watcher } from './Graph'
 
 import S2Identified from './sbol2/S2Identified'
 import S2ComponentInstance from './sbol2/S2ComponentInstance'
@@ -16,9 +18,10 @@ import S2Range from './sbol2/S2Range'
 import S2Collection from './sbol2/S2Collection'
 
 import SXIdentified from './sbolx/SXIdentified'
-import SXSubModule from './sbolx/SXSubModule'
-import SXModule from './sbolx/SXModule'
+import SXSubComponent from './sbolx/SXSubComponent'
+import SXComponent from './sbolx/SXComponent'
 import SXSequence from './sbolx/SXSequence'
+import SXSequenceConstraint from './sbolx/SXSequenceConstraint'
 import SXLocation from './sbolx/SXLocation'
 import SXOrientedLocation from './sbolx/SXOrientedLocation'
 import SXRange from './sbolx/SXRange'
@@ -26,11 +29,14 @@ import SXSequenceFeature from './sbolx/SXSequenceFeature'
 import SXInteraction from './sbolx/SXInteraction'
 import SXParticipation from './sbolx/SXParticipation'
 import SXCollection from './sbolx/SXCollection'
+import SXThingWithLocation from './sbolx/SXThingWithLocation'
 
 import * as node from './node'
 import * as triple from './triple'
-import CompliantURIs from './CompliantURIs'
+import SBOL2CompliantURIs from './SBOL2CompliantURIs'
+import SBOLXCompliantURIs from './SBOLXCompliantURIs'
 import SBOL2Copier from './SBOL2Copier'
+import SBOLXCopier from './SBOLXCopier'
 
 import Repository from './SBOL2Repository'
 import { SearchQuery, SearchResult } from './SBOL2Repository'
@@ -55,22 +61,28 @@ export {
     // SBOLX
     SBOLXGraph,
     SXIdentified,
-    SXSubModule,
-    SXModule,
+    SXSubComponent,
+    SXComponent,
     SXSequence,
     SXLocation,
+    SXThingWithLocation,
     SXOrientedLocation,
     SXRange,
+    SXSequenceConstraint,
     SXSequenceFeature,
     SXInteraction,
     SXParticipation,
     SXCollection,
 
     // etc
+    Graph,
+    Watcher,
     node,
     triple,
-    CompliantURIs,
+    SBOL2CompliantURIs,
+    SBOLXCompliantURIs,
     SBOL2Copier,
+    SBOLXCopier,
     Repository,
     SearchQuery,
     SearchResult

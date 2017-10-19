@@ -6,7 +6,7 @@ import SXIdentified from './SXIdentified'
 import * as triple from '../triple'
 import * as node from '../node'
 import { Types, Predicates, Specifiers } from 'sbolterms'
-import CompliantURIs from "../CompliantURIs";
+import CompliantURIs from "../SBOL2CompliantURIs";
 
 export default class SXCollection extends SXIdentified {
 

@@ -16,9 +16,6 @@ export default abstract class S2OrientedLocation extends S2Location {
 
     get orientation():string|undefined {
 
-        console.error('ORIENTED LOC ' + this.uri)
-        console.dir(this.graph.match(this.uri, null, null))
-
         return this.getUriProperty(Predicates.SBOL2.orientation)
 
     }

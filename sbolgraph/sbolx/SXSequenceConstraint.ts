@@ -1,14 +1,14 @@
 
-import { SBOLXGraph, SXModule } from '..';
+import { SBOLXGraph, SXComponent } from '..';
 
 import SXIdentified from './SXIdentified'
-import SXSubModule from './SXSubModule'
+import SXSubComponent from './SXSubComponent'
 import SXRange from './SXRange'
 
 import * as triple from '../triple'
 import * as node from '../node'
 import { Types, Predicates, Specifiers } from 'sbolterms'
-import CompliantURIs from "../CompliantURIs";
+import CompliantURIs from "../SBOLXCompliantURIs";
 
 export default class SXSequenceConstraint extends SXIdentified {
 
@@ -36,6 +36,12 @@ export default class SXSequenceConstraint extends SXIdentified {
 
     }
 
+    get containingComponent():SXComponent {
+
+        return this.containingObject as SXComponent
+
+    }
+
     get restriction():string {
 
         const restriction:string|undefined = this.getUriProperty(Predicates.SBOLX.constraintRestriction)
@@ -47,7 +53,7 @@ export default class SXSequenceConstraint extends SXIdentified {
         return restriction
     }
 
-    get subject():SXSubModule {
+    get subject():SXSubComponent {
 
         const subject:string|undefined = this.getUriProperty(Predicates.SBOLX.constraintSubject)
 
@@ -55,10 +61,10 @@ export default class SXSequenceConstraint extends SXIdentified {
             throw new Error('SeqCons has no subject?')
         }
 
-        return new SXSubModule(this.graph, subject)
+        return new SXSubComponent(this.graph, subject)
     }
 
-    get object():SXSubModule {
+    get object():SXSubComponent {
 
         const object:string|undefined = this.getUriProperty(Predicates.SBOLX.constraintObject)
 
@@ -66,7 +72,7 @@ export default class SXSequenceConstraint extends SXIdentified {
             throw new Error('SeqCons has no object?')
         }
 
-        return new SXSubModule(this.graph, object)
+        return new SXSubComponent(this.graph, object)
     }
 
 }

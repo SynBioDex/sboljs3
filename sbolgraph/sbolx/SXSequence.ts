@@ -1,11 +1,11 @@
-import { SBOLXGraph, SXSubModule } from '..';
+import { SBOLXGraph, SXSubComponent } from '..';
 
 import SXIdentified from './SXIdentified'
 
 import { Types, Predicates, Specifiers } from 'sbolterms'
 
 import * as triple from '../triple' 
-import SXModule from "./SXModule";
+import SXComponent from "./SXComponent";
 import SXSequenceFeature from "./SXSequenceFeature";
 import SXLocation from "./SXLocation";
 import SXRange from "./SXRange";
@@ -47,12 +47,12 @@ export default class SXSequence extends SXIdentified {
         if(pos < 0 || pos >= elements.length)
             return
 
-        const containingModules:Array<SXModule> =
+        const containingModules:Array<SXComponent> =
             this.graph.match(null, Predicates.SBOLX.usesSequence, this.uri)
                 .map(triple.subjectUri)
-                .map((uri:string) => new SXModule(this.graph, uri))
+                .map((uri:string) => new SXComponent(this.graph, uri))
 
-        containingModules.forEach((module:SXModule) => {
+        containingModules.forEach((module:SXComponent) => {
 
             module.sequenceFeatures.forEach((sa:SXSequenceFeature) => {
                 sa.locations.forEach((location:SXLocation) => {
@@ -60,7 +60,7 @@ export default class SXSequence extends SXIdentified {
                 })
             })
 
-            module.subModules.forEach((sm:SXSubModule) => {
+            module.subComponents.forEach((sm:SXSubComponent) => {
                 sm.locations.forEach((location:SXLocation) => {
                     updateLocation(location)
                 })
@@ -115,12 +115,12 @@ export default class SXSequence extends SXIdentified {
         if(pos < 0 || pos >= elements.length)
             return
 
-        const containingCDs:Array<SXModule> =
+        const containingCDs:Array<SXComponent> =
             this.graph.match(null, Predicates.SBOLX.usesSequence, this.uri)
                 .map(triple.subjectUri)
-                .map((uri:string) => new SXModule(this.graph, uri))
+                .map((uri:string) => new SXComponent(this.graph, uri))
 
-        containingCDs.forEach((cd:SXModule) => {
+        containingCDs.forEach((cd:SXComponent) => {
 
             cd.sequenceFeatures.forEach((sa:SXSequenceFeature) => {
                 sa.locations.forEach((location:SXLocation) => {
@@ -128,7 +128,7 @@ export default class SXSequence extends SXIdentified {
                 })
             })
 
-            cd.subModules.forEach((sm:SXSubModule) => {
+            cd.subComponents.forEach((sm:SXSubComponent) => {
                 sm.locations.forEach((location:SXLocation) => {
                     updateLocation(location)
                 })

@@ -2,7 +2,7 @@
 import SXIdentified from "./SXIdentified";
 import { Predicates } from 'sbolterms'
 import * as node from '../node'
-import CompliantURIs from '../CompliantURIs'
+import CompliantURIs from '../SBOL2CompliantURIs'
 import SBOLXGraph from '../SBOLXGraph'
 
 export default class SXIdentifiedFactory {

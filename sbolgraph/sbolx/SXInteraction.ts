@@ -1,4 +1,4 @@
-import { SBOLXGraph, SXSubModule, SXModule } from '..';
+import { SBOLXGraph, SXSubComponent, SXComponent } from '..';
 
 import SXIdentified from './SXIdentified'
 import SXParticipation from './SXParticipation'
@@ -25,15 +25,15 @@ export default class SXInteraction extends SXIdentified {
 
     }
 
-    get participants():Array<SXSubModule> {
+    get participants():Array<SXSubComponent> {
 
-        const participants:Array<SXSubModule|undefined>
+        const participants:Array<SXSubComponent|undefined>
             = this.participations.map((participation:SXParticipation) => participation.participant)
 
-        return participants.filter((el) => !!el) as Array<SXSubModule>
+        return participants.filter((el) => !!el) as Array<SXSubComponent>
     }
 
-    get containingModule():SXModule {
+    get containingModule():SXComponent {
 
         const uri = triple.subjectUri(
             this.graph.matchOne(null, Predicates.SBOLX.hasInteraction, this.uri)
@@ -43,7 +43,7 @@ export default class SXInteraction extends SXIdentified {
             throw new Error('Interaction ' + this.uri + ' not contained by a Module?')
         }
 
-        return new SXModule(this.graph, uri)
+        return new SXComponent(this.graph, uri)
     }
 
     get containingObject():SXIdentified|undefined {

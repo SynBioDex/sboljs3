@@ -5,8 +5,8 @@ import * as triple from '../triple'
 import { Types, Predicates, Specifiers } from 'sbolterms'
 import SBOLXGraph from "../SBOLXGraph";
 import SXSequenceFeature from "./SXSequenceFeature";
-import SXModule from "./SXModule";
-import SXSubModule from "./SXSubModule";
+import SXComponent from "./SXComponent";
+import SXSubComponent from "./SXSubComponent";
 
 export default abstract class SXLocation extends SXIdentified {
 
@@ -34,6 +34,24 @@ export default abstract class SXLocation extends SXIdentified {
 
         return this.facadeType === Types.SBOLX.Range // TODO || this.facadeType === Types.SBOLX.Cut
    
+    }
+
+    get displayName():string|undefined {
+
+        const name:string|undefined = this.name
+
+        if(name !== undefined)
+            return name
+
+        const containingObject:SXIdentified|undefined = this.containingObject
+
+        if(containingObject === undefined) {
+            throw new Error('???')
+
+        }
+
+        return containingObject.displayName
+
     }
 }
 
