@@ -31,6 +31,11 @@ export default class Graph {
 
     match(s:string|null, p:string|null, o: string|number|null): Array<Triple> {
 
+        if(s === undefined || p === undefined || o === undefined) {
+            console.dir(arguments)
+            throw new Error('one of s/p/o were undefined')
+        }
+
         const res = this.graph.match(s, p, o).toArray()
 
         //console.log('Match { ' + s + ', ' + p + ', ' + o + ' } => ' + res.length)
@@ -39,6 +44,9 @@ export default class Graph {
     }
 
     matchOne(s:string|null, p:string|null, o: string|number|null) {
+
+        if(s === undefined || p === undefined || o === undefined)
+            throw new Error('one of s/p/o were undefined')
 
         if(!s && !o) {
             console.dir({ s, p, o })
@@ -65,6 +73,9 @@ export default class Graph {
     }
 
     hasMatch(s:string|null, p: string|null, o: string|number|null):boolean {
+
+        if(s === undefined || p === undefined || o === undefined)
+            throw new Error('one of s/p/o were undefined')
 
         return this.match(s, p, o).length > 0
 
@@ -176,6 +187,9 @@ export default class Graph {
     }
 
     removeMatches(s:string|null, p:string|null, o:string|number|null):void {
+
+        if(s === undefined || p === undefined || o === undefined)
+            throw new Error('one of s/p/o were undefined')
 
         //console.log('Remove matches { ' + s + ', ' + p + ', ' + o + ' }')
 

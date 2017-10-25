@@ -85,7 +85,7 @@ export default class SBOLXGraph extends Graph {
 
     get rootComponents():Array<SXComponent> {
 
-        return this.instancesOfType(Types.SBOL2.ComponentDefinition).filter((uri) => {
+        return this.instancesOfType(Types.SBOLX.Component).filter((uri) => {
             return !this.hasMatch(null, Predicates.SBOLX.instanceOf, uri)
         }).map((uri) => new SXComponent(this, uri))
 

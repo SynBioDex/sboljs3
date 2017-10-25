@@ -53,6 +53,10 @@ export default class SXSequenceConstraint extends SXIdentified {
         return restriction
     }
 
+    set restriction(uri:string) {
+        this.setUriProperty(Predicates.SBOLX.constraintRestriction, uri)
+    }
+
     get subject():SXSubComponent {
 
         const subject:string|undefined = this.getUriProperty(Predicates.SBOLX.constraintSubject)
@@ -64,6 +68,10 @@ export default class SXSequenceConstraint extends SXIdentified {
         return new SXSubComponent(this.graph, subject)
     }
 
+    set subject(sc:SXSubComponent) {
+        this.setUriProperty(Predicates.SBOLX.constraintSubject, sc.uri)
+    }
+
     get object():SXSubComponent {
 
         const object:string|undefined = this.getUriProperty(Predicates.SBOLX.constraintObject)
@@ -73,6 +81,10 @@ export default class SXSequenceConstraint extends SXIdentified {
         }
 
         return new SXSubComponent(this.graph, object)
+    }
+
+    set object(sc:SXSubComponent) {
+        this.setUriProperty(Predicates.SBOLX.constraintObject, sc.uri)
     }
 
 }

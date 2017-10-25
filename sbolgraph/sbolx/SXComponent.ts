@@ -185,6 +185,27 @@ export default class SXComponent extends SXIdentified {
         return wrapper
     }
 
+    createConstraint(subject:SXSubComponent, restriction:string, object:SXSubComponent):SXSequenceConstraint {
+
+        const identified:SXIdentified =
+            SXIdentifiedFactory.createChild(this.graph, Types.SBOLX.SequenceConstraint, this, 'constraint_' + subject.id + '_' + object.id, undefined, this.version)
+
+        this.graph.add(node.createUriNode(this.uri), node.createUriNode(Predicates.SBOLX.hasSequenceConstraint), node.createUriNode(identified.uri))
+
+        const constraint:SXSequenceConstraint = new SXSequenceConstraint(this.graph, identified.uri)
+
+        constraint.subject = subject
+        constraint.restriction = restriction
+        constraint.object = object
+
+        return constraint
+    }
+
 }
+
+
+
+
+
 
 
