@@ -35,6 +35,18 @@ export default class SXSequence extends SXIdentified {
         }
     }
 
+    prependFragment(fragment:string) {
+
+        this.elements = fragment + this.elements
+
+    }
+
+    appendFragment(fragment:string) {
+
+        this.elements = this.elements + fragment
+
+    }
+
     // Updates any SequenceFeatures and SubModules that use this sequence
     //
     insertFragment(pos:number, fragment:string) {
@@ -43,6 +55,10 @@ export default class SXSequence extends SXIdentified {
 
         if(elements === undefined)
             throw new Error('???')
+
+        if(pos === elements.length) {
+            this.appendFragment(fragment)
+        }
 
         if(pos < 0 || pos >= elements.length)
             return

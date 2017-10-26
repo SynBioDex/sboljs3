@@ -69,6 +69,19 @@ export default class SBOLXGraph extends Graph {
 
     }
 
+    createSequence(uriPrefix:string, id:string, version?:string):SXSequence {
+
+        const identified:SXIdentified =
+            SXIdentifiedFactory.createTopLevel(this, Types.SBOLX.Sequence, uriPrefix, id, undefined, version)
+
+        const seq:SXSequence = new SXSequence(this, identified.uri)
+
+        seq.encoding = Specifiers.SBOLX.SequenceEncoding.NucleicAcid
+        seq.elements = ''
+
+        return seq
+    }
+
     get sequences():Array<SXSequence> {
 
         return this.instancesOfType(Types.SBOLX.Sequence)
@@ -76,7 +89,7 @@ export default class SBOLXGraph extends Graph {
 
     }
 
-    get modules():Array<SXComponent> {
+    get components():Array<SXComponent> {
 
         return this.instancesOfType(Types.SBOLX.Component)
                     .map((uri) => new SXComponent(this, uri))

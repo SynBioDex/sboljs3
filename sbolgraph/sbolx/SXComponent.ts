@@ -201,6 +201,23 @@ export default class SXComponent extends SXIdentified {
         return constraint
     }
 
+    createSequence():SXSequence {
+
+        const seq:SXSequence = this.graph.createSequence(this.uriPrefix, this.displayName + '_sequence', this.version)
+
+        this.addSequence(seq)
+
+        return seq
+    }
+
+    addSequence(seq:SXSequence):void {
+
+        this.graph.insertProperties(this.uri, {
+            [Predicates.SBOLX.usesSequence]: node.createUriNode(seq.uri)
+        })
+
+    }
+
 }
 
 

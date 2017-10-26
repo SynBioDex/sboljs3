@@ -12,14 +12,14 @@ export default class SXThingWithLocation extends SXIdentified {
 
     get locations():Array<SXLocation> {
 
-        return this.getUriProperties(Predicates.SBOL2.location)
+        return this.getUriProperties(Predicates.SBOLX.hasLocation)
                    .map((uri:string) => this.graph.uriToFacade(uri) as SXLocation)
     }
 
     get rangeLocations():Array<SXRange> {
 
         return this.locations.filter((location:SXIdentified) => {
-            return location.objectType === Types.SBOL2.Range
+            return location.objectType === Types.SBOLX.Range
         }).map((identified:SXIdentified) => {
             return new SXRange(this.graph, identified.uri)
         })
@@ -78,7 +78,7 @@ export default class SXThingWithLocation extends SXIdentified {
         return false
     }
 
-    addRange(start:number, end:number) {
+    addRange(start:number, end:number):SXRange {
 
         const id:string = 'range_' + name
 
@@ -87,7 +87,12 @@ export default class SXThingWithLocation extends SXIdentified {
 
         this.graph.add(node.createUriNode(this.uri), node.createUriNode(Predicates.SBOLX.hasLocation), node.createUriNode(identified.uri))
 
-        return new SXRange(this.graph, identified.uri)
+        const range:SXRange = new SXRange(this.graph, identified.uri)
+
+        range.start = start
+        range.end = end
+
+        return range
     }
 
 }
