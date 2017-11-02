@@ -16,7 +16,9 @@ import {
     SXSubComponent,
     S2ComponentInstance,
     SXIdentified,
-    SXCollection
+    SXCollection,
+    S2Sequence,
+    SXSequence
 
 } from '.'
 
@@ -52,6 +54,33 @@ export default function convertToSBOLX(graph:SBOL2Graph):SBOLXGraph {
 
 
     })
+
+    function convertSeq(seq:S2Sequence):SXSequence {
+
+        const existing = map.get(seq.uriChain)
+
+        if(existing)
+            return existing as SXSequence
+
+        var displayId:string|undefined = seq.displayId
+        var version:string|undefined = seq.version
+    
+        if(displayId === undefined)
+            throw new Error('missing displayId')
+
+        if(version === undefined) {
+            version = '1'
+        }
+
+        const xseq:SXSequence = xgraph.createSequence(seq.uriPrefix, displayId, version)
+
+        map.set(xseq.uriChain, xseq)
+
+        xseq.encoding = seq.encoding
+        xseq.elements = seq.elements
+
+        return xseq
+    }
 
     function cdToModule(cd:S2ComponentDefinition):SXComponent {
 
@@ -94,6 +123,8 @@ export default function convertToSBOLX(graph:SBOL2Graph):SBOLXGraph {
 
             const subModule:SXSubComponent = module.createSubComponent(def)
 
+            map.set(sc.uriChain, subModule)
+
             // TODO check sc roles match the def roles
 
         })
@@ -106,14 +137,35 @@ export default function convertToSBOLX(graph:SBOL2Graph):SBOLXGraph {
 
                 const feature:SXSequenceFeature = module.createFeature(sa.displayName)
 
+                feature.name = sa.displayName
+
+                sa.roles.forEach((role:string) => {
+                    feature.addRole(role)
+                })
+
                 copyLocations(sa, feature)
 
             } else {
 
                 // component, add locations to existing submodule
 
+                const found = map.get(sa.component.uriChain)
+
+                if(!found)
+                    throw new Error('???')
+
+                const sc:SXSubComponent = found as SXSubComponent
+
+
+                copyLocations(sa, sc)
             }
 
+
+        })
+
+        cd.sequences.forEach((seq:S2Sequence) => {
+
+            module.addSequence(convertSeq(seq))
 
         })
 

@@ -112,9 +112,17 @@ export default class CompliantURIs {
 
         }
 
-        const containingSANewUri =
-                    CompliantURIs.getSequenceFeatureUri(
-                        graphA, containingThing.uri, topLevelPrefix, false)
+        var containingSANewUri
+
+
+        if(containingThing instanceof SXSubComponent) {
+            containingSANewUri = CompliantURIs.getComponentUri(
+                graphA, containingThing.uri, topLevelPrefix, false)
+
+        } else {
+            containingSANewUri = CompliantURIs.getSequenceFeatureUri(
+                graphA, containingThing.uri, topLevelPrefix, false)
+        }
 
         return containingSANewUri
                     + '/' + CompliantURIs.removePrefix(graphA, uri, withVersion)

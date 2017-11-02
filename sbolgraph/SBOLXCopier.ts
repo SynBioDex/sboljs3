@@ -39,6 +39,8 @@ export default class SBOLXCopier {
         switch(type) {
             case Types.SBOLX.Component:
                 return this.copyComponent(uri)
+            case Types.SBOLX.Sequence:
+                return this.copySequence(uri)
         }
 
         throw new Error('cant copy that')
@@ -156,6 +158,64 @@ export default class SBOLXCopier {
 
                     break
 
+
+                case Predicates.SBOLX.usesSequence:
+
+                    if((objectUri = triple.objectUri(t)) === undefined)
+                        throw new Error('objectUri is undefined')
+
+                    this.graphB.add(newUri, Predicates.SBOLX.usesSequence, node.createUriNode(
+                        this.copySequence(objectUri)
+                    ))
+
+                    break
+
+                default:
+
+                    this.graphB.add(newUri, t.predicate, t.object)
+                    break
+            }
+
+        })
+
+        return newUri
+
+    }
+
+    private copySequence(uri:string):string {
+
+        const alreadyMapped:string|undefined = this.oldToNewUriMap.get(uri)
+
+        if(alreadyMapped !== undefined)
+            return alreadyMapped
+
+        const newUri = this.uniqueUri(
+            CompliantURIs.getComponentDefinitionUri(this.graphA, uri, this.newPrefix, true)
+        )
+
+        this.oldToNewUriMap.set(uri, newUri)
+
+
+        console.log(uri + ' => ' + newUri)
+
+        this.graphB.add(newUri, Predicates.Prov.wasDerivedFrom, node.createUriNode(uri))
+
+        const triples = this.graphA.match(uri, null, null)
+
+        var objectUri:string|undefined = undefined
+
+        triples.forEach((t) => {
+
+            switch(triple.predicateUri(t)) {
+
+                case Predicates.Prov.wasDerivedFrom:
+                    break
+
+                case Predicates.SBOLX.persistentIdentity:
+
+                    this.graphB.add(newUri, Predicates.SBOLX.persistentIdentity, node.createUriNode(newUri))
+                    break
+
                 default:
 
                     this.graphB.add(newUri, t.predicate, t.object)
@@ -209,6 +269,19 @@ export default class SBOLXCopier {
                         newUri,
                         Predicates.SBOLX.instanceOf,
                         node.createUriNode(this.copyComponent(objectUri))
+                    )
+
+                    break
+
+                case Predicates.SBOLX.hasLocation:
+
+                    if((objectUri = triple.objectUri(t)) === undefined)
+                        throw new Error('objectUri is undefined')
+
+                    this.graphB.add(
+                        newUri,
+                        Predicates.SBOLX.hasLocation, 
+                        node.createUriNode(this.copyLocation(objectUri))
                     )
 
                     break
