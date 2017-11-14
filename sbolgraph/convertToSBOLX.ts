@@ -123,6 +123,8 @@ export default function convertToSBOLX(graph:SBOL2Graph):SBOLXGraph {
 
             const subModule:SXSubComponent = module.createSubComponent(def)
 
+            subModule.name = sc.displayName
+
             map.set(sc.uriChain, subModule)
 
             // TODO check sc roles match the def roles
