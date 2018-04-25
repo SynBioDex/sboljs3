@@ -29,7 +29,7 @@
     "rdf-parser-rdfxml": "^0.3.1",
     "rdf-serializer-xml": "^0.1.0",
     "request": "^2.81.0",
-    "sbolterms": "git+https://github.com/udp/sbolterms.git",
+    "bioterms": "git+https://github.com/udp/bioterms.git",
     "shortid": "^2.2.8"
   },
   "devDependencies": {

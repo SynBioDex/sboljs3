@@ -5,7 +5,7 @@ import S2FunctionalComponent from './S2FunctionalComponent'
 import S2Interaction from './S2Interaction'
 
 import * as triple from '../triple'
-import { Types, Predicates, Specifiers } from 'sbolterms'
+import { Types, Predicates, Specifiers } from 'bioterms'
 
 export default class S2Participation extends S2Identified {
 

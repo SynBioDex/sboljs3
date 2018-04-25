@@ -4,7 +4,7 @@ import SXThingWithLocation from './SXThingWithLocation'
 
 import * as triple from '../triple'
 import * as node from '../node'
-import { Types, Predicates, Specifiers } from 'sbolterms'
+import { Types, Predicates, Specifiers } from 'bioterms'
 import SBOLXGraph from "../SBOLXGraph";
 import SXComponent from "./SXComponent";
 import SXSubComponent from "./SXSubComponent";

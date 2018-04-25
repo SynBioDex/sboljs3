@@ -1,6 +1,6 @@
 
 
-import { Types, Predicates, Specifiers } from 'sbolterms'
+import { Types, Predicates, Specifiers } from 'bioterms'
 import SBOLXGraph from "./SBOLXGraph";
 
 import * as node from './node'

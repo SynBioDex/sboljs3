@@ -7,7 +7,7 @@ import S2Interaction from './S2Interaction'
 import SBOL2Graph from '../SBOL2Graph'
 
 import * as triple from '../triple'
-import { Predicates, Types } from 'sbolterms'
+import { Predicates, Types } from 'bioterms'
 
 export default class S2ModuleDefinition extends S2Identified {
 

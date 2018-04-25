@@ -1,6 +1,6 @@
 
 import SXIdentified from "./SXIdentified";
-import { Predicates } from 'sbolterms'
+import { Predicates } from 'bioterms'
 import * as node from '../node'
 import CompliantURIs from '../SBOL2CompliantURIs'
 import SBOLXGraph from '../SBOLXGraph'

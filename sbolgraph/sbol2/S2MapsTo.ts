@@ -1,7 +1,7 @@
 
 import S2Identified from './S2Identified'
 
-import { Types, Predicates, Specifiers } from 'sbolterms'
+import { Types, Predicates, Specifiers } from 'bioterms'
 import SBOL2Graph from "../SBOL2Graph";
 
 import * as triple from '../triple'

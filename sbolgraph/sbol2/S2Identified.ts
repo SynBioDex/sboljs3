@@ -1,6 +1,6 @@
 
 import * as triple from '../triple'
-import { Types, Predicates, Specifiers } from 'sbolterms'
+import { Types, Predicates, Specifiers } from 'bioterms'
 
 import S2Facade from './S2Facade'
 

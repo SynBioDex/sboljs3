@@ -22,7 +22,7 @@ import {
 
 } from '.'
 
-import { Predicates } from 'sbolterms'
+import { Predicates } from 'bioterms'
 import SXThingWithLocation from './sbolx/SXThingWithLocation';
 
 

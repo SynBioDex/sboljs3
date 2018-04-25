@@ -4,7 +4,7 @@ import SXIdentified from './SXIdentified'
 import SXParticipation from './SXParticipation'
 
 import * as triple from '../triple'
-import { Types, Predicates, Specifiers } from 'sbolterms'
+import { Types, Predicates, Specifiers } from 'bioterms'
 
 export default class SXInteraction extends SXIdentified {
 

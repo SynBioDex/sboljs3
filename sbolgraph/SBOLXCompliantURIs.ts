@@ -3,7 +3,7 @@ import SBOLXGraph from "./SBOLXGraph";
 import SXSubComponent from "./sbolx/SXSubComponent";
 import * as triple from './triple'
 import SXComponent from "./sbolx/SXComponent";
-import { Predicates, Types, Specifiers } from "sbolterms";
+import { Predicates, Types, Specifiers } from "bioterms";
 import assert from 'power-assert'
 import { SXLocation, SXSequenceFeature, SXThingWithLocation, SXSequenceConstraint } from '.'
 

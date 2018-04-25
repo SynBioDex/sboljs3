@@ -4,7 +4,7 @@ import S2Identified from './S2Identified'
 import S2Participation from './S2Participation'
 
 import * as triple from '../triple'
-import { Types, Predicates, Specifiers } from 'sbolterms'
+import { Types, Predicates, Specifiers } from 'bioterms'
 
 export default class S2Interaction extends S2Identified {
 

@@ -7,7 +7,7 @@ import S2Range from './S2Range'
 
 import * as triple from '../triple'
 import * as node from '../node'
-import { Types, Predicates, Specifiers } from 'sbolterms'
+import { Types, Predicates, Specifiers } from 'bioterms'
 import CompliantURIs from "../SBOL2CompliantURIs";
 
 export default class S2SequenceConstraint extends S2Identified {

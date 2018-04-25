@@ -6,7 +6,7 @@ import S2SequenceAnnotation from './S2SequenceAnnotation'
 import S2SequenceConstraint from './S2SequenceConstraint'
 
 import * as triple from '../triple'
-import { Types, Predicates, Specifiers } from 'sbolterms'
+import { Types, Predicates, Specifiers } from 'bioterms'
 
 export default class S2ComponentInstance extends S2Identified {
 

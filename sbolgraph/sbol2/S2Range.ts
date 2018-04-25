@@ -3,7 +3,7 @@ import S2Identified from './S2Identified'
 import S2OrientedLocation from './S2OrientedLocation'
 
 import * as triple from '../triple'
-import { Types, Predicates, Specifiers } from 'sbolterms'
+import { Types, Predicates, Specifiers } from 'bioterms'
 import SBOL2Graph from "../SBOL2Graph";
 
 export default class S2Range extends S2OrientedLocation {

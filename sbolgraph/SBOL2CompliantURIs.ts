@@ -3,7 +3,7 @@ import SBOL2Graph from "./SBOL2Graph";
 import S2ComponentInstance from "./sbol2/S2ComponentInstance";
 import * as triple from './triple'
 import S2ComponentDefinition from "./sbol2/S2ComponentDefinition";
-import { Predicates, Types, Specifiers } from "sbolterms";
+import { Predicates, Types, Specifiers } from "bioterms";
 import assert from 'power-assert'
 import S2SequenceAnnotation from "./sbol2/S2SequenceAnnotation";
 import S2Location from "./sbol2/S2Location";

@@ -2,7 +2,7 @@ import { SBOLXGraph, SXSubComponent } from '..';
 
 import SXIdentified from './SXIdentified'
 
-import { Types, Predicates, Specifiers } from 'sbolterms'
+import { Types, Predicates, Specifiers } from 'bioterms'
 
 import * as triple from '../triple' 
 import SXComponent from "./SXComponent";

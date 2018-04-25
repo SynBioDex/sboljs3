@@ -3,7 +3,7 @@ import SXIdentified from './SXIdentified'
 import SXOrientedLocation from './SXOrientedLocation'
 
 import * as triple from '../triple'
-import { Types, Predicates, Specifiers } from 'sbolterms'
+import { Types, Predicates, Specifiers } from 'bioterms'
 import SBOLXGraph from "../SBOLXGraph";
 
 export default class SXRange extends SXOrientedLocation {

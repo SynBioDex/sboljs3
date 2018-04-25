@@ -7,7 +7,7 @@ import SBOLXGraph from '../SBOLXGraph'
 
 import * as triple from '../triple'
 import * as node from '../node'
-import { Predicates, Types, Specifiers } from 'sbolterms'
+import { Predicates, Types, Specifiers } from 'bioterms'
 import SXSequence from './SXSequence';
 import SXSequenceConstraint from './SXSequenceConstraint';
 import SXSequenceFeature from './SXSequenceFeature'

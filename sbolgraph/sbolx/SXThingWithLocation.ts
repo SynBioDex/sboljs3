@@ -6,7 +6,7 @@ import SXIdentifiedFactory from './SXIdentifiedFactory'
 
 import * as node from '../node'
 
-import { Predicates, Types } from 'sbolterms'
+import { Predicates, Types } from 'bioterms'
 
 export default class SXThingWithLocation extends SXIdentified {
 

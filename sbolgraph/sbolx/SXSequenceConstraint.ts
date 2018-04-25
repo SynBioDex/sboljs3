@@ -7,7 +7,7 @@ import SXRange from './SXRange'
 
 import * as triple from '../triple'
 import * as node from '../node'
-import { Types, Predicates, Specifiers } from 'sbolterms'
+import { Types, Predicates, Specifiers } from 'bioterms'
 import CompliantURIs from "../SBOLXCompliantURIs";
 
 export default class SXSequenceConstraint extends SXIdentified {

@@ -2,7 +2,7 @@
 import * as triple from './triple'
 import * as node from './node'
 
-import { Predicates } from 'sbolterms'
+import { Predicates } from 'bioterms'
 import Graph from "./Graph";
 import { Watcher } from "./Graph";
 

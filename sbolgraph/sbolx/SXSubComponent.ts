@@ -7,7 +7,7 @@ import SXOrientedLocation from './SXOrientedLocation'
 import SXIdentifiedFactory from './SXIdentifiedFactory'
 
 import * as triple from '../triple'
-import { Types, Predicates, Specifiers } from 'sbolterms'
+import { Types, Predicates, Specifiers } from 'bioterms'
 import SBOLXGraph from "../SBOLXGraph";
 
 export default class SXSubComponent extends SXThingWithLocation {
