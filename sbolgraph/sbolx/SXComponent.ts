@@ -218,6 +218,16 @@ export default class SXComponent extends SXIdentified {
 
     }
 
+    createInteraction(id:string, version?:string):SXInteraction {
+
+        const identified:SXIdentified =
+            SXIdentifiedFactory.createChild(this.graph, Types.SBOLX.Interaction, this, id, undefined, version)
+
+        const interaction:SXInteraction = new SXInteraction(this.graph, identified.uri)
+
+        return interaction
+    }
+
 }
 
 

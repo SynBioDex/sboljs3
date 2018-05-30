@@ -5,6 +5,7 @@ import SXSubComponent from './SXSubComponent'
 import SXInteraction from './SXInteraction'
 
 import * as triple from '../triple'
+import * as node from '../node'
 import { Types, Predicates, Specifiers } from 'bioterms'
 
 export default class SXParticipation extends SXIdentified {
@@ -59,6 +60,16 @@ export default class SXParticipation extends SXIdentified {
         return this.graph.hasMatch(this.uri, Predicates.SBOLX.hasRole, uri)
     
     }
+
+    addRole(role:string):void {
+        this.graph.insert(node.createUriNode(this.uri), Predicates.SBOLX.hasRole, node.createUriNode(role))
+    }
+
+    setParticipant(participant:SXSubComponent):void {
+        this.setUriProperty(Predicates.SBOLX.participant, node.createUriNode(participant.uri))
+    }
+
+
 
 }
 

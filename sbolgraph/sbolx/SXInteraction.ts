@@ -5,6 +5,7 @@ import SXParticipation from './SXParticipation'
 
 import * as triple from '../triple'
 import { Types, Predicates, Specifiers } from 'bioterms'
+import SXIdentifiedFactory from 'sbolgraph/sbolx/SXIdentifiedFactory';
 
 export default class SXInteraction extends SXIdentified {
 
@@ -51,6 +52,30 @@ export default class SXInteraction extends SXIdentified {
         return this.containingModule
 
     }
+
+    createParticipation(id:string, version?:string):SXParticipation {
+
+        const identified:SXIdentified =
+            SXIdentifiedFactory.createChild(this.graph, Types.SBOLX.Participation, this, id, undefined, version)
+
+        const participation:SXParticipation = new SXParticipation(this.graph, identified.uri)
+
+        return participation
+    }
+
+    createParticipationWithParticipantAndRole(id:string, participant:SXSubComponent, role:string, version?:string):SXParticipation {
+
+        let participation = this.createParticipation(id, version)
+
+        participation.addRole(role)
+        participation.setParticipant(participant)
+
+        return participation
+    }
+
+
+
+
 }
 
 
