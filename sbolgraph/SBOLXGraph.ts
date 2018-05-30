@@ -168,7 +168,11 @@ export default class SBOLXGraph extends Graph {
 
         return parser.parse(data).then((graph) => {
 
-            return Promise.resolve(new SBOLXGraph(graph))
+            const sbol2Graph: SBOL2Graph = new SBOL2Graph(graph)
+
+            const sbolxGraph: SBOLXGraph = convertToSBOLX(sbol2Graph)
+
+            return Promise.resolve(sbolxGraph)
 
         })
 

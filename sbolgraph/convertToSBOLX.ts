@@ -22,7 +22,7 @@ import {
 
 } from '.'
 
-import { Predicates } from 'bioterms'
+import { Predicates, Prefixes } from 'bioterms'
 import SXThingWithLocation from './sbolx/SXThingWithLocation';
 
 
@@ -37,6 +37,27 @@ export default function convertToSBOLX(graph:SBOL2Graph):SBOLXGraph {
     graph.componentDefinitions.forEach((cd:S2ComponentDefinition) => {
         cdToModule(cd)
     })
+
+    graph.sequences.forEach((seq:S2Sequence) => {
+        convertSeq(seq)
+    })
+
+
+    for(let typeTriple of graph.match(null, Predicates.a, null)) {
+
+        if(typeTriple.object.toString().indexOf(Prefixes.sbol2) !== 0) {
+
+            for(let triple of graph.match(typeTriple.subject, null, null)) {
+
+                xgraph.add(triple.subject, triple.predicate, triple.object)
+
+            }
+
+        }
+
+    }
+
+
 
     graph.collections.forEach((collection:S2Collection) => {
 
