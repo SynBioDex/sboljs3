@@ -6,10 +6,14 @@ import S2Facade from './S2Facade'
 
 import SBOL2Graph from '../SBOL2Graph'
 
-export default abstract class S2Identified extends S2Facade {
+export default class S2Identified extends S2Facade {
 
     constructor(graph:SBOL2Graph, uri:string) {
         super(graph, uri)
+    }
+    
+    get facadeType():string {
+        throw new Error('base called')
     }
 
     get name():string|undefined {
@@ -85,7 +89,11 @@ export default abstract class S2Identified extends S2Facade {
 
 
 
-    abstract get containingObject():S2Identified|undefined
+    get containingObject():S2Identified|undefined {
+
+        return undefined
+
+    }
 
 
     get uriChain():string {

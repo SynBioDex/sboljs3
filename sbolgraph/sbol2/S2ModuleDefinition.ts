@@ -8,6 +8,7 @@ import SBOL2Graph from '../SBOL2Graph'
 
 import * as triple from '../triple'
 import { Predicates, Types } from 'bioterms'
+import S2IdentifiedFactory from '../sbol2/S2IdentifiedFactory';
 
 export default class S2ModuleDefinition extends S2Identified {
 
@@ -44,6 +45,16 @@ export default class S2ModuleDefinition extends S2Identified {
 
     get containingObject():S2Identified|undefined {
         return undefined
+    }
+
+    createInteraction(id:string, version?:string):S2Interaction {
+
+        const identified:S2Identified =
+            S2IdentifiedFactory.createChild(this.graph, Types.SBOL2.Interaction, this, id, undefined, version)
+
+        const interaction:S2Interaction = new S2Interaction(this.graph, identified.uri)
+
+        return interaction
     }
 }
 

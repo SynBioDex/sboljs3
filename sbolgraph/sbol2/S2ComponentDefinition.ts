@@ -160,6 +160,14 @@ export default class S2ComponentDefinition extends S2Identified {
 
     }
 
+    createSequence():S2Sequence {
+
+        const seq:S2Sequence = this.graph.createSequence(this.uriPrefix, this.displayName + '_sequence', this.version)
+
+        this.addSequence(seq)
+
+        return seq
+    }
 
 
     addSequence(sequence:S2Sequence):void {

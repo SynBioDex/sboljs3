@@ -29,6 +29,7 @@ import S2Participation from "./sbol2/S2Participation";
 import S2MapsTo from "./sbol2/S2MapsTo";
 
 import S2GenericLocation from "./sbol2/S2GenericLocation";
+import S2IdentifiedFactory from './sbol2/S2IdentifiedFactory';
 
 export default class SBOL2Graph extends Graph {
 
@@ -50,6 +51,48 @@ export default class SBOL2Graph extends Graph {
         return new SBOL2Graph(this.graph.toArray())
 
     }
+
+    createComponentDefinition(uriPrefix:string, id:string, version?:string):S2ComponentDefinition {
+
+        const identified:S2Identified =
+            S2IdentifiedFactory.createTopLevel(this, Types.SBOL2.ComponentDefinition, uriPrefix, id, undefined, version)
+
+        return new S2ComponentDefinition(this, identified.uri)
+
+    }
+
+    createModuleDefinition(uriPrefix:string, id:string, version?:string):S2ModuleDefinition {
+
+        const identified:S2Identified =
+            S2IdentifiedFactory.createTopLevel(this, Types.SBOL2.ModuleDefinition, uriPrefix, id, undefined, version)
+
+        return new S2ModuleDefinition(this, identified.uri)
+
+    }
+
+
+    createCollection(uriPrefix:string, id:string, version?:string):S2Collection {
+
+        const identified:S2Identified =
+            S2IdentifiedFactory.createTopLevel(this, Types.SBOL2.Collection, uriPrefix, id, undefined, version)
+
+        return new S2Collection(this, identified.uri)
+
+    }
+
+    createSequence(uriPrefix:string, id:string, version?:string):S2Sequence {
+
+        const identified:S2Identified =
+            S2IdentifiedFactory.createTopLevel(this, Types.SBOL2.Sequence, uriPrefix, id, undefined, version)
+
+        const seq:S2Sequence = new S2Sequence(this, identified.uri)
+
+        seq.encoding = Specifiers.SBOL2.SequenceEncoding.NucleicAcid
+        seq.elements = ''
+
+        return seq
+    }
+
 
     get sequences():Array<S2Sequence> {
 
