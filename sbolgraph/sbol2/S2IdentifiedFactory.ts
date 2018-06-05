@@ -53,6 +53,9 @@ export default class SXIdentifiedFactory {
         const uri:string = graph.generateURI(
             parent.persistentIdentity + '/' + id + '$n?$/' + version)
 
+        console.log('so our uri is ' + uri)
+
+
         graph.insertProperties(uri, {
             [Predicates.a]: node.createUriNode(type),
             [Predicates.SBOL2.displayId]: node.createStringNode(CompliantURIs.getDisplayId(uri)),

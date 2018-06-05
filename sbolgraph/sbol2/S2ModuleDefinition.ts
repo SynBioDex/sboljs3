@@ -9,6 +9,7 @@ import SBOL2Graph from '../SBOL2Graph'
 import * as triple from '../triple'
 import { Predicates, Types } from 'bioterms'
 import S2IdentifiedFactory from '../sbol2/S2IdentifiedFactory';
+import { S2ComponentDefinition } from '..';
 
 export default class S2ModuleDefinition extends S2Identified {
 
@@ -55,6 +56,21 @@ export default class S2ModuleDefinition extends S2Identified {
         const interaction:S2Interaction = new S2Interaction(this.graph, identified.uri)
 
         return interaction
+    }
+
+    createFunctionalComponent(definition:S2ComponentDefinition, id?:string, version?:string):S2FunctionalComponent {
+
+        let actualId = id || definition.displayId
+
+        if(actualId === undefined)
+            throw new Error('???')
+
+        const identified:S2Identified =
+            S2IdentifiedFactory.createChild(this.graph, Types.SBOL2.FunctionalComponent, this, actualId, undefined, version)
+
+        const fc:S2FunctionalComponent = new S2FunctionalComponent(this.graph, identified.uri)
+
+        return fc
     }
 }
 

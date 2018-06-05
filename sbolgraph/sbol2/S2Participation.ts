@@ -5,6 +5,7 @@ import S2FunctionalComponent from './S2FunctionalComponent'
 import S2Interaction from './S2Interaction'
 
 import * as triple from '../triple'
+import * as node from '../node'
 import { Types, Predicates, Specifiers } from 'bioterms'
 
 export default class S2Participation extends S2Identified {
@@ -58,6 +59,14 @@ export default class S2Participation extends S2Identified {
 
         return this.graph.hasMatch(this.uri, Predicates.SBOL2.role, uri)
     
+    }
+
+    addRole(role:string):void {
+        this.graph.insert(node.createUriNode(this.uri), Predicates.SBOLX.hasRole, node.createUriNode(role))
+    }
+
+    setParticipant(participant:S2FunctionalComponent):void {
+        this.setUriProperty(Predicates.SBOLX.participant, node.createUriNode(participant.uri))
     }
 
 }

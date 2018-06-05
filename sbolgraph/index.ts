@@ -16,6 +16,7 @@ import S2Location from './sbol2/S2Location'
 import S2OrientedLocation from './sbol2/S2OrientedLocation'
 import S2Range from './sbol2/S2Range'
 import S2Collection from './sbol2/S2Collection'
+import S2Interaction from './sbol2/S2Interaction'
 
 import SXIdentified from './sbolx/SXIdentified'
 import SXSubComponent from './sbolx/SXSubComponent'
@@ -57,6 +58,7 @@ export {
     S2Location,
     S2Range,
     S2Collection,
+    S2Interaction,
 
     // SBOLX
     SBOLXGraph,

@@ -5,6 +5,7 @@ import S2Participation from './S2Participation'
 
 import * as triple from '../triple'
 import { Types, Predicates, Specifiers } from 'bioterms'
+import S2IdentifiedFactory from './S2IdentifiedFactory';
 
 export default class S2Interaction extends S2Identified {
 
@@ -51,6 +52,27 @@ export default class S2Interaction extends S2Identified {
         return this.containingModuleDefinition
 
     }
+
+    createParticipation(id:string, version?:string):S2Participation {
+
+        const identified:S2Identified =
+            S2IdentifiedFactory.createChild(this.graph, Types.SBOL2.Participation, this, id, undefined, version)
+
+        const participation:S2Participation = new S2Participation(this.graph, identified.uri)
+
+        return participation
+    }
+
+    createParticipationWithParticipantAndRole(id:string, participant:S2FunctionalComponent, role:string, version?:string):S2Participation {
+
+        let participation = this.createParticipation(id, version)
+
+        participation.addRole(role)
+        participation.setParticipant(participant)
+
+        return participation
+    }
+
 }
 
 
