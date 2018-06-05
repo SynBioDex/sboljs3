@@ -14,6 +14,8 @@ export default class S2ComponentInstance extends S2Identified {
 
         super(graph, uri)
 
+        this.access = Specifiers.SBOL2.Access.PublicAccess
+
     }
 
     get facadeType():string {
@@ -46,6 +48,19 @@ export default class S2ComponentInstance extends S2Identified {
         }
 
         return new S2ComponentDefinition(this.graph, uri)
+    }
+
+    get access():string|undefined {
+        return this.getUriProperty(Predicates.SBOL2.access)
+    }
+
+    set access(access:string|undefined) {
+
+        if(access === undefined) {
+            this.deleteProperty(Predicates.SBOL2.access)
+        } else {
+            this.setUriProperty(Predicates.SBOL2.access, access)
+        }
     }
 
     get sequenceAnnotations():Array<S2SequenceAnnotation> {

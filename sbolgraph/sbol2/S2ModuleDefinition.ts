@@ -7,6 +7,7 @@ import S2Interaction from './S2Interaction'
 import SBOL2Graph from '../SBOL2Graph'
 
 import * as triple from '../triple'
+import * as node from '../node'
 import { Predicates, Types } from 'bioterms'
 import S2IdentifiedFactory from '../sbol2/S2IdentifiedFactory';
 import { S2ComponentDefinition } from '..';
@@ -48,12 +49,26 @@ export default class S2ModuleDefinition extends S2Identified {
         return undefined
     }
 
+    addInteraction(interaction:S2Interaction) {
+        this.graph.insertProperties(this.uri, {
+            [Predicates.SBOL2.interaction]: node.createUriNode(interaction.uri)
+        })
+    }
+
+    addFunctionalComponent(fc:S2FunctionalComponent) {
+        this.graph.insertProperties(this.uri, {
+            [Predicates.SBOL2.functionalComponent]: node.createUriNode(fc.uri)
+        })
+    }
+
     createInteraction(id:string, version?:string):S2Interaction {
 
         const identified:S2Identified =
             S2IdentifiedFactory.createChild(this.graph, Types.SBOL2.Interaction, this, id, undefined, version)
 
         const interaction:S2Interaction = new S2Interaction(this.graph, identified.uri)
+
+        this.addInteraction(interaction)
 
         return interaction
     }
@@ -69,6 +84,10 @@ export default class S2ModuleDefinition extends S2Identified {
             S2IdentifiedFactory.createChild(this.graph, Types.SBOL2.FunctionalComponent, this, actualId, undefined, version)
 
         const fc:S2FunctionalComponent = new S2FunctionalComponent(this.graph, identified.uri)
+
+        fc.definition = definition
+
+        this.addFunctionalComponent(fc)
 
         return fc
     }

@@ -7,7 +7,7 @@ import S2MapsTo from './S2MapsTo'
 import S2Participation from './S2Participation'
 
 import * as triple from '../triple'
-import { Types, Predicates, Specifiers } from 'bioterms'
+import { Types, Predicates, Specifiers, Prefixes } from 'bioterms'
 import S2Interaction from "./S2Interaction";
 
 export default class S2FunctionalComponent extends S2Identified {
@@ -16,11 +16,41 @@ export default class S2FunctionalComponent extends S2Identified {
 
         super(graph, uri)
 
+        this.direction = Specifiers.SBOL2.Direction.InputAndOutput
+        this.access = Specifiers.SBOL2.Access.PublicAccess
     }
 
     get facadeType():string {
         return Types.SBOL2.FunctionalComponent
     }
+
+
+    get access():string|undefined {
+        return this.getUriProperty(Predicates.SBOL2.access)
+    }
+
+    set access(access:string|undefined) {
+
+        if(access === undefined) {
+            this.deleteProperty(Predicates.SBOL2.access)
+        } else {
+            this.setUriProperty(Predicates.SBOL2.access, access)
+        }
+    }
+
+    get direction():string|undefined {
+        return this.getUriProperty(Prefixes.sbol2 + 'direction')
+    }
+
+    set direction(direction:string|undefined) {
+
+        if(direction === undefined) {
+            this.deleteProperty(Prefixes.sbol2 + 'direction')
+        } else {
+            this.setUriProperty(Prefixes.sbol2 + 'direction', direction)
+        }
+    }
+
 
     get displayName():string {
 
@@ -48,6 +78,10 @@ export default class S2FunctionalComponent extends S2Identified {
         }
 
         return new S2ComponentDefinition(this.graph, uri)
+    }
+    
+    set definition(definition:S2ComponentDefinition) {
+        this.setUriProperty(Prefixes.sbol2 + 'definition', definition.uri)
     }
 
     get mappings():Array<S2MapsTo> {
