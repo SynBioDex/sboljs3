@@ -21,6 +21,26 @@ export default class SXSubComponent extends SXThingWithLocation {
         return Types.SBOLX.SubComponent
     }
 
+    get displayName():string|undefined {
+
+        let name = this.name
+        
+        if(name)
+            return name
+
+        let instanceOf = this.instanceOf
+
+        if(instanceOf) {
+            let instanceOfName = this.instanceOf.name
+
+            if(instanceOfName) {
+                return instanceOfName
+            }
+        }
+
+        return this.id
+    }
+
     get instanceOf():SXComponent {
 
         const uri:string|undefined = this.getUriProperty(Predicates.SBOLX.instanceOf)
