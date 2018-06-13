@@ -225,6 +225,8 @@ export default class SXComponent extends SXIdentified {
 
         const interaction:SXInteraction = new SXInteraction(this.graph, identified.uri)
 
+        this.graph.add(node.createUriNode(this.uri), node.createUriNode(Predicates.SBOLX.hasInteraction), node.createUriNode(identified.uri))
+
         return interaction
     }
 

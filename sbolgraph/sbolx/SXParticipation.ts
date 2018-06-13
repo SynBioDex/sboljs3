@@ -65,6 +65,10 @@ export default class SXParticipation extends SXIdentified {
         this.graph.insert(node.createUriNode(this.uri), Predicates.SBOLX.hasRole, node.createUriNode(role))
     }
 
+    get roles():string[] {
+        return this.getUriProperties(Predicates.SBOLX.hasRole)
+    }
+
     setParticipant(participant:SXSubComponent):void {
         this.setUriProperty(Predicates.SBOLX.participant, node.createUriNode(participant.uri))
     }

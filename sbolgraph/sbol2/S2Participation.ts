@@ -65,6 +65,10 @@ export default class S2Participation extends S2Identified {
         this.graph.insert(node.createUriNode(this.uri), Predicates.SBOL2.role, node.createUriNode(role))
     }
 
+    get roles():Array<string> {
+        return this.getUriProperties(Predicates.SBOL2.role)
+    }
+
     setParticipant(participant:S2FunctionalComponent):void {
         this.setUriProperty(Predicates.SBOL2.participant, node.createUriNode(participant.uri))
     }

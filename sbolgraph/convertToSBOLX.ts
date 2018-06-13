@@ -18,7 +18,13 @@ import {
     SXIdentified,
     SXCollection,
     S2Sequence,
-    SXSequence
+    SXSequence,
+    S2ModuleDefinition,
+    S2FunctionalComponent,
+    S2Interaction,
+    SXInteraction,
+    SXParticipation,
+    S2ModuleInstance
 
 } from '.'
 
@@ -36,6 +42,10 @@ export default function convertToSBOLX(graph:SBOL2Graph):SBOLXGraph {
 
     graph.componentDefinitions.forEach((cd:S2ComponentDefinition) => {
         cdToModule(cd)
+    })
+
+    graph.moduleDefinitions.forEach((md:S2ModuleDefinition) => {
+        mdToModule(md)
     })
 
     graph.sequences.forEach((seq:S2Sequence) => {
@@ -196,6 +206,97 @@ export default function convertToSBOLX(graph:SBOL2Graph):SBOLXGraph {
 
     }
 
+    function mdToModule(md:S2ModuleDefinition):SXComponent {
+
+        const existing = map.get(md.uriChain)
+
+        if(existing)
+            return existing as SXComponent
+
+        var displayId:string|undefined = md.displayId
+        var version:string|undefined = md.version
+    
+        if(displayId === undefined)
+            throw new Error('missing displayId')
+
+        if(version === undefined) {
+            version = '1'
+        }
+
+        const module:SXComponent = xgraph.createComponent(md.uriPrefix, displayId, version)
+
+        map.set(md.uriChain, module)
+
+        md.modules.forEach((sm:S2ModuleInstance) => {
+
+            const def:SXComponent = mdToModule(sm.definition)
+
+            const subModule:SXSubComponent = module.createSubComponent(def)
+
+            subModule.name = sm.displayName
+
+            map.set(sm.uriChain, subModule)
+
+            // TODO check sc roles match the def roles
+
+        })
+
+        md.functionalComponents.forEach((sc:S2FunctionalComponent) => {
+
+            const def:SXComponent = cdToModule(sc.definition)
+
+            const subModule:SXSubComponent = module.createSubComponent(def)
+
+            subModule.name = sc.displayName
+
+            map.set(sc.uriChain, subModule)
+
+            // TODO check sc roles match the def roles
+
+        })
+
+        md.interactions.forEach((int:S2Interaction) => {
+
+            if(!int.displayId) {
+                throw new Error('missing displayId')
+            }
+
+            let newInt:SXInteraction = module.createInteraction(int.displayId, int.version)
+
+            for(let type of int.types)
+                newInt.addType(type)
+
+            for(let participation of int.participations) {
+
+                if (!participation.displayId) {
+                    throw new Error('missing displayId')
+                }
+
+                let newParticipation:SXParticipation = newInt.createParticipation(participation.displayId, participation.version)
+
+                if(participation.participant) {
+
+                    let participant = map.get(participation.participant.uriChain)
+
+                    if(!participant || !(participant instanceof SXSubComponent)) {
+                        throw new Error('???')
+                    }
+
+                    newParticipation.setParticipant(participant as SXSubComponent)
+                }
+
+                for (let role of participation.roles) {
+                    newParticipation.addRole(role)
+                }
+
+            }
+        })
+
+
+        return module
+
+    }
+
 
     return xgraph
 
@@ -225,5 +326,6 @@ function copyLocations(a:S2SequenceAnnotation, b:SXThingWithLocation) {
         }
 
     })
+
 
 }

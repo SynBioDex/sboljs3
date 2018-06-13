@@ -41,6 +41,10 @@ export default class S2Interaction extends S2Identified {
 
     }
 
+    hasType(type:string):boolean {
+        return this.graph.hasMatch(this.uri, Predicates.SBOL2.type, type)
+    }
+
     get participations():Array<S2Participation> {
 
         return this.getUriProperties(Predicates.SBOL2.participation)
