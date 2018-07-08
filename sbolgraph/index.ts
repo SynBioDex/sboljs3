@@ -17,6 +17,7 @@ import S2OrientedLocation from './sbol2/S2OrientedLocation'
 import S2Range from './sbol2/S2Range'
 import S2Collection from './sbol2/S2Collection'
 import S2Interaction from './sbol2/S2Interaction'
+import S2MapsTo from './sbol2/S2MapsTo'
 
 import SXIdentified from './sbolx/SXIdentified'
 import SXSubComponent from './sbolx/SXSubComponent'
@@ -31,6 +32,7 @@ import SXInteraction from './sbolx/SXInteraction'
 import SXParticipation from './sbolx/SXParticipation'
 import SXCollection from './sbolx/SXCollection'
 import SXThingWithLocation from './sbolx/SXThingWithLocation'
+import SXMapsTo from './sbolx/SXMapsTo'
 
 import * as node from './node'
 import * as triple from './triple'
@@ -59,6 +61,7 @@ export {
     S2Range,
     S2Collection,
     S2Interaction,
+    S2MapsTo,
 
     // SBOLX
     SBOLXGraph,
@@ -75,6 +78,7 @@ export {
     SXInteraction,
     SXParticipation,
     SXCollection,
+    SXMapsTo,
 
     // etc
     Graph,

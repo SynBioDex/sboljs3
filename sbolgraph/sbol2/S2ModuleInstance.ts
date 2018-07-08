@@ -3,8 +3,12 @@ import S2Identified from './S2Identified'
 import S2ModuleDefinition from './S2ModuleDefinition'
 
 import * as triple from '../triple'
+import * as node from '../node'
 import { Types, Predicates, Specifiers } from 'bioterms'
 import SBOL2Graph from "../SBOL2Graph";
+import S2FunctionalComponent from './S2FunctionalComponent';
+import S2MapsTo from './S2MapsTo';
+import S2IdentifiedFactory from './S2IdentifiedFactory';
 
 export default class S2ModuleInstance extends S2Identified {
 
@@ -39,6 +43,29 @@ export default class S2ModuleInstance extends S2Identified {
         }
 
         return this.graph.uriToFacade(uri)
+
+    }
+
+
+    get mappings():S2MapsTo[] {
+
+        return this.getUriProperties(Predicates.SBOL2.mapsTo).map((mapsTo) => new S2MapsTo(this.graph, mapsTo))
+    }
+
+
+    createMapping(local:S2FunctionalComponent, remote:S2FunctionalComponent)  {
+
+        const identified:S2Identified =
+            S2IdentifiedFactory.createChild(this.graph, Types.SBOL2.MapsTo, this, 'mapping_' + local.displayId + '_' + remote.displayId, undefined, this.version)
+
+        const mapping:S2MapsTo = new S2MapsTo(this.graph, identified.uri)
+
+        mapping.local = local
+        mapping.remote = remote
+
+        this.graph.add(node.createUriNode(this.uri), node.createUriNode(Predicates.SBOL2.mapsTo), node.createUriNode(identified.uri))
+
+        return mapping
 
     }
 }

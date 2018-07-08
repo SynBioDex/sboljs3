@@ -28,7 +28,7 @@ import {
 
 } from '.'
 
-import { Predicates, Prefixes } from 'bioterms'
+import { Predicates, Prefixes, Specifiers } from 'bioterms'
 import SXThingWithLocation from './sbolx/SXThingWithLocation';
 
 
@@ -292,6 +292,29 @@ export default function convertToSBOLX(graph:SBOL2Graph):SBOLXGraph {
             }
         })
 
+        md.modules.forEach((sm:S2ModuleInstance) => {
+
+            const def:SXComponent = mdToModule(sm.definition)
+
+            const subModule:SXSubComponent = map.get(sm.uriChain) as SXSubComponent
+
+            sm.mappings.forEach((mapsTo) => {
+
+                if(!mapsTo.local || !mapsTo.remote) {
+                    throw new Error('???')
+                }
+
+                let a = map.get(mapsTo.local.uriChain)
+                let b = map.get(mapsTo.remote.uriChain)
+
+                if(!a || !b) {
+                    throw new Error('hack failed')
+                }
+
+                subModule.createMapping(a as SXSubComponent, b as SXSubComponent)
+
+            })
+        })
 
         return module
 

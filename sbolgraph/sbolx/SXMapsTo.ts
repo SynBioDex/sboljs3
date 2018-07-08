@@ -1,14 +1,14 @@
 
-import S2Identified from './S2Identified'
+import SXIdentified from './SXIdentified'
 
 import { Types, Predicates, Specifiers } from 'bioterms'
-import SBOL2Graph from "../SBOL2Graph";
 
 import * as triple from '../triple'
+import SBOLXGraph from '../SBOLXGraph';
 
-export default class S2MapsTo extends S2Identified {
+export default class SXMapsTo extends SXIdentified {
 
-    constructor(graph:SBOL2Graph, uri:string) {
+    constructor(graph:SBOLXGraph, uri:string) {
 
         super(graph, uri)
     }
@@ -17,7 +17,7 @@ export default class S2MapsTo extends S2Identified {
         return Types.SBOL2.MapsTo
     }
 
-    get local():S2Identified|undefined {
+    get local():SXIdentified|undefined {
 
         const localUri:string|undefined = this.getUriProperty(Predicates.SBOL2.local)
 
@@ -28,7 +28,7 @@ export default class S2MapsTo extends S2Identified {
 
     }
 
-    set local(local:S2Identified|undefined) {
+    set local(local:SXIdentified|undefined) {
 
         if(local)
             this.setUriProperty(Predicates.SBOL2.local, local.uri)
@@ -37,7 +37,7 @@ export default class S2MapsTo extends S2Identified {
 
     }
 
-    get remote():S2Identified|undefined {
+    get remote():SXIdentified|undefined {
 
         const remoteUri:string|undefined = this.getUriProperty(Predicates.SBOL2.remote)
 
@@ -48,7 +48,7 @@ export default class S2MapsTo extends S2Identified {
 
     }
 
-    set remote(remote:S2Identified|undefined) {
+    set remote(remote:SXIdentified|undefined) {
 
         if(remote)
             this.setUriProperty(Predicates.SBOL2.remote, remote.uri)
@@ -57,7 +57,7 @@ export default class S2MapsTo extends S2Identified {
 
     }
 
-    get containingObject():S2Identified|undefined {
+    get containingObject():SXIdentified|undefined {
 
         const uri = triple.subjectUri(
             this.graph.matchOne(null, Predicates.SBOL2.mapsTo, this.uri)

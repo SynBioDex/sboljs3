@@ -15,6 +15,7 @@ import SXIdentifiedFactory from './SXIdentifiedFactory';
 import SXThingWithLocation from './SXThingWithLocation';
 import SXLocation from './SXLocation'
 import SXOrientedLocation from './SXOrientedLocation'
+import SXMapsTo from './SXMapsTo';
 
 export default class SXComponent extends SXIdentified {
 
@@ -229,7 +230,6 @@ export default class SXComponent extends SXIdentified {
 
         return interaction
     }
-
 }
 
 

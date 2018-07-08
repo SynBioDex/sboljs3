@@ -7,8 +7,10 @@ import SXOrientedLocation from './SXOrientedLocation'
 import SXIdentifiedFactory from './SXIdentifiedFactory'
 
 import * as triple from '../triple'
+import * as node from '../node'
 import { Types, Predicates, Specifiers } from 'bioterms'
 import SBOLXGraph from "../SBOLXGraph";
+import SXMapsTo from './SXMapsTo';
 
 export default class SXSubComponent extends SXThingWithLocation {
 
@@ -122,6 +124,40 @@ export default class SXSubComponent extends SXThingWithLocation {
         container.createConstraint(sc, Specifiers.SBOLX.SequenceConstraint.Precedes, this)
 
         return sc
+    }
+
+    get mappings():Array<SXMapsTo> {
+
+        return this.graph.match(null, Predicates.SBOL2.local, this.uri).map(triple.subjectUri)
+                .concat(
+                    this.graph.match(null, Predicates.SBOL2.remote, this.uri).map(triple.subjectUri)
+                )
+                .filter((el) => !!el)
+                .map((mapsToUri) => new SXMapsTo(this.graph, mapsToUri as string))
+    }
+
+    addMapping(mapping:SXMapsTo) {
+
+        this.graph.insertProperties(this.uri, {
+            [Predicates.SBOL2.mapsTo]: node.createUriNode(mapping.uri)
+        })
+
+    }
+
+    createMapping(local:SXSubComponent, remote:SXSubComponent)  {
+
+        const identified:SXIdentified =
+            SXIdentifiedFactory.createChild(this.graph, Types.SBOL2.MapsTo, this, 'mapping_' + local.id + '_' + remote.id, undefined, this.version)
+
+        const mapping:SXMapsTo = new SXMapsTo(this.graph, identified.uri)
+
+        this.graph.add(node.createUriNode(this.uri), node.createUriNode(Predicates.SBOL2.mapsTo), node.createUriNode(identified.uri))
+
+        mapping.local = local
+        mapping.remote = remote
+
+        return mapping
+
     }
 }
 

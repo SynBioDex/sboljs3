@@ -7,8 +7,10 @@ import S2MapsTo from './S2MapsTo'
 import S2Participation from './S2Participation'
 
 import * as triple from '../triple'
+import * as node from '../node'
 import { Types, Predicates, Specifiers, Prefixes } from 'bioterms'
 import S2Interaction from "./S2Interaction";
+import S2IdentifiedFactory from './S2IdentifiedFactory';
 
 export default class S2FunctionalComponent extends S2Identified {
 
@@ -94,7 +96,6 @@ export default class S2FunctionalComponent extends S2Identified {
                 .map((mapsToUri) => new S2MapsTo(this.graph, mapsToUri as string))
     }
 
-
     get containingModuleDefinition():S2ModuleDefinition {
 
         const uri = triple.subjectUri(
@@ -128,7 +129,6 @@ export default class S2FunctionalComponent extends S2Identified {
         return this.containingModuleDefinition
 
     }
-
 }
 
 
