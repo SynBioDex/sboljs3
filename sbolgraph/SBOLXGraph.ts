@@ -1,7 +1,7 @@
 
 import Graph from './Graph'
 
-import { Types, Predicates, Specifiers } from 'bioterms'
+import { Types, Predicates, Specifiers, Prefixes } from 'bioterms'
 
 import * as triple from './triple'
 import * as node from './node'
@@ -31,6 +31,7 @@ import {
 
 import SXIdentifiedFactory from './sbolx/SXIdentifiedFactory'
 import convertToSBOLX from './convertToSBOLX';
+import serialize from './serialize';
 
 export default class SBOLXGraph extends Graph {
 
@@ -180,9 +181,22 @@ export default class SBOLXGraph extends Graph {
 
     serializeXML() {
 
-        const serializer = new XMLSerializer()
+        let defaultPrefixes:Array<[string,string]> = [
+            [ 'rdf', Prefixes.rdf ],
+            [ 'dcterms', Prefixes.dcterms ],
+            [ 'prov', Prefixes.prov ],
+            [ 'sbol', Prefixes.sbol2 ],
+            [ 'sbolx', Prefixes.sbolx ],
+        ]
 
-        return serializer.serialize(this.graph)
+        let ownershipPredicates = [
+            Predicates.SBOLX.hasSequenceConstraint,
+            Predicates.SBOLX.hasSequenceFeature,
+            Predicates.SBOLX.hasSubComponent,
+            Predicates.SBOLX.hasParticipation
+        ]
+
+        return serialize(this, new Map(defaultPrefixes), new Set(ownershipPredicates))
     }
 
     // TODO
