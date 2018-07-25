@@ -28,7 +28,7 @@ export default class SXSequenceFeature extends SXThingWithLocation {
     }
 
     addRole(role:string):void {
-        this.graph.insert(node.createUriNode(this.uri), Predicates.SBOLX.hasRole, node.createUriNode(role))
+        this.graph.insert(this.uri, Predicates.SBOLX.hasRole, node.createUriNode(role))
     }
 
     removeRole(role:string):void {

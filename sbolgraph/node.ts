@@ -6,6 +6,10 @@ import assert from 'power-assert'
 
 export function createUriNode(uri:string):RdfNode {
 
+    if(! (typeof(uri) === 'string')) {
+        throw new Error('???')
+    }
+
     return rdf.createNamedNode(uri)
 
 }

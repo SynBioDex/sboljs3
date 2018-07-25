@@ -62,7 +62,7 @@ export default class SXParticipation extends SXIdentified {
     }
 
     addRole(role:string):void {
-        this.graph.insert(node.createUriNode(this.uri), Predicates.SBOLX.hasRole, node.createUriNode(role))
+        this.graph.insert(this.uri, Predicates.SBOLX.hasRole, node.createUriNode(role))
     }
 
     get roles():string[] {

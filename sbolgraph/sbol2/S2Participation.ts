@@ -62,7 +62,7 @@ export default class S2Participation extends S2Identified {
     }
 
     addRole(role:string):void {
-        this.graph.insert(node.createUriNode(this.uri), Predicates.SBOL2.role, node.createUriNode(role))
+        this.graph.insert(this.uri, Predicates.SBOL2.role, node.createUriNode(role))
     }
 
     get roles():Array<string> {
