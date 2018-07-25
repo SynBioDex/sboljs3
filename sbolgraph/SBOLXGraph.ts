@@ -193,7 +193,8 @@ export default class SBOLXGraph extends Graph {
             Predicates.SBOLX.hasSequenceConstraint,
             Predicates.SBOLX.hasSequenceFeature,
             Predicates.SBOLX.hasSubComponent,
-            Predicates.SBOLX.hasParticipation
+            Predicates.SBOLX.hasParticipation,
+            Predicates.SBOLX.hasLocation
         ]
 
         return serialize(this, new Map(defaultPrefixes), new Set(ownershipPredicates))
