@@ -110,7 +110,15 @@ export default class SXSubComponent extends SXThingWithLocation {
 
         const sc:SXSubComponent = container.createSubComponent(component)
 
+        let existingConstraints:Array<SXSequenceConstraint> = this.getConstraintsWithThisSubject()
+
         container.createConstraint(this, Specifiers.SBOLX.SequenceConstraint.Precedes, sc)
+
+        for(let c of existingConstraints) {
+            if(c.restriction === Specifiers.SBOLX.SequenceConstraint.Precedes) {
+                c.subject = sc
+            }
+        }
 
         return sc
     }
@@ -121,9 +129,32 @@ export default class SXSubComponent extends SXThingWithLocation {
 
         const sc:SXSubComponent = container.createSubComponent(component)
 
+
+        let existingConstraints:Array<SXSequenceConstraint> = this.getConstraintsWithThisObject()
+
         container.createConstraint(sc, Specifiers.SBOLX.SequenceConstraint.Precedes, this)
 
+        for(let c of existingConstraints) {
+            if(c.restriction === Specifiers.SBOLX.SequenceConstraint.Precedes) {
+                c.object = sc
+            }
+        }
+
         return sc
+    }
+
+    getConstraintsWithThisSubject():Array<SXSequenceConstraint> {
+
+        return this.graph.match(null, Predicates.SBOLX.constraintSubject, this.uri)
+                    .map(triple.subjectUri)
+                    .map((uri:string) => new SXSequenceConstraint(this.graph, uri))
+    }
+
+    getConstraintsWithThisObject():Array<SXSequenceConstraint> {
+
+        return this.graph.match(null, Predicates.SBOLX.constraintObject, this.uri)
+                    .map(triple.subjectUri)
+                    .map((uri:string) => new SXSequenceConstraint(this.graph, uri))
     }
 
     get mappings():Array<SXMapsTo> {
