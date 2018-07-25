@@ -157,6 +157,12 @@ export default class SXSubComponent extends SXThingWithLocation {
                     .map((uri:string) => new SXSequenceConstraint(this.graph, uri))
     }
 
+    getConstraints():Array<SXSequenceConstraint> {
+
+        return this.getConstraintsWithThisSubject().concat(this.getConstraintsWithThisObject())
+
+    }
+
     get mappings():Array<SXMapsTo> {
 
         return this.graph.match(null, Predicates.SBOL2.local, this.uri).map(triple.subjectUri)
@@ -190,6 +196,47 @@ export default class SXSubComponent extends SXThingWithLocation {
         return mapping
 
     }
+
+    swapWith(otherSubComponent:SXSubComponent) {
+
+        let a = this.getConstraintsWithThisObject()
+        let b = this.getConstraintsWithThisSubject()
+        let c = otherSubComponent.getConstraintsWithThisObject()
+        let d = otherSubComponent.getConstraintsWithThisSubject()
+
+        for(let sc of a) {
+            sc.object = otherSubComponent
+        }
+
+        for(let sc of b) {
+            sc.subject = otherSubComponent
+        }
+
+        for(let sc of c) {
+            sc.object = this
+        }
+
+        for(let sc of d) {
+            sc.subject = this
+        }
+
+        // TODO locations
+    }
+
+    destroy() {
+
+        for(let c of this.getConstraints()) {
+            c.destroy()
+        }
+
+        for(let m of this.mappings) {
+            m.destroy()
+        }
+
+        super.destroy()
+
+    }
+
 }
 
 

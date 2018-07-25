@@ -307,7 +307,7 @@ export default class SBOLXGraph extends Graph {
 
     add(s:any, p:any, o:any) {
 
-        console.log(arguments)
+        //console.log(arguments)
 
         if(typeof s === 'string') {
             s = node.createUriNode(s)

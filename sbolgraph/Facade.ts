@@ -152,5 +152,12 @@ export default abstract class Facade {
 
     }
 
+    destroy() {
+
+        this._graph.removeMatches(null, null, this.uri)
+        this._graph.removeMatches(this.uri, null, null)
+
+    }
+
 }
 
