@@ -80,18 +80,6 @@ export default class SXIdentified extends SXFacade {
 
     }
 
-
-    get uriChain():string {
-
-        const containingObject:SXIdentified|undefined = this.containingObject
-
-        if(containingObject !== undefined) {
-            return containingObject.uriChain + ';' + this.uri
-        } else {
-            return this.uri
-        }
-
-    }
 }
 
 

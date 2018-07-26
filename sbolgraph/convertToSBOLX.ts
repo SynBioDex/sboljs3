@@ -35,7 +35,6 @@ import SXThingWithLocation from './sbolx/SXThingWithLocation';
 
 export default function convertToSBOLX(graph:SBOL2Graph):SBOLXGraph {
 
-    // uriChain -> uriChain
     const map:Map<string, SXIdentified> = new Map()
 
     const xgraph:SBOLXGraph = new SBOLXGraph()
@@ -88,7 +87,7 @@ export default function convertToSBOLX(graph:SBOL2Graph):SBOLXGraph {
 
     function convertSeq(seq:S2Sequence):SXSequence {
 
-        const existing = map.get(seq.uriChain)
+        const existing = map.get(seq.uri)
 
         if(existing)
             return existing as SXSequence
@@ -105,7 +104,7 @@ export default function convertToSBOLX(graph:SBOL2Graph):SBOLXGraph {
 
         const xseq:SXSequence = xgraph.createSequence(seq.uriPrefix, displayId, version)
 
-        map.set(xseq.uriChain, xseq)
+        map.set(xseq.uri, xseq)
 
         xseq.encoding = seq.encoding
         xseq.elements = seq.elements
@@ -115,7 +114,7 @@ export default function convertToSBOLX(graph:SBOL2Graph):SBOLXGraph {
 
     function cdToModule(cd:S2ComponentDefinition):SXComponent {
 
-        const existing = map.get(cd.uriChain)
+        const existing = map.get(cd.uri)
 
         if(existing)
             return existing as SXComponent
@@ -132,7 +131,7 @@ export default function convertToSBOLX(graph:SBOL2Graph):SBOLXGraph {
 
         const module:SXComponent = xgraph.createComponent(cd.uriPrefix, displayId, version)
 
-        map.set(cd.uriChain, module)
+        map.set(cd.uri, module)
 
         console.log('roles')
 
@@ -156,7 +155,7 @@ export default function convertToSBOLX(graph:SBOL2Graph):SBOLXGraph {
 
             subModule.name = sc.displayName
 
-            map.set(sc.uriChain, subModule)
+            map.set(sc.uri, subModule)
 
             // TODO check sc roles match the def roles
 
@@ -182,7 +181,7 @@ export default function convertToSBOLX(graph:SBOL2Graph):SBOLXGraph {
 
                 // component, add locations to existing submodule
 
-                const found = map.get(sa.component.uriChain)
+                const found = map.get(sa.component.uri)
 
                 if(!found)
                     throw new Error('???')
@@ -208,7 +207,7 @@ export default function convertToSBOLX(graph:SBOL2Graph):SBOLXGraph {
 
     function mdToModule(md:S2ModuleDefinition):SXComponent {
 
-        const existing = map.get(md.uriChain)
+        const existing = map.get(md.uri)
 
         if(existing)
             return existing as SXComponent
@@ -225,7 +224,7 @@ export default function convertToSBOLX(graph:SBOL2Graph):SBOLXGraph {
 
         const module:SXComponent = xgraph.createComponent(md.uriPrefix, displayId, version)
 
-        map.set(md.uriChain, module)
+        map.set(md.uri, module)
 
         md.modules.forEach((sm:S2ModuleInstance) => {
 
@@ -235,7 +234,7 @@ export default function convertToSBOLX(graph:SBOL2Graph):SBOLXGraph {
 
             subModule.name = sm.displayName
 
-            map.set(sm.uriChain, subModule)
+            map.set(sm.uri, subModule)
 
             // TODO check sc roles match the def roles
 
@@ -249,7 +248,7 @@ export default function convertToSBOLX(graph:SBOL2Graph):SBOLXGraph {
 
             subModule.name = sc.displayName
 
-            map.set(sc.uriChain, subModule)
+            map.set(sc.uri, subModule)
 
             // TODO check sc roles match the def roles
 
@@ -276,7 +275,7 @@ export default function convertToSBOLX(graph:SBOL2Graph):SBOLXGraph {
 
                 if(participation.participant) {
 
-                    let participant = map.get(participation.participant.uriChain)
+                    let participant = map.get(participation.participant.uri)
 
                     if(!participant || !(participant instanceof SXSubComponent)) {
                         throw new Error('???')
@@ -296,7 +295,7 @@ export default function convertToSBOLX(graph:SBOL2Graph):SBOLXGraph {
 
             const def:SXComponent = mdToModule(sm.definition)
 
-            const subModule:SXSubComponent = map.get(sm.uriChain) as SXSubComponent
+            const subModule:SXSubComponent = map.get(sm.uri) as SXSubComponent
 
             sm.mappings.forEach((mapsTo) => {
 
@@ -304,8 +303,8 @@ export default function convertToSBOLX(graph:SBOL2Graph):SBOLXGraph {
                     throw new Error('???')
                 }
 
-                let a = map.get(mapsTo.local.uriChain)
-                let b = map.get(mapsTo.remote.uriChain)
+                let a = map.get(mapsTo.local.uri)
+                let b = map.get(mapsTo.remote.uri)
 
                 if(!a || !b) {
                     throw new Error('hack failed')
