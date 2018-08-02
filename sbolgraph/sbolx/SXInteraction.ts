@@ -66,6 +66,12 @@ export default class SXInteraction extends SXIdentified {
         return participants.filter((el) => !!el) as Array<SXSubComponent>
     }
 
+    hasParticipant(participant:SXSubComponent):boolean {
+
+        return this.participants.map((p) => p.uri).indexOf(participant.uri) !== -1
+
+    }
+
     get containingModule():SXComponent {
 
         const uri = triple.subjectUri(

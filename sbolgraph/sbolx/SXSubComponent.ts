@@ -8,9 +8,10 @@ import SXIdentifiedFactory from './SXIdentifiedFactory'
 
 import * as triple from '../triple'
 import * as node from '../node'
-import { Types, Predicates, Specifiers } from 'bioterms'
+import { Types, Predicates, Specifiers, Prefixes } from 'bioterms'
 import SBOLXGraph from "../SBOLXGraph";
 import SXMapsTo from './SXMapsTo';
+import { SXInteraction } from '..';
 
 export default class SXSubComponent extends SXThingWithLocation {
 
@@ -222,6 +223,76 @@ export default class SXSubComponent extends SXThingWithLocation {
 
         // TODO locations
     }
+
+    createInteractionWith(other:SXSubComponent, id:string, interactionType:string, ourRole:string, theirRole:string):SXInteraction {
+
+        if(!other.isSiblingOf(this)) {
+            throw new Error('???')
+        }
+
+        let container = this.containingComponent
+
+        if(!container) {
+            throw new Error('???')
+        }
+
+        let interaction = container.createInteraction(id)
+        interaction.type = interactionType
+
+        interaction.createParticipationWithParticipantAndRole('ourParticipation', this, ourRole)
+        interaction.createParticipationWithParticipantAndRole('theirParticipation', other, theirRole)
+
+        return interaction
+    }
+
+    createProduct(id:string):SXSubComponent {
+
+        let product = this.graph.createComponent(this.uriPrefix, id)
+
+        let container = this.containingComponent
+
+        let productSC = container.createSubComponent(product)
+
+        let interaction = this.createInteractionWith(productSC, 'production', Prefixes.sbo + 'SBO:0000589', Prefixes.sbo + 'SBO:0000645', Prefixes.sbo + 'SBO:0000011')
+
+        return productSC
+    }
+
+    getInteractions():Array<SXInteraction> {
+
+        let container = this.containingComponent
+
+        return container.interactions.filter((interaction) => {
+            return interaction.hasParticipant(this)
+        })
+
+    }
+
+    getProducts():Array<SXSubComponent> {
+
+        let interactions = this.getInteractions()
+
+        let productionInteractions = interactions.filter((interaction) => {
+            return interaction.hasType(Prefixes.sbo + 'SBO:0000589')
+        })
+
+        let products:SXSubComponent[] = []
+        
+        for(let i of productionInteractions) {
+            for(let p of i.participations) {
+                if(p.hasRole(Prefixes.sbo + 'SBO:0000011')) {
+                    let participant = p.participant
+                    if(participant  === undefined) {
+                        throw new Error('???')
+                    }
+                    products.push(participant)
+                }
+            }
+        }
+
+        return products
+    }
+
 
     destroy() {
 

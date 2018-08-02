@@ -80,6 +80,26 @@ export default class SXIdentified extends SXFacade {
 
     }
 
+    isSiblingOf(other:SXIdentified):boolean {
+
+        let ourContainer = this.containingObject
+        let theirContainer = other.containingObject
+
+        if(!ourContainer) {
+            if(!theirContainer) {
+                return true
+            } else {
+                return false
+            }
+        } else {
+            if(theirContainer === ourContainer) {
+                return true
+            } else {
+                return false
+            }
+        }
+    }
+
 }
 
 
