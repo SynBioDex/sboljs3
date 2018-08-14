@@ -44,6 +44,8 @@ import SBOLXCopier from './SBOLXCopier'
 import Repository from './SBOL2Repository'
 import { SearchQuery, SearchResult } from './SBOL2Repository'
 
+import serialize from './serialize'
+
 export {
 
     // SBOL2
@@ -91,7 +93,8 @@ export {
     SBOLXCopier,
     Repository,
     SearchQuery,
-    SearchResult
+    SearchResult,
+    serialize
 }
 
 
