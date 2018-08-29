@@ -1,10 +1,12 @@
 
 import Graph from './Graph'
 
-import { Types, Predicates, Specifiers } from 'bioterms'
+import { Types, Predicates, Specifiers, Prefixes } from 'bioterms'
 
 import * as triple from './triple'
 import * as node from './node'
+
+import rdf = require('rdf-ext')
 
 import S2ComponentDefinition from './sbol2/S2ComponentDefinition'
 import S2ComponentInstance from './sbol2/S2ComponentInstance'
@@ -17,7 +19,7 @@ import S2Sequence from './sbol2/S2Sequence'
 import S2Collection from './sbol2/S2Collection'
 
 import RdfGraphArray = require('rdf-graph-array')
-import XMLSerializer = require('rdf-serializer-xml')
+import serialize from './serialize';
 
 import request = require('request')
 
@@ -206,10 +208,10 @@ export default class SBOL2Graph extends Graph {
 
     }
 
-    static loadURL(url) {
+    static async loadURL(url):Promise<SBOL2Graph> {
 
         let graph = new SBOL2Graph()
-        graph.loadURL(url)
+        await graph.loadURL(url)
         return graph
     }
 
@@ -265,9 +267,27 @@ export default class SBOL2Graph extends Graph {
 
     serializeXML() {
 
-        const serializer = new XMLSerializer()
+        let defaultPrefixes:Array<[string,string]> = [
+            [ 'rdf', Prefixes.rdf ],
+            [ 'dcterms', Prefixes.dcterms ],
+            [ 'prov', Prefixes.prov ],
+            [ 'sbol', Prefixes.sbol2 ]
+        ]
 
-        return serializer.serialize(this.graph)
+        let ownershipPredicates = [
+            Predicates.SBOL2.sequenceConstraint,
+            Predicates.SBOL2.sequenceAnnotation,
+            Predicates.SBOL2.attachment,
+            Predicates.SBOL2.component,
+            Predicates.SBOL2.module,
+            Predicates.SBOL2.functionalComponent,
+            Predicates.SBOL2.participation,
+            Predicates.Prov.qualifiedAssociation,
+            Predicates.Prov.qualifiedUsage
+        ]
+
+        return serialize(this, new Map(defaultPrefixes), new Set(ownershipPredicates))
+
     }
 
     // TODO
@@ -471,7 +491,95 @@ export default class SBOL2Graph extends Graph {
     }
 
 
+    changeURIPrefix(newPrefix:string) {
 
+        const topLevels = new Set([
+            Types.SBOL2.Collection,
+            Types.SBOL2.ComponentDefinition,
+            Types.SBOL2.ModuleDefinition,
+            Types.SBOL2.Sequence,
+            Types.SBOL2.Model,
+            Types.Prov.Plan,
+            Types.Prov.Agent,
+            Types.Prov.Activity
+        ])
+
+        let triples = this.graph._graph
+
+        let newGraph = new RdfGraphArray.Graph([])
+
+        let prefixes = new Set()
+
+        for(let triple of triples) {
+
+            if(triple.predicate.nominalValue === Predicates.a) {
+
+                if(topLevels.has(triple.object.nominalValue)) {
+
+                    let subjectPrefix = prefix(triple.subject.nominalValue)
+
+                    prefixes.add(subjectPrefix)
+                }
+            }
+        }
+
+        for(let triple of triples) {
+
+            let subject = triple.subject
+            let predicate = triple.predicate
+            let object = triple.object
+
+            let matched = false
+
+            for(let prefix of prefixes) {
+                if(subject.nominalValue.indexOf(prefix) === 0) {
+                    subject = rdf.createNamedNode(newPrefix + subject.nominalValue.slice(prefix.length))
+                    matched = true
+                    break
+                }
+            }
+
+            if(!matched) {
+                // can't change prefix, just drop the triple
+                continue
+            }
+
+            if(object.interfaceName === 'NamedNode') {
+                for(let prefix of prefixes) {
+                    if(object.nominalValue.indexOf(prefix) === 0) {
+                        object = rdf.createNamedNode(newPrefix + object.nominalValue.slice(prefix.length))
+                        break
+                    }
+                }
+            }
+
+            newGraph.add({ subject, predicate, object })
+
+        }
+
+        console.dir(prefixes)
+
+        this.graph = newGraph
+
+        function prefix(uri:string) {
+
+            let n = 0
+
+            for(let i = uri.length - 1; i > 0; -- i) {
+
+                if(uri[i] === '/') {
+                    ++ n
+                    
+                    if(n === 2) {
+                        return uri.slice(0, i + 1)
+                    }
+                }
+            }
+
+            throw new Error('cant get prefix')
+        }
+
+    }
 
 }
 
