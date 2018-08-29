@@ -48,6 +48,11 @@ import Repository from './SBOL2Repository'
 import { SearchQuery, SearchResult } from './SBOL2Repository'
 
 import serialize from './serialize'
+import S2ProvAgent from './sbol2/S2ProvAgent';
+import S2ProvPlan from './sbol2/S2ProvPlan';
+import S2ProvActivity from './sbol2/S2ProvActivity';
+import S2ProvUsage from './sbol2/S2ProvUsage';
+import S2ProvAssociation from './sbol2/S2ProvAssociation';
 
 export {
 
@@ -70,6 +75,11 @@ export {
     S2Interaction,
     S2MapsTo,
     S2Attachment,
+    S2ProvAgent,
+    S2ProvPlan,
+    S2ProvActivity,
+    S2ProvUsage,
+    S2ProvAssociation,
 
     // SBOLX
     SBOLXGraph,

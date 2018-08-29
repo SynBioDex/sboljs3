@@ -30,6 +30,12 @@ import S2MapsTo from "./sbol2/S2MapsTo";
 
 import S2GenericLocation from "./sbol2/S2GenericLocation";
 import S2IdentifiedFactory from './sbol2/S2IdentifiedFactory';
+import S2Cut from './sbol2/S2Cut';
+import S2ProvAgent from './sbol2/S2ProvAgent';
+import S2ProvAssociation from './sbol2/S2ProvAssociation';
+import S2ProvPlan from './sbol2/S2ProvPlan';
+import S2ProvUsage from './sbol2/S2ProvUsage';
+import S2ProvActivity from './sbol2/S2ProvActivity';
 
 export default class SBOL2Graph extends Graph {
 
@@ -378,6 +384,9 @@ export default class SBOL2Graph extends Graph {
         if(type === Types.SBOL2.Range)
             return new S2Range(this, uri)
 
+        if(type === Types.SBOL2.Cut)
+            return new S2Cut(this, uri)
+
         if(type === Types.SBOL2.GenericLocation)
             return new S2GenericLocation(this, uri)
 
@@ -389,6 +398,21 @@ export default class SBOL2Graph extends Graph {
 
         if(type === Types.SBOL2.Collection)
             return new S2Collection(this, uri)
+
+        if(type === Types.Prov.Agent)
+            return new S2ProvAgent(this, uri)
+
+        if(type === Types.Prov.Association)
+            return new S2ProvAssociation(this, uri)
+
+        if(type === Types.Prov.Plan)
+            return new S2ProvPlan(this, uri)
+
+        if(type === Types.Prov.Usage)
+            return new S2ProvUsage(this, uri)
+
+        if(type === Types.Prov.Activity)
+            return new S2ProvActivity(this, uri)
 
         throw new Error('unknown type: ' + uri)
 
