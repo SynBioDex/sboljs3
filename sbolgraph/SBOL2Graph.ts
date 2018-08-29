@@ -17,7 +17,6 @@ import S2Sequence from './sbol2/S2Sequence'
 import S2Collection from './sbol2/S2Collection'
 
 import RdfGraphArray = require('rdf-graph-array')
-import RdfParserXml = require('rdf-parser-rdfxml')
 import XMLSerializer = require('rdf-serializer-xml')
 
 import request = require('request')
@@ -36,6 +35,7 @@ import S2ProvAssociation from './sbol2/S2ProvAssociation';
 import S2ProvPlan from './sbol2/S2ProvPlan';
 import S2ProvUsage from './sbol2/S2ProvUsage';
 import S2ProvActivity from './sbol2/S2ProvActivity';
+import parseRDF from './parseRDF';
 
 export default class SBOL2Graph extends Graph {
 
@@ -208,7 +208,14 @@ export default class SBOL2Graph extends Graph {
 
     static loadURL(url) {
 
-        return new Promise((resolve, reject) => {
+        let graph = new SBOL2Graph()
+        graph.loadURL(url)
+        return graph
+    }
+
+    async loadURL(url:string):Promise<void> {
+
+        let res:any = await new Promise((resolve, reject) => {
 
             console.log('requesting ' + url)
 
@@ -235,51 +242,24 @@ export default class SBOL2Graph extends Graph {
 
             })
 
-        }).then((res:any) => {
-
-            var { data, mimeType } = res
-
-            console.log('SBOL2Graph::loadURL: mimetype is ' + mimeType)
-
-            if(mimeType === 'text/xml')
-                mimeType = 'application/rdf+xml'
-
-            if(mimeType === 'application/xml')
-                mimeType = 'application/rdf+xml'
-
-            const parser = new RdfParserXml()
-
-            return parser.parse(data).then((graph) => {
-
-                return Promise.resolve(new SBOL2Graph(graph))
-
-            })
-
         })
+
+        var { data, mimeType } = res
+
+        await this.loadString(data, mimeType)
+    }
+
+    static async loadString(data:string, mimeType:string):Promise<SBOL2Graph> {
+
+        let graph = new SBOL2Graph()
+        graph.loadString(data, mimeType)
+        return graph
 
     }
 
-    static loadString(data:string, mimeType:string):Promise<SBOL2Graph> {
+    async loadString(data:string, mimeType:string):Promise<void> {
 
-        const parser = new RdfParserXml()
-
-        return parser.parse(data).then((graph) => {
-
-            return Promise.resolve(new SBOL2Graph(graph))
-
-        })
-
-    }
-
-    loadString(data:string, mimeType:string):Promise<null> {
-
-        const parser = new RdfParserXml()
-
-        return parser.parse(data).then((graph) => {
-
-            this.graph.addAll(graph)
-
-        })
+        await parseRDF(this, data, mimeType)
 
     }
 

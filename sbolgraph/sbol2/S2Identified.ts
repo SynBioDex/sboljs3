@@ -5,6 +5,7 @@ import { Types, Predicates, Specifiers } from 'bioterms'
 import S2Facade from './S2Facade'
 
 import SBOL2Graph from '../SBOL2Graph'
+import { S2Attachment } from '..';
 
 export default class S2Identified extends S2Facade {
 
@@ -87,6 +88,12 @@ export default class S2Identified extends S2Facade {
 
     }
 
+    get attachments():Array<S2Attachment> {
+
+        return this.getUriProperties(Predicates.SBOL2.attachment)
+            .map((attachment) => new S2Attachment(this.graph, attachment))
+
+    }
 
 
     get containingObject():S2Identified|undefined {

@@ -11,6 +11,7 @@ import * as node from '../node'
 import { Predicates, Types } from 'bioterms'
 import S2IdentifiedFactory from '../sbol2/S2IdentifiedFactory';
 import { S2ComponentDefinition } from '..';
+import S2Model from './S2Model';
 
 export default class S2ModuleDefinition extends S2Identified {
 
@@ -22,6 +23,22 @@ export default class S2ModuleDefinition extends S2Identified {
 
     get facadeType():string {
         return Types.SBOL2.ModuleDefinition
+    }
+
+    get roles():Array<string> {
+        return this.getUriProperties(Predicates.SBOL2.role)
+    }
+
+    hasRole(role:string):boolean {
+        return this.graph.hasMatch(this.uri, Predicates.SBOL2.role, role)
+    }
+
+    addRole(role:string):void {
+        this.graph.insert(node.createUriNode(this.uri), node.createUriNode(Predicates.SBOL2.role), node.createUriNode(role))
+    }
+
+    removeRole(role:string):void {
+        this.graph.removeMatches(this.uri, Predicates.SBOL2.role, role)
     }
 
     get modules():Array<S2ModuleInstance> {
@@ -42,6 +59,13 @@ export default class S2ModuleDefinition extends S2Identified {
 
         return this.getUriProperties(Predicates.SBOL2.interaction)
                     .map((uri:string) => new S2Interaction(this.graph, uri))
+
+    }
+
+    get models():Array<S2Model> {
+
+        return this.getUriProperties(Predicates.SBOL2.model)
+                    .map((uri:string) => new S2Model(this.graph, uri))
 
     }
 
