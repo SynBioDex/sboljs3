@@ -265,6 +265,18 @@ export default class SBOL2Graph extends Graph {
 
     }
 
+    loadString(data:string, mimeType:string):Promise<null> {
+
+        const parser = new RdfParserXml()
+
+        return parser.parse(data).then((graph) => {
+
+            this.graph.addAll(graph)
+
+        })
+
+    }
+
     serializeXML() {
 
         const serializer = new XMLSerializer()

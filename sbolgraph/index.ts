@@ -15,9 +15,12 @@ import S2Sequence from './sbol2/S2Sequence'
 import S2Location from './sbol2/S2Location'
 import S2OrientedLocation from './sbol2/S2OrientedLocation'
 import S2Range from './sbol2/S2Range'
+import S2Cut from './sbol2/S2Cut'
+import S2GenericLocation from './sbol2/S2GenericLocation'
 import S2Collection from './sbol2/S2Collection'
 import S2Interaction from './sbol2/S2Interaction'
 import S2MapsTo from './sbol2/S2MapsTo'
+import S2Attachment from './sbol2/S2Attachment'
 
 import SXIdentified from './sbolx/SXIdentified'
 import SXSubComponent from './sbolx/SXSubComponent'
@@ -61,9 +64,12 @@ export {
     S2OrientedLocation,
     S2Location,
     S2Range,
+    S2Cut,
+    S2GenericLocation,
     S2Collection,
     S2Interaction,
     S2MapsTo,
+    S2Attachment,
 
     // SBOLX
     SBOLXGraph,
