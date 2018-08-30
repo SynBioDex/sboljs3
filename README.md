@@ -67,6 +67,21 @@ Is this going to be slower than the other libraries?
 Marginally, but hopefully not significantly, and certainly not in time complexity terms.  All of the predefined partial triple evaluations in the library are hash table lookups facilitated by a [fork of rdf-graph-array](https://github.com/udp/rdf-graph-array) with additional indexing.  Hash table lookups should be O(1).
 
 
+Implemented so far
+===
+
+* Reading and writing fully compliant SBOL2
+* Reading (converting) FASTA and GenBank
+
+
+Not implemented so far
+===
+
+* SBOL1 support
+* Writing FASTA and GenBank
+* Validation
+
+
 
 
 
