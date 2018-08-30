@@ -134,6 +134,10 @@ export default class S2SequenceAnnotation extends S2Identified {
         return this.graph.hasMatch(this.uri, Predicates.SBOL2.role, role)
     }
 
+    addRole(role:string):void {
+        this.graph.insert(this.uri, Predicates.SBOL2.role, node.createUriNode(role))
+    }
+
     static fromIdentified(identified:S2Identified):S2SequenceAnnotation {
 
         const type:string|undefined = identified.objectType

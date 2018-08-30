@@ -38,6 +38,9 @@ import S2ProvPlan from './sbol2/S2ProvPlan';
 import S2ProvUsage from './sbol2/S2ProvUsage';
 import S2ProvActivity from './sbol2/S2ProvActivity';
 import parseRDF from './parseRDF';
+import identifyFiletype, { Filetype } from './conversion/identifyFiletype';
+import fastaToSBOL2 from './conversion/fastaToSBOL2';
+import genbankToSBOL2 from './conversion/genbankToSBOL2';
 
 export default class SBOL2Graph extends Graph {
 
@@ -208,14 +211,14 @@ export default class SBOL2Graph extends Graph {
 
     }
 
-    static async loadURL(url):Promise<SBOL2Graph> {
+    static async loadURL(url, defaultURIPrefix?:string):Promise<SBOL2Graph> {
 
         let graph = new SBOL2Graph()
-        await graph.loadURL(url)
+        await graph.loadURL(url, defaultURIPrefix)
         return graph
     }
 
-    async loadURL(url:string):Promise<void> {
+    async loadURL(url:string, defaultURIPrefix?:string):Promise<void> {
 
         let res:any = await new Promise((resolve, reject) => {
 
@@ -234,7 +237,7 @@ export default class SBOL2Graph extends Graph {
                 var mimeType = res.headers['content-type']
 
                 if(mimeType === undefined)
-                    mimeType = 'application/rdf+xml'
+                    mimeType = null
 
                 resolve({
                     mimeType: mimeType,
@@ -248,21 +251,39 @@ export default class SBOL2Graph extends Graph {
 
         var { data, mimeType } = res
 
-        await this.loadString(data, mimeType)
+        await this.loadString(data, defaultURIPrefix, mimeType)
     }
 
-    static async loadString(data:string, mimeType:string):Promise<SBOL2Graph> {
+    static async loadString(data:string, defaultURIPrefix?:string, mimeType?:string):Promise<SBOL2Graph> {
 
         let graph = new SBOL2Graph()
-        graph.loadString(data, mimeType)
+        graph.loadString(data, defaultURIPrefix, mimeType)
         return graph
 
     }
 
-    async loadString(data:string, mimeType:string):Promise<void> {
+    async loadString(data:string, defaultURIPrefix?:string, mimeType?:string):Promise<void> {
 
-        await parseRDF(this, data, mimeType)
+        let filetype = identifyFiletype(data, mimeType || null)
 
+        if(filetype === Filetype.RDFXML || filetype === Filetype.NTriples) {
+            await parseRDF(this, data, filetype)
+            return
+        }
+
+        defaultURIPrefix = defaultURIPrefix || 'http://converted/'
+
+        if(filetype === Filetype.FASTA) {
+            fastaToSBOL2(this, defaultURIPrefix, data)
+            return
+        }
+
+        if(filetype === Filetype.GenBank) {
+            genbankToSBOL2(this, defaultURIPrefix, data)
+            return
+        }
+
+        throw new Error('Unknown format')
     }
 
     serializeXML() {
@@ -282,6 +303,7 @@ export default class SBOL2Graph extends Graph {
             Predicates.SBOL2.module,
             Predicates.SBOL2.functionalComponent,
             Predicates.SBOL2.participation,
+            Predicates.SBOL2.location,
             Predicates.Prov.qualifiedAssociation,
             Predicates.Prov.qualifiedUsage
         ]

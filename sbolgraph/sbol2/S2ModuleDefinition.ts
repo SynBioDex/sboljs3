@@ -34,7 +34,7 @@ export default class S2ModuleDefinition extends S2Identified {
     }
 
     addRole(role:string):void {
-        this.graph.insert(node.createUriNode(this.uri), node.createUriNode(Predicates.SBOL2.role), node.createUriNode(role))
+        this.graph.insert(this.uri, Predicates.SBOL2.role, node.createUriNode(role))
     }
 
     removeRole(role:string):void {

@@ -7,7 +7,7 @@ import assert from 'power-assert'
 export function createUriNode(uri:string):RdfNode {
 
     if(! (typeof(uri) === 'string')) {
-        throw new Error('???')
+        throw new Error('trying to create URI node for ' + (typeof uri) + ' ' + uri)
     }
 
     return rdf.createNamedNode(uri)
