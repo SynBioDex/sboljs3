@@ -1,4 +1,4 @@
-A library for the Synthetic Biology Open Language (SBOL) written in TypeScript, for JavaScript/TypeScript applications in the browser or node.js.
+A library for the Synthetic Biology Open Language (SBOL) written in TypeScript, for JavaScript/TypeScript applications in the browser or node.js.  Also ported to [Python](https://github.com/udp/pysbolgraph).
 
 Unlike existing libraries such as libSBOLj and sboljs, sbolgraph does not attempt to "load" SBOL RDF into an object oriented datastructure.  Instead, sbolgraph keeps the SBOL RDF in an RDF graph, and provides "facade" classes that look like class instances but actually just wrap a URI and query/update the graph in their getters/setters.
 
