@@ -38,5 +38,13 @@ export default function identifyFiletype(content:string, mimeType:string|null):F
         return Filetype.RDFXML
     }
 
+    let firstLineEnd = content.indexOf('\n', n)
+
+    if(firstLineEnd !== -1) {
+        if(content[n] === '<' && content[firstLineEnd - 1] === '.') {
+            return Filetype.NTriples
+        }
+    }
+
     return null
 }
