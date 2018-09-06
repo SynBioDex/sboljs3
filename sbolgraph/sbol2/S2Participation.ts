@@ -70,7 +70,7 @@ export default class S2Participation extends S2Identified {
     }
 
     setParticipant(participant:S2FunctionalComponent):void {
-        this.setUriProperty(Predicates.SBOL2.participant, node.createUriNode(participant.uri))
+        this.setUriProperty(Predicates.SBOL2.participant, participant.uri)
     }
 
 }

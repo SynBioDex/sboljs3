@@ -92,7 +92,7 @@ export default class SXIdentified extends SXFacade {
                 return false
             }
         } else {
-            if(theirContainer === ourContainer) {
+            if(theirContainer && theirContainer.uri === ourContainer.uri) {
                 return true
             } else {
                 return false

@@ -70,7 +70,7 @@ export default class SXParticipation extends SXIdentified {
     }
 
     setParticipant(participant:SXSubComponent):void {
-        this.setUriProperty(Predicates.SBOLX.participant, node.createUriNode(participant.uri))
+        this.setUriProperty(Predicates.SBOLX.participant, participant.uri)
     }
 
 
