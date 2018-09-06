@@ -21,7 +21,7 @@ export default class S2Collection extends S2Identified {
 
     get members():Array<S2Identified> {
 
-        return this.getUriProperties(Predicates.SBOLX.hasMember)
+        return this.getUriProperties(Predicates.SBOL2.member)
                    .map((uri:string) => this.graph.uriToFacade(uri))
                    .filter((r:S2Identified) => r !== undefined) as Array<S2Identified>
 
