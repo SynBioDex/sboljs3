@@ -34,6 +34,10 @@ export default function identifyFiletype(content:string, mimeType:string|null):F
         return Filetype.NTriples // @prefix maybe
     }
 
+    if(content[n] === '#') {
+        return Filetype.NTriples // # Empty TURTLE
+    }
+
     if(content.substr(n, 5) === 'LOCUS') {
         return Filetype.GenBank
     }
