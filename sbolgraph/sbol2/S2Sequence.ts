@@ -22,6 +22,18 @@ export default class S2Sequence extends S2Identified {
         return Types.SBOL2.Sequence
     }
 
+    get displayType() {
+        switch(this.encoding) {
+        case Specifiers.SBOL2.SequenceEncoding.AminoAcid:
+            return 'Amino Acid Sequence'
+        case Specifiers.SBOL2.SequenceEncoding.NucleicAcid:
+        case Specifiers.SBOL2.SequenceEncoding.RNA:
+            return 'Nucleic Acid Sequence'
+        default:
+            return 'Sequence'
+        }
+    }
+
     get elements():string|undefined {
         return this.getStringProperty(Predicates.SBOL2.elements)
     }

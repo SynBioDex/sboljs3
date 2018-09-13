@@ -5,7 +5,7 @@ import { Types, Predicates, Specifiers } from 'bioterms'
 import S2Facade from './S2Facade'
 
 import SBOL2Graph from '../SBOL2Graph'
-import { S2Attachment } from '..';
+import { S2Attachment, S2Collection } from '..';
 
 export default class S2Identified extends S2Facade {
 
@@ -23,6 +23,10 @@ export default class S2Identified extends S2Facade {
 
     get displayName():string|undefined {
         return this.name || this.displayId
+    }
+
+    get displayType() {
+        return this.objectType
     }
 
     set name(name:string|undefined) {
@@ -100,6 +104,13 @@ export default class S2Identified extends S2Facade {
 
         return undefined
 
+    }
+
+    get containingCollections():Array<S2Collection> {
+
+        return this.graph.match(null, Predicates.SBOL2.member, this.uri)
+                    .map(triple.subjectUri)
+                    .map((uri) => new S2Collection(this.graph, uri as string))
     }
 
 
