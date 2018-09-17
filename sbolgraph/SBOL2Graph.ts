@@ -211,6 +211,14 @@ export default class SBOL2Graph extends Graph {
 
     }
 
+
+    get provPlans():Array<S2ProvPlan> {
+
+        return this.instancesOfType(Types.Prov.Plan)
+                    .map((uri) => new S2ProvPlan(this, uri))
+
+    }
+
     static async loadURL(url, defaultURIPrefix?:string):Promise<SBOL2Graph> {
 
         let graph = new SBOL2Graph()

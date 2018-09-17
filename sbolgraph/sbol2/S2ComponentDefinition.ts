@@ -8,7 +8,7 @@ import S2SequenceConstraint from './S2SequenceConstraint'
 
 import * as triple from '../triple'
 import * as node from '../node'
-import { Types, Predicates, Specifiers } from 'bioterms'
+import { Types, Predicates, Specifiers, uriToName } from 'bioterms'
 import CompliantURIs from "../SBOL2CompliantURIs";
 
 export default class S2ComponentDefinition extends S2Identified {
@@ -41,6 +41,17 @@ export default class S2ComponentDefinition extends S2Identified {
 
         this.setUriProperty(Predicates.SBOL2.type, uri)
 
+    }
+
+    get displayType():string {
+        for(let role of this.roles) {
+            let name = uriToName(role)
+            
+            if(name) {
+                return name
+            }
+        }
+        return super.displayType
     }
 
     get components():Array<S2ComponentInstance> {

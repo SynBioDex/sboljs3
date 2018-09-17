@@ -25,8 +25,8 @@ export default class S2Identified extends S2Facade {
         return this.name || this.displayId
     }
 
-    get displayType() {
-        return this.objectType
+    get displayType():string {
+        return this.objectType || 'unknown'
     }
 
     set name(name:string|undefined) {
