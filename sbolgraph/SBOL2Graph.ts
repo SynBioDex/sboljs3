@@ -41,6 +41,7 @@ import parseRDF from './parseRDF';
 import identifyFiletype, { Filetype } from './conversion/identifyFiletype';
 import fastaToSBOL2 from './conversion/fastaToSBOL2';
 import genbankToSBOL2 from './conversion/genbankToSBOL2';
+import S2Implementation from './sbol2/S2Implementation';
 
 export default class SBOL2Graph extends Graph {
 
@@ -104,6 +105,34 @@ export default class SBOL2Graph extends Graph {
         return seq
     }
 
+
+    createImplementation(uriPrefix:string, id:string, version?:string):S2Implementation {
+
+        const identified:S2Identified =
+            S2IdentifiedFactory.createTopLevel(this, Types.SBOL2.Implementation, uriPrefix, id, undefined, version)
+
+        return new S2Implementation(this, identified.uri)
+
+    }
+
+
+    createProvActivity(uriPrefix:string, id:string, version?:string):S2ProvActivity {
+
+        const identified:S2Identified =
+            S2IdentifiedFactory.createTopLevel(this, Types.Prov.Activity, uriPrefix, id, undefined, version)
+
+        return new S2ProvActivity(this, identified.uri)
+
+    }
+
+    createProvAssociation(uriPrefix:string, id:string, version?:string):S2ProvAssociation {
+
+        const identified:S2Identified =
+            S2IdentifiedFactory.createTopLevel(this, Types.Prov.Association, uriPrefix, id, undefined, version)
+
+        return new S2ProvAssociation(this, identified.uri)
+
+    }
 
     get sequences():Array<S2Sequence> {
 
