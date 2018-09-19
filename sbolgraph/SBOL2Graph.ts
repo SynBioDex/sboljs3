@@ -134,6 +134,33 @@ export default class SBOL2Graph extends Graph {
 
     }
 
+    createProvAgent(uriPrefix:string, id:string, version?:string):S2ProvAgent {
+
+        const identified:S2Identified =
+            S2IdentifiedFactory.createTopLevel(this, Types.Prov.Agent, uriPrefix, id, undefined, version)
+
+        return new S2ProvAgent(this, identified.uri)
+
+    }
+
+    createProvPlan(uriPrefix:string, id:string, version?:string):S2ProvPlan {
+
+        const identified:S2Identified =
+            S2IdentifiedFactory.createTopLevel(this, Types.Prov.Plan, uriPrefix, id, undefined, version)
+
+        return new S2ProvPlan(this, identified.uri)
+
+    }
+
+    createProvUsage(uriPrefix:string, id:string, version?:string):S2ProvUsage {
+
+        const identified:S2Identified =
+            S2IdentifiedFactory.createTopLevel(this, Types.Prov.Usage, uriPrefix, id, undefined, version)
+
+        return new S2ProvUsage(this, identified.uri)
+
+    }
+
     get sequences():Array<S2Sequence> {
 
         return this.instancesOfType(Types.SBOL2.Sequence)

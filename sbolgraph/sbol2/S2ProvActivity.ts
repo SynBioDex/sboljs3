@@ -4,6 +4,7 @@ import SBOL2Graph from "../SBOL2Graph";
 import S2ProvAssociation from "./S2ProvAssociation";
 import { Types, Predicates } from "bioterms";
 import S2ProvPlan from "./S2ProvPlan";
+import { S2ProvUsage } from "..";
 
 export default class S2ProvActivity extends S2Identified {
 
@@ -41,6 +42,26 @@ export default class S2ProvActivity extends S2Identified {
             this.deleteProperty(Predicates.Prov.hadPlan)
         } else {
             this.setUriProperty(Predicates.Prov.hadPlan, plan.uri)
+        }
+    }
+
+    get usage():S2ProvUsage|undefined {
+
+        let usage = this.getUriProperty(Predicates.Prov.qualifiedUsage)
+
+        if(!usage) {
+            return undefined
+        }
+
+        return new S2ProvUsage(this.graph, usage)
+    }
+
+    set usage(usage:S2ProvUsage|undefined) {
+
+        if(usage === undefined) {
+            this.deleteProperty(Predicates.Prov.qualifiedUsage)
+        } else {
+            this.setUriProperty(Predicates.Prov.qualifiedUsage, usage.uri)
         }
     }
 
