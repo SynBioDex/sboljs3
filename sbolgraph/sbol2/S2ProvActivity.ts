@@ -65,4 +65,24 @@ export default class S2ProvActivity extends S2Identified {
         }
     }
 
+    get association():S2ProvAssociation|undefined {
+
+        let association = this.getUriProperty(Predicates.Prov.qualifiedAssociation)
+
+        if(!association) {
+            return undefined
+        }
+
+        return new S2ProvAssociation(this.graph, association)
+    }
+
+    set association(association:S2ProvAssociation|undefined) {
+
+        if(association === undefined) {
+            this.deleteProperty(Predicates.Prov.qualifiedAssociation)
+        } else {
+            this.setUriProperty(Predicates.Prov.qualifiedAssociation, association.uri)
+        }
+    }
+
 }

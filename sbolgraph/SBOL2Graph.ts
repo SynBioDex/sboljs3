@@ -221,6 +221,16 @@ export default class SBOL2Graph extends Graph {
 
     }
 
+    getActivity(uri):S2ProvActivity|null {
+
+        if(this.getType(uri) !== Types.Prov.Activity)
+            return null
+
+        return new S2ProvActivity(this, uri)
+
+    }
+
+
     get rootComponentDefinitions():Array<S2ComponentDefinition> {
 
         return this.instancesOfType(Types.SBOL2.ComponentDefinition).filter((uri) => {

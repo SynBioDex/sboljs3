@@ -3,6 +3,7 @@ import S2Identified from "./S2Identified";
 import SBOL2Graph from "../SBOL2Graph";
 import { Types, Predicates } from "bioterms";
 import { S2ComponentDefinition, S2ModuleDefinition } from "..";
+import S2ProvActivity from "./S2ProvActivity";
 
 export default class S2Implementation extends S2Identified {
 
@@ -44,5 +45,26 @@ export default class S2Implementation extends S2Identified {
             this.setUriProperty(Predicates.SBOL2.built, built.uri)
         }
     }
+
+    get activity():S2ProvActivity|undefined {
+
+        let activity = this.getUriProperty(Predicates.Prov.wasGeneratedBy)
+
+        if(!activity) {
+            return undefined
+        }
+
+        return new S2ProvActivity(this.graph, activity)
+    }
+
+    set activity(activity:S2ProvActivity|undefined) {
+
+        if(activity === undefined) {
+            this.deleteProperty(Predicates.Prov.wasGeneratedBy)
+        } else {
+            this.setUriProperty(Predicates.Prov.wasGeneratedBy, activity.uri)
+        }
+    }
+
 
 }
