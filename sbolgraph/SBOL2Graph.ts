@@ -452,6 +452,9 @@ export default class SBOL2Graph extends Graph {
         if(type === Types.SBOL2.FunctionalComponent)
             return new S2FunctionalComponent(this, uri)
 
+        if(type === Types.SBOL2.Implementation)
+            return new S2Implementation(this, uri)
+
         if(type === Types.SBOL2.Interaction)
             return new S2Interaction(this, uri)
 
