@@ -36,6 +36,7 @@ import SXParticipation from './sbolx/SXParticipation'
 import SXCollection from './sbolx/SXCollection'
 import SXThingWithLocation from './sbolx/SXThingWithLocation'
 import SXMapsTo from './sbolx/SXMapsTo'
+import SXModel from './sbolx/SXModel'
 
 import * as node from './node'
 import * as triple from './triple'
@@ -97,6 +98,7 @@ export {
     SXParticipation,
     SXCollection,
     SXMapsTo,
+    SXModel,
 
     // etc
     Graph,
