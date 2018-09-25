@@ -27,6 +27,12 @@ export default class S2Collection extends S2Identified {
 
     }
 
+    addMember(member:S2Identified):void {
+
+        this.graph.add(this.uri, Predicates.SBOL2.member, node.createUriNode(member.uri))
+
+    }
+
     get containingObject():S2Identified|undefined {
 
         return undefined
