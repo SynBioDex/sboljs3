@@ -42,6 +42,8 @@ import identifyFiletype, { Filetype } from './conversion/identifyFiletype';
 import fastaToSBOL2 from './conversion/fastaToSBOL2';
 import genbankToSBOL2 from './conversion/genbankToSBOL2';
 import S2Implementation from './sbol2/S2Implementation';
+import SEP21Experiment from './sbol2/SEP21Experiment';
+import SEP21ExperimentalData from './sbol2/SEP21ExperimentalData';
 
 export default class SBOL2Graph extends Graph {
 
@@ -115,6 +117,14 @@ export default class SBOL2Graph extends Graph {
 
     }
 
+    createExperiment(uriPrefix:string, id:string, version?:string):SEP21Experiment {
+
+        const identified:S2Identified =
+            S2IdentifiedFactory.createTopLevel(this, 'https://github.com/SynBioDex/SEPs/blob/sep21/sep_021.md#Experiment', uriPrefix, id, undefined, version)
+
+        return new SEP21Experiment(this, identified.uri)
+
+    }
 
     createProvActivity(uriPrefix:string, id:string, version?:string):S2ProvActivity {
 
@@ -408,6 +418,10 @@ export default class SBOL2Graph extends Graph {
             this.match(null, Predicates.a, Types.SBOL2.Collection)
                 .map(triple.subjectUri))
 
+        Array.prototype.push.apply(topLevels,
+            this.match(null, Predicates.a, Types.SBOL2.Implementation)
+                .map(triple.subjectUri))
+
         return topLevels.map((topLevel) => this.uriToFacade(topLevel) as S2Identified)
     }
 
@@ -464,6 +478,12 @@ export default class SBOL2Graph extends Graph {
 
         if(type === Types.SBOL2.Implementation)
             return new S2Implementation(this, uri)
+
+        if(type === 'https://github.com/SynBioDex/SEPs/blob/sep21/sep_021.md#Experiment')
+            return new SEP21Experiment(this, uri)
+
+        if(type === 'https://github.com/SynBioDex/SEPs/blob/sep21/sep_021.md#ExperimentalData')
+            return new SEP21ExperimentalData(this, uri)
 
         if(type === Types.SBOL2.Interaction)
             return new S2Interaction(this, uri)

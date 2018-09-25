@@ -25,7 +25,7 @@ export default class S2Implementation extends S2Identified {
         if(!built) {
             return undefined
         }
-        
+
         let builtObj = this.graph.uriToFacade(built)
 
         if(builtObj instanceof S2ComponentDefinition)
@@ -65,6 +65,42 @@ export default class S2Implementation extends S2Identified {
             this.setUriProperty(Predicates.Prov.wasGeneratedBy, activity.uri)
         }
     }
+
+    get design():S2ComponentDefinition|S2ModuleDefinition|undefined{
+
+        let design_uri = this.getUriProperty(Predicates.Prov.wasDerivedFrom)
+
+        if(!design_uri){
+            return undefined
+        }
+
+        // NEED TO FIX THIS GETTER, DOESN'T WORK FOR SOME REASON
+        return new S2ComponentDefinition(this.graph, design_uri)
+
+        console.log(this.graph.getTopLevelsWithPrefix(design_uri))
+
+        let design = this.graph.uriToFacade(design_uri)
+
+        console.log(design)
+
+        if(design instanceof S2ComponentDefinition)
+            return design as S2ComponentDefinition
+
+        if (design instanceof S2ModuleDefinition)
+            return design as S2ModuleDefinition
+
+        throw new Error('design has wrong type')
+    }
+
+    set design(design:S2ComponentDefinition|S2ModuleDefinition|undefined) {
+
+        if(design === undefined) {
+            this.deleteProperty(Predicates.Prov.wasDerivedFrom)
+        } else {
+            this.setUriProperty(Predicates.Prov.wasDerivedFrom, design.uri)
+        }
+    }
+    
 
 
 }

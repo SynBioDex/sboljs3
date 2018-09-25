@@ -11,6 +11,9 @@ import S2ComponentDefinition from './sbol2/S2ComponentDefinition'
 import S2ModuleDefinition from './sbol2/S2ModuleDefinition'
 import S2SequenceAnnotation from './sbol2/S2SequenceAnnotation'
 import S2FunctionalComponent from './sbol2/S2FunctionalComponent'
+import S2Implementation from './sbol2/S2Implementation'
+import SEP21Experiment from './sbol2/SEP21Experiment'
+import SEP21ExperimentalData from './sbol2/SEP21ExperimentalData'
 import S2Sequence from './sbol2/S2Sequence'
 import S2Location from './sbol2/S2Location'
 import S2OrientedLocation from './sbol2/S2OrientedLocation'
@@ -65,6 +68,9 @@ export {
     S2ModuleDefinition,
     S2SequenceAnnotation,
     S2FunctionalComponent,
+    S2Implementation,
+    SEP21Experiment,
+    SEP21ExperimentalData,
     S2Sequence,
     S2OrientedLocation,
     S2Location,
