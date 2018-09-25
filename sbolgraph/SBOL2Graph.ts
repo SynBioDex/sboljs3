@@ -106,6 +106,16 @@ export default class SBOL2Graph extends Graph {
         return seq
     }
 
+    createModel(uriPrefix:string, id:string, version?:string):S2Model {
+
+        const identified:S2Identified =
+            S2IdentifiedFactory.createTopLevel(this, Types.SBOL2.Model, uriPrefix, id, undefined, version)
+
+        const model:S2Model = new S2Model(this, identified.uri)
+
+        return model
+    }
+
 
     createImplementation(uriPrefix:string, id:string, version?:string):S2Implementation {
 
@@ -180,6 +190,13 @@ export default class SBOL2Graph extends Graph {
 
         return this.instancesOfType(Types.SBOL2.Collection)
                     .map((uri) => new S2Collection(this, uri))
+
+    }
+
+    get models():Array<S2Model> {
+
+        return this.instancesOfType(Types.SBOL2.Model)
+                    .map((uri) => new S2Model(this, uri))
 
     }
 

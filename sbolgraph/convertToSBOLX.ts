@@ -24,12 +24,14 @@ import {
     S2Interaction,
     SXInteraction,
     SXParticipation,
-    S2ModuleInstance
+    S2ModuleInstance,
+    SXModel
 
 } from '.'
 
 import { Predicates, Prefixes, Specifiers } from 'bioterms'
 import SXThingWithLocation from './sbolx/SXThingWithLocation';
+import S2Model from './sbol2/S2Model';
 
 
 
@@ -45,6 +47,10 @@ export default function convertToSBOLX(graph:SBOL2Graph):SBOLXGraph {
 
     graph.moduleDefinitions.forEach((md:S2ModuleDefinition) => {
         mdToModule(md)
+    })
+
+    graph.models.forEach((model:S2Model) => {
+        modelToModel(model)
     })
 
     graph.sequences.forEach((seq:S2Sequence) => {
@@ -104,12 +110,30 @@ export default function convertToSBOLX(graph:SBOL2Graph):SBOLXGraph {
 
         const xseq:SXSequence = xgraph.createSequence(seq.uriPrefix, displayId, version)
 
-        map.set(xseq.uri, xseq)
+        map.set(seq.uri, xseq)
 
         xseq.encoding = seq.encoding
         xseq.elements = seq.elements
 
         return xseq
+    }
+
+    function modelToModel(model:S2Model):SXModel {
+
+        const existing = map.get(model.uri)
+
+        if(existing)
+            return existing as SXModel
+    
+        const xmodel:SXModel = xgraph.createModel(model.uriPrefix, model.displayId || 'collection', model.version)
+
+        xmodel.framework = model.framework
+        xmodel.source = model.source
+        xmodel.language = model.language
+
+        map.set(model.uri, xmodel)
+
+        return xmodel
     }
 
     function cdToModule(cd:S2ComponentDefinition):SXComponent {
@@ -313,6 +337,10 @@ export default function convertToSBOLX(graph:SBOL2Graph):SBOLXGraph {
                 subModule.createMapping(a as SXSubComponent, b as SXSubComponent)
 
             })
+        })
+
+        md.models.forEach((model:S2Model) => {
+            module.addModel(modelToModel(model))
         })
 
         return module
