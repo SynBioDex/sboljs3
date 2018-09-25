@@ -17,6 +17,7 @@ import S2FunctionalComponent from './sbol2/S2FunctionalComponent'
 import S2Range from './sbol2/S2Range'
 import S2Sequence from './sbol2/S2Sequence'
 import S2Collection from './sbol2/S2Collection'
+import S2Model from './sbol2/S2Model'
 
 import RdfGraphArray = require('rdf-graph-array')
 import serialize from './serialize';
@@ -107,6 +108,16 @@ export default class SBOL2Graph extends Graph {
         return seq
     }
 
+    createModel(uriPrefix:string, id:string, version?:string):S2Model {
+
+        const identified:S2Identified =
+            S2IdentifiedFactory.createTopLevel(this, Types.SBOL2.Model, uriPrefix, id, undefined, version)
+
+        const model:S2Model = new S2Model(this, identified.uri)
+
+        return model
+    }
+
 
     createImplementation(uriPrefix:string, id:string, version?:string):S2Implementation {
 
@@ -189,6 +200,13 @@ export default class SBOL2Graph extends Graph {
 
         return this.instancesOfType(Types.SBOL2.Collection)
                     .map((uri) => new S2Collection(this, uri))
+
+    }
+
+    get models():Array<S2Model> {
+
+        return this.instancesOfType(Types.SBOL2.Model)
+                    .map((uri) => new S2Model(this, uri))
 
     }
 
@@ -532,6 +550,9 @@ export default class SBOL2Graph extends Graph {
 
         if(type === Types.Prov.Activity)
             return new S2ProvActivity(this, uri)
+
+        if(type === Types.SBOL2.Model)
+            return new S2Model(this, uri)
 
         throw new Error('unknown type: ' + uri)
 

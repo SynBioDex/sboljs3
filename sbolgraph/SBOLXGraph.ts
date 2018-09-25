@@ -26,6 +26,7 @@ import {
     SXParticipation,
     SXInteraction,
     SXCollection,
+    SXModel,
     SBOL2Graph
 } from '.'
 
@@ -83,6 +84,16 @@ export default class SBOLXGraph extends Graph {
         seq.elements = ''
 
         return seq
+    }
+
+    createModel(uriPrefix:string, id:string, version?:string):SXModel {
+
+        const identified:SXIdentified =
+            SXIdentifiedFactory.createTopLevel(this, Types.SBOL2.Model, uriPrefix, id, undefined, version)
+
+        const model:SXModel = new SXModel(this, identified.uri)
+
+        return model
     }
 
     get sequences():Array<SXSequence> {
@@ -293,6 +304,9 @@ export default class SBOLXGraph extends Graph {
 
             if(type === Types.SBOLX.Collection)
                 return new SXCollection(this, uri)
+
+            if(type === Types.SBOLX.Model)
+                return new SXModel(this, uri)
 
             throw new Error('unknown type: ' + uri)
         }

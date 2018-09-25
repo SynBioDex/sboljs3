@@ -16,6 +16,7 @@ import SXThingWithLocation from './SXThingWithLocation';
 import SXLocation from './SXLocation'
 import SXOrientedLocation from './SXOrientedLocation'
 import SXMapsTo from './SXMapsTo';
+import { SXModel } from '..';
 
 export default class SXComponent extends SXIdentified {
 
@@ -101,6 +102,14 @@ export default class SXComponent extends SXIdentified {
         return this.getUriProperties(Predicates.SBOLX.hasSequenceFeature)
                    .map((uri:string) => new SXSequenceFeature(this.graph, uri))
 
+    }
+
+    get containedObjects():Array<SXIdentified> {
+
+        return (this.subComponents as SXIdentified[])
+                   .concat(this.interactions)
+                   .concat(this.sequenceConstraints)
+                   .concat(this.sequenceFeatures)
     }
 
     get annotatedLocations():Array<SXLocation> {
@@ -230,6 +239,11 @@ export default class SXComponent extends SXIdentified {
 
         return interaction
     }
+
+    addModel(model:SXModel) {
+        this.graph.add(node.createUriNode(this.uri), node.createUriNode(Predicates.SBOLX.hasModel), node.createUriNode(model.uri))
+    }
+
 
 
 

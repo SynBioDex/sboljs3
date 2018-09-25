@@ -80,6 +80,12 @@ export default class SXIdentified extends SXFacade {
 
     }
 
+    get containedObjects():Array<SXIdentified> {
+
+        return []
+
+    }
+
     isSiblingOf(other:SXIdentified):boolean {
 
         let ourContainer = this.containingObject
@@ -98,6 +104,28 @@ export default class SXIdentified extends SXFacade {
                 return false
             }
         }
+    }
+
+    getSiblings():Array<SXIdentified> {
+
+        let ourContainer = this.containingObject
+
+        if(!ourContainer) {
+            return []
+        }
+
+        let containedObjects = ourContainer.containedObjects
+
+        // remove us from the list
+        //
+        for(let i = 0; i < containedObjects.length; ++ i) {
+            if(containedObjects[i].uri === this.uri) {
+                containedObjects.splice(i, 1)
+                break
+            }
+        }
+
+        return containedObjects
     }
 
 }
