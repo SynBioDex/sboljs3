@@ -103,6 +103,14 @@ export default class SXComponent extends SXIdentified {
 
     }
 
+    get containedObjects():Array<SXIdentified> {
+
+        return (this.subComponents as SXIdentified[])
+                   .concat(this.interactions)
+                   .concat(this.sequenceConstraints)
+                   .concat(this.sequenceFeatures)
+    }
+
     get annotatedLocations():Array<SXLocation> {
 
         const all:Array<SXLocation> = []
