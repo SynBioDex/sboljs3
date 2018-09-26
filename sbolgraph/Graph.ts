@@ -36,9 +36,10 @@ export default class Graph {
             throw new Error('one of s/p/o were undefined')
         }
 
+        
         const res = this.graph.match(s, p, o).toArray()
 
-        //console.log('Match { ' + s + ', ' + p + ', ' + o + ' } => ' + res.length)
+        // console.log('Match { ' + s + ', ' + p + ', ' + o + ' } => ' + res.length)
 
         return res
     }
@@ -220,10 +221,11 @@ export default class Graph {
 
     getType(uri:string):string {
 
+        console.log(uri)
         const type:string|undefined = triple.objectUri(
             this.matchOne(uri, Predicates.a, null)
         )
-
+        console.log(type)
         if(!type) {
             throw new Error(uri + ' has no type?')
         }

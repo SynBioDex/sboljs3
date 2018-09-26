@@ -21,11 +21,20 @@ export default class SEP21Experiment extends S2Identified {
         return 'https://github.com/SynBioDex/SEPs/blob/sep21/sep_021.md#Experiment'
     }
 
-    get experimentalData():Array<S2Identified> {
+    get experimentalData():Array<SEP21ExperimentalData> {
 
-        return this.getUriProperties('https://github.com/SynBioDex/SEPs/blob/sep21/sep_021.md#experimentalData')
-                   .map((uri:string) => this.graph.uriToFacade(uri))
-                   .filter((r:S2Identified) => r !== undefined) as Array<S2Identified>
+        let result:SEP21ExperimentalData[] = []
+        let expDataURIs = this.getUriProperties('https://github.com/SynBioDex/SEPs/blob/sep21/sep_021.md#experimentalData')
+
+        for (let uri of expDataURIs){
+            result.push(new SEP21ExperimentalData(this.graph, uri))
+        }
+
+        return result
+
+        // return this.getUriProperties('https://github.com/SynBioDex/SEPs/blob/sep21/sep_021.md#experimentalData')
+        //            .map((uri:string) => this.graph.uriToFacade(uri))
+        //            .filter((r:SEP21ExperimentalData) => r !== undefined) as Array<SEP21ExperimentalData>
 
     }
 

@@ -137,6 +137,15 @@ export default class SBOL2Graph extends Graph {
 
     }
 
+    createExperimentalData(uriPrefix:string, id:string, version?:string):SEP21ExperimentalData {
+
+        const identified:S2Identified =
+            S2IdentifiedFactory.createTopLevel(this, 'https://github.com/SynBioDex/SEPs/blob/sep21/sep_021.md#ExperimentalData', uriPrefix, id, undefined, version)
+
+        return new SEP21ExperimentalData(this, identified.uri)
+
+    }
+
     createProvActivity(uriPrefix:string, id:string, version?:string):S2ProvActivity {
 
         const identified:S2Identified =
@@ -258,6 +267,23 @@ export default class SBOL2Graph extends Graph {
 
     }
 
+    getExperiment(uri):SEP21Experiment|null {
+
+        if(this.getType(uri) !== 'https://github.com/SynBioDex/SEPs/blob/sep21/sep_021.md#Experiment')
+            return null
+
+        return new SEP21Experiment(this, uri)
+
+    }
+
+    getExperimentalData(uri):SEP21ExperimentalData|null {
+
+        if(this.getType(uri) !== 'https://github.com/SynBioDex/SEPs/blob/sep21/sep_021.md#ExperimentalData')
+            return null
+
+        return new SEP21ExperimentalData(this, uri)
+
+    }
 
     get rootComponentDefinitions():Array<S2ComponentDefinition> {
 
