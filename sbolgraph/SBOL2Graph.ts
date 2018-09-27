@@ -45,6 +45,7 @@ import genbankToSBOL2 from './conversion/genbankToSBOL2';
 import S2Implementation from './sbol2/S2Implementation';
 import SEP21Experiment from './sbol2/SEP21Experiment';
 import SEP21ExperimentalData from './sbol2/SEP21ExperimentalData';
+import { S2Attachment } from '.';
 
 export default class SBOL2Graph extends Graph {
 
@@ -579,6 +580,9 @@ export default class SBOL2Graph extends Graph {
 
         if(type === Types.SBOL2.Model)
             return new S2Model(this, uri)
+
+        if(type === Types.SBOL2.Attachment)
+            return new S2Attachment(this, uri)
 
         throw new Error('unknown type: ' + uri)
 
