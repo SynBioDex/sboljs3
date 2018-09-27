@@ -221,11 +221,9 @@ export default class Graph {
 
     getType(uri:string):string {
 
-        console.log(uri)
         const type:string|undefined = triple.objectUri(
             this.matchOne(uri, Predicates.a, null)
         )
-        console.log(type)
         if(!type) {
             throw new Error(uri + ' has no type?')
         }
