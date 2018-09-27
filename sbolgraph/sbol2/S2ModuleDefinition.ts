@@ -41,6 +41,14 @@ export default class S2ModuleDefinition extends S2Identified {
         this.graph.removeMatches(this.uri, Predicates.SBOL2.role, role)
     }
 
+    get containedObjects():Array<S2Identified> {
+
+        return (this.modules as S2Identified[])
+                   .concat(this.functionalComponents)
+                   .concat(this.interactions)
+                   .concat(this.models)
+    }
+
     get modules():Array<S2ModuleInstance> {
 
         return this.getUriProperties(Predicates.SBOL2.module)

@@ -11,6 +11,7 @@ import * as node from '../node'
 import { Types, Predicates, Specifiers, Prefixes } from 'bioterms'
 import S2Interaction from "./S2Interaction";
 import S2IdentifiedFactory from './S2IdentifiedFactory';
+import S2ComponentInstance from './S2ComponentInstance';
 
 export default class S2FunctionalComponent extends S2Identified {
 
@@ -94,6 +95,21 @@ export default class S2FunctionalComponent extends S2Identified {
                 )
                 .filter((el) => !!el)
                 .map((mapsToUri) => new S2MapsTo(this.graph, mapsToUri as string))
+    }
+
+    createMapping(local:S2FunctionalComponent, remote:S2ComponentInstance, refinement:string):S2MapsTo {
+ 
+        let id = local.displayId + '_mapsto_' + remote.displayId
+
+        let identified = S2IdentifiedFactory.createChild(this.graph, Types.SBOL2.MapsTo, this, id, id, this.version)
+
+        let mapsTo = new S2MapsTo(this.graph, identified.uri)
+
+        mapsTo.local = local
+        mapsTo.remote = remote
+        mapsTo.refinement =refinement
+
+        return mapsTo
     }
 
     get containingModuleDefinition():S2ModuleDefinition {
