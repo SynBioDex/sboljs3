@@ -66,7 +66,7 @@ export default class S2Implementation extends S2Identified {
         }
     }
 
-    get design():S2ComponentDefinition|S2ModuleDefinition|undefined{
+    get design():S2Identified|undefined{
 
         let design_uri = this.getUriProperty(Predicates.Prov.wasDerivedFrom)
 
@@ -74,25 +74,24 @@ export default class S2Implementation extends S2Identified {
             return undefined
         }
 
-        // NEED TO FIX THIS GETTER, DOESN'T WORK FOR SOME REASON
-        return new S2ComponentDefinition(this.graph, design_uri)
+        return new S2Identified(this.graph, design_uri)
 
-        console.log(this.graph.getTopLevelsWithPrefix(design_uri))
+        // console.log(this.graph.getTopLevelsWithPrefix(design_uri))
 
-        let design = this.graph.uriToFacade(design_uri)
+        // let design = this.graph.uriToFacade(design_uri)
 
-        console.log(design)
+        // console.log(design)
 
-        if(design instanceof S2ComponentDefinition)
-            return design as S2ComponentDefinition
+        // if(design instanceof S2ComponentDefinition)
+        //     return design as S2ComponentDefinition
 
-        if (design instanceof S2ModuleDefinition)
-            return design as S2ModuleDefinition
+        // if (design instanceof S2ModuleDefinition)
+        //     return design as S2ModuleDefinition
 
-        throw new Error('design has wrong type')
+        // throw new Error('design has wrong type')
     }
 
-    set design(design:S2ComponentDefinition|S2ModuleDefinition|undefined) {
+    set design(design:S2Identified|undefined) {
 
         if(design === undefined) {
             this.deleteProperty(Predicates.Prov.wasDerivedFrom)
