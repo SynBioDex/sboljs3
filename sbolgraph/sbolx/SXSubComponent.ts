@@ -98,13 +98,6 @@ export default class SXSubComponent extends SXThingWithLocation {
 
     }
 
-    addOrientedLocation():SXOrientedLocation {
-
-        const loc:SXIdentified = SXIdentifiedFactory.createChild(this.graph, Types.SBOLX.OrientedLocation, this, 'location', undefined, this.version)
-
-        return new SXOrientedLocation(loc.graph, loc.uri)
-    }
-
     createAfter(component:SXComponent):SXSubComponent {
 
         const container:SXComponent = this.containingComponent

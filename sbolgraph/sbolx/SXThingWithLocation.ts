@@ -7,6 +7,7 @@ import SXIdentifiedFactory from './SXIdentifiedFactory'
 import * as node from '../node'
 
 import { Predicates, Types } from 'bioterms'
+import SXOrientedLocation from './SXOrientedLocation';
 
 export default class SXThingWithLocation extends SXIdentified {
 
@@ -93,6 +94,46 @@ export default class SXThingWithLocation extends SXIdentified {
         range.end = end
 
         return range
+    }
+
+    addOrientedLocation():SXOrientedLocation {
+
+        const loc:SXIdentified = SXIdentifiedFactory.createChild(this.graph, Types.SBOLX.OrientedLocation, this, 'location', undefined, this.version)
+
+        this.graph.add(node.createUriNode(this.uri), node.createUriNode(Predicates.SBOLX.hasLocation), node.createUriNode(loc.uri))
+
+        return new SXOrientedLocation(loc.graph, loc.uri)
+    }
+
+    setOrientation(orientation:string) {
+
+        let hadOrientedLocation = false
+
+        if(this.locations.length > 0) {
+            for(let location of this.locations) {
+                if(location instanceof SXOrientedLocation) {
+                    location.orientation = orientation
+                    hadOrientedLocation = true
+                }
+            }
+        }
+
+        if(hadOrientedLocation)
+            return
+
+        let loc = this.addOrientedLocation()
+        loc.orientation = orientation
+    }
+
+    getOrientation():string|undefined {
+
+        for (let location of this.locations) {
+            if (location instanceof SXOrientedLocation) {
+                return location.orientation
+            }
+        }
+
+        return undefined
     }
 
 }
