@@ -25,6 +25,10 @@ export default class SXOrientedLocation extends SXLocation {
         this.setUriProperty(Predicates.SBOLX.orientation, orientation)
 
     }
+
+    isFixed():boolean {
+        return false
+    }
 }
 
 

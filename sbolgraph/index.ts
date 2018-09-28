@@ -57,6 +57,8 @@ import S2ProvPlan from './sbol2/S2ProvPlan';
 import S2ProvActivity from './sbol2/S2ProvActivity';
 import S2ProvUsage from './sbol2/S2ProvUsage';
 import S2ProvAssociation from './sbol2/S2ProvAssociation';
+import convertToSBOL2 from './convertToSBOL2';
+import convertToSBOLX from './convertToSBOLX';
 
 export {
 
@@ -118,7 +120,10 @@ export {
     Repository,
     SearchQuery,
     SearchResult,
-    serialize
+    serialize,
+
+    convertToSBOL2,
+    convertToSBOLX
 }
 
 

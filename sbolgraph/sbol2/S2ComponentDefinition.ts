@@ -43,6 +43,12 @@ export default class S2ComponentDefinition extends S2Identified {
 
     }
 
+    addType(uri:string) {
+        this.graph.insertProperties(this.uri, {
+            [Predicates.SBOL2.type]: node.createUriNode(uri)
+        })
+    }
+
     get displayType():string {
         for(let role of this.roles) {
             
@@ -54,6 +60,13 @@ export default class S2ComponentDefinition extends S2Identified {
         }
            
         return "Design"
+    }
+
+    get containedObjects():Array<S2Identified> {
+
+        return (this.components as S2Identified[])
+                   .concat(this.sequenceConstraints)
+                   .concat(this.sequenceAnnotations)
     }
 
     get components():Array<S2ComponentInstance> {

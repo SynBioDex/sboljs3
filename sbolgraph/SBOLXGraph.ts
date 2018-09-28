@@ -110,11 +110,26 @@ export default class SBOLXGraph extends Graph {
 
     }
 
+    get collections():Array<SXCollection> {
+
+        return this.instancesOfType(Types.SBOLX.Collection)
+                    .map((uri) => new SXCollection(this, uri))
+
+    }
+
     get rootComponents():Array<SXComponent> {
 
         return this.instancesOfType(Types.SBOLX.Component).filter((uri) => {
             return !this.hasMatch(null, Predicates.SBOLX.instanceOf, uri)
         }).map((uri) => new SXComponent(this, uri))
+
+    }
+
+    getInstancesOfComponent(component:SXComponent):SXSubComponent[] {
+
+        return this.match(null, Predicates.SBOLX.instanceOf, component.uri)
+                   .map(triple.subjectUri)
+                   .map((uri) => new SXSubComponent(this, uri as string))
 
     }
 
@@ -384,8 +399,6 @@ export default class SBOLXGraph extends Graph {
         return name.replace(/\s/, '_')
 
     }
-
-
 
 
 }

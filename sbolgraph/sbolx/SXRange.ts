@@ -41,6 +41,10 @@ export default class SXRange extends SXOrientedLocation {
             this.deleteProperty(Predicates.SBOLX.rangeEnd)
         }
     }
+
+    isFixed():boolean {
+        return true
+    }
 }
 
 

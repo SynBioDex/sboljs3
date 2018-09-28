@@ -57,6 +57,19 @@ export default class S2MapsTo extends S2Identified {
 
     }
 
+    set refinement(refinement:string|undefined) {
+
+        if(refinement)
+            this.setStringProperty(Predicates.SBOL2.refinement, refinement)
+        else
+            this.deleteProperty(Predicates.SBOL2.refinement)
+
+    }
+
+    get refinement():string|undefined {
+        return this.getStringProperty(Predicates.SBOL2.refinement)
+    }
+
     get containingObject():S2Identified|undefined {
 
         const uri = triple.subjectUri(

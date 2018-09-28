@@ -367,7 +367,10 @@ function copyLocations(a:S2SequenceAnnotation, b:SXThingWithLocation) {
             if(start === undefined || end === undefined)
                 throw new Error('missing start/end on range')
 
-            b.addRange(start, end)
+            let loc = b.addRange(start, end)
+
+            loc.orientation = range.orientation === Specifiers.SBOL2.Orientation.ReverseComplement
+                ? Specifiers.SBOLX.Orientation.ReverseComplement : Specifiers.SBOLX.Orientation.Inline
 
         } else {
 

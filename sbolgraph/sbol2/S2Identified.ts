@@ -110,6 +110,10 @@ export default class S2Identified extends S2Facade {
 
     }
 
+    get containedObjects():S2Identified[] {
+        return []
+    }
+
     get containingCollections():Array<S2Collection> {
 
         return this.graph.match(null, Predicates.SBOL2.member, this.uri)
@@ -128,6 +132,48 @@ export default class S2Identified extends S2Facade {
             return this.uri
         }
 
+    }
+
+    isSiblingOf(other:S2Identified):boolean {
+
+        let ourContainer = this.containingObject
+        let theirContainer = other.containingObject
+
+        if(!ourContainer) {
+            if(!theirContainer) {
+                return true
+            } else {
+                return false
+            }
+        } else {
+            if(theirContainer && theirContainer.uri === ourContainer.uri) {
+                return true
+            } else {
+                return false
+            }
+        }
+    }
+
+    getSiblings():Array<S2Identified> {
+
+        let ourContainer = this.containingObject
+
+        if(!ourContainer) {
+            return []
+        }
+
+        let containedObjects = ourContainer.containedObjects
+
+        // remove us from the list
+        //
+        for(let i = 0; i < containedObjects.length; ++ i) {
+            if(containedObjects[i].uri === this.uri) {
+                containedObjects.splice(i, 1)
+                break
+            }
+        }
+
+        return containedObjects
     }
 }
 
