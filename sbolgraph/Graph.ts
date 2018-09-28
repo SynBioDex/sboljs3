@@ -122,8 +122,7 @@ export default class Graph {
                 object: arguments[2],
             })
 
-            this.fireWatchers(arguments[0])
-            this.fireGlobalWatchers()
+            this.touchSubject(arguments[0])
 
         } else {
 
@@ -142,11 +141,15 @@ export default class Graph {
             })
 
             w.forEach((uri:string) => {
-                this.fireWatchers(uri)
-                this.fireGlobalWatchers()
+                this.touchSubject(uri)
             })
 
         }
+    }
+
+    touchSubject(subject:string) {
+        this.fireWatchers(subject)
+        this.fireGlobalWatchers()
     }
 
     insertProperties(subject:string, properties:Object):void {
@@ -205,7 +208,7 @@ export default class Graph {
         this.graph.removeMatches(s, p, o)
 
         w.forEach((uri: string) => {
-            this.fireWatchers(uri)
+            this.touchSubject(uri)
         })
 
         this.fireGlobalWatchers()

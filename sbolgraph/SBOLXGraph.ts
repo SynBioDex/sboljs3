@@ -401,8 +401,6 @@ export default class SBOLXGraph extends Graph {
     }
 
 
-
-
 }
 
 
