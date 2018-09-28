@@ -86,4 +86,9 @@ export default class SEP21Experiment extends S2Identified {
         }
     }
 
+    get displayType():string {
+        
+        return "Experiment"
+    }
+
 }

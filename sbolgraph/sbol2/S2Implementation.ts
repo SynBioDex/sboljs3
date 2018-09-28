@@ -100,6 +100,10 @@ export default class S2Implementation extends S2Identified {
         }
     }
     
+    get displayType():string {
+        
+        return "Construct"
+    }
 
 
 }

@@ -53,6 +53,10 @@ export default class S2Identified extends S2Facade {
         this.setStringProperty(Predicates.SBOL2.displayId, displayId)
     }
 
+    set displayType(type:string) {
+        this.setUriProperty(Predicates.a, type)
+    }
+
     get version():string|undefined {
         return this.getStringProperty(Predicates.SBOL2.version)
     }

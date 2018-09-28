@@ -45,13 +45,15 @@ export default class S2ComponentDefinition extends S2Identified {
 
     get displayType():string {
         for(let role of this.roles) {
+            
             let name = uriToName(role)
             
             if(name) {
                 return name
             }
         }
-        return super.displayType
+           
+        return "Design"
     }
 
     get components():Array<S2ComponentInstance> {

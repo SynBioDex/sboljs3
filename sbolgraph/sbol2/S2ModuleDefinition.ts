@@ -8,7 +8,7 @@ import SBOL2Graph from '../SBOL2Graph'
 
 import * as triple from '../triple'
 import * as node from '../node'
-import { Predicates, Types } from 'bioterms'
+import { Predicates, Types, uriToName } from 'bioterms'
 import S2IdentifiedFactory from '../sbol2/S2IdentifiedFactory';
 import { S2ComponentDefinition } from '..';
 import S2Model from './S2Model';
@@ -114,6 +114,19 @@ export default class S2ModuleDefinition extends S2Identified {
         this.addFunctionalComponent(fc)
 
         return fc
+    }
+
+    get displayType():string {
+        for(let role of this.roles) {
+            
+            let name = uriToName(role)
+            
+            if(name) {
+                return name
+            }
+        }
+
+        return "Design"
     }
 }
 
