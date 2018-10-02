@@ -12,6 +12,7 @@ import {
     S2Range,
     S2Identified,
     S2Collection,
+    S2GenericLocation,
 
     SXSubComponent,
     S2ComponentInstance,
@@ -388,6 +389,13 @@ function copyLocations(a:S2SequenceAnnotation, b:SXThingWithLocation) {
             let loc = b.addRange(start, end)
 
             loc.orientation = range.orientation === Specifiers.SBOL2.Orientation.ReverseComplement
+                ? Specifiers.SBOLX.Orientation.ReverseComplement : Specifiers.SBOLX.Orientation.Inline
+
+        } else if(location instanceof S2GenericLocation) {
+
+            let loc = b.addOrientedLocation()
+
+            loc.orientation = location.orientation === Specifiers.SBOL2.Orientation.ReverseComplement
                 ? Specifiers.SBOLX.Orientation.ReverseComplement : Specifiers.SBOLX.Orientation.Inline
 
         } else {
