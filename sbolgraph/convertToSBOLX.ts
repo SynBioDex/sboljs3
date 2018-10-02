@@ -34,7 +34,7 @@ import SXThingWithLocation from './sbolx/SXThingWithLocation';
 import S2Model from './sbol2/S2Model';
 import SXIdentifiedFactory from './sbolx/SXIdentifiedFactory'
 
-
+import * as node from './node'
 
 export default function convertToSBOLX(graph:SBOL2Graph):SBOLXGraph {
 
@@ -258,6 +258,8 @@ export default function convertToSBOLX(graph:SBOL2Graph):SBOLXGraph {
 
             let subModule = _subModule as SXSubComponent
 
+            xgraph.add(module.uri, Predicates.SBOLX.hasSubComponent, node.createUriNode(subModule.uri))
+
             let def = map.get(sm.definition.uri)
 
             if(def && def instanceof SXComponent) {
@@ -278,6 +280,8 @@ export default function convertToSBOLX(graph:SBOL2Graph):SBOLXGraph {
                 SXIdentifiedFactory.createChild(xgraph, Types.SBOLX.SubComponent, module, sc.displayId || 'subcomponent', sc.name)
 
             let subModule = _subModule as SXSubComponent
+
+            xgraph.add(module.uri, Predicates.SBOLX.hasSubComponent, node.createUriNode(subModule.uri))
 
             let def = map.get(sc.definition.uri)
 
