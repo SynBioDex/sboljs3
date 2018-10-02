@@ -6,7 +6,6 @@ import S2Identified from './S2Identified'
 import * as triple from '../triple'
 import * as node from '../node'
 import { Types, Predicates, Specifiers } from 'bioterms'
-import CompliantURIs from "../SBOL2CompliantURIs";
 
 export default class S2Collection extends S2Identified {
 

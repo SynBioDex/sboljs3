@@ -48,12 +48,17 @@ export default class SXIdentified extends SXFacade {
         this.setStringProperty(Predicates.SBOLX.id, id)
     }
 
-    get version():string {
-        return this.getRequiredStringProperty(Predicates.SBOLX.version)
+    get version():string|undefined {
+        return this.getStringProperty(Predicates.SBOLX.version)
     }
 
-    set version(version:string) {
-        this.setStringProperty(Predicates.SBOLX.version, version)
+    set version(version:string|undefined) {
+
+        if(version !== undefined) {
+            this.setStringProperty(Predicates.SBOLX.version, version)
+        } else {
+            this.deleteProperty(Predicates.SBOLX.version)
+        }
     }
 
     get persistentIdentity():string {
@@ -66,11 +71,16 @@ export default class SXIdentified extends SXFacade {
 
     get uriPrefix():string {
 
-        const version:string = this.version
+        const version:string|undefined = this.version
         const id:string = this.id
 
-        return this.uri.substr(0,
-            this.uri.length - id.length - version.length - 1)
+        if(version !== undefined) {
+            return this.uri.substr(0,
+                this.uri.length - id.length - version.length - 1)
+        } else {
+            return this.uri.substr(0,
+                this.uri.length - id.length)
+        }
 
     }
 

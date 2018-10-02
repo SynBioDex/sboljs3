@@ -5,11 +5,13 @@ import S2ComponentInstance from './S2ComponentInstance'
 import S2Sequence from './S2Sequence'
 import S2SequenceAnnotation from './S2SequenceAnnotation'
 import S2SequenceConstraint from './S2SequenceConstraint'
+import S2Range from './S2Range'
 
 import * as triple from '../triple'
 import * as node from '../node'
 import { Types, Predicates, Specifiers, uriToName } from 'bioterms'
-import CompliantURIs from "../SBOL2CompliantURIs";
+
+import S2IdentifiedFactory from './S2IdentifiedFactory'
 
 export default class S2ComponentDefinition extends S2Identified {
 
@@ -152,37 +154,26 @@ export default class S2ComponentDefinition extends S2Identified {
 
     addComponentByDefinition(componentDefinition:S2ComponentDefinition):S2ComponentInstance {
 
-        const cUri:string = this.graph.generateURI(this.persistentIdentity + '/' + componentDefinition.displayId + '$n?$/1')
+        let identified = S2IdentifiedFactory.createChild(this.graph, Types.SBOL2.Component, this, componentDefinition.displayId || 'subcomponent', this.version)
+        let component = new S2ComponentInstance(this.graph, identified.uri)
 
-        this.graph.insertProperties(cUri, {
-            [Predicates.a]: node.createUriNode(Types.SBOL2.Component),
-            [Predicates.SBOL2.displayId]: node.createStringNode(CompliantURIs.getDisplayId(cUri)),
-            [Predicates.SBOL2.version]: node.createStringNode(CompliantURIs.getVersion(cUri)),
-            [Predicates.SBOL2.persistentIdentity]: node.createUriNode(CompliantURIs.getPersistentIdentity(cUri)),
-            [Predicates.SBOL2.definition]: node.createUriNode(componentDefinition.uri)
-        })
+        component.definition = componentDefinition
 
-        this.graph.add(this.uri, Predicates.SBOL2.component, node.createUriNode(cUri))
+        this.graph.add(this.uri, Predicates.SBOL2.component, node.createUriNode(component.uri))
 
-        return new S2ComponentInstance(this.graph, cUri)
+        return component
     }
-
-
 
     addSequenceAnnotationForComponent(componentInstance:S2ComponentInstance):S2SequenceAnnotation {
 
-        const saUri:string = this.graph.generateURI(this.persistentIdentity + '/' + componentInstance.displayId + '_sequenceAnnotation$n?$/1')
+        let identified = S2IdentifiedFactory.createChild(this.graph, Types.SBOL2.SequenceAnnotation, this, componentInstance.displayId + '_sequenceAnnotation', this.version)
+        let sequenceAnnotation = new S2SequenceAnnotation(this.graph, identified.uri)
 
-        this.graph.insertProperties(saUri, {
-            [Predicates.a]: node.createUriNode(Types.SBOL2.SequenceAnnotation),
-            [Predicates.SBOL2.displayId]: node.createStringNode(CompliantURIs.getDisplayId(saUri)),
-            [Predicates.SBOL2.version]: node.createStringNode(CompliantURIs.getVersion(saUri)),
-            [Predicates.SBOL2.persistentIdentity]: node.createUriNode(CompliantURIs.getPersistentIdentity(saUri))
-        })
+        sequenceAnnotation.component = componentInstance
 
-        this.graph.add(this.uri, Predicates.SBOL2.component, node.createUriNode(saUri))
+        this.graph.add(this.uri, Predicates.SBOL2.sequenceAnnotation, node.createUriNode(sequenceAnnotation.uri))
 
-        return new S2SequenceAnnotation(this.graph, saUri)
+        return sequenceAnnotation
 
     }
 
@@ -202,44 +193,30 @@ export default class S2ComponentDefinition extends S2Identified {
     }
 
 
-
     annotateRange(start:number, end:number, name:string):S2SequenceAnnotation {
-
-        const saUri = this.graph.generateURI(this.persistentIdentity + '/' + this.graph.nameToDisplayId(name) + '$n$/' + this.version)
 
         this.graph.startIgnoringWatchers()
 
-        this.graph.insertProperties(saUri, {
-            [Predicates.a]: node.createUriNode(Types.SBOL2.SequenceAnnotation),
-            [Predicates.SBOL2.persistentIdentity]: node.createUriNode(CompliantURIs.getPersistentIdentity(saUri)),
-            [Predicates.SBOL2.displayId]: node.createStringNode(CompliantURIs.getDisplayId(saUri)),
-            [Predicates.SBOL2.version]: node.createStringNode(CompliantURIs.getVersion(saUri))
-        })
-
-        const sa:S2SequenceAnnotation = new S2SequenceAnnotation(this.graph, saUri)
+        let identified = S2IdentifiedFactory.createChild(this.graph, Types.SBOL2.SequenceAnnotation, this, 'anno_' + name, this.version)
+        let sequenceAnnotation = new S2SequenceAnnotation(this.graph, identified.uri)
 
         this.graph.insertProperties(this.uri, {
-            [Predicates.SBOL2.sequenceAnnotation]: node.createUriNode(saUri)
+            [Predicates.SBOL2.sequenceAnnotation]: node.createUriNode(sequenceAnnotation.uri)
         })
 
-        const rangeUri = sa.persistentIdentity + '/range/' + sa.version
+        let rangeIdentified = S2IdentifiedFactory.createChild(this.graph, Types.SBOL2.Range, sequenceAnnotation, 'range', this.version)
+        let range = new S2Range(this.graph, rangeIdentified.uri)
 
-        this.graph.insertProperties(rangeUri, {
-            [Predicates.a]: node.createUriNode(Types.SBOL2.Range),
-            [Predicates.SBOL2.persistentIdentity]: node.createUriNode(CompliantURIs.getPersistentIdentity(rangeUri)),
-            [Predicates.SBOL2.displayId]: node.createStringNode(CompliantURIs.getDisplayId(rangeUri)),
-            [Predicates.SBOL2.version]: node.createStringNode(CompliantURIs.getVersion(rangeUri)),
-            [Predicates.SBOL2.start]: node.createIntNode(start),
-            [Predicates.SBOL2.end]: node.createIntNode(end)
+        this.graph.insertProperties(sequenceAnnotation.uri, {
+            [Predicates.SBOL2.location]: node.createUriNode(range.uri)
         })
 
-        this.graph.insertProperties(saUri, {
-            [Predicates.SBOL2.location]: node.createUriNode(rangeUri)
-        })
+        range.start = start
+        range.end = end
 
         this.graph.stopIgnoringWatchers()
 
-        return sa
+        return sequenceAnnotation
     }
 
 

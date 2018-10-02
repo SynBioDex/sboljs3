@@ -2,7 +2,6 @@
 import SXIdentified from "./SXIdentified";
 import { Predicates } from 'bioterms'
 import * as node from '../node'
-import CompliantURIs from '../SBOL2CompliantURIs'
 import SBOLXGraph from '../SBOLXGraph'
 
 export default class SXIdentifiedFactory {
@@ -16,17 +15,21 @@ export default class SXIdentifiedFactory {
 
         id = nameToID(id)
 
-        if(version === undefined)
-            version = '1'
+        let versionSuffix = version !== undefined ? '/' + version : ''
 
-        const uri:string = graph.generateURI(uriPrefix + id + '$n?$/' + version)
+        const uri:string = graph.generateURI(uriPrefix + id + '$n?$' + versionSuffix)
 
         graph.insertProperties(uri, {
             [Predicates.a]: node.createUriNode(type),
-            [Predicates.SBOLX.id]: node.createStringNode(CompliantURIs.getDisplayId(uri)),
-            [Predicates.SBOLX.persistentIdentity]: node.createUriNode(CompliantURIs.getPersistentIdentity(uri)),
-            [Predicates.SBOLX.version]: node.createStringNode(CompliantURIs.getVersion(uri))
+            [Predicates.SBOLX.id]: node.createStringNode(id),
+            [Predicates.SBOLX.persistentIdentity]: node.createUriNode(extractPersistentIdentity(uri, version)),
         })
+
+        if(version !== undefined) {
+            graph.insertProperties(uri, {
+                [Predicates.SBOLX.version]: node.createStringNode(version)
+            })
+        }
 
         if(name !== undefined) {
             graph.insertProperties(uri, {
@@ -47,18 +50,22 @@ export default class SXIdentifiedFactory {
 
         id = nameToID(id)
 
-        if(version === undefined)
-            version = '1'
+        let versionSuffix = version !== undefined ? '/' + version : ''
 
         const uri:string = graph.generateURI(
-            parent.persistentIdentity + '/' + id + '$n?$/' + version)
+            parent.persistentIdentity + '/' + id + '$n?$' + versionSuffix)
 
         graph.insertProperties(uri, {
             [Predicates.a]: node.createUriNode(type),
-            [Predicates.SBOLX.id]: node.createStringNode(CompliantURIs.getDisplayId(uri)),
-            [Predicates.SBOLX.persistentIdentity]: node.createUriNode(CompliantURIs.getPersistentIdentity(uri)),
-            [Predicates.SBOLX.version]: node.createStringNode(CompliantURIs.getVersion(uri))
+            [Predicates.SBOLX.id]: node.createStringNode(id),
+            [Predicates.SBOLX.persistentIdentity]: node.createUriNode(extractPersistentIdentity(uri, version))
         })
+
+        if(version !== undefined) {
+            graph.insertProperties(uri, {
+                [Predicates.SBOLX.version]: node.createStringNode(version)
+            })
+        }
 
         if(name !== undefined) {
             graph.insertProperties(uri, {
@@ -77,3 +84,14 @@ function nameToID(name:string):string {
     return name.replace(/\s/, '_')
 
 }
+
+function extractPersistentIdentity(uri:string, version:string|undefined) {
+    if(version !== undefined) {
+        return uri.substr(0, uri.length - version.length - 1)
+    } else {
+        return uri
+    }
+}
+
+
+

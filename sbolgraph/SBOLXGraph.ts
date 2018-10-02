@@ -57,6 +57,9 @@ export default class SBOLXGraph extends Graph {
 
     createComponent(uriPrefix:string, id:string, version?:string):SXComponent {
 
+        if(arguments.length < 3)
+            version = '1'
+
         const identified:SXIdentified =
             SXIdentifiedFactory.createTopLevel(this, Types.SBOLX.Component, uriPrefix, id, undefined, version)
 
@@ -66,6 +69,9 @@ export default class SBOLXGraph extends Graph {
 
     createCollection(uriPrefix:string, id:string, version?:string):SXCollection {
 
+        if(arguments.length < 3)
+            version = '1'
+
         const identified:SXIdentified =
             SXIdentifiedFactory.createTopLevel(this, Types.SBOLX.Collection, uriPrefix, id, undefined, version)
 
@@ -74,6 +80,9 @@ export default class SBOLXGraph extends Graph {
     }
 
     createSequence(uriPrefix:string, id:string, version?:string):SXSequence {
+
+        if(arguments.length < 3)
+            version = '1'
 
         const identified:SXIdentified =
             SXIdentifiedFactory.createTopLevel(this, Types.SBOLX.Sequence, uriPrefix, id, undefined, version)
@@ -87,6 +96,9 @@ export default class SBOLXGraph extends Graph {
     }
 
     createModel(uriPrefix:string, id:string, version?:string):SXModel {
+
+        if(arguments.length < 3)
+            version = '1'
 
         const identified:SXIdentified =
             SXIdentifiedFactory.createTopLevel(this, Types.SBOL2.Model, uriPrefix, id, undefined, version)
@@ -401,6 +413,18 @@ export default class SBOLXGraph extends Graph {
 
     }
 
+    printTree() {
+        for(let cd of this.components) {
+            console.log('component:' + cd.uri + ' (' + cd.id + ')')
+            for(let c of cd.subComponents) {
+                console.log(indent(1) + 'sc-> ' + c.instanceOf.uri)
+            }
+        }
+
+        function indent(n) {
+            return '        '.slice(8 - n)
+        }
+    }
 
 }
 

@@ -43,10 +43,6 @@ import SXModel from './sbolx/SXModel'
 
 import * as node from './node'
 import * as triple from './triple'
-import SBOL2CompliantURIs from './SBOL2CompliantURIs'
-import SBOLXCompliantURIs from './SBOLXCompliantURIs'
-import SBOL2Copier from './SBOL2Copier'
-import SBOLXCopier from './SBOLXCopier'
 
 import Repository from './SBOL2Repository'
 import { SearchQuery, SearchResult } from './SBOL2Repository'
@@ -113,10 +109,6 @@ export {
     Watcher,
     node,
     triple,
-    SBOL2CompliantURIs,
-    SBOLXCompliantURIs,
-    SBOL2Copier,
-    SBOLXCopier,
     Repository,
     SearchQuery,
     SearchResult,

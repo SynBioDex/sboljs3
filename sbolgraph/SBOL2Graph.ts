@@ -70,6 +70,11 @@ export default class SBOL2Graph extends Graph {
 
     createComponentDefinition(uriPrefix:string, id:string, version?:string):S2ComponentDefinition {
 
+        console.dir(arguments)
+
+        if(arguments.length < 3)
+            version = '1'
+
         const identified:S2Identified =
             S2IdentifiedFactory.createTopLevel(this, Types.SBOL2.ComponentDefinition, uriPrefix, id, undefined, version)
 
@@ -78,6 +83,9 @@ export default class SBOL2Graph extends Graph {
     }
 
     createModuleDefinition(uriPrefix:string, id:string, version?:string):S2ModuleDefinition {
+
+        if(arguments.length < 3)
+            version = '1'
 
         const identified:S2Identified =
             S2IdentifiedFactory.createTopLevel(this, Types.SBOL2.ModuleDefinition, uriPrefix, id, undefined, version)
@@ -89,6 +97,9 @@ export default class SBOL2Graph extends Graph {
 
     createCollection(uriPrefix:string, id:string, version?:string):S2Collection {
 
+        if(arguments.length < 3)
+            version = '1'
+
         const identified:S2Identified =
             S2IdentifiedFactory.createTopLevel(this, Types.SBOL2.Collection, uriPrefix, id, undefined, version)
 
@@ -97,6 +108,9 @@ export default class SBOL2Graph extends Graph {
     }
 
     createSequence(uriPrefix:string, id:string, version?:string):S2Sequence {
+
+        if(arguments.length < 3)
+            version = '1'
 
         const identified:S2Identified =
             S2IdentifiedFactory.createTopLevel(this, Types.SBOL2.Sequence, uriPrefix, id, undefined, version)
@@ -111,6 +125,9 @@ export default class SBOL2Graph extends Graph {
 
     createModel(uriPrefix:string, id:string, version?:string):S2Model {
 
+        if(arguments.length < 3)
+            version = '1'
+
         const identified:S2Identified =
             S2IdentifiedFactory.createTopLevel(this, Types.SBOL2.Model, uriPrefix, id, undefined, version)
 
@@ -122,6 +139,9 @@ export default class SBOL2Graph extends Graph {
 
     createImplementation(uriPrefix:string, id:string, version?:string):S2Implementation {
 
+        if(arguments.length < 3)
+            version = '1'
+
         const identified:S2Identified =
             S2IdentifiedFactory.createTopLevel(this, Types.SBOL2.Implementation, uriPrefix, id, undefined, version)
 
@@ -130,6 +150,9 @@ export default class SBOL2Graph extends Graph {
     }
 
     createExperiment(uriPrefix:string, id:string, version?:string):SEP21Experiment {
+
+        if(arguments.length < 3)
+            version = '1'
 
         const identified:S2Identified =
             S2IdentifiedFactory.createTopLevel(this, 'https://github.com/SynBioDex/SEPs/blob/sep21/sep_021.md#Experiment', uriPrefix, id, undefined, version)
@@ -140,6 +163,9 @@ export default class SBOL2Graph extends Graph {
 
     createExperimentalData(uriPrefix:string, id:string, version?:string):SEP21ExperimentalData {
 
+        if(arguments.length < 3)
+            version = '1'
+
         const identified:S2Identified =
             S2IdentifiedFactory.createTopLevel(this, 'https://github.com/SynBioDex/SEPs/blob/sep21/sep_021.md#ExperimentalData', uriPrefix, id, undefined, version)
 
@@ -148,6 +174,9 @@ export default class SBOL2Graph extends Graph {
     }
 
     createProvActivity(uriPrefix:string, id:string, version?:string):S2ProvActivity {
+
+        if(arguments.length < 3)
+            version = '1'
 
         const identified:S2Identified =
             S2IdentifiedFactory.createTopLevel(this, Types.Prov.Activity, uriPrefix, id, undefined, version)
@@ -158,6 +187,9 @@ export default class SBOL2Graph extends Graph {
 
     createProvAssociation(uriPrefix:string, id:string, version?:string):S2ProvAssociation {
 
+        if(arguments.length < 3)
+            version = '1'
+
         const identified:S2Identified =
             S2IdentifiedFactory.createTopLevel(this, Types.Prov.Association, uriPrefix, id, undefined, version)
 
@@ -166,6 +198,9 @@ export default class SBOL2Graph extends Graph {
     }
 
     createProvAgent(uriPrefix:string, id:string, version?:string):S2ProvAgent {
+
+        if(arguments.length < 3)
+            version = '1'
 
         const identified:S2Identified =
             S2IdentifiedFactory.createTopLevel(this, Types.Prov.Agent, uriPrefix, id, undefined, version)
@@ -176,6 +211,9 @@ export default class SBOL2Graph extends Graph {
 
     createProvPlan(uriPrefix:string, id:string, version?:string):S2ProvPlan {
 
+        if(arguments.length < 3)
+            version = '1'
+
         const identified:S2Identified =
             S2IdentifiedFactory.createTopLevel(this, Types.Prov.Plan, uriPrefix, id, undefined, version)
 
@@ -184,6 +222,9 @@ export default class SBOL2Graph extends Graph {
     }
 
     createProvUsage(uriPrefix:string, id:string, version?:string):S2ProvUsage {
+
+        if(arguments.length < 3)
+            version = '1'
 
         const identified:S2Identified =
             S2IdentifiedFactory.createTopLevel(this, Types.Prov.Usage, uriPrefix, id, undefined, version)
@@ -597,8 +638,6 @@ export default class SBOL2Graph extends Graph {
 
     add(s:any, p:any, o:any) {
 
-        console.log(arguments)
-
         if(typeof s === 'string') {
             s = node.createUriNode(s)
         }
@@ -749,6 +788,27 @@ export default class SBOL2Graph extends Graph {
             throw new Error('cant get prefix')
         }
 
+    }
+
+    printTree() {
+        for(let cd of this.componentDefinitions) {
+            console.log('component:' + cd.uri)
+            for(let c of cd.components) {
+                console.log(indent(1) + 'c-> ' + c.definition.uri)
+            }
+        }
+        for(let md of this.moduleDefinitions) {
+            console.log('module:' + md.uri)
+            for(let c of md.functionalComponents) {
+                console.log(indent(1) + 'c-> ' + c.definition.uri)
+            }
+            for(let m of md.modules) {
+                console.log(indent(1) + 'm-> ' + m.definition.uri)
+            }
+        }
+        function indent(n) {
+            return '        '.slice(8 - n)
+        }
     }
 
 }

@@ -3,12 +3,14 @@ import { SBOL2Graph, S2ComponentDefinition } from '..';
 import S2Identified from './S2Identified'
 import S2ComponentInstance from './S2ComponentInstance'
 import S2Range from './S2Range'
+import S2GenericLocation from './S2GenericLocation'
 
 import * as triple from '../triple'
 import * as node from '../node'
 import { Types, Predicates, Specifiers } from 'bioterms'
-import CompliantURIs from "../SBOL2CompliantURIs";
 import S2Location from "./S2Location";
+
+import S2IdentifiedFactory from './S2IdentifiedFactory'
 
 export default class S2SequenceAnnotation extends S2Identified {
 
@@ -111,6 +113,15 @@ export default class S2SequenceAnnotation extends S2Identified {
             return new S2ComponentInstance(this.graph, uri)
     }
 
+    set component(component:S2ComponentInstance|undefined) {
+
+        if(component !== undefined) {
+            this.setUriProperty(Predicates.SBOL2.component, component.uri)
+        } else {
+            this.deleteProperty(Predicates.SBOL2.component)
+        }
+    }
+
     get displayName():string {
 
         const component = this.component
@@ -185,16 +196,13 @@ export default class S2SequenceAnnotation extends S2Identified {
 
     addLocationGeneric(orientation:string) {
 
-        const locationUri:string = this.graph.generateURI(this.persistentIdentity + '/location$n?$/1')
+        let identified = S2IdentifiedFactory.createChild(this.graph, Types.SBOL2.GenericLocation, this, 'location', this.version)
 
-        this.graph.insertProperties(locationUri, {
-            [Predicates.a]: node.createUriNode(Types.SBOL2.GenericLocation),
-            [Predicates.SBOL2.displayId]: node.createStringNode(CompliantURIs.getDisplayId(locationUri)),
-            [Predicates.SBOL2.version]: node.createStringNode(CompliantURIs.getVersion(locationUri)),
-            [Predicates.SBOL2.persistentIdentity]: node.createUriNode(CompliantURIs.getPersistentIdentity(locationUri))
-        })
+        let location = new S2GenericLocation(this.graph, identified.uri)
 
-        this.graph.add(this.uri, Predicates.SBOL2.location, node.createUriNode(locationUri))
+        location.orientation = orientation
+
+        return location
     }
 
     setLocationGeneric(orientation:string) {

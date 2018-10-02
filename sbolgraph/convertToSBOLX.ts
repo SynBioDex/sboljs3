@@ -106,10 +106,6 @@ export default function convertToSBOLX(graph:SBOL2Graph):SBOLXGraph {
         if(displayId === undefined)
             throw new Error('missing displayId for ' + seq.uri)
 
-        if(version === undefined) {
-            version = '1'
-        }
-
         const xseq:SXSequence = xgraph.createSequence(seq.uriPrefix, displayId, version)
 
         map.set(seq.uri, xseq)
@@ -151,27 +147,17 @@ export default function convertToSBOLX(graph:SBOL2Graph):SBOLXGraph {
         if(displayId === undefined)
             throw new Error('missing displayId for ' + cd.uri)
 
-        if(version === undefined) {
-            version = '1'
-        }
-
         const module:SXComponent = xgraph.createComponent(cd.uriPrefix, displayId, version)
 
         map.set(cd.uri, module)
-
-        console.log('roles')
 
         cd.roles.forEach((role:string) => {
             module.addRole(role)
         })
 
-        console.log('types')
-
         cd.types.forEach((type:string) => {
             module.addType(type)
         })
-
-        console.log('cs')
 
         cd.components.forEach((sc:S2ComponentInstance) => {
 
@@ -243,10 +229,6 @@ export default function convertToSBOLX(graph:SBOL2Graph):SBOLXGraph {
     
         if(displayId === undefined)
             throw new Error('missing displayId for ' + md.uri)
-
-        if(version === undefined) {
-            version = '1'
-        }
 
         const module:SXComponent = xgraph.createComponent(md.uriPrefix, displayId, version)
 

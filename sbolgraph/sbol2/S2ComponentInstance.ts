@@ -50,6 +50,12 @@ export default class S2ComponentInstance extends S2Identified {
         return new S2ComponentDefinition(this.graph, uri)
     }
 
+    set definition(def:S2ComponentDefinition) {
+
+        this.setUriProperty(Predicates.SBOL2.definition, def.uri)
+
+    }
+
     get access():string|undefined {
         return this.getUriProperty(Predicates.SBOL2.access)
     }
