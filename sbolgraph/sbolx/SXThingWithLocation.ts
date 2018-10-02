@@ -81,7 +81,7 @@ export default class SXThingWithLocation extends SXIdentified {
 
     addRange(start:number, end:number):SXRange {
 
-        const id:string = 'range_' + name
+        const id:string = 'range'
 
         const identified:SXIdentified =
             SXIdentifiedFactory.createChild(this.graph, Types.SBOLX.Range, this, id, undefined, this.version)

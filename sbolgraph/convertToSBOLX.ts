@@ -102,7 +102,7 @@ export default function convertToSBOLX(graph:SBOL2Graph):SBOLXGraph {
         var version:string|undefined = seq.version
     
         if(displayId === undefined)
-            throw new Error('missing displayId')
+            throw new Error('missing displayId for ' + seq.uri)
 
         if(version === undefined) {
             version = '1'
@@ -147,7 +147,7 @@ export default function convertToSBOLX(graph:SBOL2Graph):SBOLXGraph {
         var version:string|undefined = cd.version
     
         if(displayId === undefined)
-            throw new Error('missing displayId')
+            throw new Error('missing displayId for ' + cd.uri)
 
         if(version === undefined) {
             version = '1'
@@ -240,7 +240,7 @@ export default function convertToSBOLX(graph:SBOL2Graph):SBOLXGraph {
         var version:string|undefined = md.version
     
         if(displayId === undefined)
-            throw new Error('missing displayId')
+            throw new Error('missing displayId for ' + md.uri)
 
         if(version === undefined) {
             version = '1'
@@ -281,7 +281,7 @@ export default function convertToSBOLX(graph:SBOL2Graph):SBOLXGraph {
         md.interactions.forEach((int:S2Interaction) => {
 
             if(!int.displayId) {
-                throw new Error('missing displayId')
+                throw new Error('missing displayId for ' + int.uri)
             }
 
             let newInt:SXInteraction = module.createInteraction(int.displayId, int.version)
@@ -292,7 +292,7 @@ export default function convertToSBOLX(graph:SBOL2Graph):SBOLXGraph {
             for(let participation of int.participations) {
 
                 if (!participation.displayId) {
-                    throw new Error('missing displayId')
+                    throw new Error('missing displayId for ' + participation.uri)
                 }
 
                 let newParticipation:SXParticipation = newInt.createParticipation(participation.displayId, participation.version)
