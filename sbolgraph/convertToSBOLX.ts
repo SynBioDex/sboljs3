@@ -29,9 +29,10 @@ import {
 
 } from '.'
 
-import { Predicates, Prefixes, Specifiers } from 'bioterms'
+import { Types, Predicates, Prefixes, Specifiers } from 'bioterms'
 import SXThingWithLocation from './sbolx/SXThingWithLocation';
 import S2Model from './sbol2/S2Model';
+import SXIdentifiedFactory from './sbolx/SXIdentifiedFactory'
 
 
 
@@ -252,25 +253,40 @@ export default function convertToSBOLX(graph:SBOL2Graph):SBOLXGraph {
 
         md.modules.forEach((sm:S2ModuleInstance) => {
 
-            const def:SXComponent = mdToModule(sm.definition)
+            let _subModule:SXIdentified =
+                SXIdentifiedFactory.createChild(xgraph, Types.SBOLX.SubComponent, module, sm.displayId || 'submodule', sm.name)
 
-            const subModule:SXSubComponent = module.createSubComponent(def)
+            let subModule = _subModule as SXSubComponent
 
-            subModule.name = sm.displayName
+            let def = map.get(sm.definition.uri)
+
+            if(def && def instanceof SXComponent) {
+                subModule.instanceOf = def
+            } else {
+                // missing definition, can't convert it
+                subModule.setUriProperty(Predicates.SBOLX.instanceOf, sm.definition.uri)
+            }
 
             map.set(sm.uri, subModule)
 
             // TODO check sc roles match the def roles
-
         })
 
         md.functionalComponents.forEach((sc:S2FunctionalComponent) => {
 
-            const def:SXComponent = cdToModule(sc.definition)
+            let _subModule:SXIdentified =
+                SXIdentifiedFactory.createChild(xgraph, Types.SBOLX.SubComponent, module, sc.displayId || 'subcomponent', sc.name)
 
-            const subModule:SXSubComponent = module.createSubComponent(def)
+            let subModule = _subModule as SXSubComponent
 
-            subModule.name = sc.displayName
+            let def = map.get(sc.definition.uri)
+
+            if(def && def instanceof SXComponent) {
+                subModule.instanceOf = def
+            } else {
+                // missing definition, can't convert it
+                subModule.setUriProperty(Predicates.SBOLX.instanceOf, sc.definition.uri)
+            }
 
             map.set(sc.uri, subModule)
 
@@ -316,8 +332,6 @@ export default function convertToSBOLX(graph:SBOL2Graph):SBOLXGraph {
         })
 
         md.modules.forEach((sm:S2ModuleInstance) => {
-
-            const def:SXComponent = mdToModule(sm.definition)
 
             const subModule:SXSubComponent = map.get(sm.uri) as SXSubComponent
 
