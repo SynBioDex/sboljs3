@@ -1,0 +1,3 @@
+[submodule "SBOLTestSuite"]
+	path = SBOLTestSuite
+	url = https://github.com/SynBioDex/SBOLTestSuite.git
