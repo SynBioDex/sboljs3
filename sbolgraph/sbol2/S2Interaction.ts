@@ -88,11 +88,9 @@ export default class S2Interaction extends S2Identified {
     createParticipation(id:string, version?:string):S2Participation {
 
         const identified:S2Identified =
-            S2IdentifiedFactory.createChild(this.graph, Types.SBOL2.Participation, this, id, undefined, version)
+            S2IdentifiedFactory.createChild(this.graph, Types.SBOL2.Participation, this, Predicates.SBOL2.participation, id, undefined, version)
 
         const participation:S2Participation = new S2Participation(this.graph, identified.uri)
-
-        this.addParticipation(participation)
 
         return participation
     }

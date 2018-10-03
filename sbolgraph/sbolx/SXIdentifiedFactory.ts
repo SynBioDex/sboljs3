@@ -44,6 +44,7 @@ export default class SXIdentifiedFactory {
     static createChild(graph:SBOLXGraph,
                     type:string,
                     parent:SXIdentified,
+                    ownershipPredicate:string,
                     id:string,
                     name:string|undefined,
                     version?:string|undefined):SXIdentified {
@@ -72,6 +73,10 @@ export default class SXIdentifiedFactory {
                 [Predicates.Dcterms.title]: node.createStringNode(name)
             })
         }
+
+        graph.insertProperties(parent.uri, {
+            [ownershipPredicate]: node.createUriNode(uri)
+        })
 
         return new SXIdentified(graph, uri)
     }

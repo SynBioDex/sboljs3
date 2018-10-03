@@ -144,9 +144,7 @@ export default class SXComponent extends SXIdentified {
         const id:string = 'submodule_' + definition.id
 
         const identified:SXIdentified =
-            SXIdentifiedFactory.createChild(this.graph, Types.SBOLX.SubComponent, this, id, undefined, this.version)
-
-        this.graph.add(node.createUriNode(this.uri), node.createUriNode(Predicates.SBOLX.hasSubComponent), node.createUriNode(identified.uri))
+            SXIdentifiedFactory.createChild(this.graph, Types.SBOLX.SubComponent, this, Predicates.SBOLX.hasSubComponent, id, undefined, this.version)
 
         const module:SXSubComponent = new SXSubComponent(this.graph, identified.uri)
 
@@ -169,9 +167,7 @@ export default class SXComponent extends SXIdentified {
         const id:string = 'feature_' + name
 
         const identified:SXIdentified =
-            SXIdentifiedFactory.createChild(this.graph, Types.SBOLX.SequenceFeature, this, id, undefined, this.version)
-
-        this.graph.add(node.createUriNode(this.uri), node.createUriNode(Predicates.SBOLX.hasSequenceFeature), node.createUriNode(identified.uri))
+            SXIdentifiedFactory.createChild(this.graph, Types.SBOLX.SequenceFeature, this, Predicates.SBOLX.hasSequenceFeature, id, undefined, this.version)
 
         return new SXSequenceFeature(this.graph, identified.uri)
 
@@ -198,9 +194,7 @@ export default class SXComponent extends SXIdentified {
     createConstraint(subject:SXSubComponent, restriction:string, object:SXSubComponent):SXSequenceConstraint {
 
         const identified:SXIdentified =
-            SXIdentifiedFactory.createChild(this.graph, Types.SBOLX.SequenceConstraint, this, 'constraint_' + subject.id + '_' + object.id, undefined, this.version)
-
-        this.graph.add(node.createUriNode(this.uri), node.createUriNode(Predicates.SBOLX.hasSequenceConstraint), node.createUriNode(identified.uri))
+            SXIdentifiedFactory.createChild(this.graph, Types.SBOLX.SequenceConstraint, this, Predicates.SBOLX.hasSequenceConstraint, 'constraint_' + subject.id + '_' + object.id, undefined, this.version)
 
         const constraint:SXSequenceConstraint = new SXSequenceConstraint(this.graph, identified.uri)
 
@@ -231,11 +225,9 @@ export default class SXComponent extends SXIdentified {
     createInteraction(id:string, version?:string):SXInteraction {
 
         const identified:SXIdentified =
-            SXIdentifiedFactory.createChild(this.graph, Types.SBOLX.Interaction, this, id, undefined, version)
+            SXIdentifiedFactory.createChild(this.graph, Types.SBOLX.Interaction, this,  Predicates.SBOLX.hasInteraction, id, undefined, version)
 
         const interaction:SXInteraction = new SXInteraction(this.graph, identified.uri)
-
-        this.graph.add(node.createUriNode(this.uri), node.createUriNode(Predicates.SBOLX.hasInteraction), node.createUriNode(identified.uri))
 
         return interaction
     }

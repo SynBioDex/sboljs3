@@ -138,6 +138,17 @@ export default class SXIdentified extends SXFacade {
         return containedObjects
     }
 
+    destroy() {
+
+        let contained = this.containedObjects
+
+        super.destroy()
+
+        for(let obj of contained) {
+            obj.destroy()
+        }
+    }
+
 }
 
 

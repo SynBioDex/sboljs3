@@ -44,6 +44,7 @@ export default class SXIdentifiedFactory {
     static createChild(graph:SBOL2Graph,
                     type:string,
                     parent:S2Identified,
+                    ownershipPredicate:string,
                     id:string,
                     name:string|undefined,
                     version?:string|undefined):S2Identified {
@@ -72,6 +73,10 @@ export default class SXIdentifiedFactory {
                 [Predicates.Dcterms.title]: node.createStringNode(name)
             })
         }
+
+        graph.insertProperties(parent.uri, {
+            [ownershipPredicate]: node.createUriNode(uri)
+        })
 
         return new S2Identified(graph, uri)
     }

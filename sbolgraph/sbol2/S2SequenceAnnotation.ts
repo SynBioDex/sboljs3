@@ -196,7 +196,7 @@ export default class S2SequenceAnnotation extends S2Identified {
 
     addLocationGeneric(orientation:string) {
 
-        let identified = S2IdentifiedFactory.createChild(this.graph, Types.SBOL2.GenericLocation, this, 'location', this.version)
+        let identified = S2IdentifiedFactory.createChild(this.graph, Types.SBOL2.GenericLocation, this, Predicates.SBOL2.location, 'location', this.version)
 
         let location = new S2GenericLocation(this.graph, identified.uri)
 

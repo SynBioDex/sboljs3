@@ -225,6 +225,7 @@ export default class SBOLXGraph extends Graph {
             [ 'prov', Prefixes.prov ],
             [ 'sbol', Prefixes.sbol2 ],
             [ 'sbolx', Prefixes.sbolx ],
+            [ 'backport', 'http://biocad.io/terms/backport#' ]
         ]
 
         let ownershipPredicates = [

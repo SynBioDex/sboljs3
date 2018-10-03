@@ -154,24 +154,20 @@ export default class S2ComponentDefinition extends S2Identified {
 
     addComponentByDefinition(componentDefinition:S2ComponentDefinition):S2ComponentInstance {
 
-        let identified = S2IdentifiedFactory.createChild(this.graph, Types.SBOL2.Component, this, componentDefinition.displayId || 'subcomponent', this.version)
+        let identified = S2IdentifiedFactory.createChild(this.graph, Types.SBOL2.Component, this, Predicates.SBOL2.component, componentDefinition.displayId || 'subcomponent', this.version)
         let component = new S2ComponentInstance(this.graph, identified.uri)
 
         component.definition = componentDefinition
-
-        this.graph.add(this.uri, Predicates.SBOL2.component, node.createUriNode(component.uri))
 
         return component
     }
 
     addSequenceAnnotationForComponent(componentInstance:S2ComponentInstance):S2SequenceAnnotation {
 
-        let identified = S2IdentifiedFactory.createChild(this.graph, Types.SBOL2.SequenceAnnotation, this, componentInstance.displayId + '_sequenceAnnotation', this.version)
+        let identified = S2IdentifiedFactory.createChild(this.graph, Types.SBOL2.SequenceAnnotation, this, Predicates.SBOL2.sequenceAnnotation, componentInstance.displayId + '_sequenceAnnotation', this.version)
         let sequenceAnnotation = new S2SequenceAnnotation(this.graph, identified.uri)
 
         sequenceAnnotation.component = componentInstance
-
-        this.graph.add(this.uri, Predicates.SBOL2.sequenceAnnotation, node.createUriNode(sequenceAnnotation.uri))
 
         return sequenceAnnotation
 
@@ -197,19 +193,11 @@ export default class S2ComponentDefinition extends S2Identified {
 
         this.graph.startIgnoringWatchers()
 
-        let identified = S2IdentifiedFactory.createChild(this.graph, Types.SBOL2.SequenceAnnotation, this, 'anno_' + name, this.version)
+        let identified = S2IdentifiedFactory.createChild(this.graph, Types.SBOL2.SequenceAnnotation, this, Predicates.SBOL2.sequenceAnnotation, 'anno_' + name, this.version)
         let sequenceAnnotation = new S2SequenceAnnotation(this.graph, identified.uri)
 
-        this.graph.insertProperties(this.uri, {
-            [Predicates.SBOL2.sequenceAnnotation]: node.createUriNode(sequenceAnnotation.uri)
-        })
-
-        let rangeIdentified = S2IdentifiedFactory.createChild(this.graph, Types.SBOL2.Range, sequenceAnnotation, 'range', this.version)
+        let rangeIdentified = S2IdentifiedFactory.createChild(this.graph, Types.SBOL2.Range, sequenceAnnotation, Predicates.SBOL2.location, 'range', this.version)
         let range = new S2Range(this.graph, rangeIdentified.uri)
-
-        this.graph.insertProperties(sequenceAnnotation.uri, {
-            [Predicates.SBOL2.location]: node.createUriNode(range.uri)
-        })
 
         range.start = start
         range.end = end

@@ -96,11 +96,9 @@ export default class S2ModuleDefinition extends S2Identified {
     createInteraction(id:string, version?:string):S2Interaction {
 
         const identified:S2Identified =
-            S2IdentifiedFactory.createChild(this.graph, Types.SBOL2.Interaction, this, id, undefined, version)
+            S2IdentifiedFactory.createChild(this.graph, Types.SBOL2.Interaction, this, Predicates.SBOL2.interaction, id, undefined, version)
 
         const interaction:S2Interaction = new S2Interaction(this.graph, identified.uri)
-
-        this.addInteraction(interaction)
 
         return interaction
     }
@@ -113,13 +111,11 @@ export default class S2ModuleDefinition extends S2Identified {
             throw new Error('???')
 
         const identified:S2Identified =
-            S2IdentifiedFactory.createChild(this.graph, Types.SBOL2.FunctionalComponent, this, actualId, undefined, version)
+            S2IdentifiedFactory.createChild(this.graph, Types.SBOL2.FunctionalComponent, this, Predicates.SBOL2.functionalComponent, actualId, undefined, version)
 
         const fc:S2FunctionalComponent = new S2FunctionalComponent(this.graph, identified.uri)
 
         fc.definition = definition
-
-        this.addFunctionalComponent(fc)
 
         return fc
     }
@@ -135,6 +131,17 @@ export default class S2ModuleDefinition extends S2Identified {
         }
 
         return "Design"
+    }
+
+    destroy() {
+
+        let contained = this.containedObjects
+
+        super.destroy()
+
+        for(let obj of contained) {
+            obj.destroy()
+        }
     }
 }
 

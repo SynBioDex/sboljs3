@@ -94,11 +94,9 @@ export default class SXInteraction extends SXIdentified {
     createParticipation(id:string, version?:string):SXParticipation {
 
         const identified:SXIdentified =
-            SXIdentifiedFactory.createChild(this.graph, Types.SBOLX.Participation, this, id, undefined, version)
+            SXIdentifiedFactory.createChild(this.graph, Types.SBOLX.Participation, this, Predicates.SBOLX.hasParticipation, id, undefined, version)
 
         const participation:SXParticipation = new SXParticipation(this.graph, identified.uri)
-
-        this.graph.add(node.createUriNode(this.uri), node.createUriNode(Predicates.SBOLX.hasParticipation), node.createUriNode(identified.uri))
 
         return participation
     }

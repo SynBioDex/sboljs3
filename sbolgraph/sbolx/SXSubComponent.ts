@@ -178,11 +178,9 @@ export default class SXSubComponent extends SXThingWithLocation {
     createMapping(local:SXSubComponent, remote:SXSubComponent)  {
 
         const identified:SXIdentified =
-            SXIdentifiedFactory.createChild(this.graph, Types.SBOL2.MapsTo, this, 'mapping_' + local.id + '_' + remote.id, undefined, this.version)
+            SXIdentifiedFactory.createChild(this.graph, Types.SBOL2.MapsTo, this, Predicates.SBOL2.mapsTo, 'mapping_' + local.id + '_' + remote.id, undefined, this.version)
 
         const mapping:SXMapsTo = new SXMapsTo(this.graph, identified.uri)
-
-        this.graph.add(node.createUriNode(this.uri), node.createUriNode(Predicates.SBOL2.mapsTo), node.createUriNode(identified.uri))
 
         mapping.local = local
         mapping.remote = remote

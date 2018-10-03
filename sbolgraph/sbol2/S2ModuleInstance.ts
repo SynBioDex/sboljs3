@@ -56,14 +56,12 @@ export default class S2ModuleInstance extends S2Identified {
     createMapping(local:S2FunctionalComponent, remote:S2FunctionalComponent)  {
 
         const identified:S2Identified =
-            S2IdentifiedFactory.createChild(this.graph, Types.SBOL2.MapsTo, this, 'mapping_' + local.displayId + '_' + remote.displayId, undefined, this.version)
+            S2IdentifiedFactory.createChild(this.graph, Types.SBOL2.MapsTo, this,  Predicates.SBOL2.mapsTo,'mapping_' + local.displayId + '_' + remote.displayId, undefined, this.version)
 
         const mapping:S2MapsTo = new S2MapsTo(this.graph, identified.uri)
 
         mapping.local = local
         mapping.remote = remote
-
-        this.graph.add(node.createUriNode(this.uri), node.createUriNode(Predicates.SBOL2.mapsTo), node.createUriNode(identified.uri))
 
         return mapping
 

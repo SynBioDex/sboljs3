@@ -84,9 +84,7 @@ export default class SXThingWithLocation extends SXIdentified {
         const id:string = 'range'
 
         const identified:SXIdentified =
-            SXIdentifiedFactory.createChild(this.graph, Types.SBOLX.Range, this, id, undefined, this.version)
-
-        this.graph.add(node.createUriNode(this.uri), node.createUriNode(Predicates.SBOLX.hasLocation), node.createUriNode(identified.uri))
+            SXIdentifiedFactory.createChild(this.graph, Types.SBOLX.Range, this, Predicates.SBOLX.hasLocation, id, undefined, this.version)
 
         const range:SXRange = new SXRange(this.graph, identified.uri)
 
@@ -98,9 +96,7 @@ export default class SXThingWithLocation extends SXIdentified {
 
     addOrientedLocation():SXOrientedLocation {
 
-        const loc:SXIdentified = SXIdentifiedFactory.createChild(this.graph, Types.SBOLX.OrientedLocation, this, 'location', undefined, this.version)
-
-        this.graph.add(node.createUriNode(this.uri), node.createUriNode(Predicates.SBOLX.hasLocation), node.createUriNode(loc.uri))
+        const loc:SXIdentified = SXIdentifiedFactory.createChild(this.graph, Types.SBOLX.OrientedLocation, this, Predicates.SBOLX.hasLocation, 'location', undefined, this.version)
 
         return new SXOrientedLocation(loc.graph, loc.uri)
     }

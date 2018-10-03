@@ -462,7 +462,8 @@ export default class SBOL2Graph extends Graph {
             [ 'rdf', Prefixes.rdf ],
             [ 'dcterms', Prefixes.dcterms ],
             [ 'prov', Prefixes.prov ],
-            [ 'sbol', Prefixes.sbol2 ]
+            [ 'sbol', Prefixes.sbol2 ],
+            [ 'backport', 'http://biocad.io/terms/backport#' ],
         ]
 
         let ownershipPredicates = [
