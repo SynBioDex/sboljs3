@@ -43,6 +43,7 @@ export default function convertToSBOL2(graph:SBOLXGraph):SBOL2Graph {
 
 
     let componentToCDandMD:Map<string, { cd:S2ComponentDefinition, md:S2ModuleDefinition, fc:S2FunctionalComponent }> = new Map()
+    let subcomponentToFC:Map<string, S2FunctionalComponent> = new Map()
 
     function getCDandMD(component:SXComponent) {
         let mapping = componentToCDandMD.get(component.uri)
@@ -98,6 +99,8 @@ export default function convertToSBOL2(graph:SBOLXGraph):SBOL2Graph {
             let cdSubcomponent = cd.addComponentByDefinition(newDefOfSubcomponent.cd)
             let mdSubcomponent = md.createFunctionalComponent(newDefOfSubcomponent.cd)
 
+            subcomponentToFC.set(subcomponent.uri, mdSubcomponent)
+
             copyIdentifiedProperties(subcomponent, cdSubcomponent)
             copyIdentifiedProperties(subcomponent, mdSubcomponent)
 
@@ -121,6 +124,37 @@ export default function convertToSBOL2(graph:SBOLXGraph):SBOL2Graph {
         }
     }
 
+    // Port interactions
+    for(let component of graph.components) {
+
+        let { cd, md, fc } = getCDandMD(component)
+
+        for(let interaction of component.interactions) {
+
+            let newInteraction = md.createInteraction(interaction.id, interaction.version)
+            copyIdentifiedProperties(interaction, newInteraction)
+
+            for(let participation of interaction.participations) {
+
+                let newParticipation = newInteraction.createParticipation(participation.id, participation.version)
+                copyIdentifiedProperties(participation, newParticipation)
+
+                for(let role of participation.roles) {
+                    newParticipation.addRole(role)
+                }
+
+                let participant = participation.participant
+
+                if(participant) {
+
+                    let newParticipant = subcomponentToFC.get(participant.uri)
+
+                    newParticipation.participant = newParticipant
+
+                }
+            }
+        }
+    }
 
     // We can do some pruning now.
     //

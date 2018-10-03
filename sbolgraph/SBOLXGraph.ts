@@ -34,6 +34,8 @@ import SXIdentifiedFactory from './sbolx/SXIdentifiedFactory'
 import convertToSBOLX from './convertToSBOLX';
 import serialize from './serialize';
 
+import changeURIPrefix from './changeURIPrefix'
+
 export default class SBOLXGraph extends Graph {
 
     depthCache: Object
@@ -405,6 +407,22 @@ export default class SBOLXGraph extends Graph {
                     || subjectTypes.indexOf(Types.SBOLX.Sequence) !== -1
         }    
 
+
+    }
+
+    changeURIPrefix(newPrefix:string) {
+
+        let topLevels = new Set([
+            Types.SBOLX.Collection,
+            Types.SBOLX.Component,
+            Types.SBOLX.Sequence,
+            Types.SBOLX.Model,
+            Types.Prov.Plan,
+            Types.Prov.Agent,
+            Types.Prov.Activity
+        ])
+
+        changeURIPrefix(this, topLevels, newPrefix)
 
     }
 

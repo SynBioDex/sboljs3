@@ -29,6 +29,16 @@ export default class S2Participation extends S2Identified {
         }
     }
 
+    set participant(participant:S2FunctionalComponent|undefined) {
+
+        if(participant !== undefined) {
+            this.setUriProperty(Predicates.SBOL2.participant, participant.uri)
+        } else {
+            this.deleteProperty(Predicates.SBOL2.participant)
+        }
+
+    }
+
     get interaction():S2Interaction|undefined {
 
         const uri:string|undefined = triple.subjectUri(
