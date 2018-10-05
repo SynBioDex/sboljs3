@@ -10,6 +10,7 @@ import uuid from 'uuid/v4'
 import assert from 'power-assert'
 
 import shortid = require('shortid')
+import changeURIPrefix from './changeURIPrefix';
 
 export interface Watcher {
     unwatch():void
@@ -272,7 +273,31 @@ export default class Graph {
         this.graph.removeMatches(null, null, subject)
     }
 
+    replaceURI(oldURI:string, newURI:string) {
 
+        // TODO: do this in-place instead of creating a new graph
+        //
+        let newGraph = new RdfGraphArray()
+        
+        for(let triple of this.graph._graph) {
+
+            newGraph.add({
+                subject: replace(triple.subject),
+                predicate: replace(triple.predicate),
+                object: replace(triple.object)
+            })
+        }
+
+        this.graph = newGraph
+
+        function replace(n) {
+            if(n.interfaceName !== 'NamedNode')
+                return n
+            if(n.nominalValue !== oldURI)
+                return n
+            return node.createUriNode(newURI)
+        }
+    }
 
     _globalWatchers:Array<() => void>
     _subjWatchers:Map<string, Array<() => void>>

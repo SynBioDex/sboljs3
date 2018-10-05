@@ -52,6 +52,38 @@ export default class SXIdentified extends SXFacade {
         return this.getStringProperty(Predicates.SBOLX.version)
     }
 
+    setCompliantIdentity(id:string, version?:string) {
+
+        let uriPrefix = this.uriPrefix
+
+        this.id = id
+        this.version = version
+
+        let newPersistentIdentity = uriPrefix + id
+        let newURI = newPersistentIdentity
+
+        if(version)
+            newURI += '/' + version
+
+        let curPersistentIdentity = this.persistentIdentity
+
+        if(newURI !== this.uri) {
+
+            console.log(this.graph.serializeXML())
+            console.log('replace ' + this.uri + ' -> ' + newURI)
+            this.graph.replaceURI(this.uri, newURI)
+            console.log(this.graph.serializeXML())
+
+            this.uri = newURI
+        }
+
+        if (curPersistentIdentity) {
+            this.graph.replaceURI(curPersistentIdentity, newPersistentIdentity)
+        }
+
+        this.persistentIdentity = newPersistentIdentity
+    }
+
     set version(version:string|undefined) {
 
         if(version !== undefined) {
