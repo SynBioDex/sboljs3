@@ -29,6 +29,15 @@ export default class SXParticipation extends SXIdentified {
         }
     }
 
+    set participant(c:SXSubComponent|undefined) {
+
+        if(c) {
+            this.setUriProperty(Predicates.SBOLX.participant, c.uri)
+        } else {
+            this.deleteProperty(Predicates.SBOLX.participant)
+        }
+    }
+
     get interaction():SXInteraction|undefined {
 
         const uri:string|undefined = triple.subjectUri(

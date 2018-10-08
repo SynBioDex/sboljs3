@@ -236,8 +236,15 @@ export default class SXComponent extends SXIdentified {
         this.graph.add(node.createUriNode(this.uri), node.createUriNode(Predicates.SBOLX.hasModel), node.createUriNode(model.uri))
     }
 
+    dissolve() {
+        let instances = this.graph.getInstancesOfComponent(this)
 
+        for(let instance of instances) {
+            instance.dissolve()
+        }
 
+        this.destroy()
+    }
 
 }
 

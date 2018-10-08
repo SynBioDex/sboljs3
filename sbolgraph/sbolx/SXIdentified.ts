@@ -20,8 +20,9 @@ export default class SXIdentified extends SXFacade {
         return this.getStringProperty(Predicates.Dcterms.title)
     }
 
+    // Should never throw; make sure not dependent on any getRequiredProperties
     get displayName():string|undefined {
-        return this.name || this.id
+        return this.name || this.getStringProperty(Predicates.SBOLX.id) || this.uri
     }
 
     set name(name:string|undefined) {

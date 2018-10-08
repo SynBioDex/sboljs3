@@ -206,9 +206,6 @@ export default class S2ComponentDefinition extends S2Identified {
 
         return sequenceAnnotation
     }
-
-
-
 }
 
 

@@ -31,17 +31,18 @@ export default class SXSubComponent extends SXThingWithLocation {
         if(name)
             return name
 
-        let instanceOf = this.instanceOf
+        try {
+            let instanceOf = this.instanceOf
 
-        if(instanceOf) {
-            let instanceOfName = this.instanceOf.name
+            let instanceOfName = instanceOf.name
 
-            if(instanceOfName) {
+            if (instanceOfName) {
                 return instanceOfName
             }
+        } catch(e) {
         }
 
-        return this.id
+        return this.getStringProperty(Predicates.SBOLX.id) || this.uri
     }
 
     get instanceOf():SXComponent {
@@ -284,7 +285,6 @@ export default class SXSubComponent extends SXThingWithLocation {
         return products
     }
 
-
     destroy() {
 
         for(let c of this.getConstraints()) {
@@ -299,6 +299,19 @@ export default class SXSubComponent extends SXThingWithLocation {
 
     }
 
+    dissolve() {
+
+        let containingComponent = this.containingComponent
+
+        let def = this.instanceOf
+
+        for(let subcomponent of def.subComponents) {
+            let newSC = containingComponent.createSubComponent(subcomponent.instanceOf)
+            // TODO locations etc
+        }
+
+        this.destroy()
+    }
 }
 
 
