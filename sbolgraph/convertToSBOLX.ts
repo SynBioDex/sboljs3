@@ -60,6 +60,47 @@ export default function convertToSBOLX(graph:SBOL2Graph):SBOLXGraph {
     })
 
 
+    for(let sm of graph.instancesOfType(Types.SBOL2.Module).map((uri) => graph.uriToFacade(uri))) {
+
+        if(! (sm instanceof S2ModuleInstance)) {
+            throw new Error('???')
+        }
+
+        let _subModule = map.get(sm.uri)
+
+        if(! (_subModule instanceof SXSubComponent)) {
+            console.warn(sm.uri + ' did not map to a subcomponent')
+
+            if(_subModule)
+                console.warn('it mapped to ' + _subModule.constructor.name)
+        }
+
+        const subModule:SXSubComponent = _subModule as SXSubComponent
+
+        for(let mapsTo of sm.mappings) {
+
+            if(!mapsTo.local || !mapsTo.remote) {
+                throw new Error('???')
+            }
+
+            let a = map.get(mapsTo.local.uri)
+
+            if(!a) {
+                throw new Error('Local side of MapsTo ' + mapsTo.local.uri + ' in submodule ' + sm.uri + ' was not found')
+            }
+
+            let b = map.get(mapsTo.remote.uri)
+
+            if(!b) {
+                throw new Error('Remote side of MapsTo ' + mapsTo.local.uri + ' in submodule ' + sm.uri + ' was not found')
+            }
+
+            subModule.createMapping(a as SXSubComponent, b as SXSubComponent)
+
+        }
+    }
+
+
     // Keep anything in the graph that isn't describing an SBOL2 object
     // TODO: update references to converted objects
     //
@@ -245,7 +286,7 @@ export default function convertToSBOLX(graph:SBOL2Graph):SBOLXGraph {
             let _subModule:SXIdentified =
                 SXIdentifiedFactory.createChild(xgraph, Types.SBOLX.SubComponent, module, Predicates.SBOLX.hasSubComponent, sm.displayId || 'submodule', sm.name)
 
-            let subModule = _subModule as SXSubComponent
+            let subModule = new SXSubComponent(xgraph, _subModule.uri)
 
             copyIdentifiedProperties(sm, subModule)
 
@@ -329,28 +370,6 @@ export default function convertToSBOLX(graph:SBOL2Graph):SBOLXGraph {
                 }
 
             }
-        })
-
-        md.modules.forEach((sm:S2ModuleInstance) => {
-
-            const subModule:SXSubComponent = map.get(sm.uri) as SXSubComponent
-
-            sm.mappings.forEach((mapsTo) => {
-
-                if(!mapsTo.local || !mapsTo.remote) {
-                    throw new Error('???')
-                }
-
-                let a = map.get(mapsTo.local.uri)
-                let b = map.get(mapsTo.remote.uri)
-
-                if(!a || !b) {
-                    throw new Error('hack failed')
-                }
-
-                subModule.createMapping(a as SXSubComponent, b as SXSubComponent)
-
-            })
         })
 
         md.models.forEach((model:S2Model) => {
