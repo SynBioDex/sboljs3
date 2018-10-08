@@ -268,7 +268,7 @@ export default function convertToSBOLX(graph:SBOL2Graph):SBOLXGraph {
             let _subModule:SXIdentified =
                 SXIdentifiedFactory.createChild(xgraph, Types.SBOLX.SubComponent, module, Predicates.SBOLX.hasSubComponent, sc.displayId || 'subcomponent', sc.name)
 
-            let subModule = _subModule as SXSubComponent
+            let subModule = new SXSubComponent(xgraph, _subModule.uri)
 
             copyIdentifiedProperties(sc, subModule)
 
@@ -313,6 +313,11 @@ export default function convertToSBOLX(graph:SBOL2Graph):SBOLXGraph {
                     let participant = map.get(participation.participant.uri)
 
                     if(!participant || !(participant instanceof SXSubComponent)) {
+                        console.warn('participant not instanceof SXSubComponent')
+
+                        if(participant)
+                            console.warn(participant.constructor.name)
+
                         throw new Error('???')
                     }
 
