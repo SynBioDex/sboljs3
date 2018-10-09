@@ -48,6 +48,7 @@ import SEP21ExperimentalData from './sbol2/SEP21ExperimentalData';
 import { S2Attachment } from '.';
 
 import changeURIPrefix from './changeURIPrefix'
+import convertXto2 from './conversion/convertXto2';
 
 export default class SBOL2Graph extends Graph {
 
@@ -440,6 +441,9 @@ export default class SBOL2Graph extends Graph {
 
         if(filetype === Filetype.RDFXML || filetype === Filetype.NTriples) {
             await parseRDF(this, data, filetype)
+
+            convertXto2(this)
+
             return
         }
 

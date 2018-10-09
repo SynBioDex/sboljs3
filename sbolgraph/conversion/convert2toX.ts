@@ -1,6 +1,6 @@
 
-import SBOL2Graph from './SBOL2Graph'
-import SBOLXGraph from './SBOLXGraph'
+import SBOL2Graph from '../SBOL2Graph'
+import SBOLXGraph from '../SBOLXGraph'
 
 import {
 
@@ -26,41 +26,45 @@ import {
     SXInteraction,
     SXParticipation,
     S2ModuleInstance,
-    SXModel
+    SXModel,
+    Graph
 
-} from '.'
+} from '..'
 
 import { Types, Predicates, Prefixes, Specifiers } from 'bioterms'
-import SXThingWithLocation from './sbolx/SXThingWithLocation';
-import S2Model from './sbol2/S2Model';
-import SXIdentifiedFactory from './sbolx/SXIdentifiedFactory'
+import SXThingWithLocation from '../sbolx/SXThingWithLocation';
+import S2Model from '../sbol2/S2Model';
+import SXIdentifiedFactory from '../sbolx/SXIdentifiedFactory'
 
-import * as node from './node'
+import * as node from '../node'
 
-export default function convertToSBOLX(graph:SBOL2Graph):SBOLXGraph {
+export default function convert2toX(graph:Graph) {
 
     const map:Map<string, SXIdentified> = new Map()
 
-    const xgraph:SBOLXGraph = new SBOLXGraph()
+    let graph2:SBOL2Graph = new SBOL2Graph()
+    graph2.graph = graph.graph
 
-    graph.componentDefinitions.forEach((cd:S2ComponentDefinition) => {
+    let graphx:SBOLXGraph = new SBOLXGraph()
+
+    graph2.componentDefinitions.forEach((cd:S2ComponentDefinition) => {
         cdToModule(cd)
     })
 
-    graph.moduleDefinitions.forEach((md:S2ModuleDefinition) => {
+    graph2.moduleDefinitions.forEach((md:S2ModuleDefinition) => {
         mdToModule(md)
     })
 
-    graph.models.forEach((model:S2Model) => {
+    graph2.models.forEach((model:S2Model) => {
         modelToModel(model)
     })
 
-    graph.sequences.forEach((seq:S2Sequence) => {
+    graph2.sequences.forEach((seq:S2Sequence) => {
         convertSeq(seq)
     })
 
 
-    for(let sm of graph.instancesOfType(Types.SBOL2.Module).map((uri) => graph.uriToFacade(uri))) {
+    for(let sm of graph2.instancesOfType(Types.SBOL2.Module).map((uri) => graph2.uriToFacade(uri))) {
 
         if(! (sm instanceof S2ModuleInstance)) {
             throw new Error('???')
@@ -100,23 +104,9 @@ export default function convertToSBOLX(graph:SBOL2Graph):SBOLXGraph {
         }
     }
 
+    graph2.collections.forEach((collection:S2Collection) => {
 
-    // Keep anything in the graph that isn't describing an SBOL2 object
-    // TODO: update references to converted objects
-    //
-    for(let typeTriple of graph.match(null, Predicates.a, null)) {
-        if(typeTriple.object.toString().indexOf(Prefixes.sbol2) !== 0) {
-            for(let triple of graph.match(typeTriple.subject, null, null)) {
-                xgraph.add(triple.subject, triple.predicate, triple.object)
-            }
-        }
-    }
-
-
-
-    graph.collections.forEach((collection:S2Collection) => {
-
-        const xcollection:SXCollection = xgraph.createCollection(collection.uriPrefix, collection.displayId || 'collection', collection.version)
+        const xcollection:SXCollection = graphx.createCollection(collection.uriPrefix, collection.displayId || 'collection', collection.version)
         copyIdentifiedProperties(collection, xcollection)
 
         collection.members.forEach((member:S2Identified) => {
@@ -145,7 +135,7 @@ export default function convertToSBOLX(graph:SBOL2Graph):SBOLXGraph {
         if(displayId === undefined)
             throw new Error('missing displayId for ' + seq.uri)
 
-        const xseq:SXSequence = xgraph.createSequence(seq.uriPrefix, displayId, version)
+        const xseq:SXSequence = graphx.createSequence(seq.uriPrefix, displayId, version)
         copyIdentifiedProperties(seq, xseq)
 
         map.set(seq.uri, xseq)
@@ -163,7 +153,7 @@ export default function convertToSBOLX(graph:SBOL2Graph):SBOLXGraph {
         if(existing)
             return existing as SXModel
     
-        const xmodel:SXModel = xgraph.createModel(model.uriPrefix, model.displayId || 'collection', model.version)
+        const xmodel:SXModel = graphx.createModel(model.uriPrefix, model.displayId || 'collection', model.version)
         copyIdentifiedProperties(model, xmodel)
 
         xmodel.framework = model.framework
@@ -188,7 +178,7 @@ export default function convertToSBOLX(graph:SBOL2Graph):SBOLXGraph {
         if(displayId === undefined)
             throw new Error('missing displayId for ' + cd.uri)
 
-        const module:SXComponent = xgraph.createComponent(cd.uriPrefix, displayId, version)
+        const module:SXComponent = graphx.createComponent(cd.uriPrefix, displayId, version)
         copyIdentifiedProperties(cd, module)
 
         map.set(cd.uri, module)
@@ -277,16 +267,16 @@ export default function convertToSBOLX(graph:SBOL2Graph):SBOLXGraph {
         if(displayId === undefined)
             throw new Error('missing displayId for ' + md.uri)
 
-        const module:SXComponent = xgraph.createComponent(md.uriPrefix, displayId, version)
+        const module:SXComponent = graphx.createComponent(md.uriPrefix, displayId, version)
 
         map.set(md.uri, module)
 
         md.modules.forEach((sm:S2ModuleInstance) => {
 
             let _subModule:SXIdentified =
-                SXIdentifiedFactory.createChild(xgraph, Types.SBOLX.SubComponent, module, Predicates.SBOLX.hasSubComponent, sm.displayId || 'submodule', sm.name)
+                SXIdentifiedFactory.createChild(graphx, Types.SBOLX.SubComponent, module, Predicates.SBOLX.hasSubComponent, sm.displayId || 'submodule', sm.name)
 
-            let subModule = new SXSubComponent(xgraph, _subModule.uri)
+            let subModule = new SXSubComponent(graphx, _subModule.uri)
 
             copyIdentifiedProperties(sm, subModule)
 
@@ -307,9 +297,9 @@ export default function convertToSBOLX(graph:SBOL2Graph):SBOLXGraph {
         md.functionalComponents.forEach((sc:S2FunctionalComponent) => {
 
             let _subModule:SXIdentified =
-                SXIdentifiedFactory.createChild(xgraph, Types.SBOLX.SubComponent, module, Predicates.SBOLX.hasSubComponent, sc.displayId || 'subcomponent', sc.name)
+                SXIdentifiedFactory.createChild(graphx, Types.SBOLX.SubComponent, module, Predicates.SBOLX.hasSubComponent, sc.displayId || 'subcomponent', sc.name)
 
-            let subModule = new SXSubComponent(xgraph, _subModule.uri)
+            let subModule = new SXSubComponent(graphx, _subModule.uri)
 
             copyIdentifiedProperties(sc, subModule)
 
@@ -380,10 +370,15 @@ export default function convertToSBOLX(graph:SBOL2Graph):SBOLXGraph {
 
     }
 
+    // Delete anything with an SBOL2 type from the graph
 
-    return xgraph
+    for(let typeTriple of graph.match(null, Predicates.a, null)) {
+        if(typeTriple.object.toString().indexOf(Prefixes.sbol2) === 0) {
+            graph.removeMatches(typeTriple.subject, null, null)
+        }
+    }
 
-
+    graph.graph.addAll(graphx.graph)
 }
 
 function copyIdentifiedProperties(a:S2Identified, b:SXIdentified) {

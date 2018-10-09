@@ -1,7 +1,6 @@
 
 import SBOLXGraph from './SBOLXGraph'
 import SBOL2Graph from './SBOL2Graph'
-import convertToSBOL2 from './convertToSBOL2'
 
 import fs = require('fs')
 
@@ -13,21 +12,11 @@ async function main() {
 
     let filename = process.argv.slice(2).join(' ')
 
-    console.log('ORIGINAL')
-    let og = await SBOL2Graph.loadString(fs.readFileSync(filename) + '', 'application/rdf+xml')
-    og.printTree()
-    console.log('---')
-
     let g = await SBOLXGraph.loadString(fs.readFileSync(filename) + '', 'application/rdf+xml')
-    console.log('SBOLX')
-    g.printTree()
-    console.log('---')
     let outXFilename = filename + '_sbolx.xml'
     fs.writeFileSync(outXFilename, g.serializeXML())
 
-
-
-    let g2 = convertToSBOL2(g)
+    let g2 = await SBOL2Graph.loadString(g.serializeXML())
     console.log('ROUNDTRIPPED')
     g2.printTree()
     console.log('---')

@@ -1,6 +1,6 @@
 
-import SBOL2Graph from './SBOL2Graph'
-import SBOLXGraph from './SBOLXGraph'
+import SBOL2Graph from '../SBOL2Graph'
+import SBOLXGraph from '../SBOLXGraph'
 
 import {
 
@@ -15,32 +15,24 @@ import {
     S2GenericLocation,
     S2Range,
     SXIdentified,
-    S2Identified
+    S2Identified,
+    Graph
 
-} from '.'
+} from '..'
 
 
 import { Types, Predicates, Prefixes, Specifiers } from 'bioterms'
 
-import S2IdentifiedFactory from './sbol2/S2IdentifiedFactory'
+import S2IdentifiedFactory from '../sbol2/S2IdentifiedFactory'
 
 
 
-export default function convertToSBOL2(graph:SBOLXGraph):SBOL2Graph {
+export default function convertXto2(graph:Graph) {
 
-    const newGraph:SBOL2Graph = new SBOL2Graph()
+    let graphx:SBOLXGraph = new SBOLXGraph()
+    graphx.graph = graph.graph
 
-    // Keep anything in the graph that isn't describing an SBOLX object
-    // TODO: update references to converted objects
-    //
-    for(let typeTriple of graph.match(null, Predicates.a, null)) {
-        if(typeTriple.object.toString().indexOf(Prefixes.sbolx) !== 0) {
-            for(let triple of graph.match(typeTriple.subject, null, null)) {
-                newGraph.add(triple.subject, triple.predicate, triple.object)
-            }
-        }
-    }
-
+    let graph2:SBOL2Graph = new SBOL2Graph()
 
     let componentToCDandMD:Map<string, { cd:S2ComponentDefinition, md:S2ModuleDefinition, fc:S2FunctionalComponent }> = new Map()
     let subcomponentToFC:Map<string, S2FunctionalComponent> = new Map()
@@ -55,12 +47,12 @@ export default function convertToSBOL2(graph:SBOLXGraph):SBOL2Graph {
 
     // Create CDs and MDs for every component, where the MD contains the CD as an FC
     //
-    for(let component of graph.components) {
+    for(let component of graphx.components) {
 
-        let cd = newGraph.createComponentDefinition(component.uriPrefix, component.id, component.version)
+        let cd = graph2.createComponentDefinition(component.uriPrefix, component.id, component.version)
         copyIdentifiedProperties(component, cd)
 
-        let md = newGraph.createModuleDefinition(component.uriPrefix, component.id + '_module', component.version)
+        let md = graph2.createModuleDefinition(component.uriPrefix, component.id + '_module', component.version)
         copyIdentifiedProperties(component, md)
 
         let fc = md.createFunctionalComponent(cd)
@@ -74,21 +66,21 @@ export default function convertToSBOL2(graph:SBOLXGraph):SBOL2Graph {
         }
 
         for(let feature of component.sequenceFeatures) {
-            let saIdent = S2IdentifiedFactory.createChild(newGraph, Types.SBOL2.SequenceAnnotation, cd, Predicates.SBOL2.sequenceAnnotation, feature.id, feature.version)
-            let sa = new S2SequenceAnnotation(newGraph, saIdent.uri)
+            let saIdent = S2IdentifiedFactory.createChild(graph2, Types.SBOL2.SequenceAnnotation, cd, Predicates.SBOL2.sequenceAnnotation, feature.id, feature.version)
+            let sa = new S2SequenceAnnotation(graph2, saIdent.uri)
 
             for(let role of feature.roles) {
                 sa.addRole(role)
             }
 
-            copyLocations(newGraph, feature, sa)
+            copyLocations(graph2, feature, sa)
         }
 
         componentToCDandMD.set(component.uri, { cd, md, fc })
     }
 
     // Make subcomponents into both SBOL2 subcomponents and SBOL2 functionalcomponents
-    for(let component of graph.components) {
+    for(let component of graphx.components) {
 
         let { cd, md, fc } = getCDandMD(component)
 
@@ -114,10 +106,10 @@ export default function convertToSBOL2(graph:SBOLXGraph):SBOL2Graph {
                     saDisplayId = subcomponent.id + '_anno'
                 }
 
-                let saIdent = S2IdentifiedFactory.createChild(newGraph, Types.SBOL2.SequenceAnnotation, cd, Predicates.SBOL2.sequenceAnnotation, saDisplayId, subcomponent.version)
-                let sa = new S2SequenceAnnotation(newGraph, saIdent.uri)
+                let saIdent = S2IdentifiedFactory.createChild(graph2, Types.SBOL2.SequenceAnnotation, cd, Predicates.SBOL2.sequenceAnnotation, saDisplayId, subcomponent.version)
+                let sa = new S2SequenceAnnotation(graph2, saIdent.uri)
 
-                copyLocations(newGraph, subcomponent, sa)
+                copyLocations(graph2, subcomponent, sa)
 
 
             }
@@ -125,7 +117,7 @@ export default function convertToSBOL2(graph:SBOLXGraph):SBOL2Graph {
     }
 
     // Port interactions
-    for(let component of graph.components) {
+    for(let component of graphx.components) {
 
         let { cd, md, fc } = getCDandMD(component)
 
@@ -167,16 +159,22 @@ export default function convertToSBOL2(graph:SBOLXGraph):SBOL2Graph {
     // have to make assumptions about how the SBOLX will map to SBOL2.
     //
 
-    for(let md of newGraph.moduleDefinitions) {
+    for(let md of graph2.moduleDefinitions) {
         if(md.interactions.length === 0 && md.models.length === 0) {
             md.destroy()
         }
     }
 
 
+    // Delete anything with an SBOLX type from the graph
 
+    for(let typeTriple of graph.match(null, Predicates.a, null)) {
+        if(typeTriple.object.toString().indexOf(Prefixes.sbolx) === 0) {
+            graph.removeMatches(typeTriple.subject, null, null)
+        }
+    }
 
-    return newGraph
+    graph.graph.addAll(graph2.graph)
 }
 
 function copyIdentifiedProperties(a:SXIdentified, b:S2Identified) {
@@ -202,13 +200,13 @@ function copyIdentifiedProperties(a:SXIdentified, b:S2Identified) {
 }
 
 
-function copyLocations(newGraph:SBOL2Graph, oldThing:SXThingWithLocation, newThing:S2SequenceAnnotation) {
+function copyLocations(graph2:SBOL2Graph, oldThing:SXThingWithLocation, newThing:S2SequenceAnnotation) {
 
     for(let location of oldThing.locations) {
         if(location instanceof SXRange) {
 
-            let newLocIdent = S2IdentifiedFactory.createChild(newGraph, Types.SBOL2.Range, newThing, Predicates.SBOL2.location, location.id, location.version)
-            let newLoc = new S2Range(newGraph, newLocIdent.uri)
+            let newLocIdent = S2IdentifiedFactory.createChild(graph2, Types.SBOL2.Range, newThing, Predicates.SBOL2.location, location.id, location.version)
+            let newLoc = new S2Range(graph2, newLocIdent.uri)
 
             newLoc.start = location.start
             newLoc.end = location.end
@@ -218,8 +216,8 @@ function copyLocations(newGraph:SBOL2Graph, oldThing:SXThingWithLocation, newThi
 
         } else if(location instanceof SXOrientedLocation) {
 
-            let newLocIdent = S2IdentifiedFactory.createChild(newGraph, Types.SBOL2.GenericLocation, newThing, Predicates.SBOL2.location, location.id, location.version)
-            let newLoc = new S2GenericLocation(newGraph, newLocIdent.uri)
+            let newLocIdent = S2IdentifiedFactory.createChild(graph2, Types.SBOL2.GenericLocation, newThing, Predicates.SBOL2.location, location.id, location.version)
+            let newLoc = new S2GenericLocation(graph2, newLocIdent.uri)
 
             newLoc.orientation = location.orientation === Specifiers.SBOLX.Orientation.ReverseComplement ?
                     Specifiers.SBOL2.Orientation.ReverseComplement : Specifiers.SBOL2.Orientation.Inline

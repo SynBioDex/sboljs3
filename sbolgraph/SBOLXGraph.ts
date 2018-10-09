@@ -31,10 +31,11 @@ import {
 } from '.'
 
 import SXIdentifiedFactory from './sbolx/SXIdentifiedFactory'
-import convertToSBOLX from './convertToSBOLX';
+import convertToSBOLX from './conversion/convert2toX';
 import serialize from './serialize';
 
 import changeURIPrefix from './changeURIPrefix'
+import convert2toX from './conversion/convert2toX';
 
 export default class SBOLXGraph extends Graph {
 
@@ -147,9 +148,9 @@ export default class SBOLXGraph extends Graph {
 
     }
 
-    static loadURL(url) {
+    static async loadURL(url) {
 
-        return new Promise((resolve, reject) => {
+        let res:any = await new Promise((resolve, reject) => {
 
             console.log('requesting ' + url)
 
@@ -176,47 +177,21 @@ export default class SBOLXGraph extends Graph {
 
             })
 
-        }).then((res:any) => {
-
-            var { data, mimeType } = res
-
-            console.log('SBOLXGraph::loadURL: mimetype is ' + mimeType)
-
-            if(mimeType === 'text/xml')
-                mimeType = 'application/rdf+xml'
-
-            if(mimeType === 'application/xml')
-                mimeType = 'application/rdf+xml'
-
-            const parser = new RdfParserXml()
-
-            return parser.parse(data).then((graph) => {
-
-                const sbol2Graph:SBOL2Graph = new SBOL2Graph(graph)
-
-                const sbolxGraph:SBOLXGraph = convertToSBOLX(sbol2Graph)
-
-                return Promise.resolve(sbolxGraph)
-            })
-
         })
-
+        
+        return await this.loadString(res.data as string, res.mimeType as string)
     }
 
-    static loadString(data:string, mimeType:string):Promise<SBOLXGraph> {
+    static async loadString(data:string, mimeType:string):Promise<SBOLXGraph> {
 
         const parser = new RdfParserXml()
 
-        return parser.parse(data).then((graph) => {
+        let graph = await parser.parse(data)
 
-            const sbol2Graph: SBOL2Graph = new SBOL2Graph(graph)
+        let sbolxGraph: SBOLXGraph = new SBOLXGraph(graph)
+        convert2toX(sbolxGraph)
 
-            const sbolxGraph: SBOLXGraph = convertToSBOLX(sbol2Graph)
-
-            return Promise.resolve(sbolxGraph)
-
-        })
-
+        return Promise.resolve(sbolxGraph)
     }
 
     serializeXML() {
