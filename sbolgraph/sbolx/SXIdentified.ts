@@ -53,9 +53,9 @@ export default class SXIdentified extends SXFacade {
         return this.getStringProperty(Predicates.SBOLX.version)
     }
 
-    setCompliantIdentity(id:string, version?:string) {
+    setCompliantIdentity(id:string, version?:string, newPrefix?:string) {
 
-        let uriPrefix = this.uriPrefix
+        let uriPrefix = newPrefix || this.uriPrefix
 
         this.id = id
         this.version = version
@@ -83,6 +83,12 @@ export default class SXIdentified extends SXFacade {
         }
 
         this.persistentIdentity = newPersistentIdentity
+
+        let childPrefix = this.persistentIdentity + '/'
+
+        for(let contained of this.containedObjects) {
+            contained.setCompliantIdentity(contained.id, contained.version, childPrefix)
+        }
     }
 
     set version(version:string|undefined) {
