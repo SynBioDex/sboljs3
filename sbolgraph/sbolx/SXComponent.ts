@@ -182,9 +182,9 @@ export default class SXComponent extends SXIdentified {
         return feature
     }
 
-    wrap():SXComponent {
+    wrap(wrapperId?:string):SXComponent {
 
-        const wrapper:SXComponent = this.graph.createComponent(this.uriPrefix, this.displayName + '_wrapper', this.version)
+        const wrapper:SXComponent = this.graph.createComponent(this.uriPrefix, wrapperId || (this.displayName + '_wrapper'), this.version)
 
         wrapper.createSubComponent(this)
 

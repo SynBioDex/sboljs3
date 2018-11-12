@@ -21,7 +21,7 @@ export default class SXIdentifiedFactory {
 
         graph.insertProperties(uri, {
             [Predicates.a]: node.createUriNode(type),
-            [Predicates.SBOLX.id]: node.createStringNode(id),
+            [Predicates.SBOLX.id]: node.createStringNode(extractID(uri, version)),
             [Predicates.SBOLX.persistentIdentity]: node.createUriNode(extractPersistentIdentity(uri, version)),
         })
 
@@ -58,7 +58,7 @@ export default class SXIdentifiedFactory {
 
         graph.insertProperties(uri, {
             [Predicates.a]: node.createUriNode(type),
-            [Predicates.SBOLX.id]: node.createStringNode(id),
+            [Predicates.SBOLX.id]: node.createStringNode(extractID(uri, version)),
             [Predicates.SBOLX.persistentIdentity]: node.createUriNode(extractPersistentIdentity(uri, version))
         })
 
@@ -95,6 +95,15 @@ function extractPersistentIdentity(uri:string, version:string|undefined) {
         return uri.substr(0, uri.length - version.length - 1)
     } else {
         return uri
+    }
+}
+
+function extractID(uri:string, version:string|undefined) {
+    let tokens = uri.split('/')
+    if(version !== undefined) {
+        return tokens[tokens.length - 2]
+    } else {
+        return tokens[tokens.length - 1]
     }
 }
 
