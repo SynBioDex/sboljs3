@@ -4,8 +4,26 @@ Unlike existing libraries such as libSBOLj and sboljs, sbolgraph does not attemp
 
 [Example project using webpack](https://github.com/udp/sbolgraph_example)
 
-Bi-directional properties
-===
+# Implemented so far
+
+* Reading and writing fully compliant SBOL2
+* Reading (converting) FASTA and GenBank
+
+In addition to the SBOL2 implementation (`SBOL2Graph`), an implementation of a hypothetical standard in which [SEP10](https://github.com/SynBioDex/SEPs/blob/master/sep_010.md), [SEP22](https://github.com/SynBioDex/SEPs/blob/master/sep_022.md),  [SEP25](https://github.com/SynBioDex/SEPs/blob/master/sep_025.md), and [SEP15](https://github.com/SynBioDex/SEPs/blob/9120aff2c2c0902b7975280c790f19c307a6774b/sep_015.md). have been accepted is implemented in the class `SBOLXGraph`.  Functionality to convert to and from SBOL2 and the hypothetical SBOL "X" standard is provided in the `sbolgraph/conversion/` subdirectory.
+
+
+# Not implemented so far
+
+* SBOL1 support
+* Writing FASTA and GenBank
+* Validation
+
+
+
+# Advantages of sbolgraph
+
+
+## Bi-directional properties
 
 In sbolgraph, the bi-directional nature of RDF predicates is inherently preserved.  For example, for the following fragment of SBOL:
 
@@ -49,8 +67,7 @@ sbolgraph avoids this by maintaining the graph and using accessors to query it, 
 	}
 
 
-No [de]serialization logic
-===
+## No [de]serialization logic
 
 sbolgraph doesn't need methods to load or save from an RDF graph.  Instead, standard routines to serialize/deserialize an RDF graph can be used, because the graph is the only state.   This means that:
 
@@ -59,31 +76,9 @@ sbolgraph doesn't need methods to load or save from an RDF graph.  Instead, stan
 
 
 
-Performance
-===
+# Performance
 
 Is this going to be slower than the other libraries?
 
 Marginally, but hopefully not significantly, and certainly not in time complexity terms.  All of the predefined partial triple evaluations in the library are hash table lookups facilitated by a [fork of rdf-graph-array](https://github.com/udp/rdf-graph-array) with additional indexing.  Hash table lookups should be O(1).
-
-
-Implemented so far
-===
-
-* Reading and writing fully compliant SBOL2
-* Reading (converting) FASTA and GenBank
-
-In addition to the SBOL2 implementation (`SBOL2Graph`), an implementation of a hypothetical standard in which [SEP10](https://github.com/SynBioDex/SEPs/blob/master/sep_010.md), [SEP22](https://github.com/SynBioDex/SEPs/blob/master/sep_022.md),  [SEP25](https://github.com/SynBioDex/SEPs/blob/master/sep_025.md), and [SEP15](https://github.com/SynBioDex/SEPs/blob/9120aff2c2c0902b7975280c790f19c307a6774b/sep_015.md). have been accepted is implemented in the class `SBOLXGraph`.  Functionality to convert to and from SBOL2 and the hypothetical SBOL "X" standard is provided in the `sbolgraph/conversion/` subdirectory.
-
-
-Not implemented so far
-===
-
-* SBOL1 support
-* Writing FASTA and GenBank
-* Validation
-
-
-
-
 
