@@ -73,6 +73,8 @@ Implemented so far
 * Reading and writing fully compliant SBOL2
 * Reading (converting) FASTA and GenBank
 
+In addition to the SBOL2 implementation (`SBOL2Graph`), an implementation of a hypothetical standard in which [SEP10](https://github.com/SynBioDex/SEPs/blob/master/sep_010.md), [SEP22](https://github.com/SynBioDex/SEPs/blob/master/sep_022.md),  [SEP25](https://github.com/SynBioDex/SEPs/blob/master/sep_025.md), and [SEP15](https://github.com/SynBioDex/SEPs/blob/9120aff2c2c0902b7975280c790f19c307a6774b/sep_015.md). have been accepted is implemented in the class `SBOLXGraph`.  Functionality to convert to and from SBOL2 and the hypothetical SBOL "X" standard is provided in the `sbolgraph/conversion/` subdirectory.
+
 
 Not implemented so far
 ===
