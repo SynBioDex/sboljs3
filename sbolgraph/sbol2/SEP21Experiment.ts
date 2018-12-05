@@ -77,13 +77,20 @@ export default class SEP21Experiment extends S2Identified {
 
     }
 
-    set construct(construct:S2Implementation|undefined) {
+    // set construct(construct:S2Implementation|undefined) {
 
-        if(construct === undefined) {
-            this.deleteProperty(Predicates.Prov.wasDerivedFrom)
-        } else {
-            this.setUriProperty(Predicates.Prov.wasDerivedFrom, construct.uri)
-        }
+    //     if(construct === undefined) {
+    //         this.deleteProperty(Predicates.Prov.wasDerivedFrom)
+    //     } else {
+    //         this.setUriProperty(Predicates.Prov.wasDerivedFrom, construct.uri)
+    //     }
+    // }
+
+
+    addConstruct(construct:S2Implementation):void {
+
+        this.graph.add(this.uri, Predicates.Prov.wasDerivedFrom, node.createUriNode(construct.uri))
+
     }
 
     get displayType():string {
