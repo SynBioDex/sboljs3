@@ -61,7 +61,7 @@ export default function changeURIPrefix(graph:Graph, topLevels:Set<string>, newP
 
     console.dir(prefixes)
 
-    this.graph = newGraph
+    graph.graph = newGraph
 
     // TODO currently only works for compliant URIs
     // 
