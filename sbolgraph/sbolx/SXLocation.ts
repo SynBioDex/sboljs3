@@ -19,7 +19,7 @@ export default abstract class SXLocation extends SXIdentified {
     get containingObject():SXIdentified|undefined {
 
         const uri = triple.subjectUri(
-            this.graph.matchOne(null, Predicates.SBOLX.hasLocation, this.uri)
+            this.graph.matchOne(null, Predicates.SBOLX.location, this.uri)
         )
 
         if(!uri) {

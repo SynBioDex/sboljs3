@@ -19,26 +19,26 @@ export default class SXRange extends SXOrientedLocation {
     }
 
     get start():number|undefined {
-        return this.getIntProperty(Predicates.SBOLX.rangeStart)
+        return this.getIntProperty(Predicates.SBOLX.start)
     }
 
     set start(n:number|undefined) {
         if(n !== undefined) {
-            this.setIntProperty(Predicates.SBOLX.rangeStart, n)
+            this.setIntProperty(Predicates.SBOLX.start, n)
         } else {
-            this.deleteProperty(Predicates.SBOLX.rangeStart)
+            this.deleteProperty(Predicates.SBOLX.start)
         }
     }
 
     get end():number|undefined {
-        return this.getIntProperty(Predicates.SBOLX.rangeEnd)
+        return this.getIntProperty(Predicates.SBOLX.end)
     }
 
     set end(n:number|undefined) {
         if(n !== undefined) {
-            this.setIntProperty(Predicates.SBOLX.rangeEnd, n)
+            this.setIntProperty(Predicates.SBOLX.end, n)
         } else {
-            this.deleteProperty(Predicates.SBOLX.rangeEnd)
+            this.deleteProperty(Predicates.SBOLX.end)
         }
     }
 

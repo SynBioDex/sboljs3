@@ -65,7 +65,7 @@ export default class SXSubComponent extends SXThingWithLocation {
     get containingObject():SXIdentified|undefined {
 
         const uri = triple.subjectUri(
-            this.graph.matchOne(null, Predicates.SBOLX.hasSubComponent, this.uri)
+            this.graph.matchOne(null, Predicates.SBOLX.subComponent, this.uri)
         )
 
         if(!uri) {
@@ -79,7 +79,7 @@ export default class SXSubComponent extends SXThingWithLocation {
     get containingComponent():SXComponent {
 
         const uri = triple.subjectUri(
-            this.graph.matchOne(null, Predicates.SBOLX.hasSubComponent, this.uri)
+            this.graph.matchOne(null, Predicates.SBOLX.subComponent, this.uri)
         )
 
         if(!uri) {
@@ -92,7 +92,7 @@ export default class SXSubComponent extends SXThingWithLocation {
 
     get sequenceConstraints():Array<SXSequenceConstraint> {
 
-        return this.graph.match(null, Predicates.SBOLX.constraintSubject, this.uri)
+        return this.graph.match(null, Predicates.SBOLX.subject, this.uri)
                    .map(triple.subjectUri)
                    //.filter((uri:string) => this.graph.getType(uri) === Types.SBOLX.SequenceConstraint)
                    .map((uri:string) => new SXSequenceConstraint(this.graph, uri))
@@ -140,14 +140,14 @@ export default class SXSubComponent extends SXThingWithLocation {
 
     getConstraintsWithThisSubject():Array<SXSequenceConstraint> {
 
-        return this.graph.match(null, Predicates.SBOLX.constraintSubject, this.uri)
+        return this.graph.match(null, Predicates.SBOLX.subject, this.uri)
                     .map(triple.subjectUri)
                     .map((uri:string) => new SXSequenceConstraint(this.graph, uri))
     }
 
     getConstraintsWithThisObject():Array<SXSequenceConstraint> {
 
-        return this.graph.match(null, Predicates.SBOLX.constraintObject, this.uri)
+        return this.graph.match(null, Predicates.SBOLX.object, this.uri)
                     .map(triple.subjectUri)
                     .map((uri:string) => new SXSequenceConstraint(this.graph, uri))
     }

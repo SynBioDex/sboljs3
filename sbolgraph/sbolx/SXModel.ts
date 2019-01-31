@@ -18,27 +18,27 @@ export default class SXModel extends SXIdentified {
     }
 
     get framework(): string|undefined {
-        return this.getUriProperty(Predicates.SBOLX.modelFramework)
+        return this.getUriProperty(Predicates.SBOLX.framework)
     }
 
     set framework(framework: string|undefined) {
-        this.setUriProperty(Predicates.SBOLX.modelFramework, framework)
+        this.setUriProperty(Predicates.SBOLX.framework, framework)
     }
 
     get language():string|undefined {
-        return this.getUriProperty(Predicates.SBOLX.modelLanguage)
+        return this.getUriProperty(Predicates.SBOLX.language)
     }
 
     set language(language:string|undefined) {
-        this.setUriProperty(Predicates.SBOLX.modelLanguage, language)
+        this.setUriProperty(Predicates.SBOLX.language, language)
     }
 
     get source():string|undefined {
-        return this.getUriProperty(Predicates.SBOLX.modelSource)
+        return this.getUriProperty(Predicates.SBOLX.source)
     }
 
     set source(source:string|undefined) {
-        this.setUriProperty(Predicates.SBOLX.modelSource, source)
+        this.setUriProperty(Predicates.SBOLX.source, source)
     }
 
 }

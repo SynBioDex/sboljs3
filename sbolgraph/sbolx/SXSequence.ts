@@ -23,15 +23,15 @@ export default class SXSequence extends SXIdentified {
     }
 
     get elements():string|undefined {
-        return this.getStringProperty(Predicates.SBOLX.sequenceElements)
+        return this.getStringProperty(Predicates.SBOLX.elements)
     }
 
     set elements(elements:string|undefined) {
 
         if(elements === undefined) {
-            this.deleteProperty(Predicates.SBOLX.sequenceElements)
+            this.deleteProperty(Predicates.SBOLX.elements)
         } else {
-            this.setStringProperty(Predicates.SBOLX.sequenceElements, elements)
+            this.setStringProperty(Predicates.SBOLX.elements, elements)
         }
     }
 
@@ -64,7 +64,7 @@ export default class SXSequence extends SXIdentified {
             return
 
         const containingModules:Array<SXComponent> =
-            this.graph.match(null, Predicates.SBOLX.usesSequence, this.uri)
+            this.graph.match(null, Predicates.SBOLX.sequence, this.uri)
                 .map(triple.subjectUri)
                 .map((uri:string) => new SXComponent(this.graph, uri))
 
@@ -132,7 +132,7 @@ export default class SXSequence extends SXIdentified {
             return
 
         const containingCDs:Array<SXComponent> =
-            this.graph.match(null, Predicates.SBOLX.usesSequence, this.uri)
+            this.graph.match(null, Predicates.SBOLX.sequence, this.uri)
                 .map(triple.subjectUri)
                 .map((uri:string) => new SXComponent(this.graph, uri))
 
@@ -186,15 +186,15 @@ export default class SXSequence extends SXIdentified {
     }
 
     get encoding():string|undefined {
-        return this.getUriProperty(Predicates.SBOLX.sequenceEncoding)
+        return this.getUriProperty(Predicates.SBOLX.encoding)
     }
 
     set encoding(encoding:string|undefined) {
 
         if(encoding === undefined) {
-            this.deleteProperty(Predicates.SBOLX.sequenceEncoding)
+            this.deleteProperty(Predicates.SBOLX.encoding)
         } else {
-            this.setUriProperty(Predicates.SBOLX.sequenceEncoding, encoding)
+            this.setUriProperty(Predicates.SBOLX.encoding, encoding)
         }
     }
 

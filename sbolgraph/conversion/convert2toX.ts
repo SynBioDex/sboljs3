@@ -274,7 +274,7 @@ export default function convert2toX(graph:Graph) {
         md.modules.forEach((sm:S2ModuleInstance) => {
 
             let _subModule:SXIdentified =
-                SXIdentifiedFactory.createChild(graphx, Types.SBOLX.SubComponent, module, Predicates.SBOLX.hasSubComponent, sm.displayId || 'submodule', sm.name)
+                SXIdentifiedFactory.createChild(graphx, Types.SBOLX.SubComponent, module, Predicates.SBOLX.subComponent, sm.displayId || 'submodule', sm.name)
 
             let subModule = new SXSubComponent(graphx, _subModule.uri)
 
@@ -297,7 +297,7 @@ export default function convert2toX(graph:Graph) {
         md.functionalComponents.forEach((sc:S2FunctionalComponent) => {
 
             let _subModule:SXIdentified =
-                SXIdentifiedFactory.createChild(graphx, Types.SBOLX.SubComponent, module, Predicates.SBOLX.hasSubComponent, sc.displayId || 'subcomponent', sc.name)
+                SXIdentifiedFactory.createChild(graphx, Types.SBOLX.SubComponent, module, Predicates.SBOLX.subComponent, sc.displayId || 'subcomponent', sc.name)
 
             let subModule = new SXSubComponent(graphx, _subModule.uri)
 

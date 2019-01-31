@@ -206,12 +206,12 @@ export default class SBOLXGraph extends Graph {
         ]
 
         let ownershipPredicates = [
-            Predicates.SBOLX.hasSequenceConstraint,
-            Predicates.SBOLX.hasSequenceFeature,
-            Predicates.SBOLX.hasSubComponent,
-            Predicates.SBOLX.hasParticipation,
-            Predicates.SBOLX.hasLocation,
-            Predicates.SBOLX.hasInteraction
+            Predicates.SBOLX.sequenceConstraint,
+            Predicates.SBOLX.sequenceAnnotation,
+            Predicates.SBOLX.subComponent,
+            Predicates.SBOLX.participation,
+            Predicates.SBOLX.location,
+            Predicates.SBOLX.interaction
         ]
 
         return serialize(this, new Map(defaultPrefixes), new Set(ownershipPredicates))
@@ -302,7 +302,7 @@ export default class SBOLXGraph extends Graph {
             if(type === Types.SBOLX.OrientedLocation)
                 return new SXOrientedLocation(this, uri)
 
-            if(type === Types.SBOLX.SequenceFeature)
+            if(type === Types.SBOLX.SequenceAnnotation)
                 return new SXSequenceFeature(this, uri)
 
             if(type === Types.SBOLX.Sequence)

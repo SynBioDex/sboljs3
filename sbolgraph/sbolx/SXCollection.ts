@@ -20,7 +20,7 @@ export default class SXCollection extends SXIdentified {
 
     get members():Array<SXIdentified> {
 
-        return this.getUriProperties(Predicates.SBOLX.hasMember)
+        return this.getUriProperties(Predicates.SBOLX.member)
                    .map((uri:string) => this.graph.uriToFacade(uri))
                    .filter((r:SXIdentified) => r !== undefined) as Array<SXIdentified>
 
@@ -29,7 +29,7 @@ export default class SXCollection extends SXIdentified {
     addMember(member:SXIdentified):void {
 
         this.graph.insertProperties(this.uri, {
-            [Predicates.SBOLX.hasMember]: node.createUriNode(member.uri)
+            [Predicates.SBOLX.member]: node.createUriNode(member.uri)
         })
 
     }

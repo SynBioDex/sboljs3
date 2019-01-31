@@ -41,7 +41,7 @@ export default class SXParticipation extends SXIdentified {
     get interaction():SXInteraction|undefined {
 
         const uri:string|undefined = triple.subjectUri(
-            this.graph.matchOne(null, Predicates.SBOLX.hasParticipation, this.uri)
+            this.graph.matchOne(null, Predicates.SBOLX.participation, this.uri)
         )
 
         if(uri) {
@@ -53,7 +53,7 @@ export default class SXParticipation extends SXIdentified {
     get containingObject():SXIdentified|undefined {
 
         const uri = triple.subjectUri(
-            this.graph.matchOne(null, Predicates.SBOLX.hasParticipation, this.uri)
+            this.graph.matchOne(null, Predicates.SBOLX.participation, this.uri)
         )
 
         if(!uri) {
@@ -66,20 +66,20 @@ export default class SXParticipation extends SXIdentified {
 
     hasRole(uri:string):boolean {
 
-        return this.graph.hasMatch(this.uri, Predicates.SBOLX.hasRole, uri)
+        return this.graph.hasMatch(this.uri, Predicates.SBOLX.role, uri)
     
     }
 
     addRole(role:string):void {
-        this.graph.insert(this.uri, Predicates.SBOLX.hasRole, node.createUriNode(role))
+        this.graph.insert(this.uri, Predicates.SBOLX.role, node.createUriNode(role))
     }
 
     removeRole(role:string):void {
-        this.graph.removeMatches(this.uri, Predicates.SBOLX.hasRole, role)
+        this.graph.removeMatches(this.uri, Predicates.SBOLX.role, role)
     }
 
     get roles():string[] {
-        return this.getUriProperties(Predicates.SBOLX.hasRole)
+        return this.getUriProperties(Predicates.SBOLX.role)
     }
 
     setParticipant(participant:SXSubComponent):void {

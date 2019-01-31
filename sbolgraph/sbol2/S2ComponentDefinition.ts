@@ -117,7 +117,7 @@ export default class S2ComponentDefinition extends S2Identified {
 
     isPlasmidBackbone():boolean {
 
-        return this.hasRole(Specifiers.SBOL2.Role.PlasmidBackbone)
+        return this.hasRole(Specifiers.SO.PlasmidBackbone)
     
     }
 

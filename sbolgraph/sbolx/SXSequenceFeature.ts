@@ -20,25 +20,25 @@ export default class SXSequenceFeature extends SXThingWithLocation {
     }
 
     get roles():Array<string> {
-        return this.getUriProperties(Predicates.SBOLX.hasRole)
+        return this.getUriProperties(Predicates.SBOLX.role)
     }
 
     hasRole(role:string):boolean {
-        return this.graph.hasMatch(this.uri, Predicates.SBOLX.hasRole, role)
+        return this.graph.hasMatch(this.uri, Predicates.SBOLX.role, role)
     }
 
     addRole(role:string):void {
-        this.graph.insert(this.uri, Predicates.SBOLX.hasRole, node.createUriNode(role))
+        this.graph.insert(this.uri, Predicates.SBOLX.role, node.createUriNode(role))
     }
 
     removeRole(role:string):void {
-        this.graph.removeMatches(this.uri, Predicates.SBOLX.hasRole, role)
+        this.graph.removeMatches(this.uri, Predicates.SBOLX.role, role)
     }
 
     get containingObject():SXIdentified|undefined {
 
         const uri = triple.subjectUri(
-            this.graph.matchOne(null, Predicates.SBOLX.hasSequenceFeature, this.uri)
+            this.graph.matchOne(null, Predicates.SBOLX.sequenceAnnotation, this.uri)
         )
 
         if(!uri) {

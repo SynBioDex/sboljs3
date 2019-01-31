@@ -24,7 +24,7 @@ export default class SXSequenceConstraint extends SXIdentified {
     get containingObject():SXIdentified|undefined {
 
         const uri = triple.subjectUri(
-            this.graph.matchOne(null, Predicates.SBOLX.hasSequenceConstraint, this.uri)
+            this.graph.matchOne(null, Predicates.SBOLX.sequenceConstraint, this.uri)
         )
 
         if(!uri) {
@@ -43,7 +43,7 @@ export default class SXSequenceConstraint extends SXIdentified {
 
     get restriction():string {
 
-        const restriction:string|undefined = this.getUriProperty(Predicates.SBOLX.constraintRestriction)
+        const restriction:string|undefined = this.getUriProperty(Predicates.SBOLX.restriction)
 
         if(restriction === undefined) {
             throw new Error('SeqCons has no restriction?')
@@ -53,12 +53,12 @@ export default class SXSequenceConstraint extends SXIdentified {
     }
 
     set restriction(uri:string) {
-        this.setUriProperty(Predicates.SBOLX.constraintRestriction, uri)
+        this.setUriProperty(Predicates.SBOLX.restriction, uri)
     }
 
     get subject():SXSubComponent {
 
-        const subject:string|undefined = this.getUriProperty(Predicates.SBOLX.constraintSubject)
+        const subject:string|undefined = this.getUriProperty(Predicates.SBOLX.subject)
 
         if(subject === undefined) {
             throw new Error('SeqCons has no subject?')
@@ -68,12 +68,12 @@ export default class SXSequenceConstraint extends SXIdentified {
     }
 
     set subject(sc:SXSubComponent) {
-        this.setUriProperty(Predicates.SBOLX.constraintSubject, sc.uri)
+        this.setUriProperty(Predicates.SBOLX.subject, sc.uri)
     }
 
     get object():SXSubComponent {
 
-        const object:string|undefined = this.getUriProperty(Predicates.SBOLX.constraintObject)
+        const object:string|undefined = this.getUriProperty(Predicates.SBOLX.object)
 
         if(object === undefined) {
             throw new Error('SeqCons has no object?')
@@ -83,7 +83,7 @@ export default class SXSequenceConstraint extends SXIdentified {
     }
 
     set object(sc:SXSubComponent) {
-        this.setUriProperty(Predicates.SBOLX.constraintObject, sc.uri)
+        this.setUriProperty(Predicates.SBOLX.object, sc.uri)
     }
 
 }

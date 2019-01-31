@@ -47,24 +47,24 @@ export default class SXComponent extends SXIdentified {
     }
 
     get roles():Array<string> {
-        return this.getUriProperties(Predicates.SBOLX.hasRole)
+        return this.getUriProperties(Predicates.SBOLX.role)
     }
 
     hasRole(role:string):boolean {
-        return this.graph.hasMatch(this.uri, Predicates.SBOLX.hasRole, role)
+        return this.graph.hasMatch(this.uri, Predicates.SBOLX.role, role)
     }
 
     addRole(role:string):void {
-        this.graph.insert(this.uri, Predicates.SBOLX.hasRole, node.createUriNode(role))
+        this.graph.insert(this.uri, Predicates.SBOLX.role, node.createUriNode(role))
     }
 
     removeRole(role:string):void {
-        this.graph.removeMatches(this.uri, Predicates.SBOLX.hasRole, role)
+        this.graph.removeMatches(this.uri, Predicates.SBOLX.role, role)
     }
 
     get sequence():SXSequence|undefined {
 
-        const uri:string|undefined = this.getUriProperty(Predicates.SBOLX.usesSequence)
+        const uri:string|undefined = this.getUriProperty(Predicates.SBOLX.sequence)
 
         if(uri === undefined)
             return undefined
@@ -74,14 +74,14 @@ export default class SXComponent extends SXIdentified {
 
     get subComponents():Array<SXSubComponent> {
 
-        return this.getUriProperties(Predicates.SBOLX.hasSubComponent)
+        return this.getUriProperties(Predicates.SBOLX.subComponent)
                    .map((uri:string) => new SXSubComponent(this.graph, uri))
 
     }
 
     get interactions():Array<SXInteraction> {
 
-        return this.getUriProperties(Predicates.SBOLX.hasInteraction)
+        return this.getUriProperties(Predicates.SBOLX.interaction)
                     .map((uri:string) => new SXInteraction(this.graph, uri))
 
     }
@@ -92,14 +92,14 @@ export default class SXComponent extends SXIdentified {
 
     get sequenceConstraints():Array<SXSequenceConstraint> {
 
-        return this.getUriProperties(Predicates.SBOLX.hasSequenceConstraint)
+        return this.getUriProperties(Predicates.SBOLX.sequenceConstraint)
                    .map((uri:string) => new SXSequenceConstraint(this.graph, uri))
 
     }
 
     get sequenceFeatures():Array<SXSequenceFeature> {
 
-        return this.getUriProperties(Predicates.SBOLX.hasSequenceFeature)
+        return this.getUriProperties(Predicates.SBOLX.sequenceAnnotation)
                    .map((uri:string) => new SXSequenceFeature(this.graph, uri))
 
     }
@@ -135,7 +135,7 @@ export default class SXComponent extends SXIdentified {
 
     isPlasmidBackbone():boolean {
 
-        return this.hasRole(Specifiers.SBOL2.Role.PlasmidBackbone)
+        return this.hasRole(Specifiers.SO.PlasmidBackbone)
     
     }
 
@@ -144,7 +144,7 @@ export default class SXComponent extends SXIdentified {
         const id:string = definition.id
 
         const identified:SXIdentified =
-            SXIdentifiedFactory.createChild(this.graph, Types.SBOLX.SubComponent, this, Predicates.SBOLX.hasSubComponent, id, undefined, this.version)
+            SXIdentifiedFactory.createChild(this.graph, Types.SBOLX.SubComponent, this, Predicates.SBOLX.subComponent, id, undefined, this.version)
 
         const module:SXSubComponent = new SXSubComponent(this.graph, identified.uri)
 
@@ -156,9 +156,9 @@ export default class SXComponent extends SXIdentified {
     setSequence(sequence:SXSequence|undefined):void {
 
         if(sequence === undefined)
-            this.deleteProperty(Predicates.SBOLX.usesSequence)
+            this.deleteProperty(Predicates.SBOLX.sequence)
         else
-            this.setUriProperty(Predicates.SBOLX.usesSequence, sequence.uri)
+            this.setUriProperty(Predicates.SBOLX.sequence, sequence.uri)
 
     }
 
@@ -167,7 +167,7 @@ export default class SXComponent extends SXIdentified {
         const id:string = 'feature_' + name
 
         const identified:SXIdentified =
-            SXIdentifiedFactory.createChild(this.graph, Types.SBOLX.SequenceFeature, this, Predicates.SBOLX.hasSequenceFeature, id, undefined, this.version)
+            SXIdentifiedFactory.createChild(this.graph, Types.SBOLX.SequenceAnnotation, this, Predicates.SBOLX.sequenceAnnotation, id, undefined, this.version)
 
         return new SXSequenceFeature(this.graph, identified.uri)
 
@@ -194,7 +194,7 @@ export default class SXComponent extends SXIdentified {
     createConstraint(subject:SXSubComponent, restriction:string, object:SXSubComponent):SXSequenceConstraint {
 
         const identified:SXIdentified =
-            SXIdentifiedFactory.createChild(this.graph, Types.SBOLX.SequenceConstraint, this, Predicates.SBOLX.hasSequenceConstraint, 'constraint_' + subject.id + '_' + object.id, undefined, this.version)
+            SXIdentifiedFactory.createChild(this.graph, Types.SBOLX.SequenceConstraint, this, Predicates.SBOLX.sequenceConstraint, 'constraint_' + subject.id + '_' + object.id, undefined, this.version)
 
         const constraint:SXSequenceConstraint = new SXSequenceConstraint(this.graph, identified.uri)
 
@@ -217,7 +217,7 @@ export default class SXComponent extends SXIdentified {
     addSequence(seq:SXSequence):void {
 
         this.graph.insertProperties(this.uri, {
-            [Predicates.SBOLX.usesSequence]: node.createUriNode(seq.uri)
+            [Predicates.SBOLX.sequence]: node.createUriNode(seq.uri)
         })
 
     }
@@ -225,7 +225,7 @@ export default class SXComponent extends SXIdentified {
     createInteraction(id:string, version?:string):SXInteraction {
 
         const identified:SXIdentified =
-            SXIdentifiedFactory.createChild(this.graph, Types.SBOLX.Interaction, this,  Predicates.SBOLX.hasInteraction, id, undefined, version)
+            SXIdentifiedFactory.createChild(this.graph, Types.SBOLX.Interaction, this,  Predicates.SBOLX.interaction, id, undefined, version)
 
         const interaction:SXInteraction = new SXInteraction(this.graph, identified.uri)
 
@@ -233,7 +233,7 @@ export default class SXComponent extends SXIdentified {
     }
 
     addModel(model:SXModel) {
-        this.graph.add(node.createUriNode(this.uri), node.createUriNode(Predicates.SBOLX.hasModel), node.createUriNode(model.uri))
+        this.graph.add(node.createUriNode(this.uri), node.createUriNode(Predicates.SBOLX.model), node.createUriNode(model.uri))
     }
 
     dissolve() {

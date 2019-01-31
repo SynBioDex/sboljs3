@@ -53,7 +53,7 @@ export default class SXInteraction extends SXIdentified {
 
     get participations():Array<SXParticipation> {
 
-        return this.getUriProperties(Predicates.SBOLX.hasParticipation)
+        return this.getUriProperties(Predicates.SBOLX.participation)
                    .map((uri:string) => new SXParticipation(this.graph, uri))
 
     }
@@ -75,7 +75,7 @@ export default class SXInteraction extends SXIdentified {
     get containingModule():SXComponent {
 
         const uri = triple.subjectUri(
-            this.graph.matchOne(null, Predicates.SBOLX.hasInteraction, this.uri)
+            this.graph.matchOne(null, Predicates.SBOLX.interaction, this.uri)
         )
 
         if(!uri) {
@@ -94,7 +94,7 @@ export default class SXInteraction extends SXIdentified {
     createParticipation(id:string, version?:string):SXParticipation {
 
         const identified:SXIdentified =
-            SXIdentifiedFactory.createChild(this.graph, Types.SBOLX.Participation, this, Predicates.SBOLX.hasParticipation, id, undefined, version)
+            SXIdentifiedFactory.createChild(this.graph, Types.SBOLX.Participation, this, Predicates.SBOLX.participation, id, undefined, version)
 
         const participation:SXParticipation = new SXParticipation(this.graph, identified.uri)
 
