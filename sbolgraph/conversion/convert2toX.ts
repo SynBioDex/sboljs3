@@ -129,13 +129,8 @@ export default function convert2toX(graph:Graph) {
         if(existing)
             return existing as SXSequence
 
-        var displayId:string|undefined = seq.displayId
-        var version:string|undefined = seq.version
-    
-        if(displayId === undefined)
-            throw new Error('missing displayId for ' + seq.uri)
-
-        const xseq:SXSequence = graphx.createSequence(seq.uriPrefix, displayId, version)
+        const xseq:SXSequence = new SXSequence(graphx, seq.uri)
+        xseq.setUriProperty(Predicates.a, Types.SBOLX.Sequence)
         copyIdentifiedProperties(seq, xseq)
 
         map.set(seq.uri, xseq)
@@ -153,7 +148,8 @@ export default function convert2toX(graph:Graph) {
         if(existing)
             return existing as SXModel
     
-        const xmodel:SXModel = graphx.createModel(model.uriPrefix, model.displayId || 'collection', model.version)
+        const xmodel:SXModel = new SXModel(graphx, model.uri)
+        xmodel.setUriProperty(Predicates.a, Types.SBOLX.Model)
         copyIdentifiedProperties(model, xmodel)
 
         xmodel.framework = model.framework
@@ -172,13 +168,8 @@ export default function convert2toX(graph:Graph) {
         if(existing)
             return existing as SXComponent
 
-        var displayId:string|undefined = cd.displayId
-        var version:string|undefined = cd.version
-    
-        if(displayId === undefined)
-            throw new Error('missing displayId for ' + cd.uri)
-
-        const module:SXComponent = graphx.createComponent(cd.uriPrefix, displayId, version)
+        const module:SXComponent = new SXComponent(graphx, cd.uri)
+        module.setUriProperty(Predicates.a, Types.SBOLX.Component)
         copyIdentifiedProperties(cd, module)
 
         map.set(cd.uri, module)
@@ -195,7 +186,8 @@ export default function convert2toX(graph:Graph) {
 
             const def:SXComponent = cdToModule(sc.definition)
 
-            const subModule:SXSubComponent = module.createSubComponent(def)
+            const subModule:SXSubComponent = new SXSubComponent(graphx, sc.uri)
+            subModule.setUriProperty(Predicates.a, Types.SBOLX.SubComponent)
             copyIdentifiedProperties(sc, subModule)
 
             subModule.name = sc.name
@@ -212,7 +204,8 @@ export default function convert2toX(graph:Graph) {
 
                 // no component, make a feature
 
-                const feature:SXSequenceFeature = module.createFeature(sa.displayName)
+                const feature:SXSequenceFeature = new SXSequenceFeature(graphx, sa.uri)
+                feature.setUriProperty(Predicates.a, Types.SBOLX.SequenceAnnotation)
                 copyIdentifiedProperties(sa, feature)
 
                 feature.name = sa.name
@@ -261,23 +254,16 @@ export default function convert2toX(graph:Graph) {
         if(existing)
             return existing as SXComponent
 
-        var displayId:string|undefined = md.displayId
-        var version:string|undefined = md.version
-    
-        if(displayId === undefined)
-            throw new Error('missing displayId for ' + md.uri)
-
-        const module:SXComponent = graphx.createComponent(md.uriPrefix, displayId, version)
+        const module:SXComponent = new SXComponent(graphx, md.uri)
+        module.setUriProperty(Predicates.a, Types.SBOLX.Component)
+        copyIdentifiedProperties(md, module)
 
         map.set(md.uri, module)
 
         md.modules.forEach((sm:S2ModuleInstance) => {
 
-            let _subModule:SXIdentified =
-                SXIdentifiedFactory.createChild(graphx, Types.SBOLX.SubComponent, module, Predicates.SBOLX.subComponent, sm.displayId || 'submodule', sm.name)
-
-            let subModule = new SXSubComponent(graphx, _subModule.uri)
-
+            let subModule = new SXSubComponent(graphx, sm.uri)
+            subModule.setUriProperty(Predicates.a, Types.SBOLX.SubComponent)
             copyIdentifiedProperties(sm, subModule)
 
             let def = map.get(sm.definition.uri)
@@ -296,11 +282,8 @@ export default function convert2toX(graph:Graph) {
 
         md.functionalComponents.forEach((sc:S2FunctionalComponent) => {
 
-            let _subModule:SXIdentified =
-                SXIdentifiedFactory.createChild(graphx, Types.SBOLX.SubComponent, module, Predicates.SBOLX.subComponent, sc.displayId || 'subcomponent', sc.name)
-
-            let subModule = new SXSubComponent(graphx, _subModule.uri)
-
+            let subModule = new SXSubComponent(graphx, sc.uri)
+            subModule.setUriProperty(Predicates.a, Types.SBOLX.SubComponent)
             copyIdentifiedProperties(sc, subModule)
 
             let def = map.get(sc.definition.uri)
@@ -320,12 +303,8 @@ export default function convert2toX(graph:Graph) {
 
         md.interactions.forEach((int:S2Interaction) => {
 
-            if(!int.displayId) {
-                throw new Error('missing displayId for ' + int.uri)
-            }
-
-            let newInt:SXInteraction = module.createInteraction(int.displayId, int.version)
-
+            let newInt = new SXInteraction(graphx, int.uri)
+            newInt.setUriProperty(Predicates.a, Types.SBOLX.Interaction)
             copyIdentifiedProperties(int, newInt)
 
             for(let type of int.types)
@@ -333,11 +312,9 @@ export default function convert2toX(graph:Graph) {
 
             for(let participation of int.participations) {
 
-                if (!participation.displayId) {
-                    throw new Error('missing displayId for ' + participation.uri)
-                }
-
-                let newParticipation:SXParticipation = newInt.createParticipation(participation.displayId, participation.version)
+                let newParticipation = new SXParticipation(graphx, participation.uri)
+                newParticipation.setUriProperty(Predicates.a, Types.SBOLX.Participation)
+                copyIdentifiedProperties(participation, newParticipation)
 
                 if(participation.participant) {
 
@@ -393,7 +370,11 @@ function copyIdentifiedProperties(a:S2Identified, b:SXIdentified) {
             continue
         }
 
-        if(p.indexOf(Prefixes.sbol2) !== 0) {
+        if(p.indexOf(Prefixes.sbol2) !== 0
+            || p == Predicates.SBOL2.displayId
+            || p == Predicates.SBOL2.version
+            || p == Predicates.SBOL2.persistentIdentity
+        ) {
             b.graph.insert(b.uri, triple.predicate.nominalValue, triple.object)
         }
     }

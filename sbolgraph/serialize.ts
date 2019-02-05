@@ -35,7 +35,7 @@ export default function serialize(graph:Graph, defaultPrefixes:Map<string,string
         let subjectElem = subjectToElement.get(s)
 
         if(!subjectElem) {
-            throw new Error('???')
+            throw new Error(s + ' has no type?')
         }
 
         let p = nodeToURI(triple.predicate)
@@ -49,6 +49,10 @@ export default function serialize(graph:Graph, defaultPrefixes:Map<string,string
             let o = nodeToURI(triple.object)
 
             let ownedElement = subjectToElement.get(o)
+
+            if(!ownedElement) {
+                throw new Error('owned element ' + o + ' not found? subject ' + s + ', predicate ' + p)
+            }
 
             let ownershipElement = SubElement(subjectElem, prefixify(p))
             ownershipElement.append(ownedElement)
@@ -87,6 +91,9 @@ export default function serialize(graph:Graph, defaultPrefixes:Map<string,string
     for(let prefix of prefixes.keys()) {
         docAttr['xmlns:' + prefix] = prefixes.get(prefix)
     }
+
+
+    console.log(JSON.stringify(docAttr))
 
 
     let root = Element(prefixify(Prefixes.rdf + 'RDF'), docAttr)

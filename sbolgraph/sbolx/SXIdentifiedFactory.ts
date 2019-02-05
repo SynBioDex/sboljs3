@@ -40,7 +40,7 @@ export default class SXIdentifiedFactory {
         return new SXIdentified(graph, uri)
 
     }
-
+    
     static createChild(graph:SBOLXGraph,
                     type:string,
                     parent:SXIdentified,
