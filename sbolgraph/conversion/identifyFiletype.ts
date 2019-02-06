@@ -46,6 +46,10 @@ export default function identifyFiletype(content:string, mimeType:string|null):F
         return Filetype.RDFXML
     }
 
+    if(content.substr(n, 5) === '<rdf:') {
+        return Filetype.RDFXML
+    }
+
     let firstLineEnd = content.indexOf('\n', n)
 
     if(firstLineEnd !== -1) {
