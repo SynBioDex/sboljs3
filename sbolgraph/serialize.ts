@@ -35,7 +35,10 @@ export default function serialize(graph:Graph, defaultPrefixes:Map<string,string
         let subjectElem = subjectToElement.get(s)
 
         if(!subjectElem) {
-            throw new Error(s + ' has no type?')
+            subjectElem = Element('rdf:Description', {
+                [prefixify(Prefixes.rdf + 'about')]: s
+            })
+            subjectToElement.set(s, subjectElem)
         }
 
         let p = nodeToURI(triple.predicate)
@@ -50,16 +53,15 @@ export default function serialize(graph:Graph, defaultPrefixes:Map<string,string
 
             let ownedElement = subjectToElement.get(o)
 
-            if(!ownedElement) {
-                throw new Error('owned element ' + o + ' not found? subject ' + s + ', predicate ' + p)
+            if(ownedElement) {
+
+                let ownershipElement = SubElement(subjectElem, prefixify(p))
+                ownershipElement.append(ownedElement)
+
+                ownedElements.add(o)
+
+                continue
             }
-
-            let ownershipElement = SubElement(subjectElem, prefixify(p))
-            ownershipElement.append(ownedElement)
-
-            ownedElements.add(o)
-
-            continue
         }
 
         if(triple.object.interfaceName === 'NamedNode') {
@@ -112,10 +114,13 @@ export default function serialize(graph:Graph, defaultPrefixes:Map<string,string
     })
 
 
-    function nodeToURI(node) {
+    function nodeToURI(node):string {
 
         if(node.interfaceName !== 'NamedNode')
             throw new Error('expected NamedNode')
+
+        if(typeof node.nominalValue !== 'string')
+            throw new Error('nominalValue not a string?')
 
         return node.nominalValue
     }
