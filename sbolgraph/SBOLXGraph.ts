@@ -149,9 +149,9 @@ export default class SBOLXGraph extends Graph {
 
     }
 
-    static async loadURL(url, defaultURIPrefix?:string):Promise<SBOL2Graph> {
+    static async loadURL(url, defaultURIPrefix?:string):Promise<SBOLXGraph> {
 
-        let graph = new SBOL2Graph()
+        let graph = new SBOLXGraph()
         await graph.loadURL(url, defaultURIPrefix)
         return graph
     }
@@ -192,9 +192,9 @@ export default class SBOLXGraph extends Graph {
         await this.loadString(data, defaultURIPrefix, mimeType)
     }
 
-    static async loadString(data:string, defaultURIPrefix?:string, mimeType?:string):Promise<SBOL2Graph> {
+    static async loadString(data:string, defaultURIPrefix?:string, mimeType?:string):Promise<SBOLXGraph> {
 
-        let graph = new SBOL2Graph()
+        let graph = new SBOLXGraph()
         graph.loadString(data, defaultURIPrefix, mimeType)
         return graph
 
