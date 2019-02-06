@@ -1,8 +1,12 @@
 
-import SBOLXGraph from './SBOLXGraph'
 import SBOL2Graph from './SBOL2Graph'
+import SBOLXGraph from './SBOLXGraph'
 
 import fs = require('fs')
+
+import glob = require('glob-promise')
+import mkdirp = require('mkdirp-promise')
+import path = require('path')
 
 import fetch = require('node-fetch')
 
@@ -10,12 +14,39 @@ main()
 
 async function main() {
 
-    let filename = process.argv.slice(2).join(' ')
+    for(let f of await glob('SBOLTestSuite/**/*.*')) {
 
-    let g = await SBOLXGraph.loadString(fs.readFileSync(filename) + '', 'application/rdf+xml')
-    let outXFilename = filename + '_sbolx.xml'
-    fs.writeFileSync(outXFilename, g.serializeXML())
+        // they're too big
+        if(f.indexOf('genomes') !== -1)
+            continue
 
+        // they're wrong
+        if(f.indexOf('InvalidFiles') !== -1)
+            continue
+
+        // not supported yet
+        if(f.indexOf('SBOL1') !== -1)
+            continue
+
+        console.log(f)
+
+        let g = await SBOL2Graph.loadString(fs.readFileSync(f) + '')
+        let out2Filename = [ 'out/', path.dirname(f), '/', path.basename(f, path.extname(f)), '_sbol2.xml' ].join('')
+
+        await mkdirp(path.dirname(out2Filename))
+
+
+        let gx = await SBOLXGraph.loadString(fs.readFileSync(f) + '')
+        let outXFilename = [ 'out/', path.dirname(f), '/', path.basename(f, path.extname(f)), '_sbolx.xml' ].join('')
+        fs.writeFileSync(outXFilename, gx.serializeXML())
+
+        let gRoundtrip = await SBOL2Graph.loadString(gx.serializeXML())
+        let outRoundtripFilename = [ 'out/', path.dirname(f), '/', path.basename(f, path.extname(f)), '_roundtrip.xml' ].join('')
+        fs.writeFileSync(outRoundtripFilename, gx.serializeXML())
+    }
+
+
+    /*
     let g2 = await SBOL2Graph.loadString(g.serializeXML())
     console.log('ROUNDTRIPPED')
     g2.printTree()
@@ -51,7 +82,7 @@ async function main() {
     let r = await f.json()
 
     console.log(r)
-
+*/
 
 
 }

@@ -18,9 +18,16 @@ export default function genbankToSBOL2(graph:SBOL2Graph, uriPrefix:string, gb:st
         sequence.encoding = Specifiers.SBOL2.SequenceEncoding.AminoAcid
     }
 
-    sequence.description = gbf.definition
-    sequence.elements = gbf.sequence
+    if(gbf.definition)
+        sequence.description = gbf.definition
 
+    if(gbf.sequence)
+        sequence.elements = gbf.sequence
+
+    if(!gbf.locusName) {
+        console.dir(gbf)
+        throw new Error('missing locusName?')
+    }
 
     let componentDefinition = graph.createComponentDefinition(uriPrefix, gbf.locusName, '1')
 

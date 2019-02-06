@@ -1,9 +1,8 @@
 
-import { SBOL2Graph, S2ComponentDefinition } from '..';
+import { SBOL2Graph } from '..';
 
 import S2Identified from './S2Identified'
 import S2ComponentInstance from './S2ComponentInstance'
-import S2Range from './S2Range'
 
 import * as triple from '../triple'
 import * as node from '../node'

@@ -1,5 +1,4 @@
 
-import S2Identified from './S2Identified'
 import S2OrientedLocation from './S2OrientedLocation'
 
 import * as triple from '../triple'

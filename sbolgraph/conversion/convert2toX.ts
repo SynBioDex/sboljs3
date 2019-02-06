@@ -2,34 +2,30 @@
 import SBOL2Graph from '../SBOL2Graph'
 import SBOLXGraph from '../SBOLXGraph'
 
-import {
+import S2ComponentDefinition from '../sbol2/S2ComponentDefinition'
+import S2SequenceAnnotation from '../sbol2/S2SequenceAnnotation'
+import SXComponent from '../sbolx/SXComponent'
+import SXSequenceFeature from '../sbolx/SXSequenceFeature'
+import S2Location from '../sbol2/S2Location'
+import S2Range from '../sbol2/S2Range'
+import S2Identified from '../sbol2/S2Identified'
+import S2Collection from '../sbol2/S2Collection'
+import S2GenericLocation from '../sbol2/S2GenericLocation'
 
-    S2ComponentDefinition,
-    S2SequenceAnnotation,
-    SXComponent,
-    SXSequenceFeature,
-    S2Location,
-    S2Range,
-    S2Identified,
-    S2Collection,
-    S2GenericLocation,
-
-    SXSubComponent,
-    S2ComponentInstance,
-    SXIdentified,
-    SXCollection,
-    S2Sequence,
-    SXSequence,
-    S2ModuleDefinition,
-    S2FunctionalComponent,
-    S2Interaction,
-    SXInteraction,
-    SXParticipation,
-    S2ModuleInstance,
-    SXModel,
-    Graph
-
-} from '..'
+import SXSubComponent from '../sbolx/SXSubComponent'
+import S2ComponentInstance from '../sbol2/S2ComponentInstance'
+import SXIdentified from '../sbolx/SXIdentified'
+import SXCollection from '../sbolx/SXCollection'
+import S2Sequence from '../sbol2/S2Sequence'
+import SXSequence from '../sbolx/SXSequence'
+import S2ModuleDefinition from '../sbol2/S2ModuleDefinition'
+import S2FunctionalComponent from '../sbol2/S2FunctionalComponent'
+import S2Interaction from '../sbol2/S2Interaction'
+import SXInteraction from '../sbolx/SXInteraction'
+import SXParticipation from '../sbolx/SXParticipation'
+import S2ModuleInstance from '../sbol2/S2ModuleInstance'
+import SXModel from '../sbolx/SXModel'
+import Graph from '../Graph'
 
 import { Types, Predicates, Prefixes, Specifiers } from 'bioterms'
 import SXThingWithLocation from '../sbolx/SXThingWithLocation';

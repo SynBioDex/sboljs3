@@ -14,27 +14,28 @@ import request = require('request')
 
 import assert from 'power-assert'
 
-import {
-    SXIdentified,
-    SXSequence,
-    SXComponent,
-    SXSubComponent,
-    SXOrientedLocation,
-    SXSequenceFeature,
-    SXLocation,
-    SXRange,
-    SXParticipation,
-    SXInteraction,
-    SXCollection,
-    SXModel,
-    SBOL2Graph
-} from '.'
+import parseRDF from './parseRDF';
+
+import SXIdentified from './sbolx/SXIdentified'
+import SXSequence from './sbolx/SXSequence'
+import SXComponent from './sbolx/SXComponent'
+import SXSubComponent from './sbolx/SXSubComponent'
+import SXOrientedLocation from './sbolx/SXOrientedLocation'
+import SXSequenceFeature from './sbolx/SXSequenceFeature'
+import SXLocation from './sbolx/SXLocation'
+import SXRange from './sbolx/SXRange'
+import SXParticipation from './sbolx/SXParticipation'
+import SXInteraction from './sbolx/SXInteraction'
+import SXCollection from './sbolx/SXCollection'
+import SXModel from './sbolx/SXModel'
+import SBOL2Graph from './SBOL2Graph'
 
 import SXIdentifiedFactory from './sbolx/SXIdentifiedFactory'
-import convertToSBOLX from './conversion/convert2toX';
 import serialize from './serialize';
+import identifyFiletype, { Filetype } from './conversion/identifyFiletype';
 
 import changeURIPrefix from './changeURIPrefix'
+
 import convert2toX from './conversion/convert2toX';
 
 export default class SBOLXGraph extends Graph {
@@ -148,7 +149,14 @@ export default class SBOLXGraph extends Graph {
 
     }
 
-    static async loadURL(url) {
+    static async loadURL(url, defaultURIPrefix?:string):Promise<SBOL2Graph> {
+
+        let graph = new SBOL2Graph()
+        await graph.loadURL(url, defaultURIPrefix)
+        return graph
+    }
+
+    async loadURL(url:string, defaultURIPrefix?:string):Promise<void> {
 
         let res:any = await new Promise((resolve, reject) => {
 
@@ -167,7 +175,7 @@ export default class SBOLXGraph extends Graph {
                 var mimeType = res.headers['content-type']
 
                 if(mimeType === undefined)
-                    mimeType = 'application/rdf+xml'
+                    mimeType = null
 
                 resolve({
                     mimeType: mimeType,
@@ -178,21 +186,44 @@ export default class SBOLXGraph extends Graph {
             })
 
         })
-        
-        return await this.loadString(res.data as string, res.mimeType as string)
+
+        var { data, mimeType } = res
+
+        await this.loadString(data, defaultURIPrefix, mimeType)
     }
 
-    static async loadString(data:string, mimeType:string):Promise<SBOLXGraph> {
+    static async loadString(data:string, defaultURIPrefix?:string, mimeType?:string):Promise<SBOL2Graph> {
 
-        const parser = new RdfParserXml()
+        let graph = new SBOL2Graph()
+        graph.loadString(data, defaultURIPrefix, mimeType)
+        return graph
 
-        let graph = await parser.parse(data)
-
-        let sbolxGraph: SBOLXGraph = new SBOLXGraph(graph)
-        convert2toX(sbolxGraph)
-
-        return Promise.resolve(sbolxGraph)
     }
+
+    async loadString(data:string, defaultURIPrefix?:string, mimeType?:string):Promise<void> {
+
+        let filetype = identifyFiletype(data, mimeType || null)
+
+        if(filetype === Filetype.RDFXML || filetype === Filetype.NTriples) {
+            await parseRDF(this, data, filetype)
+
+            convert2toX(this)
+
+            return
+        }
+
+        defaultURIPrefix = defaultURIPrefix || 'http://converted/'
+
+        if(filetype === Filetype.FASTA || filetype == Filetype.GenBank) {
+            let g2 = await SBOL2Graph.loadString(data, defaultURIPrefix, mimeType)
+            this.graph.addAll(g2.graph)
+            convert2toX(this)
+            return
+        }
+
+        throw new Error('Unknown format')
+    }
+
 
     serializeXML() {
 

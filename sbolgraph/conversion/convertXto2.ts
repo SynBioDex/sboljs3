@@ -2,30 +2,23 @@
 import SBOL2Graph from '../SBOL2Graph'
 import SBOLXGraph from '../SBOLXGraph'
 
-import {
-
-    S2ComponentDefinition,
-    SXComponent,
-    SXRange,
-    SXOrientedLocation,
-    SXThingWithLocation,
-    S2ModuleDefinition,
-    S2FunctionalComponent,
-    S2SequenceAnnotation,
-    S2GenericLocation,
-    S2Range,
-    SXIdentified,
-    S2Identified,
-    Graph
-
-} from '..'
-
+import S2ComponentDefinition from '../sbol2/S2ComponentDefinition'
+import SXComponent from '../sbolx/SXComponent'
+import SXRange from '../sbolx/SXRange'
+import SXOrientedLocation from '../sbolx/SXOrientedLocation'
+import SXThingWithLocation from '../sbolx/SXThingWithLocation'
+import S2ModuleDefinition from '../sbol2/S2ModuleDefinition'
+import S2FunctionalComponent from '../sbol2/S2FunctionalComponent'
+import S2SequenceAnnotation from '../sbol2/S2SequenceAnnotation'
+import S2GenericLocation from '../sbol2/S2GenericLocation'
+import S2Range from '../sbol2/S2Range'
+import SXIdentified from '../sbolx/SXIdentified'
+import S2Identified from '../sbol2/S2Identified'
+import Graph from '../Graph'
 
 import { Types, Predicates, Prefixes, Specifiers } from 'bioterms'
 
 import S2IdentifiedFactory from '../sbol2/S2IdentifiedFactory'
-
-
 
 export default function convertXto2(graph:Graph) {
 
