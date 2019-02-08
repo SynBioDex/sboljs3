@@ -10,7 +10,9 @@ import path = require('path')
 
 import fetch = require('node-fetch')
 
-main()
+main().catch((e) => {
+    console.dir(e)
+})
 
 async function main() {
 
@@ -28,7 +30,14 @@ async function main() {
         if(f.indexOf('SBOL1') !== -1)
             continue
 
+        // more than a MB??
+        if(fs.statSync(f).size > 1048576)
+            continue
+
         console.log(f)
+
+        let outOrigFilename = [ 'out/', path.dirname(f), '/', path.basename(f, path.extname(f)), '_original.xml' ].join('')
+        fs.writeFileSync(outOrigFilename, fs.readFileSync(f) + '')
 
         let g = await SBOL2Graph.loadString(fs.readFileSync(f) + '')
         let out2Filename = [ 'out/', path.dirname(f), '/', path.basename(f, path.extname(f)), '_sbol2.xml' ].join('')
@@ -42,7 +51,7 @@ async function main() {
 
         let gRoundtrip = await SBOL2Graph.loadString(gx.serializeXML())
         let outRoundtripFilename = [ 'out/', path.dirname(f), '/', path.basename(f, path.extname(f)), '_roundtrip.xml' ].join('')
-        fs.writeFileSync(outRoundtripFilename, gx.serializeXML())
+        fs.writeFileSync(outRoundtripFilename, gRoundtrip.serializeXML())
     }
 
 

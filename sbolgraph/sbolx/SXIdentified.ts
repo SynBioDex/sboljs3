@@ -5,6 +5,7 @@ import { Types, Predicates, Specifiers } from 'bioterms'
 import SXFacade from './SXFacade'
 
 import SBOLXGraph from '../SBOLXGraph'
+import URIUtils from '../URIUtils';
 
 export default class SXIdentified extends SXFacade {
 
@@ -41,11 +42,11 @@ export default class SXIdentified extends SXFacade {
         return this.description
     }
 
-    get id():string {
+    get id():string|undefined {
         return this.getRequiredStringProperty(Predicates.SBOLX.id)
     }
 
-    set id(id:string) {
+    set id(id:string|undefined) {
         this.setStringProperty(Predicates.SBOLX.id, id)
     }
 
@@ -87,7 +88,14 @@ export default class SXIdentified extends SXFacade {
         let childPrefix = this.persistentIdentity + '/'
 
         for(let contained of this.containedObjects) {
-            contained.setCompliantIdentity(contained.id, contained.version, childPrefix)
+
+            let containedID = contained.id
+
+            if(containedID) {
+                contained.setCompliantIdentity(containedID, contained.version, childPrefix)
+            } else {
+                // not compliant; can't do anything
+            }
         }
     }
 
@@ -100,27 +108,21 @@ export default class SXIdentified extends SXFacade {
         }
     }
 
-    get persistentIdentity():string {
-        return this.getRequiredUriProperty(Predicates.SBOLX.persistentIdentity)
+    get persistentIdentity():string|undefined {
+        return this.getUriProperty(Predicates.SBOLX.persistentIdentity)
     }
 
-    set persistentIdentity(uri:string) {
-        this.setUriProperty(Predicates.SBOLX.persistentIdentity, uri)
+    set persistentIdentity(uri:string|undefined) {
+
+        if(uri !== undefined) {
+            this.setUriProperty(Predicates.SBOLX.persistentIdentity, uri)
+        } else {
+            this.deleteProperty(Predicates.SBOLX.persistentIdentity)
+        }
     }
 
     get uriPrefix():string {
-
-        const version:string|undefined = this.version
-        const id:string = this.id
-
-        if(version !== undefined) {
-            return this.uri.substr(0,
-                this.uri.length - id.length - version.length - 1)
-        } else {
-            return this.uri.substr(0,
-                this.uri.length - id.length)
-        }
-
+        return URIUtils.getPrefix(this.uri)
     }
 
     get containingObject():SXIdentified|undefined {

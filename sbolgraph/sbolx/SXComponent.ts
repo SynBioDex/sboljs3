@@ -141,7 +141,7 @@ export default class SXComponent extends SXIdentified {
 
     createSubComponent(definition:SXComponent):SXSubComponent {
 
-        const id:string = definition.id
+        const id:string|undefined = definition.id
 
         const identified:SXIdentified =
             SXIdentifiedFactory.createChild(this.graph, Types.SBOLX.SubComponent, this, Predicates.SBOLX.subComponent, id, undefined, this.version)

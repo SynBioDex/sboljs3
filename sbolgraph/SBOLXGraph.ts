@@ -28,6 +28,12 @@ import SXParticipation from './sbolx/SXParticipation'
 import SXInteraction from './sbolx/SXInteraction'
 import SXCollection from './sbolx/SXCollection'
 import SXModel from './sbolx/SXModel'
+import SXProvActivity from './sbolx/SXProvActivity';
+import SXProvAgent from './sbolx/SXProvAgent';
+import SXProvAssociation from './sbolx/SXProvAssociation';
+import SXProvPlan from './sbolx/SXProvPlan';
+import SXProvUsage from './sbolx/SXProvUsage';
+import SXImplementation from './sbolx/SXImplementation';
 import SBOL2Graph from './SBOL2Graph'
 
 import SXIdentifiedFactory from './sbolx/SXIdentifiedFactory'
@@ -195,7 +201,7 @@ export default class SBOLXGraph extends Graph {
     static async loadString(data:string, defaultURIPrefix?:string, mimeType?:string):Promise<SBOLXGraph> {
 
         let graph = new SBOLXGraph()
-        graph.loadString(data, defaultURIPrefix, mimeType)
+        await graph.loadString(data, defaultURIPrefix, mimeType)
         return graph
 
     }
@@ -345,10 +351,28 @@ export default class SBOLXGraph extends Graph {
             if(type === Types.SBOLX.Model)
                 return new SXModel(this, uri)
 
-            throw new Error('unknown type: ' + uri)
+            if(type === Types.SBOLX.Implementation)
+                return new SXImplementation(this, uri)
+
+            if(type === Types.Prov.Activity)
+                return new SXProvActivity(this, uri)
+
+            if(type === Types.Prov.Agent)
+                return new SXProvAgent(this, uri)
+
+            if(type === Types.Prov.Association)
+                return new SXProvAssociation(this, uri)
+
+            if(type === Types.Prov.Usage)
+                return new SXProvUsage(this, uri)
+
+            if(type === Types.Prov.Plan)
+                return new SXProvPlan(this, uri)
+
+            throw new Error('unknown type: ' + uri + ' a ' + type)
         }
 
-        //return undefined
+        return new SXIdentified(this, uri)
     }
 
     addAll(otherGraph:SBOLXGraph) {

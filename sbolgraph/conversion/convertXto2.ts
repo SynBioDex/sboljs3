@@ -19,6 +19,7 @@ import Graph from '../Graph'
 import { Types, Predicates, Prefixes, Specifiers } from 'bioterms'
 
 import S2IdentifiedFactory from '../sbol2/S2IdentifiedFactory'
+import URIUtils from '../URIUtils';
 
 export default function convertXto2(graph:Graph) {
 
@@ -42,10 +43,27 @@ export default function convertXto2(graph:Graph) {
     //
     for(let component of graphx.components) {
 
-        let cd = graph2.createComponentDefinition(component.uriPrefix, component.id, component.version)
+        let cdUri = component.uri
+        let mdUri = component.uri
+
+        // both URIs need to be different, but want to try to keep the old SBOL2 URI for the correct object if we can
+        //
+        switch(component.getUriProperty('http://biocad.io/terms/backport#prevType')) {
+            case Types.SBOL2.ModuleDefinition:
+                cdUri = URIUtils.addSuffix(cdUri, '_component')
+                break
+            case Types.SBOL2.ComponentDefinition:
+            default:
+                mdUri = URIUtils.addSuffix(mdUri, '_module')
+                break
+        }
+
+        let cd = new S2ComponentDefinition(graph2, cdUri)
+        cd.setUriProperty(Predicates.a, Types.SBOL2.ComponentDefinition)
         copyIdentifiedProperties(component, cd)
 
-        let md = graph2.createModuleDefinition(component.uriPrefix, component.id + '_module', component.version)
+        let md = new S2ModuleDefinition(graph2, mdUri)
+        md.setUriProperty(Predicates.a, Types.SBOL2.ModuleDefinition)
         copyIdentifiedProperties(component, md)
 
         let fc = md.createFunctionalComponent(cd)
@@ -59,7 +77,9 @@ export default function convertXto2(graph:Graph) {
         }
 
         for(let feature of component.sequenceFeatures) {
+
             let saIdent = S2IdentifiedFactory.createChild(graph2, Types.SBOL2.SequenceAnnotation, cd, Predicates.SBOL2.sequenceAnnotation, feature.id, feature.version)
+
             let sa = new S2SequenceAnnotation(graph2, saIdent.uri)
 
             for(let role of feature.roles) {
@@ -147,10 +167,12 @@ export default function convertXto2(graph:Graph) {
     //     They can be deleted along with their submodules and FCs.
     //
     //  TODO: similar rule for pointless CDs as well (no seq, seq annotations?)
+    //   & if there is ONLY a module left, remove its _module suffix
     //
     // It's easier to do this on the generated SBOL2 because it means we don't
     // have to make assumptions about how the SBOLX will map to SBOL2.
     //
+
 
     for(let md of graph2.moduleDefinitions) {
         if(md.interactions.length === 0 && md.models.length === 0) {

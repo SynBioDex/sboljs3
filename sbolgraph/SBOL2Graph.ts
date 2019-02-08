@@ -430,7 +430,7 @@ export default class SBOL2Graph extends Graph {
     static async loadString(data:string, defaultURIPrefix?:string, mimeType?:string):Promise<SBOL2Graph> {
 
         let graph = new SBOL2Graph()
-        graph.loadString(data, defaultURIPrefix, mimeType)
+        await graph.loadString(data, defaultURIPrefix, mimeType)
         return graph
 
     }
@@ -633,9 +633,7 @@ export default class SBOL2Graph extends Graph {
         if(type === Types.SBOL2.Attachment)
             return new S2Attachment(this, uri)
 
-        throw new Error('unknown type: ' + uri)
-
-        //return undefined
+        return new S2Identified(this, uri)
     }
 
     addAll(otherGraph:SBOL2Graph) {

@@ -93,7 +93,7 @@ export default class S2ModuleDefinition extends S2Identified {
         })
     }
 
-    createInteraction(id:string, version?:string):S2Interaction {
+    createInteraction(id?:string, version?:string):S2Interaction {
 
         const identified:S2Identified =
             S2IdentifiedFactory.createChild(this.graph, Types.SBOL2.Interaction, this, Predicates.SBOL2.interaction, id, undefined, version)
@@ -105,10 +105,7 @@ export default class S2ModuleDefinition extends S2Identified {
 
     createFunctionalComponent(definition:S2ComponentDefinition, id?:string, version?:string):S2FunctionalComponent {
 
-        let actualId = id || definition.displayId
-
-        if(actualId === undefined)
-            throw new Error('???')
+        let actualId = id || definition.displayId || undefined
 
         const identified:S2Identified =
             S2IdentifiedFactory.createChild(this.graph, Types.SBOL2.FunctionalComponent, this, Predicates.SBOL2.functionalComponent, actualId, undefined, version)
