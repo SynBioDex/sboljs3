@@ -199,6 +199,7 @@ export default function convert2toX(graph:Graph) {
             copyIdentifiedProperties(sc, subModule)
 
             subModule.name = sc.name
+            subModule.instanceOf = def
 
             module.insertUriProperty(Predicates.SBOLX.subComponent, subModule.uri)
 

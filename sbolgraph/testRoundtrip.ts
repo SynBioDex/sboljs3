@@ -9,6 +9,7 @@ import mkdirp = require('mkdirp-promise')
 import path = require('path')
 
 import fetch = require('node-fetch')
+import chalk from 'chalk'
 
 main().catch((e) => {
     console.dir(e)
@@ -34,20 +35,30 @@ async function main() {
         if(fs.statSync(f).size > 1048576)
             continue
 
-        console.log(f)
+        console.log(chalk.cyanBright.bold('🔄 Converting file: ' + f))
 
         let outOrigFilename = [ 'out/', path.dirname(f), '/', path.basename(f, path.extname(f)), '_original.xml' ].join('')
+
+        await mkdirp(path.dirname(outOrigFilename))
+
         fs.writeFileSync(outOrigFilename, fs.readFileSync(f) + '')
+
+
+        console.log(chalk.cyanBright('🤔 SBOL2 -> SBOL2'))
 
         let g = await SBOL2Graph.loadString(fs.readFileSync(f) + '')
         let out2Filename = [ 'out/', path.dirname(f), '/', path.basename(f, path.extname(f)), '_sbol2.xml' ].join('')
 
-        await mkdirp(path.dirname(out2Filename))
 
+
+        console.log(chalk.cyanBright('🤔 SBOL2 -> SBOLX'))
 
         let gx = await SBOLXGraph.loadString(fs.readFileSync(f) + '')
         let outXFilename = [ 'out/', path.dirname(f), '/', path.basename(f, path.extname(f)), '_sbolx.xml' ].join('')
         fs.writeFileSync(outXFilename, gx.serializeXML())
+
+
+        console.log(chalk.cyanBright('🤔 SBOL2 -> SBOLX -> SBOL2'))
 
         let gRoundtrip = await SBOL2Graph.loadString(gx.serializeXML())
         let outRoundtripFilename = [ 'out/', path.dirname(f), '/', path.basename(f, path.extname(f)), '_roundtrip.xml' ].join('')
