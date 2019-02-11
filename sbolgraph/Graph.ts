@@ -223,14 +223,11 @@ export default class Graph {
                   .map(triple.subjectUri) as Array<string>
     }
 
-    getType(uri:string):string {
+    getType(uri:string):string|undefined {
 
         const type:string|undefined = triple.objectUri(
             this.matchOne(uri, Predicates.a, null)
         )
-        if(!type) {
-            throw new Error(uri + ' has no type?')
-        }
 
         return type
     }

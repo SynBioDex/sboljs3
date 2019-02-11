@@ -25,6 +25,7 @@ import SXInteraction from '../sbolx/SXInteraction'
 import SXParticipation from '../sbolx/SXParticipation'
 import S2ModuleInstance from '../sbol2/S2ModuleInstance'
 import SXModel from '../sbolx/SXModel'
+import SXMapsTo from '../sbolx/SXMapsTo'
 import Graph from '../Graph'
 
 import { Types, Predicates, Prefixes, Specifiers } from 'bioterms'
@@ -43,21 +44,21 @@ export default function convert2toX(graph:Graph) {
 
     let graphx:SBOLXGraph = new SBOLXGraph()
 
-    graph2.componentDefinitions.forEach((cd:S2ComponentDefinition) => {
+    for(let cd of graph2.componentDefinitions) {
         cdToModule(cd)
-    })
+    }
 
-    graph2.moduleDefinitions.forEach((md:S2ModuleDefinition) => {
+    for(let md of graph2.moduleDefinitions) {
         mdToModule(md)
-    })
+    }
 
-    graph2.models.forEach((model:S2Model) => {
+    for(let model of graph2.models) {
         modelToModel(model)
-    })
+    }
 
-    graph2.sequences.forEach((seq:S2Sequence) => {
+    for(let seq of graph2.sequences) {
         convertSeq(seq)
-    })
+    }
 
 
     for(let sm of graph2.instancesOfType(Types.SBOL2.Module).map((uri) => graph2.uriToFacade(uri))) {
@@ -86,37 +87,46 @@ export default function convert2toX(graph:Graph) {
             let a = map.get(mapsTo.local.uri)
 
             if(!a) {
-                throw new Error('Local side of MapsTo ' + mapsTo.local.uri + ' in submodule ' + sm.uri + ' was not found')
+                console.warn('Local side of MapsTo ' + mapsTo.local.uri + ' in submodule ' + sm.uri + ' was not found')
+                a = new SXSubComponent(graphx, mapsTo.local.uri)
             }
 
             let b = map.get(mapsTo.remote.uri)
 
             if(!b) {
-                throw new Error('Remote side of MapsTo ' + mapsTo.local.uri + ' in submodule ' + sm.uri + ' was not found')
+                console.warn('Remote side of MapsTo ' + mapsTo.remote.uri + ' in submodule ' + sm.uri + ' was not found')
+                b = new SXSubComponent(graphx, mapsTo.remote.uri)
             }
 
-            subModule.createMapping(a as SXSubComponent, b as SXSubComponent)
+            let newMapsTo = new SXMapsTo(graphx, mapsTo.uri)
+            newMapsTo.setUriProperty(Predicates.a, Types.SBOLX.MapsTo)
+
+            newMapsTo.local = a
+            newMapsTo.remote = b
+            newMapsTo.refinement = mapsTo.refinement
+            
+            subModule.addMapping(newMapsTo)
+
+            //subModule.createMapping(a as SXSubComponent, b as SXSubComponent)
 
         }
     }
 
-    graph2.collections.forEach((collection:S2Collection) => {
+    for(let collection of graph2.collections) {
 
         const xcollection:SXCollection = graphx.createCollection(collection.uriPrefix, collection.displayId || 'collection', collection.version)
         copyIdentifiedProperties(collection, xcollection)
 
-        collection.members.forEach((member:S2Identified) => {
+        for(let member of collection.members) {
 
             const converted:SXIdentified|undefined = map.get(member.uri)
 
-            if(converted === undefined)
-                throw new Error('???')
+            if(converted !== undefined) {
+                xcollection.addMember(converted)
+            }
+        }
 
-            xcollection.addMember(converted)
-        })
-
-
-    })
+    }
 
     function convertSeq(seq:S2Sequence):SXSequence {
 
@@ -168,17 +178,19 @@ export default function convert2toX(graph:Graph) {
         module.setUriProperty(Predicates.a, Types.SBOLX.Component)
         copyIdentifiedProperties(cd, module)
 
+        module.setUriProperty('http://biocad.io/terms/backport#prevType', Types.SBOL2.ComponentDefinition)
+
         map.set(cd.uri, module)
 
-        cd.roles.forEach((role:string) => {
+        for(let role of cd.roles) {
             module.addRole(role)
-        })
+        }
 
-        cd.types.forEach((type:string) => {
+        for(let type of cd.types) {
             module.addType(type)
-        })
+        }
 
-        cd.components.forEach((sc:S2ComponentInstance) => {
+        for(let sc of cd.components) {
 
             const def:SXComponent = cdToModule(sc.definition)
 
@@ -187,14 +199,17 @@ export default function convert2toX(graph:Graph) {
             copyIdentifiedProperties(sc, subModule)
 
             subModule.name = sc.name
+            subModule.instanceOf = def
+
+            module.insertUriProperty(Predicates.SBOLX.subComponent, subModule.uri)
 
             map.set(sc.uri, subModule)
 
             // TODO check sc roles match the def roles
 
-        })
+        }
 
-        cd.sequenceAnnotations.forEach((sa:S2SequenceAnnotation) => {
+        for(let sa of cd.sequenceAnnotations) {
 
             if(!sa.component) {
 
@@ -206,9 +221,9 @@ export default function convert2toX(graph:Graph) {
 
                 feature.name = sa.name
 
-                sa.roles.forEach((role:string) => {
+                for(let role of sa.roles) {
                     feature.addRole(role)
-                })
+                }
 
                 copyLocations(sa, feature)
 
@@ -230,14 +245,13 @@ export default function convert2toX(graph:Graph) {
                 sc.setStringProperty('http://biocad.io/terms/backport#sequenceAnnotationDisplayId', sa.displayId)
             }
 
+        }
 
-        })
-
-        cd.sequences.forEach((seq:S2Sequence) => {
+        for(let seq of cd.sequences) {
 
             module.addSequence(convertSeq(seq))
 
-        })
+        }
 
         return module
 
@@ -254,9 +268,11 @@ export default function convert2toX(graph:Graph) {
         module.setUriProperty(Predicates.a, Types.SBOLX.Component)
         copyIdentifiedProperties(md, module)
 
+        module.setUriProperty('http://biocad.io/terms/backport#prevType', Types.SBOL2.ModuleDefinition)
+
         map.set(md.uri, module)
 
-        md.modules.forEach((sm:S2ModuleInstance) => {
+        for(let sm of md.modules) {
 
             let subModule = new SXSubComponent(graphx, sm.uri)
             subModule.setUriProperty(Predicates.a, Types.SBOLX.SubComponent)
@@ -271,12 +287,14 @@ export default function convert2toX(graph:Graph) {
                 subModule.setUriProperty(Predicates.SBOLX.instanceOf, sm.definition.uri)
             }
 
+            module.insertUriProperty(Predicates.SBOLX.subComponent, subModule.uri)
+
             map.set(sm.uri, subModule)
 
             // TODO check sc roles match the def roles
-        })
+        }
 
-        md.functionalComponents.forEach((sc:S2FunctionalComponent) => {
+        for(let sc of md.functionalComponents) {
 
             let subModule = new SXSubComponent(graphx, sc.uri)
             subModule.setUriProperty(Predicates.a, Types.SBOLX.SubComponent)
@@ -291,17 +309,21 @@ export default function convert2toX(graph:Graph) {
                 subModule.setUriProperty(Predicates.SBOLX.instanceOf, sc.definition.uri)
             }
 
+            module.insertUriProperty(Predicates.SBOLX.subComponent, subModule.uri)
+
             map.set(sc.uri, subModule)
 
             // TODO check sc roles match the def roles
 
-        })
+        }
 
-        md.interactions.forEach((int:S2Interaction) => {
+        for(let int of md.interactions) {
 
             let newInt = new SXInteraction(graphx, int.uri)
             newInt.setUriProperty(Predicates.a, Types.SBOLX.Interaction)
             copyIdentifiedProperties(int, newInt)
+
+            module.insertUriProperty(Predicates.SBOLX.interaction, newInt.uri)
 
             for(let type of int.types)
                 newInt.addType(type)
@@ -311,6 +333,8 @@ export default function convert2toX(graph:Graph) {
                 let newParticipation = new SXParticipation(graphx, participation.uri)
                 newParticipation.setUriProperty(Predicates.a, Types.SBOLX.Participation)
                 copyIdentifiedProperties(participation, newParticipation)
+
+                newInt.insertUriProperty(Predicates.SBOLX.participation, newParticipation.uri)
 
                 if(participation.participant) {
 
@@ -333,11 +357,11 @@ export default function convert2toX(graph:Graph) {
                 }
 
             }
-        })
+        }
 
-        md.models.forEach((model:S2Model) => {
+        for(let model of md.models) {
             module.addModel(modelToModel(model))
-        })
+        }
 
         return module
 
@@ -366,31 +390,42 @@ function copyIdentifiedProperties(a:S2Identified, b:SXIdentified) {
             continue
         }
 
-        if(p.indexOf(Prefixes.sbol2) !== 0
-            || p == Predicates.SBOL2.displayId
-            || p == Predicates.SBOL2.version
-            || p == Predicates.SBOL2.persistentIdentity
-        ) {
+        if(p.indexOf(Prefixes.sbol2) !== 0) {
             b.graph.insert(b.uri, triple.predicate.nominalValue, triple.object)
+        }
+
+        if(p == Predicates.SBOL2.displayId) {
+            b.graph.insert(b.uri, Predicates.SBOLX.id, triple.object)
+        } else if(p == Predicates.SBOL2.version) {
+            b.graph.insert(b.uri, Predicates.SBOLX.version, triple.object)
+        } if(p == Predicates.SBOL2.persistentIdentity) {
+            b.graph.insert(b.uri, Predicates.SBOLX.persistentIdentity, triple.object)
         }
     }
 }
 
 function copyLocations(a:S2SequenceAnnotation, b:SXThingWithLocation) {
 
-    a.locations.forEach((location:S2Location) => {
+    for(let location of a.locations) {
 
         if(location instanceof S2Range) {
 
             const range:S2Range = location as S2Range
 
+
+            let loc = b.addOrientedLocation()
+            loc.setUriProperty(Predicates.a, Types.SBOLX.Range)
+
             const start:number|undefined = range.start
             const end:number|undefined = range.end
 
-            if(start === undefined || end === undefined)
-                throw new Error('missing start/end on range')
+            if(start !== undefined) {
+                loc.setIntProperty(Predicates.SBOLX.start, start)
+            }
 
-            let loc = b.addRange(start, end)
+            if(end !== undefined) {
+                loc.setIntProperty(Predicates.SBOLX.end, end)
+            }
 
             loc.orientation = range.orientation === Specifiers.SBOL2.Orientation.ReverseComplement
                 ? Specifiers.SBOLX.Orientation.ReverseComplement : Specifiers.SBOLX.Orientation.Inline
@@ -404,11 +439,11 @@ function copyLocations(a:S2SequenceAnnotation, b:SXThingWithLocation) {
 
         } else {
 
-            throw new Error('not implemented location type')
+            console.warn('not implemented location type: ' + location.uri)
 
         }
 
-    })
+    }
 
 
 }

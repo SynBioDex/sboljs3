@@ -83,6 +83,10 @@ export default abstract class Facade {
         this._graph.insert(this.uri, predicate, object)
     }
 
+    insertProperty(predicate:string, object:any) {
+        this._graph.insert(this.uri, predicate, object)
+    }
+
     deleteProperty(predicate:string) {
         this._graph.removeMatches(this.uri, predicate, null)
     }
@@ -94,6 +98,10 @@ export default abstract class Facade {
         } else {
             this.setProperty(predicate, node.createUriNode(value))
         }
+    }
+
+    insertUriProperty(predicate:string, value:string) {
+        this.insertProperty(predicate, node.createUriNode(value))
     }
 
     setStringProperty(predicate:string, value:string|undefined) {

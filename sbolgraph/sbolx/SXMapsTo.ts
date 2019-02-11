@@ -14,12 +14,12 @@ export default class SXMapsTo extends SXIdentified {
     }
 
     get facadeType():string {
-        return Types.SBOL2.MapsTo
+        return Types.SBOLX.MapsTo
     }
 
     get local():SXIdentified|undefined {
 
-        const localUri:string|undefined = this.getUriProperty(Predicates.SBOL2.local)
+        const localUri:string|undefined = this.getUriProperty(Predicates.SBOLX.local)
 
         if(localUri === undefined)
             return undefined
@@ -31,15 +31,15 @@ export default class SXMapsTo extends SXIdentified {
     set local(local:SXIdentified|undefined) {
 
         if(local)
-            this.setUriProperty(Predicates.SBOL2.local, local.uri)
+            this.setUriProperty(Predicates.SBOLX.local, local.uri)
         else
-            this.deleteProperty(Predicates.SBOL2.local)
+            this.deleteProperty(Predicates.SBOLX.local)
 
     }
 
     get remote():SXIdentified|undefined {
 
-        const remoteUri:string|undefined = this.getUriProperty(Predicates.SBOL2.remote)
+        const remoteUri:string|undefined = this.getUriProperty(Predicates.SBOLX.remote)
 
         if(remoteUri === undefined)
             return undefined
@@ -51,16 +51,29 @@ export default class SXMapsTo extends SXIdentified {
     set remote(remote:SXIdentified|undefined) {
 
         if(remote)
-            this.setUriProperty(Predicates.SBOL2.remote, remote.uri)
+            this.setUriProperty(Predicates.SBOLX.remote, remote.uri)
         else
-            this.deleteProperty(Predicates.SBOL2.remote)
+            this.deleteProperty(Predicates.SBOLX.remote)
 
+    }
+
+    set refinement(refinement:string|undefined) {
+
+        if(refinement)
+            this.setUriProperty(Predicates.SBOLX.refinement, refinement)
+        else
+            this.deleteProperty(Predicates.SBOLX.refinement)
+
+    }
+
+    get refinement():string|undefined {
+        return this.getUriProperty(Predicates.SBOLX.refinement)
     }
 
     get containingObject():SXIdentified|undefined {
 
         const uri = triple.subjectUri(
-            this.graph.matchOne(null, Predicates.SBOL2.mapsTo, this.uri)
+            this.graph.matchOne(null, Predicates.SBOLX.mapsTo, this.uri)
         )
 
         if(!uri) {

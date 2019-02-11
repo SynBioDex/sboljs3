@@ -5,6 +5,7 @@ import { Types, Predicates, Specifiers } from 'bioterms'
 import S2Facade from './S2Facade'
 
 import SBOL2Graph from '../SBOL2Graph'
+import URIUtils from '../URIUtils'
 
 export default class S2Identified extends S2Facade {
 
@@ -73,26 +74,7 @@ export default class S2Identified extends S2Facade {
     }
 
     get uriPrefix():string {
-
-        const version:string|undefined = this.version
-        const displayId:string|undefined = this.displayId
-
-        if(!displayId) {
-            throw new Error('no displayId for ' + this.uri)
-        }
-
-        if(version) {
-
-            return this.uri.substr(0,
-                this.uri.length - displayId.length - version.length - 1)
-
-        } else {
-
-            return this.uri.substr(0,
-                this.uri.length - displayId.length)
-
-        }
-
+        return URIUtils.getPrefix(this.uri)
     }
 
     get attachments():Array<S2Attachment> {

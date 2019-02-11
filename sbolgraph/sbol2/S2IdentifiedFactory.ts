@@ -9,11 +9,11 @@ export default class SXIdentifiedFactory {
     static createTopLevel(graph:SBOL2Graph,
                           type:string,
                           uriPrefix:string,
-                          id:string,
+                          id:string|undefined,
                           name:string|undefined,
                           version?:string|undefined):S2Identified {
 
-        id = nameToID(id)
+        id = id ? nameToID(id) : 'anon'
 
         let versionSuffix = version !== undefined ? '/' + version : ''
 
@@ -45,11 +45,11 @@ export default class SXIdentifiedFactory {
                     type:string,
                     parent:S2Identified,
                     ownershipPredicate:string,
-                    id:string,
+                    id:string|undefined,
                     name:string|undefined,
                     version?:string|undefined):S2Identified {
 
-        id = nameToID(id)
+        id = id ? nameToID(id) : 'anon'
 
         let versionSuffix = version !== undefined ? '/' + version : ''
 
