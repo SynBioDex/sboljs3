@@ -1,7 +1,7 @@
 
 import * as node from './node'
 
-import { Triple } from 'rdf-graph-array'
+//import { Triple } from 'rdf-graph-array'
 
 export function subjectUri(triple:Triple|undefined):string|undefined {
 
