@@ -25,6 +25,7 @@ import SXInteraction from '../sbolx/SXInteraction'
 import SXParticipation from '../sbolx/SXParticipation'
 import S2ModuleInstance from '../sbol2/S2ModuleInstance'
 import SXModel from '../sbolx/SXModel'
+import SXMapsTo from '../sbolx/SXMapsTo'
 import Graph from '../Graph'
 
 import { Types, Predicates, Prefixes, Specifiers } from 'bioterms'
@@ -86,16 +87,27 @@ export default function convert2toX(graph:Graph) {
             let a = map.get(mapsTo.local.uri)
 
             if(!a) {
-                throw new Error('Local side of MapsTo ' + mapsTo.local.uri + ' in submodule ' + sm.uri + ' was not found')
+                console.warn('Local side of MapsTo ' + mapsTo.local.uri + ' in submodule ' + sm.uri + ' was not found')
+                a = new SXSubComponent(graphx, mapsTo.local.uri)
             }
 
             let b = map.get(mapsTo.remote.uri)
 
             if(!b) {
-                throw new Error('Remote side of MapsTo ' + mapsTo.local.uri + ' in submodule ' + sm.uri + ' was not found')
+                console.warn('Remote side of MapsTo ' + mapsTo.remote.uri + ' in submodule ' + sm.uri + ' was not found')
+                b = new SXSubComponent(graphx, mapsTo.remote.uri)
             }
 
-            subModule.createMapping(a as SXSubComponent, b as SXSubComponent)
+            let newMapsTo = new SXMapsTo(graphx, mapsTo.uri)
+            newMapsTo.setUriProperty(Predicates.a, Types.SBOLX.MapsTo)
+
+            newMapsTo.local = a
+            newMapsTo.remote = b
+            newMapsTo.refinement = mapsTo.refinement
+            
+            subModule.addMapping(newMapsTo)
+
+            //subModule.createMapping(a as SXSubComponent, b as SXSubComponent)
 
         }
     }
@@ -188,6 +200,8 @@ export default function convert2toX(graph:Graph) {
 
             subModule.name = sc.name
 
+            module.insertUriProperty(Predicates.SBOLX.subComponent, subModule.uri)
+
             map.set(sc.uri, subModule)
 
             // TODO check sc roles match the def roles
@@ -272,6 +286,8 @@ export default function convert2toX(graph:Graph) {
                 subModule.setUriProperty(Predicates.SBOLX.instanceOf, sm.definition.uri)
             }
 
+            module.insertUriProperty(Predicates.SBOLX.subComponent, subModule.uri)
+
             map.set(sm.uri, subModule)
 
             // TODO check sc roles match the def roles
@@ -292,6 +308,8 @@ export default function convert2toX(graph:Graph) {
                 subModule.setUriProperty(Predicates.SBOLX.instanceOf, sc.definition.uri)
             }
 
+            module.insertUriProperty(Predicates.SBOLX.subComponent, subModule.uri)
+
             map.set(sc.uri, subModule)
 
             // TODO check sc roles match the def roles
@@ -304,6 +322,8 @@ export default function convert2toX(graph:Graph) {
             newInt.setUriProperty(Predicates.a, Types.SBOLX.Interaction)
             copyIdentifiedProperties(int, newInt)
 
+            module.insertUriProperty(Predicates.SBOLX.interaction, newInt.uri)
+
             for(let type of int.types)
                 newInt.addType(type)
 
@@ -312,6 +332,8 @@ export default function convert2toX(graph:Graph) {
                 let newParticipation = new SXParticipation(graphx, participation.uri)
                 newParticipation.setUriProperty(Predicates.a, Types.SBOLX.Participation)
                 copyIdentifiedProperties(participation, newParticipation)
+
+                newInt.insertUriProperty(Predicates.SBOLX.participation, newParticipation.uri)
 
                 if(participation.participant) {
 
