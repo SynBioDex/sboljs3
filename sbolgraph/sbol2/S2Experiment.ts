@@ -1,16 +1,13 @@
 import S2Identified from './S2Identified'
 import SBOL2Graph from '../SBOL2Graph';
 import * as node from '../node'
-import SEP21ExperimentalData from './SEP21ExperimentalData';
+import S2ExperimentalData from './S2ExperimentalData';
 import S2ProvActivity from './S2ProvActivity';
-import { Predicates } from 'bioterms';
+import { Predicates, Types } from 'bioterms';
 import { S2Implementation } from '..';
 
 
-
-
-
-export default class SEP21Experiment extends S2Identified {
+export default class S2Experiment extends S2Identified {
 
     constructor(graph:SBOL2Graph, uri:string) {
 
@@ -18,16 +15,16 @@ export default class SEP21Experiment extends S2Identified {
     }
 
     get facadeType():string {
-        return 'https://github.com/SynBioDex/SEPs/blob/sep21/sep_021.md#Experiment'
+        return Types.SBOL2.Experiment
     }
 
-    get experimentalData():Array<SEP21ExperimentalData> {
+    get experimentalData():Array<S2ExperimentalData> {
 
-        let result:SEP21ExperimentalData[] = []
-        let expDataURIs = this.getUriProperties('https://github.com/SynBioDex/SEPs/blob/sep21/sep_021.md#experimentalData')
+        let result:S2ExperimentalData[] = []
+        let expDataURIs = this.getUriProperties(Predicates.SBOL2.experimentalData)
 
         for (let uri of expDataURIs){
-            result.push(new SEP21ExperimentalData(this.graph, uri))
+            result.push(new S2ExperimentalData(this.graph, uri))
         }
 
         return result
@@ -38,9 +35,9 @@ export default class SEP21Experiment extends S2Identified {
 
     }
 
-    addExperimentalData(member:SEP21ExperimentalData):void {
+    addExperimentalData(member:S2ExperimentalData):void {
 
-        this.graph.add(this.uri, 'https://github.com/SynBioDex/SEPs/blob/sep21/sep_021.md#experimentalData', node.createUriNode(member.uri))
+        this.graph.add(this.uri, Predicates.SBOL2.experimentalData, node.createUriNode(member.uri))
 
     }
 

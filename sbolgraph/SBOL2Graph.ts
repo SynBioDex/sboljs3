@@ -19,7 +19,7 @@ import S2Sequence from './sbol2/S2Sequence'
 import S2Collection from './sbol2/S2Collection'
 import S2Model from './sbol2/S2Model'
 
-import RdfGraphArray = require('rdf-graph-array')
+//import RdfGraphArray = require('rdf-graph-array')
 import serialize from './serialize';
 
 import request = require('request')
@@ -43,8 +43,8 @@ import identifyFiletype, { Filetype } from './conversion/identifyFiletype';
 import fastaToSBOL2 from './conversion/fastaToSBOL2';
 import genbankToSBOL2 from './conversion/genbankToSBOL2';
 import S2Implementation from './sbol2/S2Implementation';
-import SEP21Experiment from './sbol2/SEP21Experiment';
-import SEP21ExperimentalData from './sbol2/SEP21ExperimentalData';
+import S2Experiment from './sbol2/S2Experiment';
+import S2ExperimentalData from './sbol2/S2ExperimentalData';
 import { S2Attachment } from '.';
 
 import changeURIPrefix from './changeURIPrefix'
@@ -152,27 +152,27 @@ export default class SBOL2Graph extends Graph {
 
     }
 
-    createExperiment(uriPrefix:string, id:string, version?:string):SEP21Experiment {
+    createExperiment(uriPrefix:string, id:string, version?:string):S2Experiment {
 
         if(arguments.length < 3)
             version = '1'
 
         const identified:S2Identified =
-            S2IdentifiedFactory.createTopLevel(this, 'https://github.com/SynBioDex/SEPs/blob/sep21/sep_021.md#Experiment', uriPrefix, id, undefined, version)
+            S2IdentifiedFactory.createTopLevel(this, Types.SBOL2.Experiment, uriPrefix, id, undefined, version)
 
-        return new SEP21Experiment(this, identified.uri)
+        return new S2Experiment(this, identified.uri)
 
     }
 
-    createExperimentalData(uriPrefix:string, id:string, version?:string):SEP21ExperimentalData {
+    createExperimentalData(uriPrefix:string, id:string, version?:string):S2ExperimentalData {
 
         if(arguments.length < 3)
             version = '1'
 
         const identified:S2Identified =
-            S2IdentifiedFactory.createTopLevel(this, 'https://github.com/SynBioDex/SEPs/blob/sep21/sep_021.md#ExperimentalData', uriPrefix, id, undefined, version)
+            S2IdentifiedFactory.createTopLevel(this, Types.SBOL2.ExperimentalData, uriPrefix, id, undefined, version)
 
-        return new SEP21ExperimentalData(this, identified.uri)
+        return new S2ExperimentalData(this, identified.uri)
 
     }
 
@@ -312,21 +312,21 @@ export default class SBOL2Graph extends Graph {
 
     }
 
-    getExperiment(uri):SEP21Experiment|null {
+    getExperiment(uri):S2Experiment|null {
 
-        if(this.getType(uri) !== 'https://github.com/SynBioDex/SEPs/blob/sep21/sep_021.md#Experiment')
+        if(this.getType(uri) !== Types.SBOL2.Experiment)
             return null
 
-        return new SEP21Experiment(this, uri)
+        return new S2Experiment(this, uri)
 
     }
 
-    getExperimentalData(uri):SEP21ExperimentalData|null {
+    getExperimentalData(uri):S2ExperimentalData|null {
 
-        if(this.getType(uri) !== 'https://github.com/SynBioDex/SEPs/blob/sep21/sep_021.md#ExperimentalData')
+        if(this.getType(uri) !== Types.SBOL2.ExperimentalData)
             return null
 
-        return new SEP21ExperimentalData(this, uri)
+        return new S2ExperimentalData(this, uri)
 
     }
 
@@ -573,11 +573,11 @@ export default class SBOL2Graph extends Graph {
         if(type === Types.SBOL2.Implementation)
             return new S2Implementation(this, uri)
 
-        if(type === 'https://github.com/SynBioDex/SEPs/blob/sep21/sep_021.md#Experiment')
-            return new SEP21Experiment(this, uri)
+        if(type === Types.SBOL2.Experiment)
+            return new S2Experiment(this, uri)
 
-        if(type === 'https://github.com/SynBioDex/SEPs/blob/sep21/sep_021.md#ExperimentalData')
-            return new SEP21ExperimentalData(this, uri)
+        if(type === Types.SBOL2.ExperimentalData)
+            return new S2ExperimentalData(this, uri)
 
         if(type === Types.SBOL2.Interaction)
             return new S2Interaction(this, uri)

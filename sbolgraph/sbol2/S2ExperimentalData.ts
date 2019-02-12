@@ -1,7 +1,8 @@
 import S2Identified from "./S2Identified";
 import SBOL2Graph from "../SBOL2Graph";
+import { Types } from "bioterms";
 
-export default class SEP21ExperimentalData extends S2Identified {
+export default class S2ExperimentalData extends S2Identified {
 
     constructor(graph:SBOL2Graph, uri:string) {
 
@@ -9,7 +10,7 @@ export default class SEP21ExperimentalData extends S2Identified {
     }
 
     get facadeType():string {
-        return 'https://github.com/SynBioDex/SEPs/blob/sep21/sep_021.md#ExperimentalData'
+        return Types.SBOL2.Experiment
     }
 
 }
