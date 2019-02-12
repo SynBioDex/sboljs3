@@ -21,6 +21,7 @@ import { Types, Predicates, Prefixes, Specifiers } from 'bioterms'
 import S2IdentifiedFactory from '../sbol2/S2IdentifiedFactory'
 import URIUtils from '../URIUtils';
 
+
 export default function convertXto2(graph:Graph) {
 
     let graphx:SBOLXGraph = new SBOLXGraph()
@@ -28,13 +29,15 @@ export default function convertXto2(graph:Graph) {
 
     let graph2:SBOL2Graph = new SBOL2Graph()
 
-    let componentToCDandMD:Map<string, { cd:S2ComponentDefinition, md:S2ModuleDefinition, fc:S2FunctionalComponent }> = new Map()
+    type Mapping = { cd: S2ComponentDefinition, md: S2ModuleDefinition, fc: S2FunctionalComponent }
+    
+    let componentToCDandMD:Map<string, Mapping> = new Map()
     let subcomponentToFC:Map<string, S2FunctionalComponent> = new Map()
 
-    function getCDandMD(component:SXComponent) {
+    function getCDandMD(component:SXComponent):Mapping|undefined {
         let mapping = componentToCDandMD.get(component.uri)
         if(!mapping) {
-            throw new Error('no idea')
+            console.warn(component.uri + ' has no cd/md mapping?')
         }
         return mapping
     }
@@ -78,9 +81,11 @@ export default function convertXto2(graph:Graph) {
 
         for(let feature of component.sequenceFeatures) {
 
-            let saIdent = S2IdentifiedFactory.createChild(graph2, Types.SBOL2.SequenceAnnotation, cd, Predicates.SBOL2.sequenceAnnotation, feature.id, feature.version)
+            let sa = new S2SequenceAnnotation(graph2, feature.uri)
+            sa.setUriProperty(Predicates.a, Types.SBOL2.SequenceAnnotation)
+            copyIdentifiedProperties(feature, sa)
 
-            let sa = new S2SequenceAnnotation(graph2, saIdent.uri)
+            cd.insertUriProperty(Predicates.SBOL2.sequenceAnnotation, sa.uri)
 
             for(let role of feature.roles) {
                 sa.addRole(role)
@@ -95,14 +100,24 @@ export default function convertXto2(graph:Graph) {
     // Make subcomponents into both SBOL2 subcomponents and SBOL2 functionalcomponents
     for(let component of graphx.components) {
 
-        let { cd, md, fc } = getCDandMD(component)
+        let mapping = getCDandMD(component)
+
+        if(!mapping) {
+            throw new Error('???')
+        }
+
+        let { cd, md, fc } = mapping
 
         for(let subcomponent of component.subComponents) {
 
-            let newDefOfSubcomponent = getCDandMD(subcomponent.instanceOf)
+            let defUri = subcomponent.getRequiredUriProperty(Predicates.SBOLX.instanceOf)
+            
+            let newDefOfSubcomponent = getCDandMD(defUri)
 
-            let cdSubcomponent = cd.addComponentByDefinition(newDefOfSubcomponent.cd)
-            let mdSubcomponent = md.createFunctionalComponent(newDefOfSubcomponent.cd)
+
+
+            let cdSubcomponent = cd.addComponentByDefinition(cd)
+            let mdSubcomponent = md.createFunctionalComponent(cd)
 
             subcomponentToFC.set(subcomponent.uri, mdSubcomponent)
 

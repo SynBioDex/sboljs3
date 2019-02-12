@@ -33,6 +33,11 @@ export default class URIUtils {
         }
     }
 
+    static getSuffix(uri:string):string {
+
+        return uri.slice(0, this.getPrefix(uri).length)
+    }
+
 }
 
 function popLastToken(uri:string) {
