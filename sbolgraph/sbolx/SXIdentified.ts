@@ -43,7 +43,7 @@ export default class SXIdentified extends SXFacade {
     }
 
     get id():string|undefined {
-        return this.getRequiredStringProperty(Predicates.SBOLX.id)
+        return this.getStringProperty(Predicates.SBOLX.id)
     }
 
     set id(id:string|undefined) {

@@ -35,4 +35,5 @@ export default class S1DnaComponent extends S1Facade {
         return this.getStringProperty(Predicates.SBOL1.description)
     }
 
+
 }

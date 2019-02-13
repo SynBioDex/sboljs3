@@ -9,7 +9,7 @@ let Element = et.Element
 let SubElement = et.SubElement
 let QName = et.QName
 
-export default function serialize(graph:Graph, defaultPrefixes:Map<string,string>, ownershipPredicates:Set<string>):string {
+export default function serialize(graph:Graph, defaultPrefixes:Map<string,string>, isOwnershipRelation:(triple:any) => boolean):string {
 
     let prefixes = new Map(defaultPrefixes)
 
@@ -47,7 +47,7 @@ export default function serialize(graph:Graph, defaultPrefixes:Map<string,string
             continue
         }
 
-        if(ownershipPredicates.has(p)) {
+        if(isOwnershipRelation(triple)) {
 
             let o = nodeToURI(triple.object)
 
@@ -117,7 +117,7 @@ export default function serialize(graph:Graph, defaultPrefixes:Map<string,string
     function nodeToURI(node):string {
 
         if(node.interfaceName !== 'NamedNode')
-            throw new Error('expected NamedNode')
+            throw new Error('expected NamedNode but found ' + JSON.stringify(node))
 
         if(typeof node.nominalValue !== 'string')
             throw new Error('nominalValue not a string?')

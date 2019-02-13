@@ -14,9 +14,22 @@ export default class URIUtils {
 
         } else {
 
-            // insert suffix at the end
+            // ends with a fragment?
 
-            return uri + suffix
+            let last = uri.lastIndexOf('#')
+
+            if(last !== -1) {
+
+                // insert suffix before fragment
+
+                return uri.slice(0, last) + suffix + uri.slice(last)
+
+            } else {
+
+                // insert suffix at end
+
+                return uri + suffix
+            }
         }
     }
 

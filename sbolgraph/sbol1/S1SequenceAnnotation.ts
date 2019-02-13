@@ -37,4 +37,9 @@ export default class S1SequenceAnnotation extends S1Facade {
         return new S1DnaComponent(this.graph, uri)
     }
 
+    get precedes():S1SequenceAnnotation[] {
+        return this.getUriProperties(Predicates.SBOL1.precedes)
+                   .map((uri) => new S1SequenceAnnotation(this.graph, uri))
+    }
+
 }

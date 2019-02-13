@@ -42,6 +42,7 @@ import identifyFiletype, { Filetype } from './conversion/identifyFiletype';
 
 import changeURIPrefix from './changeURIPrefix'
 
+import convert1to2 from './conversion/fromSBOL1/toSBOL2';
 import convert2toX from './conversion/fromSBOL2/toSBOLX';
 
 export default class SBOLXGraph extends Graph {
@@ -213,6 +214,7 @@ export default class SBOLXGraph extends Graph {
         if(filetype === Filetype.RDFXML || filetype === Filetype.NTriples) {
             await parseRDF(this, data, filetype)
 
+            convert1to2(this)
             convert2toX(this)
 
             return
@@ -251,7 +253,29 @@ export default class SBOLXGraph extends Graph {
             Predicates.SBOLX.interaction
         ]
 
-        return serialize(this, new Map(defaultPrefixes), new Set(ownershipPredicates))
+        let isOwnershipRelation = (triple:any):boolean => {
+
+            let p = nodeToURI(triple.predicate)
+
+            if(ownershipPredicates.indexOf(p) !== -1) {
+                return true
+            }
+
+            return false
+        }
+
+        return serialize(this, new Map(defaultPrefixes), isOwnershipRelation)
+
+        function nodeToURI(node):string {
+
+            if(node.interfaceName !== 'NamedNode')
+                throw new Error('expected NamedNode but found ' + JSON.stringify(node))
+
+            if(typeof node.nominalValue !== 'string')
+                throw new Error('nominalValue not a string?')
+
+            return node.nominalValue
+        }
     }
 
     // TODO

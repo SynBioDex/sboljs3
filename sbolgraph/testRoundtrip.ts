@@ -27,10 +27,6 @@ async function main() {
         if(f.indexOf('InvalidFiles') !== -1)
             continue
 
-        // not supported yet
-        if(f.indexOf('SBOL1') !== -1)
-            continue
-
         // more than a MB??
         if(fs.statSync(f).size > 1048576)
             continue
@@ -44,21 +40,21 @@ async function main() {
         fs.writeFileSync(outOrigFilename, fs.readFileSync(f) + '')
 
 
-        console.log(chalk.cyanBright('🤔 SBOL2 -> SBOL2'))
+        console.log(chalk.cyanBright('🤔 Original -> SBOL2'))
 
         let g = await SBOL2Graph.loadString(fs.readFileSync(f) + '')
         let out2Filename = [ 'out/', path.dirname(f), '/', path.basename(f, path.extname(f)), '_sbol2.xml' ].join('')
+        fs.writeFileSync(out2Filename, g.serializeXML())
 
 
-
-        console.log(chalk.cyanBright('🤔 SBOL2 -> SBOLX'))
+        console.log(chalk.cyanBright('🤔 Original -> SBOLX'))
 
         let gx = await SBOLXGraph.loadString(fs.readFileSync(f) + '')
         let outXFilename = [ 'out/', path.dirname(f), '/', path.basename(f, path.extname(f)), '_sbolx.xml' ].join('')
         fs.writeFileSync(outXFilename, gx.serializeXML())
 
 
-        console.log(chalk.cyanBright('🤔 SBOL2 -> SBOLX -> SBOL2'))
+        console.log(chalk.cyanBright('🤔 Original -> SBOLX -> SBOL2'))
 
         let gRoundtrip = await SBOL2Graph.loadString(gx.serializeXML())
         let outRoundtripFilename = [ 'out/', path.dirname(f), '/', path.basename(f, path.extname(f)), '_roundtrip.xml' ].join('')
