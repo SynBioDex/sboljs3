@@ -219,6 +219,8 @@ export default function convert2toX(graph:Graph) {
                 feature.setUriProperty(Predicates.a, Types.SBOLX.SequenceAnnotation)
                 copyIdentifiedProperties(sa, feature)
 
+                module.insertUriProperty(Predicates.SBOLX.sequenceAnnotation, feature.uri)
+
                 feature.name = sa.name
 
                 for(let role of sa.roles) {
