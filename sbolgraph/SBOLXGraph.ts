@@ -42,7 +42,7 @@ import identifyFiletype, { Filetype } from './conversion/identifyFiletype';
 
 import changeURIPrefix from './changeURIPrefix'
 
-import convert2toX from './conversion/convert2toX';
+import convert2toX from './conversion/fromSBOL2/toSBOLX';
 
 export default class SBOLXGraph extends Graph {
 

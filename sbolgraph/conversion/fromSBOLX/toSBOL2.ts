@@ -1,25 +1,25 @@
 
-import SBOL2Graph from '../SBOL2Graph'
-import SBOLXGraph from '../SBOLXGraph'
+import SBOL2Graph from '../../SBOL2Graph'
+import SBOLXGraph from '../../SBOLXGraph'
 
-import S2ComponentDefinition from '../sbol2/S2ComponentDefinition'
-import SXComponent from '../sbolx/SXComponent'
-import SXRange from '../sbolx/SXRange'
-import SXOrientedLocation from '../sbolx/SXOrientedLocation'
-import SXThingWithLocation from '../sbolx/SXThingWithLocation'
-import S2ModuleDefinition from '../sbol2/S2ModuleDefinition'
-import S2FunctionalComponent from '../sbol2/S2FunctionalComponent'
-import S2SequenceAnnotation from '../sbol2/S2SequenceAnnotation'
-import S2GenericLocation from '../sbol2/S2GenericLocation'
-import S2Range from '../sbol2/S2Range'
-import SXIdentified from '../sbolx/SXIdentified'
-import S2Identified from '../sbol2/S2Identified'
-import Graph from '../Graph'
+import S2ComponentDefinition from '../../sbol2/S2ComponentDefinition'
+import SXComponent from '../../sbolx/SXComponent'
+import SXRange from '../../sbolx/SXRange'
+import SXOrientedLocation from '../../sbolx/SXOrientedLocation'
+import SXThingWithLocation from '../../sbolx/SXThingWithLocation'
+import S2ModuleDefinition from '../../sbol2/S2ModuleDefinition'
+import S2FunctionalComponent from '../../sbol2/S2FunctionalComponent'
+import S2SequenceAnnotation from '../../sbol2/S2SequenceAnnotation'
+import S2GenericLocation from '../../sbol2/S2GenericLocation'
+import S2Range from '../../sbol2/S2Range'
+import SXIdentified from '../../sbolx/SXIdentified'
+import S2Identified from '../../sbol2/S2Identified'
+import Graph from '../../Graph'
 
 import { Types, Predicates, Prefixes, Specifiers } from 'bioterms'
 
-import S2IdentifiedFactory from '../sbol2/S2IdentifiedFactory'
-import URIUtils from '../URIUtils';
+import S2IdentifiedFactory from '../../sbol2/S2IdentifiedFactory'
+import URIUtils from '../../URIUtils';
 
 
 export default function convertXto2(graph:Graph) {
@@ -34,10 +34,10 @@ export default function convertXto2(graph:Graph) {
     let componentToCDandMD:Map<string, Mapping> = new Map()
     let subcomponentToFC:Map<string, S2FunctionalComponent> = new Map()
 
-    function getCDandMD(component:SXComponent):Mapping|undefined {
-        let mapping = componentToCDandMD.get(component.uri)
+    function getCDandMD(componentURI:string):Mapping|undefined {
+        let mapping = componentToCDandMD.get(componentURI)
         if(!mapping) {
-            console.warn(component.uri + ' has no cd/md mapping?')
+            console.warn(componentURI + ' has no cd/md mapping?')
         }
         return mapping
     }
@@ -100,7 +100,7 @@ export default function convertXto2(graph:Graph) {
     // Make subcomponents into both SBOL2 subcomponents and SBOL2 functionalcomponents
     for(let component of graphx.components) {
 
-        let mapping = getCDandMD(component)
+        let mapping = getCDandMD(component.uri)
 
         if(!mapping) {
             throw new Error('???')
@@ -147,7 +147,13 @@ export default function convertXto2(graph:Graph) {
     // Port interactions
     for(let component of graphx.components) {
 
-        let { cd, md, fc } = getCDandMD(component)
+        let mapping = getCDandMD(component.uri)
+
+        if(!mapping) {
+            throw new Error('???')
+        }
+
+        let { cd, md, fc } = mapping
 
         for(let interaction of component.interactions) {
 

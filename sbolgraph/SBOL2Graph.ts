@@ -48,7 +48,7 @@ import S2ExperimentalData from './sbol2/S2ExperimentalData';
 import { S2Attachment } from '.';
 
 import changeURIPrefix from './changeURIPrefix'
-import convertXto2 from './conversion/convertXto2';
+import convertXto2 from './conversion/fromSBOLX/toSBOL2';
 
 export default class SBOL2Graph extends Graph {
 

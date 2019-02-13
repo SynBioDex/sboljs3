@@ -1,8 +1,14 @@
 
+import SBOL1Graph from './SBOL1Graph'
 import SBOL2Graph from './SBOL2Graph'
 import SBOLXGraph from './SBOLXGraph'
 import Graph from './Graph'
 import { Watcher } from './Graph'
+
+import S1Collection from './sbol1/S1Collection'
+import S1DnaComponent from './sbol1/S1DnaComponent'
+import S1DnaSequence from './sbol1/S1DnaSequence'
+import S1SequenceAnnotation from './sbol1/S1SequenceAnnotation'
 
 import S2Identified from './sbol2/S2Identified'
 import S2ComponentInstance from './sbol2/S2ComponentInstance'
@@ -55,6 +61,13 @@ import S2ProvUsage from './sbol2/S2ProvUsage';
 import S2ProvAssociation from './sbol2/S2ProvAssociation';
 
 export {
+
+    // SBOL1
+    SBOL1Graph,
+    S1Collection,
+    S1DnaComponent,
+    S1DnaSequence,
+    S1SequenceAnnotation,
 
     // SBOL2
     SBOL2Graph,
