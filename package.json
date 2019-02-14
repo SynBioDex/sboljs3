@@ -23,7 +23,7 @@
   },
   "homepage": "https://github.com/udp/sbolgraph#readme",
   "dependencies": {
-    "bioterms": "git+https://github.com/udp/bioterms.git#8d269a8b7d0488984dac58914cb64487159a2e71",
+    "bioterms": "git+https://github.com/udp/bioterms.git",
     "browser-request": "git+https://github.com/adampash/browser-request.git#feat-add-headers-to-response",
     "elementtree": "^0.1.7",
     "genbankjs": "0.1.0",
