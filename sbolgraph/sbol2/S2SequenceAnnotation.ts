@@ -243,6 +243,11 @@ export default class S2SequenceAnnotation extends S2Identified {
         return undefined
     }
 
+    get containedObjects():Array<S2Identified> {
+
+        return (this.locations as S2Identified[])
+    }
+
 }
 
 
