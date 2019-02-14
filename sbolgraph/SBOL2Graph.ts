@@ -51,6 +51,7 @@ import changeURIPrefix from './changeURIPrefix'
 
 import convert1to2 from './conversion/fromSBOL1/toSBOL2';
 import convertXto2 from './conversion/fromSBOLX/toSBOL2';
+import enforceURICompliance from './conversion/enforceURICompliance';
 
 export default class SBOL2Graph extends Graph {
 
@@ -778,6 +779,10 @@ export default class SBOL2Graph extends Graph {
         function indent(n) {
             return '        '.slice(8 - n)
         }
+    }
+
+    enforceURICompliance(uriPrefix:string) {
+        enforceURICompliance(this, uriPrefix)
     }
 
 }

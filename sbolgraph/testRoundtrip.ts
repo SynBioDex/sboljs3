@@ -27,6 +27,9 @@ async function main() {
         if(f.indexOf('InvalidFiles') !== -1)
             continue
 
+        if(f.indexOf('manifest.sh') !== -1 || f.indexOf('pom.xml') !== -1 || f.indexOf('README.md') !== -1)
+            continue
+
         // more than a MB??
         if(fs.statSync(f).size > 1048576)
             continue
@@ -45,6 +48,14 @@ async function main() {
         let g = await SBOL2Graph.loadString(fs.readFileSync(f) + '')
         let out2Filename = [ 'out/', path.dirname(f), '/', path.basename(f, path.extname(f)), '_sbol2.xml' ].join('')
         fs.writeFileSync(out2Filename, g.serializeXML())
+
+
+        console.log(chalk.cyanBright('🤔 Original -> SBOL2 -> Compliant SBOL2'))
+
+        let g2C = await SBOL2Graph.loadString(fs.readFileSync(f) + '')
+        g2C.enforceURICompliance('http://compliant/')
+        let out2CFilename = [ 'out/', path.dirname(f), '/', path.basename(f, path.extname(f)), '_sbol2_compliant.xml' ].join('')
+        fs.writeFileSync(out2CFilename, g2C.serializeXML())
 
 
         console.log(chalk.cyanBright('🤔 Original -> SBOLX'))

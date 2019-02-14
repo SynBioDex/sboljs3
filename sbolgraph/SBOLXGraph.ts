@@ -44,6 +44,7 @@ import changeURIPrefix from './changeURIPrefix'
 
 import convert1to2 from './conversion/fromSBOL1/toSBOL2';
 import convert2toX from './conversion/fromSBOL2/toSBOLX';
+import enforceURICompliance from './conversion/enforceURICompliance';
 
 export default class SBOLXGraph extends Graph {
 
@@ -499,6 +500,9 @@ export default class SBOLXGraph extends Graph {
         }
     }
 
+    enforceURICompliance(uriPrefix:string) {
+        enforceURICompliance(this, uriPrefix)
+    }
 }
 
 
