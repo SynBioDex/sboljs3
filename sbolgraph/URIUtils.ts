@@ -55,13 +55,13 @@ export default class URIUtils {
 
 function popLastToken(uri:string) {
 
-    let last = uri.lastIndexOf('#')
+    let last = uri.lastIndexOf('#', uri.length - 2)
 
     if(last === -1)
-        last = uri.lastIndexOf('/')
+        last = uri.lastIndexOf('/', uri.length - 2)
 
     if(last === -1)
         return uri
 
-    return uri.slice(0, last)
+    return uri.slice(0, last + 1)
 }

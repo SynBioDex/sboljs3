@@ -49,15 +49,12 @@ import enforceURICompliance from './conversion/enforceURICompliance';
 export default class SBOLXGraph extends Graph {
 
     depthCache: Object
-    _cachedUriPrefixes: Array<string>|null
 
     constructor(rdfGraph?:any) {
 
         super(rdfGraph)
 
         this.depthCache = {}
-
-        this._cachedUriPrefixes = null
 
     }
 
@@ -303,25 +300,30 @@ export default class SBOLXGraph extends Graph {
 
     get uriPrefixes():Array<string> {
 
-        if(this._cachedUriPrefixes !== null)
-            return this._cachedUriPrefixes
+        let topLevels = this.topLevels
 
-        const topLevels = this.topLevels
-
-        var prefixes = {}
+        let prefixes = {}
 
         topLevels.forEach((topLevel) => {
 
-            const prefix = topLevel.uriPrefix
+            let prefix = topLevel.uriPrefix
 
             if(prefixes[prefix] === undefined)
-                prefixes[prefix] = true
+                prefixes[prefix] = 1
+            else
+                ++ prefixes[prefix]
 
         })
 
-        this._cachedUriPrefixes = Object.keys(prefixes)
+        return Object.keys(prefixes).sort((a, b) => {
+            return prefixes[b] - prefixes[a]
+        })
+    }
 
-        return this._cachedUriPrefixes
+    get mostPopularUriPrefix():string|undefined {
+
+        return this.uriPrefixes[0]
+
     }
 
     getTopLevelsWithPrefix(prefix) {

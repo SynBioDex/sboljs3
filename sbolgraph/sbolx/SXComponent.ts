@@ -7,7 +7,7 @@ import SBOLXGraph from '../SBOLXGraph'
 
 import * as triple from '../triple'
 import * as node from '../node'
-import { Predicates, Types, Specifiers } from 'bioterms'
+import { Predicates, Types, Specifiers, Prefixes } from 'bioterms'
 import SXSequence from './SXSequence';
 import SXSequenceConstraint from './SXSequenceConstraint';
 import SXSequenceFeature from './SXSequenceFeature'
@@ -17,6 +17,7 @@ import SXLocation from './SXLocation'
 import SXOrientedLocation from './SXOrientedLocation'
 import SXMapsTo from './SXMapsTo';
 import { SXModel } from '..';
+import extractTerm from '../extractTerm'
 
 export default class SXComponent extends SXIdentified {
 
@@ -60,6 +61,20 @@ export default class SXComponent extends SXIdentified {
 
     removeRole(role:string):void {
         this.graph.removeMatches(this.uri, Predicates.SBOLX.role, role)
+    }
+
+    get soTerms():string[] {
+
+        let terms:string[] = []
+
+        for(let role of this.roles) {
+            let term = extractTerm(role)
+
+            if(term)
+                terms.push(term)
+        }
+
+        return terms
     }
 
     get sequence():SXSequence|undefined {

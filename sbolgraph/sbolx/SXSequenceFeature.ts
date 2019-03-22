@@ -4,12 +4,13 @@ import SXThingWithLocation from './SXThingWithLocation'
 
 import * as triple from '../triple'
 import * as node from '../node'
-import { Types, Predicates, Specifiers } from 'bioterms'
+import { Types, Predicates, Specifiers, Prefixes } from 'bioterms'
 import SBOLXGraph from "../SBOLXGraph";
 import SXComponent from "./SXComponent";
 import SXSubComponent from "./SXSubComponent";
 import SXIdentifiedFactory from './SXIdentifiedFactory';
 import SXRange from "./SXRange";
+import extractTerm from '../extractTerm'
 
 export default class SXSequenceFeature extends SXThingWithLocation {
 
@@ -33,6 +34,20 @@ export default class SXSequenceFeature extends SXThingWithLocation {
 
     removeRole(role:string):void {
         this.graph.removeMatches(this.uri, Predicates.SBOLX.role, role)
+    }
+
+    get soTerms():string[] {
+
+        let terms:string[] = []
+
+        for(let role of this.roles) {
+            let term = extractTerm(role)
+
+            if(term)
+                terms.push(term)
+        }
+
+        return terms
     }
 
     get containingObject():SXIdentified|undefined {
