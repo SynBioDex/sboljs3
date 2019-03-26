@@ -271,6 +271,10 @@ function copyLocations(graph2:SBOL2Graph, oldThing:SXThingWithLocation, newThing
             let newLocIdent = S2IdentifiedFactory.createChild(graph2, Types.SBOL2.Range, newThing, Predicates.SBOL2.location, location.id, location.version)
             let newLoc = new S2Range(graph2, newLocIdent.uri)
 
+            if(location.sequence) {
+                newLoc.setUriProperty(Predicates.SBOL2.sequence, location.sequence.uri)
+            }
+
             newLoc.start = location.start
             newLoc.end = location.end
 
@@ -281,6 +285,10 @@ function copyLocations(graph2:SBOL2Graph, oldThing:SXThingWithLocation, newThing
 
             let newLocIdent = S2IdentifiedFactory.createChild(graph2, Types.SBOL2.GenericLocation, newThing, Predicates.SBOL2.location, location.id, location.version)
             let newLoc = new S2GenericLocation(graph2, newLocIdent.uri)
+
+            if(location.sequence) {
+                newLoc.setUriProperty(Predicates.SBOL2.sequence, location.sequence.uri)
+            }
 
             newLoc.orientation = location.orientation === Specifiers.SBOLX.Orientation.ReverseComplement ?
                     Specifiers.SBOL2.Orientation.ReverseComplement : Specifiers.SBOL2.Orientation.Inline

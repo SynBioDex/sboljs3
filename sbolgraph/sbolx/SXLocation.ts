@@ -4,9 +4,7 @@ import SXIdentified from './SXIdentified'
 import * as triple from '../triple'
 import { Types, Predicates, Specifiers } from 'bioterms'
 import SBOLXGraph from "../SBOLXGraph";
-import SXSequenceFeature from "./SXSequenceFeature";
-import SXComponent from "./SXComponent";
-import SXSubComponent from "./SXSubComponent";
+import SXSequence from "./SXSequence";
 
 export default abstract class SXLocation extends SXIdentified {
 
@@ -51,6 +49,31 @@ export default abstract class SXLocation extends SXIdentified {
         }
 
         return containingObject.displayName
+
+    }
+
+    get sequence():SXSequence|undefined {
+
+        let uri = this.getUriProperty(Predicates.SBOLX.sequence)
+
+        if(uri === undefined)
+            return undefined
+        
+        let obj = this.graph.uriToFacade(uri)
+
+        if(! (obj instanceof SXSequence)) {
+            throw new Error('sequence was not a sequence')
+        }
+
+        return obj
+    }
+
+    set sequence(sequence:SXSequence|undefined) {
+
+        if(sequence !== undefined)
+            this.setUriProperty(Predicates.SBOL2.sequence, sequence.uri)
+        else
+            this.deleteProperty(Predicates.SBOL2.sequence)
 
     }
 }

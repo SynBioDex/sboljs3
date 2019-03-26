@@ -471,6 +471,10 @@ function copyLocations(a:S2SequenceAnnotation, b:SXThingWithLocation) {
             let loc = b.addOrientedLocation()
             loc.setUriProperty(Predicates.a, Types.SBOLX.Range)
 
+            if(location.sequence) {
+                loc.setUriProperty(Predicates.SBOLX.sequence, location.sequence.uri)
+            }
+
             const start:number|undefined = range.start
             const end:number|undefined = range.end
 
@@ -488,6 +492,10 @@ function copyLocations(a:S2SequenceAnnotation, b:SXThingWithLocation) {
         } else if(location instanceof S2GenericLocation) {
 
             let loc = b.addOrientedLocation()
+
+            if(location.sequence) {
+                loc.setUriProperty(Predicates.SBOLX.sequence, location.sequence.uri)
+            }
 
             loc.orientation = location.orientation === Specifiers.SBOL2.Orientation.ReverseComplement
                 ? Specifiers.SBOLX.Orientation.ReverseComplement : Specifiers.SBOLX.Orientation.Inline

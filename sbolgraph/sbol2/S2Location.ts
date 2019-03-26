@@ -7,6 +7,7 @@ import SBOL2Graph from "../SBOL2Graph";
 import S2SequenceAnnotation from "./S2SequenceAnnotation";
 import S2ComponentDefinition from "./S2ComponentDefinition";
 import S2ComponentInstance from "./S2ComponentInstance";
+import S2Sequence from './S2Sequence';
 
 export default abstract class S2Location extends S2Identified {
 
@@ -57,6 +58,31 @@ export default abstract class S2Location extends S2Identified {
 
         return this.facadeType === Types.SBOL2.Range // TODO || this.facadeType === Types.SBOL2.Cut
    
+    }
+
+    get sequence():S2Sequence|undefined {
+
+        let uri = this.getUriProperty(Predicates.SBOL2.sequence)
+
+        if(uri === undefined)
+            return undefined
+        
+        let obj = this.graph.uriToFacade(uri)
+
+        if(! (obj instanceof S2Sequence)) {
+            throw new Error('sequence was not a sequence')
+        }
+
+        return obj
+    }
+
+    set sequence(sequence:S2Sequence|undefined) {
+
+        if(sequence !== undefined)
+            this.setUriProperty(Predicates.SBOL2.sequence, sequence.uri)
+        else
+            this.deleteProperty(Predicates.SBOL2.sequence)
+
     }
 }
 
