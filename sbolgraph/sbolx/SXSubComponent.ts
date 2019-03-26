@@ -11,7 +11,8 @@ import * as node from '../node'
 import { Types, Predicates, Specifiers, Prefixes } from 'bioterms'
 import SBOLXGraph from "../SBOLXGraph";
 import SXMapsTo from './SXMapsTo';
-import { SXInteraction } from '..';
+import SXInteraction from './SXInteraction'
+import SXLocation from './SXLocation'
 
 export default class SXSubComponent extends SXThingWithLocation {
 
@@ -311,6 +312,31 @@ export default class SXSubComponent extends SXThingWithLocation {
         }
 
         this.destroy()
+    }
+
+    get sourceLocation():SXLocation|undefined {
+
+        let uri = this.getUriProperty(Predicates.SBOLX.sourceLocation)
+
+        if(uri === undefined)
+            return undefined
+        
+        let obj = this.graph.uriToFacade(uri)
+
+        if(! (obj instanceof SXLocation)) {
+            throw new Error('sourceLocation was not a location')
+        }
+
+        return obj
+    }
+
+    set sourceLocation(location:SXLocation|undefined) {
+
+        if(location !== undefined)
+            this.setUriProperty(Predicates.SBOLX.sourceLocation, location.uri)
+        else
+            this.deleteProperty(Predicates.SBOLX.sourceLocation)
+
     }
 }
 

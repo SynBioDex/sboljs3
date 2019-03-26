@@ -7,6 +7,7 @@ import S2SequenceConstraint from './S2SequenceConstraint'
 
 import * as triple from '../triple'
 import { Types, Predicates, Specifiers } from 'bioterms'
+import S2Location from './S2Location';
 
 export default class S2ComponentInstance extends S2Identified {
 
@@ -132,6 +133,31 @@ export default class S2ComponentInstance extends S2Identified {
             return def.displayDescription
 
         return undefined
+    }
+
+    get sourceLocation():S2Location|undefined {
+
+        let uri = this.getUriProperty(Predicates.SBOL2.sourceLocation)
+
+        if(uri === undefined)
+            return undefined
+        
+        let obj = this.graph.uriToFacade(uri)
+
+        if(! (obj instanceof S2Location)) {
+            throw new Error('sourceLocation was not a location')
+        }
+
+        return obj
+    }
+
+    set sourceLocation(location:S2Location|undefined) {
+
+        if(location !== undefined)
+            this.setUriProperty(Predicates.SBOL2.sourceLocation, location.uri)
+        else
+            this.deleteProperty(Predicates.SBOL2.sourceLocation)
+
     }
 
 }
