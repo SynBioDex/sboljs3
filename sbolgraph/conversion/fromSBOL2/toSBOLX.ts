@@ -28,6 +28,11 @@ import SXModel from '../../sbolx/SXModel'
 import SXMapsTo from '../../sbolx/SXMapsTo'
 import Graph from '../../Graph'
 
+import S2Experiment from '../../sbol2/S2Experiment'
+import S2ExperimentalData from '../../sbol2/S2ExperimentalData'
+import SXExperiment from '../../sbolx/SXExperiment'
+import SXExperimentalData from '../../sbolx/SXExperimentalData'
+
 import { Types, Predicates, Prefixes, Specifiers } from 'bioterms'
 import SXThingWithLocation from '../../sbolx/SXThingWithLocation';
 import S2Model from '../../sbol2/S2Model';
@@ -58,6 +63,14 @@ export default function convert2toX(graph:Graph) {
 
     for(let seq of graph2.sequences) {
         convertSeq(seq)
+    }
+
+    for(let ed of graph2.experimentalData) {
+        convertED(ed)
+    }
+
+    for(let ex of graph2.experiments) {
+        convertExp(ex)
     }
 
 
@@ -165,6 +178,42 @@ export default function convert2toX(graph:Graph) {
         map.set(model.uri, xmodel)
 
         return xmodel
+    }
+
+    function convertED(obj:S2ExperimentalData):SXExperimentalData {
+
+        const existing = map.get(obj.uri)
+
+        if(existing)
+            return existing as SXExperimentalData
+    
+        const objx:SXExperimentalData = new SXExperimentalData(graphx, obj.uri)
+        objx.setUriProperty(Predicates.a, Types.SBOLX.ExperimentalData)
+        copyIdentifiedProperties(obj, objx)
+
+        map.set(obj.uri, objx)
+
+        return objx
+    }
+
+    function convertExp(obj:S2Experiment):SXExperiment {
+
+        const existing = map.get(obj.uri)
+
+        if(existing)
+            return existing as SXExperiment
+    
+        const objx:SXExperiment = new SXExperiment(graphx, obj.uri)
+        objx.setUriProperty(Predicates.a, Types.SBOLX.Experiment)
+        copyIdentifiedProperties(obj, objx)
+
+        for(let ed of obj.experimentalData) {
+            objx.insertUriProperty(Predicates.SBOLX.experimentalData, ed.uri)
+        }
+
+        map.set(obj.uri, objx)
+
+        return objx
     }
 
     function cdToModule(cd:S2ComponentDefinition):SXComponent {

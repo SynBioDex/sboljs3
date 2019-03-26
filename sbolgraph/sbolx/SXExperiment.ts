@@ -1,30 +1,31 @@
-import S2Identified from './S2Identified'
-import SBOL2Graph from '../SBOL2Graph';
+
+import SXIdentified from './SXIdentified'
+import SBOLXGraph from '../SBOLXGraph';
 import * as node from '../node'
-import S2ExperimentalData from './S2ExperimentalData';
-import S2ProvActivity from './S2ProvActivity';
+import SXExperimentalData from './SXExperimentalData';
+import SXProvActivity from './SXProvActivity';
 import { Predicates, Types } from 'bioterms';
-import S2Implementation from './S2Implementation';
+import SXImplementation from './SXImplementation';
 
 
-export default class S2Experiment extends S2Identified {
+export default class SXExperiment extends SXIdentified {
 
-    constructor(graph:SBOL2Graph, uri:string) {
+    constructor(graph:SBOLXGraph, uri:string) {
 
         super(graph, uri)
     }
 
     get facadeType():string {
-        return Types.SBOL2.Experiment
+        return Types.SBOLX.Experiment
     }
 
-    get experimentalData():Array<S2ExperimentalData> {
+    get experimentalData():Array<SXExperimentalData> {
 
-        let result:S2ExperimentalData[] = []
-        let expDataURIs = this.getUriProperties(Predicates.SBOL2.experimentalData)
+        let result:SXExperimentalData[] = []
+        let expDataURIs = this.getUriProperties(Predicates.SBOLX.experimentalData)
 
         for (let uri of expDataURIs){
-            result.push(new S2ExperimentalData(this.graph, uri))
+            result.push(new SXExperimentalData(this.graph, uri))
         }
 
         return result
@@ -35,13 +36,13 @@ export default class S2Experiment extends S2Identified {
 
     }
 
-    addExperimentalData(member:S2ExperimentalData):void {
+    addExperimentalData(member:SXExperimentalData):void {
 
-        this.graph.add(this.uri, Predicates.SBOL2.experimentalData, node.createUriNode(member.uri))
+        this.graph.add(this.uri, Predicates.SBOLX.experimentalData, node.createUriNode(member.uri))
 
     }
 
-    get activity():S2ProvActivity|undefined {
+    get activity():SXProvActivity|undefined {
 
         let activity = this.getUriProperty(Predicates.Prov.wasGeneratedBy)
 
@@ -49,10 +50,10 @@ export default class S2Experiment extends S2Identified {
             return undefined
         }
 
-        return new S2ProvActivity(this.graph, activity)
+        return new SXProvActivity(this.graph, activity)
     }
 
-    set activity(activity:S2ProvActivity|undefined) {
+    set activity(activity:SXProvActivity|undefined) {
 
         if(activity === undefined) {
             this.deleteProperty(Predicates.Prov.wasGeneratedBy)
@@ -62,7 +63,7 @@ export default class S2Experiment extends S2Identified {
     }
 
 
-    get construct():S2Implementation|undefined{
+    get construct():SXImplementation|undefined{
 
         let construct_uri = this.getUriProperty(Predicates.Prov.wasDerivedFrom)
 
@@ -70,11 +71,11 @@ export default class S2Experiment extends S2Identified {
             return undefined
         }
 
-        return new S2Implementation(this.graph, construct_uri)
+        return new SXImplementation(this.graph, construct_uri)
 
     }
 
-    // set construct(construct:S2Implementation|undefined) {
+    // set construct(construct:SXImplementation|undefined) {
 
     //     if(construct === undefined) {
     //         this.deleteProperty(Predicates.Prov.wasDerivedFrom)
@@ -84,7 +85,7 @@ export default class S2Experiment extends S2Identified {
     // }
 
 
-    addConstruct(construct:S2Implementation):void {
+    addConstruct(construct:SXImplementation):void {
 
         this.graph.add(this.uri, Predicates.Prov.wasDerivedFrom, node.createUriNode(construct.uri))
 

@@ -324,12 +324,26 @@ export default class SBOL2Graph extends Graph {
 
     }
 
+    get experiments():Array<S2Experiment> {
+
+        return this.instancesOfType(Types.SBOL2.Experiment)
+                    .map((uri) => new S2Experiment(this, uri))
+
+    }
+
     getExperimentalData(uri):S2ExperimentalData|null {
 
         if(this.getType(uri) !== Types.SBOL2.ExperimentalData)
             return null
 
         return new S2ExperimentalData(this, uri)
+
+    }
+
+    get experimentalData():Array<S2ExperimentalData> {
+
+        return this.instancesOfType(Types.SBOL2.ExperimentalData)
+                    .map((uri) => new S2ExperimentalData(this, uri))
 
     }
 

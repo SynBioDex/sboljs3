@@ -11,6 +11,10 @@ import S2ModuleDefinition from '../../sbol2/S2ModuleDefinition'
 import S2FunctionalComponent from '../../sbol2/S2FunctionalComponent'
 import S2SequenceAnnotation from '../../sbol2/S2SequenceAnnotation'
 import S2GenericLocation from '../../sbol2/S2GenericLocation'
+import S2Experiment from '../../sbol2/S2Experiment'
+import S2ExperimentalData from '../../sbol2/S2ExperimentalData'
+import SXExperiment from '../../sbolx/SXExperiment'
+import SXExperimentalData from '../../sbolx/SXExperimentalData'
 import S2Range from '../../sbol2/S2Range'
 import SXIdentified from '../../sbolx/SXIdentified'
 import S2Identified from '../../sbol2/S2Identified'
@@ -28,6 +32,25 @@ export default function convertXto2(graph:Graph) {
     graphx.graph = graph.graph
 
     let graph2:SBOL2Graph = new SBOL2Graph()
+
+
+
+    for(let ed of graphx.experimentalData) {
+        let ed2 = new S2ExperimentalData(graph2, ed.uri)
+        ed2.setUriProperty(Predicates.a, Types.SBOL2.ExperimentalData)
+        copyIdentifiedProperties(ed, ed2)
+    }
+
+    for(let ex of graphx.experiments) {
+        let ex2 = new S2Experiment(graph2, ex.uri)
+        ex2.setUriProperty(Predicates.a, Types.SBOL2.Experiment)
+        copyIdentifiedProperties(ex, ex2)
+        for(let ed of ex.experimentalData) {
+            ex2.insertUriProperty(Predicates.SBOLX.experimentalData, ed.uri)
+        }
+    }
+
+
 
     type Mapping = { cd: S2ComponentDefinition, md: S2ModuleDefinition, fc: S2FunctionalComponent }
     

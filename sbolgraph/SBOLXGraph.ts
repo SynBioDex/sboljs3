@@ -34,6 +34,8 @@ import SXProvAssociation from './sbolx/SXProvAssociation';
 import SXProvPlan from './sbolx/SXProvPlan';
 import SXProvUsage from './sbolx/SXProvUsage';
 import SXImplementation from './sbolx/SXImplementation';
+import SXExperiment from './sbolx/SXExperiment';
+import SXExperimentalData from './sbolx/SXExperimentalData';
 import SBOL2Graph from './SBOL2Graph'
 
 import SXIdentifiedFactory from './sbolx/SXIdentifiedFactory'
@@ -151,6 +153,38 @@ export default class SBOLXGraph extends Graph {
         return this.match(null, Predicates.SBOLX.instanceOf, component.uri)
                    .map(triple.subjectUri)
                    .map((uri) => new SXSubComponent(this, uri as string))
+
+    }
+
+    getExperiment(uri):SXExperiment|null {
+
+        if(this.getType(uri) !== Types.SBOLX.Experiment)
+            return null
+
+        return new SXExperiment(this, uri)
+
+    }
+
+    get experiments():Array<SXExperiment> {
+
+        return this.instancesOfType(Types.SBOLX.Experiment)
+                    .map((uri) => new SXExperiment(this, uri))
+
+    }
+
+    getExperimentalData(uri):SXExperimentalData|null {
+
+        if(this.getType(uri) !== Types.SBOLX.ExperimentalData)
+            return null
+
+        return new SXExperimentalData(this, uri)
+
+    }
+
+    get experimentalData():Array<SXExperimentalData> {
+
+        return this.instancesOfType(Types.SBOLX.ExperimentalData)
+                    .map((uri) => new SXExperimentalData(this, uri))
 
     }
 
@@ -380,6 +414,12 @@ export default class SBOLXGraph extends Graph {
 
             if(type === Types.SBOLX.Implementation)
                 return new SXImplementation(this, uri)
+
+            if(type === Types.SBOLX.Experiment)
+                return new SXExperiment(this, uri)
+
+            if(type === Types.SBOLX.ExperimentalData)
+                return new SXExperimentalData(this, uri)
 
             if(type === Types.Prov.Activity)
                 return new SXProvActivity(this, uri)
