@@ -10,6 +10,14 @@ import path = require('path')
 
 import fetch = require('node-fetch')
 import chalk from 'chalk'
+import { createDiffieHellman } from 'crypto';
+
+
+
+let success:string[] = []
+let fail:string[] = []
+let changed:string[] = []
+
 
 main().catch((e) => {
     console.dir(e)
@@ -48,6 +56,7 @@ async function main() {
         let g = await SBOL2Graph.loadString(fs.readFileSync(f) + '')
         let out2Filename = [ 'out/', path.dirname(f), '/', path.basename(f, path.extname(f)), '_sbol2.xml' ].join('')
         fs.writeFileSync(out2Filename, g.serializeXML())
+        await validate(f, out2Filename, f + ' ->SBOL2')
 
 
         console.log(chalk.cyanBright('🤔 Original -> SBOL2 -> Compliant SBOL2'))
@@ -56,6 +65,7 @@ async function main() {
         g2C.enforceURICompliance('http://compliant/')
         let out2CFilename = [ 'out/', path.dirname(f), '/', path.basename(f, path.extname(f)), '_sbol2_compliant.xml' ].join('')
         fs.writeFileSync(out2CFilename, g2C.serializeXML())
+        await validate(f, out2CFilename, f + ' ->SBOL2->compliant')
 
 
         console.log(chalk.cyanBright('🤔 Original -> SBOLX'))
@@ -70,17 +80,33 @@ async function main() {
         let gRoundtrip = await SBOL2Graph.loadString(gx.serializeXML())
         let outRoundtripFilename = [ 'out/', path.dirname(f), '/', path.basename(f, path.extname(f)), '_roundtrip.xml' ].join('')
         fs.writeFileSync(outRoundtripFilename, gRoundtrip.serializeXML())
+        await validate(f, outRoundtripFilename, f + ' ->SBOLX->SBOL2')
     }
 
 
-    /*
-    let g2 = await SBOL2Graph.loadString(g.serializeXML())
-    console.log('ROUNDTRIPPED')
-    g2.printTree()
-    console.log('---')
+    console.log(chalk.cyanBright('📝 Summary'))
 
-    let outFilename = filename + '_rs.xml'
-    fs.writeFileSync(outFilename, g2.serializeXML())
+    for(let s of success) {
+        console.log('Success: ' + chalk.greenBright(s))
+    }
+    for(let s of changed) {
+        console.log('Changed: ' + chalk.yellowBright(s))
+    }
+    for(let s of fail) {
+        console.log('Failed: ' + chalk.redBright(s))
+    }
+
+
+    console.log(chalk.cyanBright('📊 Statistics'))
+    console.log('       ' + success.length + ' succeeded')
+    console.log('       ' + fail.length + ' failed')
+    console.log('       ' + changed.length + ' succeeded but were different')
+
+}
+
+async function validate(orig:string, d:string, m:string) {
+
+    console.log(chalk.cyanBright('🤔 Validating...'))
 
     let f = await fetch('http://www.async.ece.utah.edu/validate/', {
         method: 'POST',
@@ -89,6 +115,7 @@ async function main() {
         },
         body: JSON.stringify({
             options: {
+                uri_prefix: 'http://foo/',
                 language: 'SBOL2',
                 test_equality: true,
                 check_uri_compliance: false,
@@ -101,16 +128,34 @@ async function main() {
                 diff_file_name: 'comparison file'
             },
             return_file: false,
-            main_file: fs.readFileSync(filename) + '',
-            diff_file: g2.serializeXML()
+            main_file: fs.readFileSync(orig) + '',
+            diff_file: fs.readFileSync(d) + ''
         })
     })
 
     let r = await f.json()
 
-    console.log(r)
-*/
+    if(r.valid) {
+        console.log(chalk.greenBright('✅ Valid'))
+    } else {
+        console.log(chalk.redBright('❌ NOT valid'))
+        fail.push(m)
+    }
 
+    if(r.equal) {
+        console.log(chalk.greenBright('✅ Equal'))
+    } else {
+        console.log(chalk.redBright('❌ NOT equal'))
+        changed.push(m)
+    }
+
+    for(let e of r.errors) {
+        console.log('       ' + e)
+    }
+
+    if(r.valid && r.equal) {
+        success.push(m)
+    }
 
 }
 
