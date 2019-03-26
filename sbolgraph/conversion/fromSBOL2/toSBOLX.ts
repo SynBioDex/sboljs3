@@ -250,6 +250,10 @@ export default function convert2toX(graph:Graph) {
             subModule.name = sc.name
             subModule.instanceOf = def
 
+            if(sc.sourceLocation) {
+                subModule.setUriProperty(Predicates.SBOLX.sourceLocation, sc.sourceLocation.uri)
+            }
+
             module.insertUriProperty(Predicates.SBOLX.subComponent, subModule.uri)
 
             map.set(sc.uri, subModule)

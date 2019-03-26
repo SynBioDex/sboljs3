@@ -147,6 +147,10 @@ export default function convertXto2(graph:Graph) {
             copyIdentifiedProperties(subcomponent, cdSubcomponent)
             copyIdentifiedProperties(subcomponent, mdSubcomponent)
 
+            if(subcomponent.sourceLocation) {
+                cdSubcomponent.setUriProperty(Predicates.SBOLX.sourceLocation, subcomponent.sourceLocation.uri)
+            }
+
             if(subcomponent.locations.length > 0) {
 
                 // if it has locations it needs a SA
