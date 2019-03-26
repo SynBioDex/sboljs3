@@ -4,7 +4,8 @@ import SBOL2Graph from "../SBOL2Graph";
 import S2ProvAssociation from "./S2ProvAssociation";
 import { Types, Predicates } from "bioterms";
 import S2ProvPlan from "./S2ProvPlan";
-import { S2ProvUsage } from "..";
+import S2ProvUsage from "./S2ProvUsage";
+import * as node from '../node'
 
 export default class S2ProvActivity extends S2Identified {
 
@@ -16,6 +17,33 @@ export default class S2ProvActivity extends S2Identified {
 
     get facadeType():string {
         return Types.Prov.Activity
+    }
+
+    get type():string {
+
+        const typeUri:string|undefined = this.getUriProperty(Predicates.SBOL2.type)
+
+        if(!typeUri)
+            throw new Error(this.uri + ' has no type?')
+
+        return typeUri
+    }
+
+    get types():Array<string> {
+
+        return this.getUriProperties(Predicates.SBOL2.type)
+    }
+
+    set type(uri:string) {
+
+        this.setUriProperty(Predicates.SBOL2.type, uri)
+
+    }
+
+    addType(uri:string) {
+        this.graph.insertProperties(this.uri, {
+            [Predicates.SBOL2.type]: node.createUriNode(uri)
+        })
     }
 
     get associations():Array<S2ProvAssociation> {

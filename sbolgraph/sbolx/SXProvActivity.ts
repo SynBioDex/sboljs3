@@ -5,6 +5,7 @@ import SXProvAssociation from "./SXProvAssociation";
 import { Types, Predicates } from "bioterms";
 import SXProvPlan from "./SXProvPlan";
 import SXProvUsage from "./SXProvUsage"
+import * as node from '../node'
 
 export default class SXProvActivity extends SXIdentified {
 
@@ -16,6 +17,33 @@ export default class SXProvActivity extends SXIdentified {
 
     get facadeType():string {
         return Types.Prov.Activity
+    }
+
+    get type():string {
+
+        const typeUri:string|undefined = this.getUriProperty(Predicates.SBOLX.type)
+
+        if(!typeUri)
+            throw new Error(this.uri + ' has no type?')
+
+        return typeUri
+    }
+
+    get types():Array<string> {
+
+        return this.getUriProperties(Predicates.SBOLX.type)
+    }
+
+    set type(uri:string) {
+
+        this.setUriProperty(Predicates.SBOLX.type, uri)
+
+    }
+
+    addType(uri:string) {
+        this.graph.insertProperties(this.uri, {
+            [Predicates.SBOLX.type]: node.createUriNode(uri)
+        })
     }
 
     get associations():Array<SXProvAssociation> {
