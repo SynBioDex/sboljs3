@@ -144,6 +144,9 @@ export default function convertXto2(graph:Graph) {
 
             subcomponentToFC.set(subcomponent.uri, mdSubcomponent)
 
+            if(subcomponent.measure)
+                mdSubcomponent.setUriProperty(Predicates.SBOL2.measure, subcomponent.measure.uri)
+
             copyIdentifiedProperties(subcomponent, cdSubcomponent)
             copyIdentifiedProperties(subcomponent, mdSubcomponent)
 
@@ -188,7 +191,7 @@ export default function convertXto2(graph:Graph) {
             copyIdentifiedProperties(interaction, newInteraction)
 
             if (interaction.measure) {
-                newInteraction.setUriProperty(Predicates.SBOLX.measure, interaction.measure.uri)
+                newInteraction.setUriProperty(Predicates.SBOL2.measure, interaction.measure.uri)
             }
 
             for(let participation of interaction.participations) {
@@ -197,7 +200,7 @@ export default function convertXto2(graph:Graph) {
                 copyIdentifiedProperties(participation, newParticipation)
 
                 if (participation.measure) {
-                    newParticipation.setUriProperty(Predicates.SBOLX.measure, participation.measure.uri)
+                    newParticipation.setUriProperty(Predicates.SBOL2.measure, participation.measure.uri)
                 }
 
                 for(let role of participation.roles) {
