@@ -7,6 +7,7 @@ import SXInteraction from './SXInteraction'
 import * as triple from '../triple'
 import * as node from '../node'
 import { Types, Predicates, Specifiers } from 'bioterms'
+import SXMeasure from './SXMeasure';
 
 export default class SXParticipation extends SXIdentified {
 
@@ -86,6 +87,23 @@ export default class SXParticipation extends SXIdentified {
         this.setUriProperty(Predicates.SBOLX.participant, participant.uri)
     }
 
+    get measure():SXMeasure|undefined {
+        let measure = this.getUriProperty(Predicates.SBOLX.measure)
+
+        if(measure === undefined)
+            return
+        
+        return new SXMeasure(this.graph, measure)
+    }
+
+    set measure(measure:SXMeasure|undefined) {
+
+        if(measure === undefined)
+            this.deleteProperty(Predicates.SBOLX.measure)
+        else
+            this.setUriProperty(Predicates.SBOLX.measure, measure.uri)
+
+    }
 
 
 }

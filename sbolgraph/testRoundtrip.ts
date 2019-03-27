@@ -113,6 +113,7 @@ async function validate(orig:string, d:string, m:string) {
         headers: {
             'content-type': 'application/json'
         },
+        timeout: 30000,
         body: JSON.stringify({
             options: {
                 uri_prefix: 'http://foo/',

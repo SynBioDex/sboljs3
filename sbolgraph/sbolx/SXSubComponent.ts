@@ -13,6 +13,7 @@ import SBOLXGraph from "../SBOLXGraph";
 import SXMapsTo from './SXMapsTo';
 import SXInteraction from './SXInteraction'
 import SXLocation from './SXLocation'
+import SXMeasure from './SXMeasure';
 
 export default class SXSubComponent extends SXThingWithLocation {
 
@@ -338,6 +339,25 @@ export default class SXSubComponent extends SXThingWithLocation {
             this.deleteProperty(Predicates.SBOLX.sourceLocation)
 
     }
+
+    get measure():SXMeasure|undefined {
+        let measure = this.getUriProperty(Predicates.SBOLX.measure)
+
+        if(measure === undefined)
+            return
+        
+        return new SXMeasure(this.graph, measure)
+    }
+
+    set measure(measure:SXMeasure|undefined) {
+
+        if(measure === undefined)
+            this.deleteProperty(Predicates.SBOLX.measure)
+        else
+            this.setUriProperty(Predicates.SBOLX.measure, measure.uri)
+
+    }
+
 }
 
 

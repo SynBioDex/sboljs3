@@ -187,10 +187,18 @@ export default function convertXto2(graph:Graph) {
             let newInteraction = md.createInteraction(interaction.id, interaction.version)
             copyIdentifiedProperties(interaction, newInteraction)
 
+            if (interaction.measure) {
+                newInteraction.setUriProperty(Predicates.SBOLX.measure, interaction.measure.uri)
+            }
+
             for(let participation of interaction.participations) {
 
                 let newParticipation = newInteraction.createParticipation(participation.id, participation.version)
                 copyIdentifiedProperties(participation, newParticipation)
+
+                if (participation.measure) {
+                    newParticipation.setUriProperty(Predicates.SBOLX.measure, participation.measure.uri)
+                }
 
                 for(let role of participation.roles) {
                     newParticipation.addRole(role)

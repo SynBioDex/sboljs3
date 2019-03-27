@@ -36,6 +36,7 @@ import SXProvUsage from './sbolx/SXProvUsage';
 import SXImplementation from './sbolx/SXImplementation';
 import SXExperiment from './sbolx/SXExperiment';
 import SXExperimentalData from './sbolx/SXExperimentalData';
+import SXMeasure from './sbolx/SXMeasure';
 import SBOL2Graph from './SBOL2Graph'
 
 import SXIdentifiedFactory from './sbolx/SXIdentifiedFactory'
@@ -188,6 +189,13 @@ export default class SBOLXGraph extends Graph {
 
     }
 
+    get measures():Array<SXMeasure> {
+
+        return this.instancesOfType(Types.Measure.Measure)
+                    .map((uri) => new SXMeasure(this, uri))
+
+    }
+
     static async loadURL(url, defaultURIPrefix?:string):Promise<SBOLXGraph> {
 
         let graph = new SBOLXGraph()
@@ -273,7 +281,8 @@ export default class SBOLXGraph extends Graph {
             [ 'prov', Prefixes.prov ],
             [ 'sbol', Prefixes.sbol2 ],
             [ 'sbolx', Prefixes.sbolx ],
-            [ 'backport', 'http://biocad.io/terms/backport#' ]
+            [ 'backport', 'http://biocad.io/terms/backport#' ],
+            [ 'om', Prefixes.measure ],
         ]
 
         let ownershipPredicates = [
@@ -282,7 +291,8 @@ export default class SBOLXGraph extends Graph {
             Predicates.SBOLX.subComponent,
             Predicates.SBOLX.participation,
             Predicates.SBOLX.location,
-            Predicates.SBOLX.interaction
+            Predicates.SBOLX.interaction,
+            Predicates.SBOLX.measure
         ]
 
         let isOwnershipRelation = (triple:any):boolean => {

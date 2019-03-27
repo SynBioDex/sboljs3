@@ -18,6 +18,7 @@ import S2Range from './sbol2/S2Range'
 import S2Sequence from './sbol2/S2Sequence'
 import S2Collection from './sbol2/S2Collection'
 import S2Model from './sbol2/S2Model'
+import S2Measure from './sbol2/S2Measure'
 
 //import RdfGraphArray = require('rdf-graph-array')
 import serialize from './serialize';
@@ -401,6 +402,13 @@ export default class SBOL2Graph extends Graph {
 
     }
 
+    get measures():Array<S2Measure> {
+
+        return this.instancesOfType(Types.Measure.Measure)
+                    .map((uri) => new S2Measure(this, uri))
+
+    }
+
     static async loadURL(url, defaultURIPrefix?:string):Promise<SBOL2Graph> {
 
         let graph = new SBOL2Graph()
@@ -488,6 +496,7 @@ export default class SBOL2Graph extends Graph {
             [ 'prov', Prefixes.prov ],
             [ 'sbol', Prefixes.sbol2 ],
             [ 'backport', 'http://biocad.io/terms/backport#' ],
+            [ 'om', Prefixes.measure ],
         ]
 
         let ownershipPredicates = [
@@ -500,7 +509,8 @@ export default class SBOL2Graph extends Graph {
             Predicates.SBOL2.location,
             Predicates.SBOL2.interaction,
             Predicates.Prov.qualifiedAssociation,
-            Predicates.Prov.qualifiedUsage
+            Predicates.Prov.qualifiedUsage,
+            Predicates.SBOL2.measure
         ]
 
         let isOwnershipRelation = (triple:any):boolean => {
@@ -683,6 +693,9 @@ export default class SBOL2Graph extends Graph {
 
         if(type === Types.SBOL2.Attachment)
             return new S2Attachment(this, uri)
+
+        if(type === Types.Measure.Measure)
+            return new S2Measure(this, uri)
 
         return new S2Identified(this, uri)
     }

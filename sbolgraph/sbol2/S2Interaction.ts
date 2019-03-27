@@ -7,6 +7,7 @@ import * as triple from '../triple'
 import * as node from '../node'
 import { Types, Predicates, Specifiers } from 'bioterms'
 import S2IdentifiedFactory from './S2IdentifiedFactory';
+import S2Measure from './S2Measure';
 
 export default class S2Interaction extends S2Identified {
 
@@ -103,6 +104,24 @@ export default class S2Interaction extends S2Identified {
         participation.setParticipant(participant)
 
         return participation
+    }
+
+    get measure():S2Measure|undefined {
+        let measure = this.getUriProperty(Predicates.SBOL2.measure)
+
+        if(measure === undefined)
+            return
+        
+        return new S2Measure(this.graph, measure)
+    }
+
+    set measure(measure:S2Measure|undefined) {
+
+        if(measure === undefined)
+            this.deleteProperty(Predicates.SBOL2.measure)
+        else
+            this.setUriProperty(Predicates.SBOL2.measure, measure.uri)
+
     }
 
 }

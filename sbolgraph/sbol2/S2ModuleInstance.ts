@@ -9,6 +9,7 @@ import SBOL2Graph from "../SBOL2Graph";
 import S2FunctionalComponent from './S2FunctionalComponent';
 import S2MapsTo from './S2MapsTo';
 import S2IdentifiedFactory from './S2IdentifiedFactory';
+import S2Measure from './S2Measure';
 
 export default class S2ModuleInstance extends S2Identified {
 
@@ -66,6 +67,25 @@ export default class S2ModuleInstance extends S2Identified {
         return mapping
 
     }
+
+    get measure():S2Measure|undefined {
+        let measure = this.getUriProperty(Predicates.SBOL2.measure)
+
+        if(measure === undefined)
+            return
+        
+        return new S2Measure(this.graph, measure)
+    }
+
+    set measure(measure:S2Measure|undefined) {
+
+        if(measure === undefined)
+            this.deleteProperty(Predicates.SBOL2.measure)
+        else
+            this.setUriProperty(Predicates.SBOL2.measure, measure.uri)
+
+    }
+
 }
 
 

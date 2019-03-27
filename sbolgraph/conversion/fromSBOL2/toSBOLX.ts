@@ -39,6 +39,7 @@ import S2Model from '../../sbol2/S2Model';
 import SXIdentifiedFactory from '../../sbolx/SXIdentifiedFactory'
 
 import * as node from '../../node'
+import SXMeasure from '../..//sbolx/SXMeasure';
 
 export default function convert2toX(graph:Graph) {
 
@@ -72,7 +73,6 @@ export default function convert2toX(graph:Graph) {
     for(let ex of graph2.experiments) {
         convertExp(ex)
     }
-
 
     for(let sm of graph2.instancesOfType(Types.SBOL2.Module).map((uri) => graph2.uriToFacade(uri))) {
 
@@ -344,6 +344,11 @@ export default function convert2toX(graph:Graph) {
 
             module.insertUriProperty(Predicates.SBOLX.subComponent, subModule.uri)
 
+            if(sm.measure) {
+                subModule.setUriProperty(Predicates.SBOLX.measure, sm.measure.uri)
+            }
+
+
             map.set(sm.uri, subModule)
 
             // TODO check sc roles match the def roles
@@ -366,6 +371,10 @@ export default function convert2toX(graph:Graph) {
 
             module.insertUriProperty(Predicates.SBOLX.subComponent, subModule.uri)
 
+            if(sc.measure) {
+                subModule.setUriProperty(Predicates.SBOLX.measure, sc.measure.uri)
+            }
+
             map.set(sc.uri, subModule)
 
             // TODO check sc roles match the def roles
@@ -380,6 +389,10 @@ export default function convert2toX(graph:Graph) {
 
             module.insertUriProperty(Predicates.SBOLX.interaction, newInt.uri)
 
+            if(int.measure) {
+                newInt.setUriProperty(Predicates.SBOLX.measure, int.measure.uri)
+            }
+
             for(let type of int.types)
                 newInt.addType(type)
 
@@ -388,6 +401,10 @@ export default function convert2toX(graph:Graph) {
                 let newParticipation = new SXParticipation(graphx, participation.uri)
                 newParticipation.setUriProperty(Predicates.a, Types.SBOLX.Participation)
                 copyIdentifiedProperties(participation, newParticipation)
+
+                if (participation.measure) {
+                    newParticipation.setUriProperty(Predicates.SBOLX.measure, participation.measure.uri)
+                }
 
                 newInt.insertUriProperty(Predicates.SBOLX.participation, newParticipation.uri)
 
