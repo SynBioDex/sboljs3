@@ -11,7 +11,10 @@ let QName = et.QName
 
 export default function serialize(graph:Graph, defaultPrefixes:Map<string,string>, isOwnershipRelation:(triple:any) => boolean):string {
 
-    let prefixes = new Map(defaultPrefixes)
+    let prefixes:Map<string,string> = new Map(defaultPrefixes)
+    let prefixesUsed:Map<string,boolean> = new Map()
+
+    prefixesUsed.set('rdf', true)
 
     let subjectToElement = new Map()
     let ownedElements = new Set()
@@ -91,7 +94,8 @@ export default function serialize(graph:Graph, defaultPrefixes:Map<string,string
     let docAttr = {}
 
     for(let prefix of prefixes.keys()) {
-        docAttr['xmlns:' + prefix] = prefixes.get(prefix)
+        if(prefixesUsed.get(prefix) === true)
+            docAttr['xmlns:' + prefix] = prefixes.get(prefix)
     }
 
 
@@ -132,6 +136,7 @@ export default function serialize(graph:Graph, defaultPrefixes:Map<string,string
             var prefixIRI:any = prefixes.get(prefix)
 
             if(iri.indexOf(prefixIRI) === 0) {
+                prefixesUsed.set(prefix, true)
                 return prefix + ':' + iri.slice(prefixIRI.length)
             }
         }
@@ -153,6 +158,8 @@ export default function serialize(graph:Graph, defaultPrefixes:Map<string,string
             if(prefixes.get(prefixName) === undefined) {
 
                 prefixes.set(prefixName, iriPrefix)
+                prefixesUsed.set(prefixName, true)
+
                 return prefixName + ':' + iri.slice(iriPrefix.length)
             }
         }
