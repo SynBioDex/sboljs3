@@ -507,6 +507,7 @@ export default class SBOL2Graph extends Graph {
             Predicates.SBOL2.functionalComponent,
             Predicates.SBOL2.participation,
             Predicates.SBOL2.location,
+            Predicates.SBOL2.sourceLocation,
             Predicates.SBOL2.interaction,
             Predicates.Prov.qualifiedAssociation,
             Predicates.Prov.qualifiedUsage,

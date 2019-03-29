@@ -291,6 +291,7 @@ export default class SBOLXGraph extends Graph {
             Predicates.SBOLX.subComponent,
             Predicates.SBOLX.participation,
             Predicates.SBOLX.location,
+            Predicates.SBOLX.sourceLocation,
             Predicates.SBOLX.interaction,
             Predicates.SBOLX.measure
         ]

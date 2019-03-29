@@ -99,9 +99,6 @@ export default function serialize(graph:Graph, defaultPrefixes:Map<string,string
     }
 
 
-    console.log(JSON.stringify(docAttr))
-
-
     let root = Element(prefixify(Prefixes.rdf + 'RDF'), docAttr)
 
     for(let subject of subjectToElement.keys()) {
