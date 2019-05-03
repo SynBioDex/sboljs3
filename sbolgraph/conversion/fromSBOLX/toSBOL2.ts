@@ -24,6 +24,7 @@ import { Types, Predicates, Prefixes, Specifiers } from 'bioterms'
 
 import S2IdentifiedFactory from '../../sbol2/S2IdentifiedFactory'
 import URIUtils from '../../URIUtils';
+import S2Sequence from '../../sbol2/S2Sequence';
 
 
 export default function convertXto2(graph:Graph) {
@@ -50,9 +51,23 @@ export default function convertXto2(graph:Graph) {
         }
     }
 
+    for(let seq of graphx.sequences) {
+        let seq2 = new S2Sequence(graph2, seq.uri)
+        seq2.setUriProperty(Predicates.a, Types.SBOL2.Sequence)
+        copyIdentifiedProperties(seq, seq2)
+        seq2.elements = seq.elements
+        seq2.encoding = seq.encoding
+    }
 
 
-    type Mapping = { cd: S2ComponentDefinition, md: S2ModuleDefinition, fc: S2FunctionalComponent }
+
+    type Mapping = {
+        cd: S2ComponentDefinition,
+        md: S2ModuleDefinition,
+        fc: S2FunctionalComponent,
+        cdSuffix:string,
+        mdSuffix:string
+    }
     
     let componentToCDandMD:Map<string, Mapping> = new Map()
     let subcomponentToFC:Map<string, S2FunctionalComponent> = new Map()
@@ -72,18 +87,18 @@ export default function convertXto2(graph:Graph) {
         let cdUri = component.uri
         let mdUri = component.uri
 
-        let cdSuffix = ''
-        let mdSuffix = ''
+        let cdSuffix = '_component'
+        let mdSuffix = '_module'
 
         // both URIs need to be different, but want to try to keep the old SBOL2 URI for the correct object if we can
         //
         switch(component.getUriProperty('http://biocad.io/terms/backport#prevType')) {
             case Types.SBOL2.ModuleDefinition:
-                cdSuffix = '_component'
+                mdSuffix = ''
                 break
             case Types.SBOL2.ComponentDefinition:
             default:
-                mdSuffix = '_module'
+                cdSuffix = ''
                 break
         }
 
@@ -119,6 +134,10 @@ export default function convertXto2(graph:Graph) {
             cd.addType(type)
         }
 
+        for(let seq of component.sequences) {
+            cd.insertUriProperty(Predicates.SBOL2.sequence, seq.uri)
+        }
+
         for(let feature of component.sequenceFeatures) {
 
             let sa = new S2SequenceAnnotation(graph2, feature.uri)
@@ -134,7 +153,7 @@ export default function convertXto2(graph:Graph) {
             copyLocations(graph2, feature, sa)
         }
 
-        componentToCDandMD.set(component.uri, { cd, md, fc })
+        componentToCDandMD.set(component.uri, { cd, md, fc, mdSuffix, cdSuffix })
     }
 
     // Make subcomponents into both SBOL2 subcomponents and SBOL2 functionalcomponents
@@ -202,7 +221,7 @@ export default function convertXto2(graph:Graph) {
             throw new Error('???')
         }
 
-        let { cd, md, fc } = mapping
+        let { cd, md, fc, cdSuffix, mdSuffix } = mapping
 
         for(let interaction of component.interactions) {
 

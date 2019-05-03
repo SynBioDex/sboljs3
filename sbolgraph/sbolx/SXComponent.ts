@@ -77,14 +77,11 @@ export default class SXComponent extends SXIdentified {
         return terms
     }
 
-    get sequence():SXSequence|undefined {
+    get sequences():Array<SXSequence> {
 
-        const uri:string|undefined = this.getUriProperty(Predicates.SBOLX.sequence)
+        return this.getUriProperties(Predicates.SBOLX.sequence)
+                   .map((uri:string) => new SXSequence(this.graph, uri))
 
-        if(uri === undefined)
-            return undefined
-
-        return new SXSequence(this.graph, uri)
     }
 
     get subComponents():Array<SXSubComponent> {
@@ -166,15 +163,6 @@ export default class SXComponent extends SXIdentified {
         module.instanceOf = definition
 
         return module
-    }
-
-    setSequence(sequence:SXSequence|undefined):void {
-
-        if(sequence === undefined)
-            this.deleteProperty(Predicates.SBOLX.sequence)
-        else
-            this.setUriProperty(Predicates.SBOLX.sequence, sequence.uri)
-
     }
 
     createFeature(name:string):SXSequenceFeature {
