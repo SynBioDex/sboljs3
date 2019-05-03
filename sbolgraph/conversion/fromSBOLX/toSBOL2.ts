@@ -263,6 +263,22 @@ function copyIdentifiedProperties(a:SXIdentified, b:S2Identified) {
             continue
         }
 
+        if(p === Predicates.SBOLX.id) {
+            b.graph.insert(b.uri, Predicates.SBOL2.displayId, triple.object)
+            continue
+        }
+
+        if(p === Predicates.SBOLX.persistentIdentity) {
+            b.graph.insert(b.uri, Predicates.SBOL2.persistentIdentity, triple.object)
+            continue
+        }
+
+        if(p === Predicates.SBOLX.version) {
+            b.graph.insert(b.uri, Predicates.SBOL2.version, triple.object)
+            continue
+        }
+
+
         if(p.indexOf('http://biocad.io/terms/backport#') !== -1) {
             continue
         }
