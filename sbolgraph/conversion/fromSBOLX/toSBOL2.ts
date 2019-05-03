@@ -72,25 +72,42 @@ export default function convertXto2(graph:Graph) {
         let cdUri = component.uri
         let mdUri = component.uri
 
+        let cdSuffix = ''
+        let mdSuffix = ''
+
         // both URIs need to be different, but want to try to keep the old SBOL2 URI for the correct object if we can
         //
         switch(component.getUriProperty('http://biocad.io/terms/backport#prevType')) {
             case Types.SBOL2.ModuleDefinition:
-                cdUri = URIUtils.addSuffix(cdUri, '_component')
+                cdSuffix = '_component'
                 break
             case Types.SBOL2.ComponentDefinition:
             default:
-                mdUri = URIUtils.addSuffix(mdUri, '_module')
+                mdSuffix = '_module'
                 break
         }
+
+        if(cdSuffix !== '')
+            cdUri = URIUtils.addSuffix(cdUri, cdSuffix)
+
+        if(mdSuffix !== '')
+            mdUri = URIUtils.addSuffix(mdUri, mdSuffix)
 
         let cd = new S2ComponentDefinition(graph2, cdUri)
         cd.setUriProperty(Predicates.a, Types.SBOL2.ComponentDefinition)
         copyIdentifiedProperties(component, cd)
+        cd.displayId = component.id + cdSuffix
 
         let md = new S2ModuleDefinition(graph2, mdUri)
         md.setUriProperty(Predicates.a, Types.SBOL2.ModuleDefinition)
         copyIdentifiedProperties(component, md)
+        md.displayId = module.id + mdSuffix
+
+        if(md.persistentIdentity && mdSuffix)
+            md.persistentIdentity = URIUtils.addSuffix(md.persistentIdentity, mdSuffix)
+
+        if(cd.persistentIdentity && cdSuffix)
+            cd.persistentIdentity = URIUtils.addSuffix(cd.persistentIdentity, cdSuffix)
 
         let fc = md.createFunctionalComponent(cd)
 
@@ -137,10 +154,12 @@ export default function convertXto2(graph:Graph) {
             
             let newDefOfSubcomponent = getCDandMD(defUri)
 
+            if(newDefOfSubcomponent === undefined) {
+                throw new Error('???')
+            }
 
-
-            let cdSubcomponent = cd.addComponentByDefinition(cd)
-            let mdSubcomponent = md.createFunctionalComponent(cd)
+            let cdSubcomponent = cd.addComponentByDefinition(newDefOfSubcomponent.cd, subcomponent.id, subcomponent.name, subcomponent.version)
+            let mdSubcomponent = md.createFunctionalComponent(newDefOfSubcomponent.cd, subcomponent.id,  subcomponent.name, subcomponent.version)
 
             subcomponentToFC.set(subcomponent.uri, mdSubcomponent)
 

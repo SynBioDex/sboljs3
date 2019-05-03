@@ -53,8 +53,12 @@ export default class SXIdentifiedFactory {
 
         let versionSuffix = version !== undefined ? '/' + version : ''
 
+        console.log('VERSION IS ' + versionSuffix)
+
         const uri:string = graph.generateURI(
             parent.persistentIdentity + '/' + id + '$n?$' + versionSuffix)
+
+        console.log('URI IS ' + uri)
 
         graph.insertProperties(uri, {
             [Predicates.a]: node.createUriNode(type),

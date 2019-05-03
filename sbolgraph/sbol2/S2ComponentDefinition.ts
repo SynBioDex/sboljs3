@@ -152,9 +152,10 @@ export default class S2ComponentDefinition extends S2Identified {
 
     }
 
-    addComponentByDefinition(componentDefinition:S2ComponentDefinition):S2ComponentInstance {
+    addComponentByDefinition(componentDefinition:S2ComponentDefinition, id?:string|undefined, name?:string|undefined, version?:string|undefined):S2ComponentInstance {
 
-        let identified = S2IdentifiedFactory.createChild(this.graph, Types.SBOL2.Component, this, Predicates.SBOL2.component, componentDefinition.displayId || 'subcomponent', this.version)
+        let identified = S2IdentifiedFactory.createChild(this.graph, Types.SBOL2.Component, this, Predicates.SBOL2.component, id || componentDefinition.displayId || 'subcomponent', name, version || this.version)
+
         let component = new S2ComponentInstance(this.graph, identified.uri)
 
         component.definition = componentDefinition
@@ -164,7 +165,7 @@ export default class S2ComponentDefinition extends S2Identified {
 
     addSequenceAnnotationForComponent(componentInstance:S2ComponentInstance):S2SequenceAnnotation {
 
-        let identified = S2IdentifiedFactory.createChild(this.graph, Types.SBOL2.SequenceAnnotation, this, Predicates.SBOL2.sequenceAnnotation, componentInstance.displayId + '_sequenceAnnotation', this.version)
+        let identified = S2IdentifiedFactory.createChild(this.graph, Types.SBOL2.SequenceAnnotation, this, Predicates.SBOL2.sequenceAnnotation, componentInstance.displayId + '_sequenceAnnotation', undefined, this.version)
         let sequenceAnnotation = new S2SequenceAnnotation(this.graph, identified.uri)
 
         sequenceAnnotation.component = componentInstance

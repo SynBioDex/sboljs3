@@ -23,6 +23,7 @@
   },
   "homepage": "https://github.com/udp/sbolgraph#readme",
   "dependencies": {
+    "@types/uuid": "^3.4.4",
     "bioterms": "git+https://github.com/udp/bioterms.git",
     "browser-request": "git+https://github.com/adampash/browser-request.git#feat-add-headers-to-response",
     "elementtree": "^0.1.7",
@@ -33,7 +34,8 @@
     "rdf-parser-rdfxml": "^0.3.1",
     "rdf-serializer-xml": "^0.1.0",
     "request": "^2.81.0",
-    "shortid": "^2.2.8"
+    "shortid": "^2.2.8",
+    "uuid": "^3.3.2"
   },
   "devDependencies": {
     "@types/mz": "0.0.32",

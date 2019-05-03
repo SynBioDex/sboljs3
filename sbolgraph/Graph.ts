@@ -5,8 +5,6 @@ import * as triple from './triple'
 import * as node from './node'
 import { Predicates } from 'bioterms'
 
-import uuid from 'uuid/v4'
-
 import assert from 'power-assert'
 
 import shortid = require('shortid')

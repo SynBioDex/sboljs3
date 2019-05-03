@@ -103,12 +103,12 @@ export default class S2ModuleDefinition extends S2Identified {
         return interaction
     }
 
-    createFunctionalComponent(definition:S2ComponentDefinition, id?:string, version?:string):S2FunctionalComponent {
+    createFunctionalComponent(definition:S2ComponentDefinition, id?:string, name?:string, version?:string):S2FunctionalComponent {
 
         let actualId = id || definition.displayId || undefined
 
         const identified:S2Identified =
-            S2IdentifiedFactory.createChild(this.graph, Types.SBOL2.FunctionalComponent, this, Predicates.SBOL2.functionalComponent, actualId, undefined, version)
+            S2IdentifiedFactory.createChild(this.graph, Types.SBOL2.FunctionalComponent, this, Predicates.SBOL2.functionalComponent, actualId, name, version || this.version)
 
         const fc:S2FunctionalComponent = new S2FunctionalComponent(this.graph, identified.uri)
 
