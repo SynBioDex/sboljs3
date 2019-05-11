@@ -518,7 +518,7 @@ export default class SBOLXGraph extends Graph {
 
     }
 
-    changeURIPrefix(newPrefix:string) {
+    changeURIPrefix(newPrefix:string):Map<string,string> {
 
         let topLevels = new Set([
             Types.SBOLX.Collection,
@@ -530,7 +530,7 @@ export default class SBOLXGraph extends Graph {
             Types.Prov.Activity
         ])
 
-        changeURIPrefix(this, topLevels, newPrefix)
+        return changeURIPrefix(this, topLevels, newPrefix)
 
     }
 

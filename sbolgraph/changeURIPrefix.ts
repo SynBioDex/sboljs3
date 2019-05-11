@@ -4,13 +4,15 @@ import rdf = require('rdf-ext')
 import RdfGraphArray = require('rdf-graph-array')
 import { Predicates } from 'bioterms'
 
-export default function changeURIPrefix(graph:Graph, topLevels:Set<string>, newPrefix:string) {
+export default function changeURIPrefix(graph:Graph, topLevels:Set<string>, newPrefix:string):Map<string,string> {
 
     let triples = graph.graph._graph
 
     let newGraph = new RdfGraphArray.Graph([])
 
     let prefixes = new Set()
+
+    let identityMap = new Map()
 
     for(let triple of triples) {
 
@@ -35,7 +37,9 @@ export default function changeURIPrefix(graph:Graph, topLevels:Set<string>, newP
 
         for(let prefix of prefixes) {
             if(subject.nominalValue.indexOf(prefix) === 0) {
-                subject = rdf.createNamedNode(newPrefix + subject.nominalValue.slice(prefix.length))
+                let newSubject = rdf.createNamedNode(newPrefix + subject.nominalValue.slice(prefix.length))
+                identityMap.set(subject.nominalValue, newSubject.nominalValue)
+                subject = newSubject
                 matched = true
                 break
             }
@@ -49,7 +53,9 @@ export default function changeURIPrefix(graph:Graph, topLevels:Set<string>, newP
         if(object.interfaceName === 'NamedNode') {
             for(let prefix of prefixes) {
                 if(object.nominalValue.indexOf(prefix) === 0) {
-                    object = rdf.createNamedNode(newPrefix + object.nominalValue.slice(prefix.length))
+                    let newObject = rdf.createNamedNode(newPrefix + object.nominalValue.slice(prefix.length))
+                    identityMap.set(object.nominalValue, newObject.nominalValue)
+                    object = newObject
                     break
                 }
             }
@@ -62,6 +68,8 @@ export default function changeURIPrefix(graph:Graph, topLevels:Set<string>, newP
     console.dir(prefixes)
 
     graph.graph = newGraph
+
+    return identityMap
 
     // TODO currently only works for compliant URIs
     // 

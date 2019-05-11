@@ -66,6 +66,8 @@ export default class Graph {
         const matches = this.match(s, p, o)
 
         if(matches.length > 1) {
+            console.error('results:')
+            console.dir(matches)
             throw new Error('Got more than one result for matchOne { ' + [s, p, o].join(', ') + ' }')
         }
 
