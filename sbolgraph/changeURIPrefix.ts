@@ -10,7 +10,7 @@ export default function changeURIPrefix(graph:Graph, topLevels:Set<string>, newP
 
     let newGraph = new RdfGraphArray.Graph([])
 
-    let prefixes = new Set()
+    let prefixes:Set<string> = new Set()
 
     let identityMap = new Map()
 
