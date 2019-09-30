@@ -3,6 +3,7 @@ import SBOL1Graph from './SBOL1Graph'
 import SBOL2Graph from './SBOL2Graph'
 import SBOLXGraph from './SBOLXGraph'
 import Graph from './Graph'
+import Facade from './Facade'
 import { Watcher } from './Graph'
 
 import S1Collection from './sbol1/S1Collection'
@@ -127,7 +128,8 @@ export {
     Repository,
     SearchQuery,
     SearchResult,
-    serialize
+    serialize,
+    Facade
 }
 
 
