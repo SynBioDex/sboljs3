@@ -1,7 +1,7 @@
 
 import SBOL2Graph from "../SBOL2Graph";
 import { Predicates, Specifiers } from "bioterms";
-import * as node from '../node'
+import { node } from 'rdfoo'
 import { S2Sequence } from "..";
 
 export default function fastaToSBOL2(graph:SBOL2Graph, uriPrefix:string, fasta:string) {

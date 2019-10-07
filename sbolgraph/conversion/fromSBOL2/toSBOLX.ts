@@ -26,7 +26,6 @@ import SXParticipation from '../../sbolx/SXParticipation'
 import S2ModuleInstance from '../../sbol2/S2ModuleInstance'
 import SXModel from '../../sbolx/SXModel'
 import SXMapsTo from '../../sbolx/SXMapsTo'
-import Graph from '../../Graph'
 
 import S2Experiment from '../../sbol2/S2Experiment'
 import S2ExperimentalData from '../../sbol2/S2ExperimentalData'
@@ -38,7 +37,7 @@ import SXThingWithLocation from '../../sbolx/SXThingWithLocation';
 import S2Model from '../../sbol2/S2Model';
 import SXIdentifiedFactory from '../../sbolx/SXIdentifiedFactory'
 
-import { node } from 'rdfoo'
+import { Graph, node } from 'rdfoo'
 import SXMeasure from '../../sbolx/SXMeasure';
 
 export default function convert2toX(graph:Graph) {
