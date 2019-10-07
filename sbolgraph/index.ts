@@ -56,6 +56,8 @@ import S2ProvActivity from './sbol2/S2ProvActivity';
 import S2ProvUsage from './sbol2/S2ProvUsage';
 import S2ProvAssociation from './sbol2/S2ProvAssociation';
 
+import { Graph, Watcher, node, triple, serialize, Facade } from 'rdfoo'
+
 export {
 
     // SBOL1
@@ -114,9 +116,15 @@ export {
     SXExperimentalData,
 
     // etc
+    Graph,
+    Watcher,
+    node,
+    triple,
     Repository,
     SearchQuery,
-    SearchResult
+    SearchResult,
+    serialize,
+    Facade
 }
 
 
