@@ -1,6 +1,5 @@
 
 import request = require('request')
-import SBOLXGraph from "./SBOLXGraph";
 
 export class SearchQuery {
 

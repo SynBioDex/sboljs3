@@ -5,7 +5,7 @@ import S2ComponentDefinition from './S2ComponentDefinition'
 import S2SequenceAnnotation from './S2SequenceAnnotation'
 import S2SequenceConstraint from './S2SequenceConstraint'
 
-import * as triple from '../triple'
+import { triple } from 'rdfoo'
 import { Types, Predicates, Specifiers } from 'bioterms'
 import S2Location from './S2Location';
 

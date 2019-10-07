@@ -1,7 +1,7 @@
 
 import SXIdentified from "./SXIdentified";
 import { Predicates } from 'bioterms'
-import * as node from '../node'
+import { node } from 'rdfoo'
 import SBOLXGraph from '../SBOLXGraph'
 
 export default class SXIdentifiedFactory {

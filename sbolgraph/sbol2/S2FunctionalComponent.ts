@@ -6,8 +6,7 @@ import S2ModuleDefinition from './S2ModuleDefinition'
 import S2MapsTo from './S2MapsTo'
 import S2Participation from './S2Participation'
 
-import * as triple from '../triple'
-import * as node from '../node'
+import { triple, node } from 'rdfoo'
 import { Types, Predicates, Specifiers, Prefixes } from 'bioterms'
 import S2Interaction from "./S2Interaction";
 import S2IdentifiedFactory from './S2IdentifiedFactory';

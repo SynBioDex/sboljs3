@@ -5,7 +5,7 @@ import S2ProvAssociation from "./S2ProvAssociation";
 import { Types, Predicates } from "bioterms";
 import S2ProvPlan from "./S2ProvPlan";
 import S2ProvUsage from "./S2ProvUsage";
-import * as node from '../node'
+import { node } from 'rdfoo'
 
 export default class S2ProvActivity extends S2Identified {
 

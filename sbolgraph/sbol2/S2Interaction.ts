@@ -3,8 +3,7 @@ import { SBOL2Graph, S2FunctionalComponent, S2ModuleDefinition } from '..';
 import S2Identified from './S2Identified'
 import S2Participation from './S2Participation'
 
-import * as triple from '../triple'
-import * as node from '../node'
+import { triple, node } from 'rdfoo'
 import { Types, Predicates, Specifiers } from 'bioterms'
 import S2IdentifiedFactory from './S2IdentifiedFactory';
 import S2Measure from './S2Measure';

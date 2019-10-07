@@ -38,8 +38,8 @@ import SXThingWithLocation from '../../sbolx/SXThingWithLocation';
 import S2Model from '../../sbol2/S2Model';
 import SXIdentifiedFactory from '../../sbolx/SXIdentifiedFactory'
 
-import * as node from '../../node'
-import SXMeasure from '../..//sbolx/SXMeasure';
+import { node } from 'rdfoo'
+import SXMeasure from '../../sbolx/SXMeasure';
 
 export default function convert2toX(graph:Graph) {
 

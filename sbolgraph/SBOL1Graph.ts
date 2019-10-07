@@ -1,5 +1,5 @@
 
-import Graph from './Graph'
+import { Graph } from 'rdfoo'
 import S1DnaSequence from './sbol1/S1DnaSequence'
 import S1DnaComponent from './sbol1/S1DnaComponent'
 import S1Collection from './sbol1/S1Collection'

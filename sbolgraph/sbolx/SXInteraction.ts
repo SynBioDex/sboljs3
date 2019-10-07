@@ -3,8 +3,7 @@ import { SBOLXGraph, SXSubComponent, SXComponent } from '..';
 import SXIdentified from './SXIdentified'
 import SXParticipation from './SXParticipation'
 
-import * as triple from '../triple'
-import * as node from '../node'
+import { triple, node } from 'rdfoo'
 import { Types, Predicates, Specifiers } from 'bioterms'
 import SXIdentifiedFactory from './SXIdentifiedFactory';
 import SXMeasure from './SXMeasure';

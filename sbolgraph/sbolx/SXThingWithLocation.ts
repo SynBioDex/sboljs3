@@ -4,7 +4,7 @@ import SXLocation from './SXLocation'
 import SXRange from './SXRange'
 import SXIdentifiedFactory from './SXIdentifiedFactory'
 
-import * as node from '../node'
+import { node } from 'rdfoo'
 
 import { Predicates, Types } from 'bioterms'
 import SXOrientedLocation from './SXOrientedLocation';

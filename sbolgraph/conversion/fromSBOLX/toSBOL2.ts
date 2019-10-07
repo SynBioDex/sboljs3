@@ -18,7 +18,7 @@ import SXExperimentalData from '../../sbolx/SXExperimentalData'
 import S2Range from '../../sbol2/S2Range'
 import SXIdentified from '../../sbolx/SXIdentified'
 import S2Identified from '../../sbol2/S2Identified'
-import Graph from '../../Graph'
+import { Graph } from 'rdfoo'
 
 import { Types, Predicates, Prefixes, Specifiers } from 'bioterms'
 

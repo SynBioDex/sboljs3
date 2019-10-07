@@ -4,8 +4,7 @@ import SXIdentified from './SXIdentified'
 import SXSubComponent from './SXSubComponent'
 import SXInteraction from './SXInteraction'
 
-import * as triple from '../triple'
-import * as node from '../node'
+import { triple, node } from 'rdfoo'
 import { Types, Predicates, Specifiers } from 'bioterms'
 import SXMeasure from './SXMeasure';
 

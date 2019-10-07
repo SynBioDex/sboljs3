@@ -5,8 +5,7 @@ import SXIdentified from './SXIdentified'
 import SXSubComponent from './SXSubComponent'
 import SXRange from './SXRange'
 
-import * as triple from '../triple'
-import * as node from '../node'
+import { triple, node } from 'rdfoo'
 import { Types, Predicates, Specifiers } from 'bioterms'
 
 export default class SXSequenceConstraint extends SXIdentified {

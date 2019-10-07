@@ -5,7 +5,7 @@ import SXProvAssociation from "./SXProvAssociation";
 import { Types, Predicates } from "bioterms";
 import SXProvPlan from "./SXProvPlan";
 import SXProvUsage from "./SXProvUsage"
-import * as node from '../node'
+import { node } from 'rdfoo'
 
 export default class SXProvActivity extends SXIdentified {
 

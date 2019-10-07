@@ -1,6 +1,6 @@
 import S2Identified from './S2Identified'
 import SBOL2Graph from '../SBOL2Graph';
-import * as node from '../node'
+import { node } from 'rdfoo'
 import S2ExperimentalData from './S2ExperimentalData';
 import S2ProvActivity from './S2ProvActivity';
 import { Predicates, Types } from 'bioterms';

@@ -2,8 +2,7 @@
 import S2Identified from './S2Identified'
 import S2ModuleDefinition from './S2ModuleDefinition'
 
-import * as triple from '../triple'
-import * as node from '../node'
+import { triple } from 'rdfoo'
 import { Types, Predicates, Specifiers } from 'bioterms'
 import SBOL2Graph from "../SBOL2Graph";
 import S2FunctionalComponent from './S2FunctionalComponent';

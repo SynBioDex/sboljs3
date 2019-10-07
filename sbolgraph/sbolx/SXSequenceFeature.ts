@@ -2,8 +2,7 @@
 import SXIdentified from './SXIdentified'
 import SXThingWithLocation from './SXThingWithLocation'
 
-import * as triple from '../triple'
-import * as node from '../node'
+import { triple, node } from 'rdfoo'
 import { Types, Predicates, Specifiers, Prefixes } from 'bioterms'
 import SBOLXGraph from "../SBOLXGraph";
 import SXComponent from "./SXComponent";

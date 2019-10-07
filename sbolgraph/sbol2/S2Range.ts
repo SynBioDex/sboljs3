@@ -1,7 +1,7 @@
 
 import S2OrientedLocation from './S2OrientedLocation'
 
-import * as triple from '../triple'
+import { triple } from 'rdfoo'
 import { Types, Predicates, Specifiers } from 'bioterms'
 import SBOL2Graph from "../SBOL2Graph";
 

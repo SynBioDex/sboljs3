@@ -6,8 +6,7 @@ import SXSequenceConstraint from './SXSequenceConstraint'
 import SXOrientedLocation from './SXOrientedLocation'
 import SXIdentifiedFactory from './SXIdentifiedFactory'
 
-import * as triple from '../triple'
-import * as node from '../node'
+import { triple, node } from 'rdfoo'
 import { Types, Predicates, Specifiers, Prefixes } from 'bioterms'
 import SBOLXGraph from "../SBOLXGraph";
 import SXMapsTo from './SXMapsTo';

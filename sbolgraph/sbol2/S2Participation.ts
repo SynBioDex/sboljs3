@@ -4,8 +4,7 @@ import S2Identified from './S2Identified'
 import S2FunctionalComponent from './S2FunctionalComponent'
 import S2Interaction from './S2Interaction'
 
-import * as triple from '../triple'
-import * as node from '../node'
+import { triple, node } from 'rdfoo'
 import { Types, Predicates, Specifiers } from 'bioterms'
 import S2Measure from './S2Measure';
 

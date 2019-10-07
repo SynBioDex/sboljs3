@@ -2,9 +2,6 @@
 import SBOL1Graph from './SBOL1Graph'
 import SBOL2Graph from './SBOL2Graph'
 import SBOLXGraph from './SBOLXGraph'
-import Graph from './Graph'
-import Facade from './Facade'
-import { Watcher } from './Graph'
 
 import S1Collection from './sbol1/S1Collection'
 import S1DnaComponent from './sbol1/S1DnaComponent'
@@ -50,13 +47,9 @@ import SXModel from './sbolx/SXModel'
 import SXExperiment from './sbolx/SXExperiment'
 import SXExperimentalData from './sbolx/SXExperimentalData'
 
-import * as node from './node'
-import * as triple from './triple'
-
 import Repository from './SBOL2Repository'
 import { SearchQuery, SearchResult } from './SBOL2Repository'
 
-import serialize from './serialize'
 import S2ProvAgent from './sbol2/S2ProvAgent';
 import S2ProvPlan from './sbol2/S2ProvPlan';
 import S2ProvActivity from './sbol2/S2ProvActivity';
@@ -121,15 +114,9 @@ export {
     SXExperimentalData,
 
     // etc
-    Graph,
-    Watcher,
-    node,
-    triple,
     Repository,
     SearchQuery,
-    SearchResult,
-    serialize,
-    Facade
+    SearchResult
 }
 
 

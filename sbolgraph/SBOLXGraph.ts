@@ -1,18 +1,8 @@
 
-import Graph from './Graph'
-
+import { Graph, triple, node, changeURIPrefix, serialize } from 'rdfoo'
 import { Types, Predicates, Specifiers, Prefixes } from 'bioterms'
 
-import * as triple from './triple'
-import * as node from './node'
-
-import RdfGraphArray = require('rdf-graph-array')
-import RdfParserXml = require('rdf-parser-rdfxml')
-import XMLSerializer = require('rdf-serializer-xml')
-
 import request = require('request')
-
-import assert from 'power-assert'
 
 import parseRDF from './parseRDF';
 
@@ -40,10 +30,7 @@ import SXMeasure from './sbolx/SXMeasure';
 import SBOL2Graph from './SBOL2Graph'
 
 import SXIdentifiedFactory from './sbolx/SXIdentifiedFactory'
-import serialize from './serialize';
 import identifyFiletype, { Filetype } from './conversion/identifyFiletype';
-
-import changeURIPrefix from './changeURIPrefix'
 
 import convert1to2 from './conversion/fromSBOL1/toSBOL2';
 import convert2toX from './conversion/fromSBOL2/toSBOLX';

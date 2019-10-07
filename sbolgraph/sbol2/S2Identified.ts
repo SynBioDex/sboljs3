@@ -1,5 +1,5 @@
 
-import * as triple from '../triple'
+import { triple } from 'rdfoo'
 import { Types, Predicates, Specifiers } from 'bioterms'
 
 import S2Facade from './S2Facade'

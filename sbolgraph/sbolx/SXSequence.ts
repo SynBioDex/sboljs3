@@ -4,7 +4,7 @@ import SXIdentified from './SXIdentified'
 
 import { Types, Predicates, Specifiers } from 'bioterms'
 
-import * as triple from '../triple' 
+import { triple } from 'rdfoo'
 import SXComponent from "./SXComponent";
 import SXSequenceFeature from "./SXSequenceFeature";
 import SXLocation from "./SXLocation";

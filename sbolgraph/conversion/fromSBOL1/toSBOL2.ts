@@ -1,5 +1,5 @@
 
-import Graph from '../../Graph'
+import { Graph } from 'rdfoo'
 
 import SBOL1Graph from '../../SBOL1Graph'
 import SBOL2Graph from '../../SBOL2Graph'

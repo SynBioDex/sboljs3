@@ -1,7 +1,7 @@
 
 import SXIdentified from './SXIdentified'
 import SBOLXGraph from '../SBOLXGraph';
-import * as node from '../node'
+import { node } from 'rdfoo'
 import SXExperimentalData from './SXExperimentalData';
 import SXProvActivity from './SXProvActivity';
 import { Predicates, Types } from 'bioterms';

@@ -6,8 +6,7 @@ import S2Interaction from './S2Interaction'
 
 import SBOL2Graph from '../SBOL2Graph'
 
-import * as triple from '../triple'
-import * as node from '../node'
+import { node } from 'rdfoo'
 import { Predicates, Types, uriToName } from 'bioterms'
 import S2IdentifiedFactory from '../sbol2/S2IdentifiedFactory';
 import { S2ComponentDefinition } from '..';

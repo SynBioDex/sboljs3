@@ -2,7 +2,7 @@
 import SXIdentified from './SXIdentified'
 import SXOrientedLocation from './SXOrientedLocation'
 
-import * as triple from '../triple'
+import { triple } from 'rdfoo'
 import { Types, Predicates, Specifiers } from 'bioterms'
 import SBOLXGraph from "../SBOLXGraph";
 

@@ -1,5 +1,5 @@
 
-import Facade from '../Facade'
+import { Facade } from 'rdfoo'
 import SBOL2Graph from '../SBOL2Graph';
 
 export default abstract class S2Facade extends Facade {

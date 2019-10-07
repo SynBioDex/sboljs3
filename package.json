@@ -26,16 +26,13 @@
     "@types/uuid": "^3.4.4",
     "bioterms": "git+https://github.com/udp/bioterms.git",
     "browser-request": "git+https://github.com/adampash/browser-request.git#feat-add-headers-to-response",
-    "elementtree": "^0.1.7",
     "genbankjs": "0.1.0",
-    "power-assert": "^1.4.4",
-    "rdf-graph-array": "git+https://github.com/udp/rdf-graph-array.git",
-    "rdf-parser-n3": "^0.3.0",
-    "rdf-parser-rdfxml": "^0.3.1",
-    "rdf-serializer-xml": "^0.1.0",
+    "rdfoo": "git+https://github.com/udp/rdfoo.git",
     "request": "^2.81.0",
     "shortid": "^2.2.8",
-    "uuid": "^3.3.2"
+    "uuid": "^3.3.2",
+    "rdf-parser-n3": "^0.3.0",
+    "rdf-parser-rdfxml": "^0.3.1"
   },
   "devDependencies": {
     "@types/mz": "0.0.32",

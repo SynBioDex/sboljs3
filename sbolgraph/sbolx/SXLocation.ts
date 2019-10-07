@@ -1,7 +1,7 @@
 
 import SXIdentified from './SXIdentified'
 
-import * as triple from '../triple'
+import { triple } from 'rdfoo'
 import { Types, Predicates, Specifiers } from 'bioterms'
 import SBOLXGraph from "../SBOLXGraph";
 import SXSequence from "./SXSequence";

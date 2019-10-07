@@ -4,7 +4,7 @@ import SXIdentified from './SXIdentified'
 import { Types, Predicates, Specifiers } from 'bioterms'
 import SBOLXGraph from "../SBOLXGraph";
 
-import * as triple from '../triple'
+import { triple } from 'rdfoo'
 
 export default class SXMeasure extends SXIdentified {
 

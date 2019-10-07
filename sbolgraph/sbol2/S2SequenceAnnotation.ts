@@ -5,8 +5,7 @@ import S2ComponentInstance from './S2ComponentInstance'
 import S2Range from './S2Range'
 import S2GenericLocation from './S2GenericLocation'
 
-import * as triple from '../triple'
-import * as node from '../node'
+import { triple, node } from 'rdfoo'
 import { Types, Predicates, Specifiers } from 'bioterms'
 import S2Location from "./S2Location";
 

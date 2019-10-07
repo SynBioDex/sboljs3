@@ -7,8 +7,7 @@ import S2SequenceAnnotation from './S2SequenceAnnotation'
 import S2SequenceConstraint from './S2SequenceConstraint'
 import S2Range from './S2Range'
 
-import * as triple from '../triple'
-import * as node from '../node'
+import { triple, node } from 'rdfoo'
 import { Types, Predicates, Specifiers, uriToName } from 'bioterms'
 
 import S2IdentifiedFactory from './S2IdentifiedFactory'

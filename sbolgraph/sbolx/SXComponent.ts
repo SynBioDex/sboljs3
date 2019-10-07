@@ -5,8 +5,7 @@ import SXInteraction from './SXInteraction'
 
 import SBOLXGraph from '../SBOLXGraph'
 
-import * as triple from '../triple'
-import * as node from '../node'
+import { triple, node } from 'rdfoo'
 import { Predicates, Types, Specifiers, Prefixes } from 'bioterms'
 import SXSequence from './SXSequence';
 import SXSequenceConstraint from './SXSequenceConstraint';

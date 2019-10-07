@@ -4,7 +4,7 @@ import S2Identified from './S2Identified'
 import { Types, Predicates, Specifiers } from 'bioterms'
 import SBOL2Graph from "../SBOL2Graph";
 
-import * as triple from '../triple'
+import { triple } from 'rdfoo'
 
 export default class S2Model extends S2Identified {
 

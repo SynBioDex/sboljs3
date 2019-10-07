@@ -1,10 +1,6 @@
 
-import Graph from './Graph'
-
+import { Graph, triple, node, changeURIPrefix, serialize } from 'rdfoo'
 import { Types, Predicates, Specifiers, Prefixes } from 'bioterms'
-
-import * as triple from './triple'
-import * as node from './node'
 
 import rdf = require('rdf-ext')
 
@@ -20,12 +16,8 @@ import S2Collection from './sbol2/S2Collection'
 import S2Model from './sbol2/S2Model'
 import S2Measure from './sbol2/S2Measure'
 
-//import RdfGraphArray = require('rdf-graph-array')
-import serialize from './serialize';
-
 import request = require('request')
 
-import assert from 'power-assert'
 import S2Interaction from "./sbol2/S2Interaction";
 import S2SequenceAnnotation from "./sbol2/S2SequenceAnnotation";
 import S2Participation from "./sbol2/S2Participation";
@@ -47,8 +39,6 @@ import S2Implementation from './sbol2/S2Implementation';
 import S2Experiment from './sbol2/S2Experiment';
 import S2ExperimentalData from './sbol2/S2ExperimentalData';
 import { S2Attachment } from '.';
-
-import changeURIPrefix from './changeURIPrefix'
 
 import convert1to2 from './conversion/fromSBOL1/toSBOL2';
 import convertXto2 from './conversion/fromSBOLX/toSBOL2';

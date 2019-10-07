@@ -3,7 +3,7 @@ import SXIdentified from './SXIdentified'
 
 import { Types, Predicates, Specifiers } from 'bioterms'
 
-import * as triple from '../triple'
+import { triple } from 'rdfoo'
 import SBOLXGraph from '../SBOLXGraph';
 
 export default class SXMapsTo extends SXIdentified {

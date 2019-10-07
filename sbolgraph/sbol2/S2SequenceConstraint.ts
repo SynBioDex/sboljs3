@@ -4,8 +4,7 @@ import { SBOL2Graph } from '..';
 import S2Identified from './S2Identified'
 import S2ComponentInstance from './S2ComponentInstance'
 
-import * as triple from '../triple'
-import * as node from '../node'
+import { triple, node } from 'rdfoo'
 import { Types, Predicates, Specifiers } from 'bioterms'
 
 export default class S2SequenceConstraint extends S2Identified {
