@@ -1,5 +1,5 @@
 
-import { Graph, triple, node, changeURIPrefix, serialize } from 'rdfoo'
+import { Graph, Facade, triple, node, changeURIPrefix, serialize } from 'rdfoo'
 import { Types, Predicates, Specifiers, Prefixes } from 'bioterms'
 
 import rdf = require('rdf-ext')
@@ -606,7 +606,7 @@ export default class SBOL2Graph extends Graph {
         })
     }
 
-    uriToFacade(uri:string):S2Identified|undefined {
+    uriToFacade(uri:string):Facade|undefined {
 
         if(!uri)
             return undefined
@@ -688,7 +688,17 @@ export default class SBOL2Graph extends Graph {
         if(type === Types.Measure.Measure)
             return new S2Measure(this, uri)
 
-        return new S2Identified(this, uri)
+        return super.uriToFacade(uri) || new S2Identified(this, uri)
+    }
+
+    uriToIdentified(uri:string):S2Identified|undefined {
+
+        let f = this.uriToFacade(uri)
+
+        if(f instanceof S2Identified)
+            return f
+        else
+            return undefined
     }
 
     addAll(otherGraph:SBOL2Graph) {
@@ -725,7 +735,7 @@ export default class SBOL2Graph extends Graph {
 
         while(!isTopLevel()) {
 
-            let identified:S2Identified|undefined = this.uriToFacade(subject)
+            let identified:S2Identified|undefined = this.uriToIdentified(subject)
 
             if(identified === undefined)
                 throw new Error('???')
