@@ -1,4 +1,5 @@
-import { SBOL2Graph, S2FunctionalComponent, S2ModuleDefinition } from '..';
+
+import SBOL2GraphView from '../SBOL2GraphView'
 
 import S2Identified from './S2Identified'
 import S2Participation from './S2Participation'
@@ -7,12 +8,14 @@ import { triple, node } from 'rdfoo'
 import { Types, Predicates, Specifiers } from 'bioterms'
 import S2IdentifiedFactory from './S2IdentifiedFactory';
 import S2Measure from './S2Measure';
+import S2FunctionalComponent from './S2FunctionalComponent'
+import S2ModuleDefinition from './S2ModuleDefinition'
 
 export default class S2Interaction extends S2Identified {
 
-    constructor(graph:SBOL2Graph, uri:string) {
+    constructor(view:SBOL2GraphView, uri:string) {
 
-        super(graph, uri)
+        super(view, uri)
 
     }
 
@@ -42,13 +45,13 @@ export default class S2Interaction extends S2Identified {
     }
 
     hasType(type:string):boolean {
-        return this.graph.hasMatch(this.uri, Predicates.SBOL2.type, type)
+        return this.view.graph.hasMatch(this.uri, Predicates.SBOL2.type, type)
     }
 
     get participations():Array<S2Participation> {
 
         return this.getUriProperties(Predicates.SBOL2.participation)
-                   .map((uri:string) => new S2Participation(this.graph, uri))
+                   .map((uri:string) => new S2Participation(this.view, uri))
 
     }
 
@@ -63,14 +66,14 @@ export default class S2Interaction extends S2Identified {
     get containingModuleDefinition():S2ModuleDefinition {
 
         const uri = triple.subjectUri(
-            this.graph.matchOne(null, Predicates.SBOL2.interaction, this.uri)
+            this.view.graph.matchOne(null, Predicates.SBOL2.interaction, this.uri)
         )
 
         if(!uri) {
             throw new Error('Interaction ' + this.uri + ' not contained by a MD?')
         }
 
-        return new S2ModuleDefinition(this.graph, uri)
+        return new S2ModuleDefinition(this.view, uri)
     }
 
     get containingObject():S2Identified|undefined {
@@ -80,7 +83,7 @@ export default class S2Interaction extends S2Identified {
     }
 
     addParticipation(participation:S2Participation) {
-        this.graph.insertProperties(this.uri, {
+        this.insertProperties({
             [Predicates.SBOL2.participation]: node.createUriNode(participation.uri)
         })
     }
@@ -88,9 +91,9 @@ export default class S2Interaction extends S2Identified {
     createParticipation(id?:string, version?:string):S2Participation {
 
         const identified:S2Identified =
-            S2IdentifiedFactory.createChild(this.graph, Types.SBOL2.Participation, this, Predicates.SBOL2.participation, id, undefined, version)
+            S2IdentifiedFactory.createChild(this.view, Types.SBOL2.Participation, this, Predicates.SBOL2.participation, id, undefined, version)
 
-        const participation:S2Participation = new S2Participation(this.graph, identified.uri)
+        const participation:S2Participation = new S2Participation(this.view, identified.uri)
 
         return participation
     }
@@ -111,7 +114,7 @@ export default class S2Interaction extends S2Identified {
         if(measure === undefined)
             return
         
-        return new S2Measure(this.graph, measure)
+        return new S2Measure(this.view, measure)
     }
 
     set measure(measure:S2Measure|undefined) {

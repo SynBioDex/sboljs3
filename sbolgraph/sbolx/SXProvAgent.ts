@@ -1,13 +1,13 @@
 
 import SXIdentified from "./SXIdentified";
-import SBOLXGraph from "../SBOLXGraph";
+import SBOLXGraphView from "../SBOLXGraphView";
 import { Types, Predicates } from "bioterms";
 
 export default class SXProvAgent extends SXIdentified {
 
-    constructor(graph:SBOLXGraph, uri:string) {
+    constructor(view:SBOLXGraphView, uri:string) {
 
-        super(graph, uri)
+        super(view, uri)
 
     }
 

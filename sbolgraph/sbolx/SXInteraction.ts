@@ -1,4 +1,5 @@
-import { SBOLXGraph, SXSubComponent, SXComponent } from '..';
+
+import SBOLXGraphView from '../SBOLXGraphView'
 
 import SXIdentified from './SXIdentified'
 import SXParticipation from './SXParticipation'
@@ -7,12 +8,14 @@ import { triple, node } from 'rdfoo'
 import { Types, Predicates, Specifiers } from 'bioterms'
 import SXIdentifiedFactory from './SXIdentifiedFactory';
 import SXMeasure from './SXMeasure';
+import SXSubComponent from './SXSubComponent'
+import SXComponent from './SXComponent'
 
 export default class SXInteraction extends SXIdentified {
 
-    constructor(graph:SBOLXGraph, uri:string) {
+    constructor(view:SBOLXGraphView, uri:string) {
 
-        super(graph, uri)
+        super(view, uri)
 
     }
 
@@ -43,18 +46,18 @@ export default class SXInteraction extends SXIdentified {
 
     addType(type:string) {
 
-        this.graph.add(node.createUriNode(this.uri), node.createUriNode(Predicates.SBOLX.type), node.createUriNode(type))
+        this.insertProperty(Predicates.SBOLX.type, node.createUriNode(type))
 
     }
 
     hasType(type:string):boolean {
-        return this.graph.hasMatch(this.uri, Predicates.SBOLX.type, type)
+        return this.view.graph.hasMatch(this.uri, Predicates.SBOLX.type, type)
     }
 
     get participations():Array<SXParticipation> {
 
         return this.getUriProperties(Predicates.SBOLX.participation)
-                   .map((uri:string) => new SXParticipation(this.graph, uri))
+                   .map((uri:string) => new SXParticipation(this.view, uri))
 
     }
 
@@ -75,14 +78,14 @@ export default class SXInteraction extends SXIdentified {
     get containingModule():SXComponent {
 
         const uri = triple.subjectUri(
-            this.graph.matchOne(null, Predicates.SBOLX.interaction, this.uri)
+            this.view.graph.matchOne(null, Predicates.SBOLX.interaction, this.uri)
         )
 
         if(!uri) {
             throw new Error('Interaction ' + this.uri + ' not contained by a Module?')
         }
 
-        return new SXComponent(this.graph, uri)
+        return new SXComponent(this.view, uri)
     }
 
     get containingObject():SXIdentified|undefined {
@@ -94,9 +97,9 @@ export default class SXInteraction extends SXIdentified {
     createParticipation(id:string, version?:string):SXParticipation {
 
         const identified:SXIdentified =
-            SXIdentifiedFactory.createChild(this.graph, Types.SBOLX.Participation, this, Predicates.SBOLX.participation, id, undefined, version)
+            SXIdentifiedFactory.createChild(this.view, Types.SBOLX.Participation, this, Predicates.SBOLX.participation, id, undefined, version)
 
-        const participation:SXParticipation = new SXParticipation(this.graph, identified.uri)
+        const participation:SXParticipation = new SXParticipation(this.view, identified.uri)
 
         return participation
     }
@@ -117,7 +120,7 @@ export default class SXInteraction extends SXIdentified {
         if(measure === undefined)
             return
         
-        return new SXMeasure(this.graph, measure)
+        return new SXMeasure(this.view, measure)
     }
 
     set measure(measure:SXMeasure|undefined) {

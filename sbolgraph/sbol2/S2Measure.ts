@@ -2,15 +2,15 @@
 import S2Identified from './S2Identified'
 
 import { Types, Predicates, Specifiers } from 'bioterms'
-import SBOL2Graph from "../SBOL2Graph";
+import SBOL2GraphView from "../SBOL2GraphView";
 
 import { triple } from 'rdfoo'
 
 export default class S2Measure extends S2Identified {
 
-    constructor(graph:SBOL2Graph, uri:string) {
+    constructor(view:SBOL2GraphView, uri:string) {
 
-        super(graph, uri)
+        super(view, uri)
     }
 
     get facadeType():string {

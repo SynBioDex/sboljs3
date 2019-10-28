@@ -1,38 +1,26 @@
 
+
 import { Graph } from 'rdfoo'
-import S1DnaSequence from './sbol1/S1DnaSequence'
-import S1DnaComponent from './sbol1/S1DnaComponent'
-import S1Collection from './sbol1/S1Collection'
-import { Types } from 'bioterms'
+import SBOL1GraphView from './SBOL1GraphView';
 
-export default class SBOL1Graph extends Graph {
+export default class SBOL1Graph extends SBOL1GraphView {
 
-    constructor(rdfGraph?:any) {
+    graph:Graph
 
-        super(rdfGraph)
-
+    constructor(otherGraph?:any) {
+        if(!otherGraph) {
+            super(new Graph())
+        } else {
+            if(otherGraph instanceof SBOL1GraphView) {
+                super(otherGraph.graph)
+            } else {
+                super(otherGraph)
+            }
+        }
     }
-
-    get dnaSequences():Array<S1DnaSequence> {
-
-        return this.instancesOfType(Types.SBOL1.DnaSequence)
-                    .map((uri) => new S1DnaSequence(this, uri))
-
-    }
-
-    get dnaComponents():Array<S1DnaComponent> {
-
-        return this.instancesOfType(Types.SBOL1.DnaComponent)
-                    .map((uri) => new S1DnaComponent(this, uri))
-
-    }
-
-    get collections():Array<S1Collection> {
-
-        return this.instancesOfType(Types.SBOL1.Collection)
-                    .map((uri) => new S1Collection(this, uri))
-
-    }
-
 
 }
+
+
+
+

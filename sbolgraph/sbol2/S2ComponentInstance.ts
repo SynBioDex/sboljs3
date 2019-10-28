@@ -1,4 +1,4 @@
-import SBOL2Graph from '../SBOL2Graph';
+import SBOL2GraphView from '../SBOL2GraphView';
 
 import S2Identified from './S2Identified'
 import S2ComponentDefinition from './S2ComponentDefinition'
@@ -11,9 +11,9 @@ import S2Location from './S2Location';
 
 export default class S2ComponentInstance extends S2Identified {
 
-    constructor(graph:SBOL2Graph, uri:string) {
+    constructor(view:SBOL2GraphView, uri:string) {
 
-        super(graph, uri)
+        super(view, uri)
 
         this.access = Specifiers.SBOL2.Access.PublicAccess
 
@@ -48,7 +48,7 @@ export default class S2ComponentInstance extends S2Identified {
             throw new Error('Component ' + this.uri + ' has no definition')
         }
 
-        return new S2ComponentDefinition(this.graph, uri)
+        return new S2ComponentDefinition(this.view, uri)
     }
 
     set definition(def:S2ComponentDefinition) {
@@ -72,19 +72,19 @@ export default class S2ComponentInstance extends S2Identified {
 
     get sequenceAnnotations():Array<S2SequenceAnnotation> {
 
-        return this.graph.match(null, Predicates.SBOL2.component, this.uri)
+        return this.view.graph.match(null, Predicates.SBOL2.component, this.uri)
                    .map(triple.subjectUri)
-                   .filter((uri:string) => this.graph.getType(uri) === Types.SBOL2.SequenceAnnotation)
-                   .map((uri:string) => new S2SequenceAnnotation(this.graph, uri))
+                   .filter((uri:string) => this.view.getType(uri) === Types.SBOL2.SequenceAnnotation)
+                   .map((uri:string) => new S2SequenceAnnotation(this.view, uri))
 
     }
 
     get sequenceConstraints():Array<S2SequenceConstraint> {
 
-        return this.graph.match(null, Predicates.SBOL2.subject, this.uri)
+        return this.view.graph.match(null, Predicates.SBOL2.subject, this.uri)
                    .map(triple.subjectUri)
-                   .filter((uri:string) => this.graph.getType(uri) === Types.SBOL2.SequenceConstraint)
-                   .map((uri:string) => new S2SequenceConstraint(this.graph, uri))
+                   .filter((uri:string) => this.view.getType(uri) === Types.SBOL2.SequenceConstraint)
+                   .map((uri:string) => new S2SequenceConstraint(this.view, uri))
 
     }
 
@@ -94,17 +94,17 @@ export default class S2ComponentInstance extends S2Identified {
 
     get containingComponentDefinition():S2ComponentDefinition {
             
-        const uri:string|undefined = this.graph.match(
+        const uri:string|undefined = this.view.graph.match(
             null, Predicates.SBOL2.component, this.uri
         ).map(triple.subjectUri).filter((s: string) => {
-            return this.graph.hasType(s, Types.SBOL2.ComponentDefinition)
+            return this.view.hasType(s, Types.SBOL2.ComponentDefinition)
         })[0]
 
         if(uri === undefined) {
             throw new Error('component not contained by definition?')
         }
 
-        return new S2ComponentDefinition(this.graph, uri)
+        return new S2ComponentDefinition(this.view, uri)
     }
 
     get containingObject():S2Identified|undefined {
@@ -142,7 +142,7 @@ export default class S2ComponentInstance extends S2Identified {
         if(uri === undefined)
             return undefined
         
-        let obj = this.graph.uriToFacade(uri)
+        let obj = this.view.uriToFacade(uri)
 
         if(! (obj instanceof S2Location)) {
             throw new Error('sourceLocation was not a location')

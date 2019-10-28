@@ -4,13 +4,13 @@ import { Types, Predicates, Specifiers } from 'bioterms'
 
 import S1Facade from './S1Facade'
 
-import SBOL1Graph from '../SBOL1Graph'
+import SBOL1GraphView from '../SBOL1GraphView'
 import URIUtils from '../URIUtils'
 
 export default class S1DnaSequence extends S1Facade {
 
-    constructor(graph:SBOL1Graph, uri:string) {
-        super(graph, uri)
+    constructor(view:SBOL1GraphView, uri:string) {
+        super(view, uri)
     }
 
     get facadeType():string {

@@ -1,16 +1,18 @@
 
-import { triple } from 'rdfoo'
+import { triple, GraphView } from 'rdfoo'
 import { Types, Predicates, Specifiers } from 'bioterms'
 
 import S2Facade from './S2Facade'
+import S2Attachment from './S2Attachment'
+import S2Collection from './S2Collection'
 
-import SBOL2Graph from '../SBOL2Graph'
+import SBOL2GraphView from '../SBOL2GraphView'
 import URIUtils from '../URIUtils'
 
 export default class S2Identified extends S2Facade {
 
-    constructor(graph:SBOL2Graph, uri:string) {
-        super(graph, uri)
+    constructor(view:SBOL2GraphView, uri:string) {
+        super(view, uri)
     }
     
     get facadeType():string {
@@ -80,7 +82,7 @@ export default class S2Identified extends S2Facade {
     get attachments():Array<S2Attachment> {
 
         return this.getUriProperties(Predicates.SBOL2.attachment)
-            .map((attachment) => new S2Attachment(this.graph, attachment))
+            .map((attachment) => new S2Attachment(this.view, attachment))
 
     }
 
@@ -97,9 +99,9 @@ export default class S2Identified extends S2Facade {
 
     get containingCollections():Array<S2Collection> {
 
-        return this.graph.match(null, Predicates.SBOL2.member, this.uri)
+        return this.view.graph.match(null, Predicates.SBOL2.member, this.uri)
                     .map(triple.subjectUri)
-                    .map((uri) => new S2Collection(this.graph, uri as string))
+                    .map((uri) => new S2Collection(this.view, uri as string))
     }
 
 
@@ -158,6 +160,4 @@ export default class S2Identified extends S2Facade {
     }
 }
 
-import S2Attachment from './S2Attachment'
-import S2Collection from './S2Collection'
 

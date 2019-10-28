@@ -4,13 +4,13 @@ import SXOrientedLocation from './SXOrientedLocation'
 
 import { triple } from 'rdfoo'
 import { Types, Predicates, Specifiers } from 'bioterms'
-import SBOLXGraph from "../SBOLXGraph";
+import SBOLXGraphView from "../SBOLXGraphView";
 
 export default class SXRange extends SXOrientedLocation {
 
-    constructor(graph:SBOLXGraph, uri:string) {
+    constructor(view:SBOLXGraphView, uri:string) {
 
-        super(graph, uri)
+        super(view, uri)
 
     }
 

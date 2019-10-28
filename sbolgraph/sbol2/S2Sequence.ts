@@ -1,4 +1,4 @@
-import SBOL2Graph from '../SBOL2Graph';
+import SBOL2GraphView from '../SBOL2GraphView';
 
 import S2Identified from './S2Identified'
 
@@ -12,9 +12,9 @@ import S2Range from "../sbol2/S2Range";
 
 export default class S2Sequence extends S2Identified {
 
-    constructor(graph:SBOL2Graph, uri:string) {
+    constructor(view:SBOL2GraphView, uri:string) {
 
-        super(graph, uri)
+        super(view, uri)
 
     }
 
@@ -60,9 +60,9 @@ export default class S2Sequence extends S2Identified {
             return
 
         const containingCDs:Array<S2ComponentDefinition> =
-            this.graph.match(null, Predicates.SBOL2.sequence, this.uri)
+            this.view.graph.match(null, Predicates.SBOL2.sequence, this.uri)
                 .map(triple.subjectUri)
-                .map((uri:string) => new S2ComponentDefinition(this.graph, uri))
+                .map((uri:string) => new S2ComponentDefinition(this.view, uri))
 
         containingCDs.forEach((cd:S2ComponentDefinition) => {
 
@@ -120,9 +120,9 @@ export default class S2Sequence extends S2Identified {
             return
 
         const containingCDs:Array<S2ComponentDefinition> =
-            this.graph.match(null, Predicates.SBOL2.sequence, this.uri)
+            this.view.graph.match(null, Predicates.SBOL2.sequence, this.uri)
                 .map(triple.subjectUri)
-                .map((uri:string) => new S2ComponentDefinition(this.graph, uri))
+                .map((uri:string) => new S2ComponentDefinition(this.view, uri))
 
         containingCDs.forEach((cd:S2ComponentDefinition) => {
 

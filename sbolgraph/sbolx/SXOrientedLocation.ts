@@ -3,14 +3,14 @@ import SXIdentified from './SXIdentified'
 
 import { triple } from 'rdfoo'
 import { Types, Predicates, Specifiers } from 'bioterms'
-import SBOLXGraph from "../SBOLXGraph";
+import SBOLXGraphView from "../SBOLXGraphView";
 import SXLocation from "./SXLocation";
 
 export default class SXOrientedLocation extends SXLocation {
 
-    constructor(graph:SBOLXGraph, uri:string) {
+    constructor(view:SBOLXGraphView, uri:string) {
 
-        super(graph, uri)
+        super(view, uri)
 
     }
 

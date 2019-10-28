@@ -2,15 +2,15 @@
 import SXIdentified from './SXIdentified'
 
 import { Types, Predicates, Specifiers } from 'bioterms'
-import SBOLXGraph from "../SBOLXGraph";
+import SBOLXGraphView from "../SBOLXGraphView";
 
 import { triple } from 'rdfoo'
 
 export default class SXModel extends SXIdentified {
 
-    constructor(graph:SBOLXGraph, uri:string) {
+    constructor(view:SBOLXGraphView, uri:string) {
 
-        super(graph, uri)
+        super(view, uri)
     }
 
     get facadeType():string {

@@ -4,13 +4,13 @@ import { Types, Predicates, Specifiers } from 'bioterms'
 
 import SXFacade from './SXFacade'
 
-import SBOLXGraph from '../SBOLXGraph'
 import URIUtils from '../URIUtils';
+import SBOLXGraphView from '../SBOLXGraphView';
 
 export default class SXIdentified extends SXFacade {
 
-    constructor(graph:SBOLXGraph, uri:string) {
-        super(graph, uri)
+    constructor(view:SBOLXGraphView, uri:string) {
+        super(view, uri)
     }
 
     get facadeType():string {
@@ -71,10 +71,10 @@ export default class SXIdentified extends SXFacade {
 
         if(newURI !== this.uri) {
 
-            console.log(this.graph.serializeXML())
+            console.log(this.view.serializeXML())
             console.log('replace ' + this.uri + ' -> ' + newURI)
             this.graph.replaceURI(this.uri, newURI)
-            console.log(this.graph.serializeXML())
+            console.log(this.view.serializeXML())
 
             this.uri = newURI
         }

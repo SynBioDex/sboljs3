@@ -1,14 +1,15 @@
 
 
 import { Facade } from 'rdfoo'
-import SBOLXGraph from '../SBOLXGraph';
+import SBOLXGraphView from '../SBOLXGraphView';
 
 export default abstract class SXFacade extends Facade {
 
-    get graph() {
+    view:SBOLXGraphView
 
-        return this._graph as SBOLXGraph
-
+    constructor(view:SBOLXGraphView, uri:string) {
+        super(view.graph, uri)
+        this.view = view
     }
 
 

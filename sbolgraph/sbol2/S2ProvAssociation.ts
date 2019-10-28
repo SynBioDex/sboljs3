@@ -1,16 +1,16 @@
 
 
 import S2Identified from "./S2Identified";
-import SBOL2Graph from "../SBOL2Graph";
+import SBOL2GraphView from "../SBOL2GraphView";
 import S2ProvAgent from "./S2ProvAgent";
 import S2ProvPlan from "./S2ProvPlan";
 import { Types, Predicates } from "bioterms";
 
 export default class S2ProvAssociation extends S2Identified {
 
-    constructor(graph:SBOL2Graph, uri:string) {
+    constructor(view:SBOL2GraphView, uri:string) {
 
-        super(graph, uri)
+        super(view, uri)
 
     }
 
@@ -26,7 +26,7 @@ export default class S2ProvAssociation extends S2Identified {
             return undefined
         }
 
-        return new S2ProvAgent(this.graph, agent)
+        return new S2ProvAgent(this.view, agent)
     }
 
     set agent(agent:S2ProvAgent|undefined) {
@@ -46,7 +46,7 @@ export default class S2ProvAssociation extends S2Identified {
             return undefined
         }
 
-        return new S2ProvPlan(this.graph, plan)
+        return new S2ProvPlan(this.view, plan)
     }
 
     set plan(plan:S2ProvPlan|undefined) {

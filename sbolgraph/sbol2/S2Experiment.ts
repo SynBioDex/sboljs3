@@ -1,5 +1,5 @@
 import S2Identified from './S2Identified'
-import SBOL2Graph from '../SBOL2Graph';
+import SBOL2GraphView from '../SBOL2GraphView';
 import { node } from 'rdfoo'
 import S2ExperimentalData from './S2ExperimentalData';
 import S2ProvActivity from './S2ProvActivity';
@@ -9,9 +9,9 @@ import S2Implementation from './S2Implementation';
 
 export default class S2Experiment extends S2Identified {
 
-    constructor(graph:SBOL2Graph, uri:string) {
+    constructor(view:SBOL2GraphView, uri:string) {
 
-        super(graph, uri)
+        super(view, uri)
     }
 
     get facadeType():string {
@@ -24,20 +24,20 @@ export default class S2Experiment extends S2Identified {
         let expDataURIs = this.getUriProperties(Predicates.SBOL2.experimentalData)
 
         for (let uri of expDataURIs){
-            result.push(new S2ExperimentalData(this.graph, uri))
+            result.push(new S2ExperimentalData(this.view, uri))
         }
 
         return result
 
         // return this.getUriProperties('https://github.com/SynBioDex/SEPs/blob/sep21/sep_021.md#experimentalData')
-        //            .map((uri:string) => this.graph.uriToFacade(uri))
+        //            .map((uri:string) => this.view.uriToFacade(uri))
         //            .filter((r:SEP21ExperimentalData) => r !== undefined) as Array<SEP21ExperimentalData>
 
     }
 
     addExperimentalData(member:S2ExperimentalData):void {
 
-        this.graph.add(this.uri, Predicates.SBOL2.experimentalData, node.createUriNode(member.uri))
+        this.insertProperty(Predicates.SBOL2.experimentalData, node.createUriNode(member.uri))
 
     }
 
@@ -49,7 +49,7 @@ export default class S2Experiment extends S2Identified {
             return undefined
         }
 
-        return new S2ProvActivity(this.graph, activity)
+        return new S2ProvActivity(this.view, activity)
     }
 
     set activity(activity:S2ProvActivity|undefined) {
@@ -70,7 +70,7 @@ export default class S2Experiment extends S2Identified {
             return undefined
         }
 
-        return new S2Implementation(this.graph, construct_uri)
+        return new S2Implementation(this.view, construct_uri)
 
     }
 
@@ -86,7 +86,7 @@ export default class S2Experiment extends S2Identified {
 
     addConstruct(construct:S2Implementation):void {
 
-        this.graph.add(this.uri, Predicates.Prov.wasDerivedFrom, node.createUriNode(construct.uri))
+        this.insertProperty(Predicates.Prov.wasDerivedFrom, node.createUriNode(construct.uri))
 
     }
 

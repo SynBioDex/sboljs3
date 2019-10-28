@@ -2,11 +2,11 @@
 import SXIdentified from "./SXIdentified";
 import { Predicates } from 'bioterms'
 import { node } from 'rdfoo'
-import SBOLXGraph from '../SBOLXGraph'
+import SBOLXGraphView from '../SBOLXGraphView'
 
 export default class SXIdentifiedFactory {
     
-    static createTopLevel(graph:SBOLXGraph,
+    static createTopLevel(view:SBOLXGraphView,
                           type:string,
                           uriPrefix:string,
                           id:string|undefined,
@@ -17,31 +17,31 @@ export default class SXIdentifiedFactory {
 
         let versionSuffix = version !== undefined ? '/' + version : ''
 
-        const uri:string = graph.generateURI(uriPrefix + id + '$n?$' + versionSuffix)
+        const uri:string = view.graph.generateURI(uriPrefix + id + '$n?$' + versionSuffix)
 
-        graph.insertProperties(uri, {
+        view.graph.insertProperties(uri, {
             [Predicates.a]: node.createUriNode(type),
             [Predicates.SBOLX.id]: node.createStringNode(extractID(uri, version)),
             [Predicates.SBOLX.persistentIdentity]: node.createUriNode(extractPersistentIdentity(uri, version)),
         })
 
         if(version !== undefined) {
-            graph.insertProperties(uri, {
+            view.graph.insertProperties(uri, {
                 [Predicates.SBOLX.version]: node.createStringNode(version)
             })
         }
 
         if(name !== undefined) {
-            graph.insertProperties(uri, {
+            view.graph.insertProperties(uri, {
                 [Predicates.Dcterms.title]: node.createStringNode(name)
             })
         }
 
-        return new SXIdentified(graph, uri)
+        return new SXIdentified(view, uri)
 
     }
     
-    static createChild(graph:SBOLXGraph,
+    static createChild(view:SBOLXGraphView,
                     type:string,
                     parent:SXIdentified,
                     ownershipPredicate:string,
@@ -53,32 +53,32 @@ export default class SXIdentifiedFactory {
 
         let versionSuffix = version !== undefined ? '/' + version : ''
 
-        const uri:string = graph.generateURI(
+        const uri:string = view.graph.generateURI(
             parent.persistentIdentity + '/' + id + '$n?$' + versionSuffix)
 
-        graph.insertProperties(uri, {
+        view.graph.insertProperties(uri, {
             [Predicates.a]: node.createUriNode(type),
             [Predicates.SBOLX.id]: node.createStringNode(extractID(uri, version)),
             [Predicates.SBOLX.persistentIdentity]: node.createUriNode(extractPersistentIdentity(uri, version))
         })
 
         if(version !== undefined) {
-            graph.insertProperties(uri, {
+            view.graph.insertProperties(uri, {
                 [Predicates.SBOLX.version]: node.createStringNode(version)
             })
         }
 
         if(name !== undefined) {
-            graph.insertProperties(uri, {
+            view.graph.insertProperties(uri, {
                 [Predicates.Dcterms.title]: node.createStringNode(name)
             })
         }
 
-        graph.insertProperties(parent.uri, {
+        view.graph.insertProperties(parent.uri, {
             [ownershipPredicate]: node.createUriNode(uri)
         })
 
-        return new SXIdentified(graph, uri)
+        return new SXIdentified(view, uri)
     }
 
 }

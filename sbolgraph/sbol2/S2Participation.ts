@@ -1,4 +1,4 @@
-import SBOL2Graph from '../SBOL2Graph';
+import SBOL2GraphView from '../SBOL2GraphView';
 
 import S2Identified from './S2Identified'
 import S2FunctionalComponent from './S2FunctionalComponent'
@@ -10,9 +10,9 @@ import S2Measure from './S2Measure';
 
 export default class S2Participation extends S2Identified {
 
-    constructor(graph:SBOL2Graph, uri:string) {
+    constructor(view:SBOL2GraphView, uri:string) {
 
-        super(graph, uri)
+        super(view, uri)
 
     }
 
@@ -25,7 +25,7 @@ export default class S2Participation extends S2Identified {
         const uri:string|undefined = this.getUriProperty(Predicates.SBOL2.participant)
 
         if(uri) {
-            return new S2FunctionalComponent(this.graph, uri)
+            return new S2FunctionalComponent(this.view, uri)
         }
     }
 
@@ -42,11 +42,11 @@ export default class S2Participation extends S2Identified {
     get interaction():S2Interaction|undefined {
 
         const uri:string|undefined = triple.subjectUri(
-            this.graph.matchOne(null, Predicates.SBOL2.participation, this.uri)
+            this.view.graph.matchOne(null, Predicates.SBOL2.participation, this.uri)
         )
 
         if(uri) {
-            return new S2Interaction(this.graph, uri)
+            return new S2Interaction(this.view, uri)
         }
 
     }
@@ -54,25 +54,25 @@ export default class S2Participation extends S2Identified {
     get containingObject():S2Identified|undefined {
 
         const uri = triple.subjectUri(
-            this.graph.matchOne(null, Predicates.SBOL2.participation, this.uri)
+            this.view.graph.matchOne(null, Predicates.SBOL2.participation, this.uri)
         )
 
         if(!uri) {
             throw new Error('Participation has no containing object?')
         }
 
-        return this.graph.uriToFacade(uri)
+        return this.view.uriToIdentified(uri)
 
     }
 
     hasRole(uri:string):boolean {
 
-        return this.graph.hasMatch(this.uri, Predicates.SBOL2.role, uri)
+        return this.view.graph.hasMatch(this.uri, Predicates.SBOL2.role, uri)
     
     }
 
     addRole(role:string):void {
-        this.graph.insert(this.uri, Predicates.SBOL2.role, node.createUriNode(role))
+        this.insertProperty(Predicates.SBOL2.role, node.createUriNode(role))
     }
 
     get roles():Array<string> {
@@ -89,7 +89,7 @@ export default class S2Participation extends S2Identified {
         if(measure === undefined)
             return
         
-        return new S2Measure(this.graph, measure)
+        return new S2Measure(this.view, measure)
     }
 
     set measure(measure:S2Measure|undefined) {

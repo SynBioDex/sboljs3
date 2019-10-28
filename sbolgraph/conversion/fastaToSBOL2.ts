@@ -29,7 +29,7 @@ export default function fastaToSBOL2(graph:SBOL2Graph, uriPrefix:string, fasta:s
             let { id, properties } = parseHeader(line)
 
             sequence = graph.createSequence(uriPrefix, id, '1')
-            graph.insertProperties(sequence.uri, properties)
+            sequence.insertProperties(properties)
 
             continue
         }

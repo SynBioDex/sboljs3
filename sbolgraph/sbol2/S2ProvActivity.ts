@@ -1,6 +1,6 @@
 
 import S2Identified from "./S2Identified";
-import SBOL2Graph from "../SBOL2Graph";
+import SBOL2GraphView from "../SBOL2GraphView";
 import S2ProvAssociation from "./S2ProvAssociation";
 import { Types, Predicates } from "bioterms";
 import S2ProvPlan from "./S2ProvPlan";
@@ -9,9 +9,9 @@ import { node } from 'rdfoo'
 
 export default class S2ProvActivity extends S2Identified {
 
-    constructor(graph:SBOL2Graph, uri:string) {
+    constructor(view:SBOL2GraphView, uri:string) {
 
-        super(graph, uri)
+        super(view, uri)
 
     }
 
@@ -41,7 +41,7 @@ export default class S2ProvActivity extends S2Identified {
     }
 
     addType(uri:string) {
-        this.graph.insertProperties(this.uri, {
+        this.insertProperties({
             [Predicates.SBOL2.type]: node.createUriNode(uri)
         })
     }
@@ -49,7 +49,7 @@ export default class S2ProvActivity extends S2Identified {
     get associations():Array<S2ProvAssociation> {
 
         return this.getUriProperties(Predicates.Prov.qualifiedAssociation)
-                    .map((uri) => new S2ProvAssociation(this.graph, uri))
+                    .map((uri) => new S2ProvAssociation(this.view, uri))
 
     }
 
@@ -61,7 +61,7 @@ export default class S2ProvActivity extends S2Identified {
             return undefined
         }
 
-        return new S2ProvPlan(this.graph, plan)
+        return new S2ProvPlan(this.view, plan)
     }
 
     set plan(plan:S2ProvPlan|undefined) {
@@ -81,7 +81,7 @@ export default class S2ProvActivity extends S2Identified {
             return undefined
         }
 
-        return new S2ProvUsage(this.graph, usage)
+        return new S2ProvUsage(this.view, usage)
     }
 
     set usage(usage:S2ProvUsage|undefined) {
@@ -101,7 +101,7 @@ export default class S2ProvActivity extends S2Identified {
             return undefined
         }
 
-        return new S2ProvAssociation(this.graph, association)
+        return new S2ProvAssociation(this.view, association)
     }
 
     set association(association:S2ProvAssociation|undefined) {

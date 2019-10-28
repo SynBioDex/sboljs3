@@ -1,5 +1,5 @@
 
-import { SBOL2Graph } from '..';
+import SBOL2GraphView from '../SBOL2GraphView';
 
 import S2Identified from './S2Identified'
 import S2ComponentInstance from './S2ComponentInstance'
@@ -9,9 +9,9 @@ import { Types, Predicates, Specifiers } from 'bioterms'
 
 export default class S2SequenceConstraint extends S2Identified {
 
-    constructor(graph:SBOL2Graph, uri:string) {
+    constructor(view:SBOL2GraphView, uri:string) {
 
-        super(graph, uri)
+        super(view, uri)
 
     }
 
@@ -22,14 +22,14 @@ export default class S2SequenceConstraint extends S2Identified {
     get containingObject():S2Identified|undefined {
 
         const uri = triple.subjectUri(
-            this.graph.matchOne(null, Predicates.SBOL2.sequenceConstraint, this.uri)
+            this.view.graph.matchOne(null, Predicates.SBOL2.sequenceConstraint, this.uri)
         )
 
         if(!uri) {
             throw new Error('SeqCons has no containing object?')
         }
 
-        return this.graph.uriToFacade(uri)
+        return this.view.uriToIdentified(uri)
 
     }
 
@@ -52,7 +52,7 @@ export default class S2SequenceConstraint extends S2Identified {
             throw new Error('SeqCons has no subject?')
         }
 
-        return new S2ComponentInstance(this.graph, subject)
+        return new S2ComponentInstance(this.view, subject)
     }
 
     get object():S2ComponentInstance {
@@ -63,7 +63,7 @@ export default class S2SequenceConstraint extends S2Identified {
             throw new Error('SeqCons has no object?')
         }
 
-        return new S2ComponentInstance(this.graph, object)
+        return new S2ComponentInstance(this.view, object)
     }
 
 }

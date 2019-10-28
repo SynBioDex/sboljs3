@@ -4,14 +4,14 @@ import { Types, Predicates, Specifiers } from 'bioterms'
 
 import S1Facade from './S1Facade'
 
-import SBOL1Graph from '../SBOL1Graph'
 import URIUtils from '../URIUtils'
 import S1DnaComponent from './S1DnaComponent';
+import SBOL1GraphView from '../SBOL1GraphView'
 
 export default class S1Collection extends S1Facade {
 
-    constructor(graph:SBOL1Graph, uri:string) {
-        super(graph, uri)
+    constructor(view:SBOL1GraphView, uri:string) {
+        super(view, uri)
     }
 
     get facadeType():string {
@@ -32,7 +32,7 @@ export default class S1Collection extends S1Facade {
 
     get components():S1DnaComponent[] {
         return this.getUriProperties(Predicates.SBOL1.component)
-                   .map((uri) => new S1DnaComponent(this.graph, uri))
+                   .map((uri) => new S1DnaComponent(this.view, uri))
     }
 
 }

@@ -1,18 +1,18 @@
 
-import { SBOLXGraph, SXComponent } from '..';
-
 import SXIdentified from './SXIdentified'
 import SXSubComponent from './SXSubComponent'
 import SXRange from './SXRange'
 
 import { triple, node } from 'rdfoo'
 import { Types, Predicates, Specifiers } from 'bioterms'
+import SBOLXGraphView from '../SBOLXGraphView'
+import SXComponent from './SXComponent'
 
 export default class SXSequenceConstraint extends SXIdentified {
 
-    constructor(graph:SBOLXGraph, uri:string) {
+    constructor(view:SBOLXGraphView, uri:string) {
 
-        super(graph, uri)
+        super(view, uri)
 
     }
 
@@ -23,14 +23,14 @@ export default class SXSequenceConstraint extends SXIdentified {
     get containingObject():SXIdentified|undefined {
 
         const uri = triple.subjectUri(
-            this.graph.matchOne(null, Predicates.SBOLX.sequenceConstraint, this.uri)
+            this.view.graph.matchOne(null, Predicates.SBOLX.sequenceConstraint, this.uri)
         )
 
         if(!uri) {
             throw new Error('SeqCons has no containing object?')
         }
 
-        return this.graph.uriToFacade(uri)
+        return this.view.uriToIdentified(uri)
 
     }
 
@@ -63,7 +63,7 @@ export default class SXSequenceConstraint extends SXIdentified {
             throw new Error('SeqCons has no subject?')
         }
 
-        return new SXSubComponent(this.graph, subject)
+        return new SXSubComponent(this.view, subject)
     }
 
     set subject(sc:SXSubComponent) {
@@ -78,7 +78,7 @@ export default class SXSequenceConstraint extends SXIdentified {
             throw new Error('SeqCons has no object?')
         }
 
-        return new SXSubComponent(this.graph, object)
+        return new SXSubComponent(this.view, object)
     }
 
     set object(sc:SXSubComponent) {

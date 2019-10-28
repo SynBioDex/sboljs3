@@ -1,16 +1,16 @@
 
 import SXIdentified from "./SXIdentified";
-import SBOL2Graph from "../SBOL2Graph";
+import SBOL2GraphView from "../SBOL2GraphView";
 import { Types, Predicates } from "bioterms";
 import SXComponent from './SXComponent'
 import SXProvActivity from "./SXProvActivity";
-import SBOLXGraph from "../SBOLXGraph";
+import SBOLXGraphView from "../SBOLXGraphView";
 
 export default class SXImplementation extends SXIdentified {
 
-    constructor(graph:SBOLXGraph, uri:string) {
+    constructor(view:SBOLXGraphView, uri:string) {
 
-        super(graph, uri)
+        super(view, uri)
 
     }
 
@@ -27,7 +27,7 @@ export default class SXImplementation extends SXIdentified {
             return undefined
         }
 
-        let builtObj = this.graph.uriToFacade(built)
+        let builtObj = this.view.uriToFacade(built)
 
         if(builtObj instanceof SXComponent)
             return builtObj as SXComponent
@@ -52,7 +52,7 @@ export default class SXImplementation extends SXIdentified {
             return undefined
         }
 
-        return new SXProvActivity(this.graph, activity)
+        return new SXProvActivity(this.view, activity)
     }
 
     set activity(activity:SXProvActivity|undefined) {
@@ -72,11 +72,11 @@ export default class SXImplementation extends SXIdentified {
             return undefined
         }
 
-        return new SXIdentified(this.graph, design_uri)
+        return new SXIdentified(this.view, design_uri)
 
-        // console.log(this.graph.getTopLevelsWithPrefix(design_uri))
+        // console.log(this.view.getTopLevelsWithPrefix(design_uri))
 
-        // let design = this.graph.uriToFacade(design_uri)
+        // let design = this.view.uriToFacade(design_uri)
 
         // console.log(design)
 

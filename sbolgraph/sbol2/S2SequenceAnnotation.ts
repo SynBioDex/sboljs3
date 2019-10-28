@@ -1,4 +1,4 @@
-import { SBOL2Graph, S2ComponentDefinition } from '..';
+import SBOL2GraphView from '../SBOL2GraphView';
 
 import S2Identified from './S2Identified'
 import S2ComponentInstance from './S2ComponentInstance'
@@ -10,12 +10,13 @@ import { Types, Predicates, Specifiers } from 'bioterms'
 import S2Location from "./S2Location";
 
 import S2IdentifiedFactory from './S2IdentifiedFactory'
+import S2ComponentDefinition from './S2ComponentDefinition';
 
 export default class S2SequenceAnnotation extends S2Identified {
 
-    constructor(graph:SBOL2Graph, uri:string) {
+    constructor(view:SBOL2GraphView, uri:string) {
 
-        super(graph, uri)
+        super(view, uri)
 
     }
 
@@ -26,7 +27,7 @@ export default class S2SequenceAnnotation extends S2Identified {
     get locations():Array<S2Location> {
 
         return this.getUriProperties(Predicates.SBOL2.location)
-                   .map((uri:string) => this.graph.uriToFacade(uri) as S2Location)
+                   .map((uri:string) => this.view.uriToFacade(uri) as S2Location)
     }
 
     get rangeLocations():Array<S2Range> {
@@ -34,7 +35,7 @@ export default class S2SequenceAnnotation extends S2Identified {
         return this.locations.filter((location:S2Identified) => {
             return location.objectType === Types.SBOL2.Range
         }).map((identified:S2Identified) => {
-            return new S2Range(this.graph, identified.uri)
+            return new S2Range(this.view, identified.uri)
         })
 
     }
@@ -94,14 +95,14 @@ export default class S2SequenceAnnotation extends S2Identified {
     get containingComponentDefinition():S2ComponentDefinition {
 
         const uri:string|undefined = triple.subjectUri(
-            this.graph.matchOne(null, Predicates.SBOL2.sequenceAnnotation, this.uri)
+            this.view.graph.matchOne(null, Predicates.SBOL2.sequenceAnnotation, this.uri)
         )
 
         if(uri === undefined) {
             throw new Error('SA not contained by a CD??')
         }
 
-        return new S2ComponentDefinition(this.graph, uri)
+        return new S2ComponentDefinition(this.view, uri)
     }
 
     get component():S2ComponentInstance|undefined {
@@ -109,7 +110,7 @@ export default class S2SequenceAnnotation extends S2Identified {
         const uri = this.getUriProperty(Predicates.SBOL2.component)
 
         if(uri)
-            return new S2ComponentInstance(this.graph, uri)
+            return new S2ComponentInstance(this.view, uri)
     }
 
     set component(component:S2ComponentInstance|undefined) {
@@ -141,11 +142,11 @@ export default class S2SequenceAnnotation extends S2Identified {
     }
 
     hasRole(role:string):boolean {
-        return this.graph.hasMatch(this.uri, Predicates.SBOL2.role, role)
+        return this.view.graph.hasMatch(this.uri, Predicates.SBOL2.role, role)
     }
 
     addRole(role:string):void {
-        this.graph.insert(this.uri, Predicates.SBOL2.role, node.createUriNode(role))
+        this.insertProperty(Predicates.SBOL2.role, node.createUriNode(role))
     }
 
     static fromIdentified(identified:S2Identified):S2SequenceAnnotation {
@@ -153,11 +154,11 @@ export default class S2SequenceAnnotation extends S2Identified {
         const type:string|undefined = identified.objectType
 
         if(type === Types.SBOL2.SequenceAnnotation)
-            return new S2SequenceAnnotation(identified.graph, identified.uri)
+            return new S2SequenceAnnotation(identified.view, identified.uri)
 
         if(type === Types.SBOL2.Component) {
             
-            const sa:S2SequenceAnnotation|undefined = (new S2ComponentInstance(identified.graph, identified.uri)).sequenceAnnotations[0]
+            const sa:S2SequenceAnnotation|undefined = (new S2ComponentInstance(identified.view, identified.uri)).sequenceAnnotations[0]
 
             if(sa === undefined) {
                 throw new Error('cannot get sequence annotation from ' + identified.uri)
@@ -173,14 +174,14 @@ export default class S2SequenceAnnotation extends S2Identified {
     get containingObject():S2Identified|undefined {
 
         const uri = triple.subjectUri(
-            this.graph.matchOne(null, Predicates.SBOL2.sequenceAnnotation, this.uri)
+            this.view.graph.matchOne(null, Predicates.SBOL2.sequenceAnnotation, this.uri)
         )
 
         if(!uri) {
             throw new Error('SA has no containing object?')
         }
 
-        return this.graph.uriToFacade(uri)
+        return this.view.uriToIdentified(uri)
 
     }
 
@@ -188,16 +189,16 @@ export default class S2SequenceAnnotation extends S2Identified {
     clearLocations():void {
 
         this.locations.forEach((location:S2Identified) => {
-            this.graph.purgeSubject(location.uri)
+            this.view.graph.purgeSubject(location.uri)
         })
 
     }
 
     addLocationGeneric(orientation:string) {
 
-        let identified = S2IdentifiedFactory.createChild(this.graph, Types.SBOL2.GenericLocation, this, Predicates.SBOL2.location, 'location', this.version)
+        let identified = S2IdentifiedFactory.createChild(this.view, Types.SBOL2.GenericLocation, this, Predicates.SBOL2.location, 'location', this.version)
 
-        let location = new S2GenericLocation(this.graph, identified.uri)
+        let location = new S2GenericLocation(this.view, identified.uri)
 
         location.orientation = orientation
 

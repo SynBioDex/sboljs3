@@ -1,4 +1,5 @@
-import { SBOLXGraph, SXSubComponent } from '..';
+
+import SBOLXGraphView from '../SBOLXGraphView'
 
 import SXIdentified from './SXIdentified'
 
@@ -9,12 +10,13 @@ import SXComponent from "./SXComponent";
 import SXSequenceFeature from "./SXSequenceFeature";
 import SXLocation from "./SXLocation";
 import SXRange from "./SXRange";
+import SXSubComponent from './SXSubComponent';
 
 export default class SXSequence extends SXIdentified {
 
-    constructor(graph:SBOLXGraph, uri:string) {
+    constructor(view:SBOLXGraphView, uri:string) {
 
-        super(graph, uri)
+        super(view, uri)
 
     }
 
@@ -64,9 +66,9 @@ export default class SXSequence extends SXIdentified {
             return
 
         const containingModules:Array<SXComponent> =
-            this.graph.match(null, Predicates.SBOLX.sequence, this.uri)
+            this.view.graph.match(null, Predicates.SBOLX.sequence, this.uri)
                 .map(triple.subjectUri)
-                .map((uri:string) => new SXComponent(this.graph, uri))
+                .map((uri:string) => new SXComponent(this.view, uri))
 
         containingModules.forEach((module:SXComponent) => {
 
@@ -132,9 +134,9 @@ export default class SXSequence extends SXIdentified {
             return
 
         const containingCDs:Array<SXComponent> =
-            this.graph.match(null, Predicates.SBOLX.sequence, this.uri)
+            this.view.graph.match(null, Predicates.SBOLX.sequence, this.uri)
                 .map(triple.subjectUri)
-                .map((uri:string) => new SXComponent(this.graph, uri))
+                .map((uri:string) => new SXComponent(this.view, uri))
 
         containingCDs.forEach((cd:SXComponent) => {
 

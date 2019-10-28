@@ -287,82 +287,83 @@ export default function convertXto2(graph:Graph) {
     }
 
     graph.graph.addAll(graph2.graph)
-}
 
-function copyIdentifiedProperties(a:SXIdentified, b:S2Identified) {
+    function copyIdentifiedProperties(a:SXIdentified, b:S2Identified) {
 
-    let aTriples = a.graph.match(a.uri, null, null)
+        let aTriples = graph.match(a.uri, null, null)
 
-    for(let triple of aTriples) {
-        
-        let p = triple.predicate.nominalValue
+        for(let triple of aTriples) {
+            
+            let p = triple.predicate.nominalValue
 
-        if(p === Predicates.a) {
-            continue
-        }
-
-        if(p === Predicates.SBOLX.id) {
-            b.graph.insert(b.uri, Predicates.SBOL2.displayId, triple.object)
-            continue
-        }
-
-        if(p === Predicates.SBOLX.persistentIdentity) {
-            b.graph.insert(b.uri, Predicates.SBOL2.persistentIdentity, triple.object)
-            continue
-        }
-
-        if(p === Predicates.SBOLX.version) {
-            b.graph.insert(b.uri, Predicates.SBOL2.version, triple.object)
-            continue
-        }
-
-
-        if(p.indexOf('http://biocad.io/terms/backport#') !== -1) {
-            continue
-        }
-
-        if(p.indexOf(Prefixes.sbolx) !== 0) {
-            b.graph.insert(b.uri, triple.predicate.nominalValue, triple.object)
-        }
-    }
-}
-
-
-function copyLocations(graph2:SBOL2Graph, oldThing:SXThingWithLocation, newThing:S2SequenceAnnotation) {
-
-    for(let location of oldThing.locations) {
-        if(location instanceof SXRange) {
-
-            let newLocIdent = S2IdentifiedFactory.createChild(graph2, Types.SBOL2.Range, newThing, Predicates.SBOL2.location, location.id, location.version)
-            let newLoc = new S2Range(graph2, newLocIdent.uri)
-
-            if(location.sequence) {
-                newLoc.setUriProperty(Predicates.SBOL2.sequence, location.sequence.uri)
+            if(p === Predicates.a) {
+                continue
             }
 
-            newLoc.start = location.start
-            newLoc.end = location.end
-
-            newLoc.orientation = location.orientation === Specifiers.SBOLX.Orientation.ReverseComplement ?
-                    Specifiers.SBOL2.Orientation.ReverseComplement : Specifiers.SBOL2.Orientation.Inline
-
-        } else if(location instanceof SXOrientedLocation) {
-
-            let newLocIdent = S2IdentifiedFactory.createChild(graph2, Types.SBOL2.GenericLocation, newThing, Predicates.SBOL2.location, location.id, location.version)
-            let newLoc = new S2GenericLocation(graph2, newLocIdent.uri)
-
-            if(location.sequence) {
-                newLoc.setUriProperty(Predicates.SBOL2.sequence, location.sequence.uri)
+            if(p === Predicates.SBOLX.id) {
+                b.graph.insert(b.uri, Predicates.SBOL2.displayId, triple.object)
+                continue
             }
 
-            newLoc.orientation = location.orientation === Specifiers.SBOLX.Orientation.ReverseComplement ?
-                    Specifiers.SBOL2.Orientation.ReverseComplement : Specifiers.SBOL2.Orientation.Inline
+            if(p === Predicates.SBOLX.persistentIdentity) {
+                b.graph.insert(b.uri, Predicates.SBOL2.persistentIdentity, triple.object)
+                continue
+            }
 
-        } else {
-            throw new Error('not implemented location type')
+            if(p === Predicates.SBOLX.version) {
+                b.graph.insert(b.uri, Predicates.SBOL2.version, triple.object)
+                continue
+            }
+
+
+            if(p.indexOf('http://biocad.io/terms/backport#') !== -1) {
+                continue
+            }
+
+            if(p.indexOf(Prefixes.sbolx) !== 0) {
+                b.graph.insert(b.uri, triple.predicate.nominalValue, triple.object)
+            }
         }
     }
-}
 
+
+    function copyLocations(graph2:SBOL2Graph, oldThing:SXThingWithLocation, newThing:S2SequenceAnnotation) {
+
+        for(let location of oldThing.locations) {
+            if(location instanceof SXRange) {
+
+                let newLocIdent = S2IdentifiedFactory.createChild(graph2, Types.SBOL2.Range, newThing, Predicates.SBOL2.location, location.id, location.version)
+                let newLoc = new S2Range(graph2, newLocIdent.uri)
+
+                if(location.sequence) {
+                    newLoc.setUriProperty(Predicates.SBOL2.sequence, location.sequence.uri)
+                }
+
+                newLoc.start = location.start
+                newLoc.end = location.end
+
+                newLoc.orientation = location.orientation === Specifiers.SBOLX.Orientation.ReverseComplement ?
+                        Specifiers.SBOL2.Orientation.ReverseComplement : Specifiers.SBOL2.Orientation.Inline
+
+            } else if(location instanceof SXOrientedLocation) {
+
+                let newLocIdent = S2IdentifiedFactory.createChild(graph2, Types.SBOL2.GenericLocation, newThing, Predicates.SBOL2.location, location.id, location.version)
+                let newLoc = new S2GenericLocation(graph2, newLocIdent.uri)
+
+                if(location.sequence) {
+                    newLoc.setUriProperty(Predicates.SBOL2.sequence, location.sequence.uri)
+                }
+
+                newLoc.orientation = location.orientation === Specifiers.SBOLX.Orientation.ReverseComplement ?
+                        Specifiers.SBOL2.Orientation.ReverseComplement : Specifiers.SBOL2.Orientation.Inline
+
+            } else {
+                throw new Error('not implemented location type')
+            }
+        }
+    }
+
+
+}
 
 

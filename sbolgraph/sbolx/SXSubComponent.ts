@@ -8,7 +8,7 @@ import SXIdentifiedFactory from './SXIdentifiedFactory'
 
 import { triple, node } from 'rdfoo'
 import { Types, Predicates, Specifiers, Prefixes } from 'bioterms'
-import SBOLXGraph from "../SBOLXGraph";
+import SBOLXGraphView from "../SBOLXGraphView";
 import SXMapsTo from './SXMapsTo';
 import SXInteraction from './SXInteraction'
 import SXLocation from './SXLocation'
@@ -16,9 +16,9 @@ import SXMeasure from './SXMeasure';
 
 export default class SXSubComponent extends SXThingWithLocation {
 
-    constructor(graph:SBOLXGraph, uri:string) {
+    constructor(view:SBOLXGraphView, uri:string) {
 
-        super(graph, uri)
+        super(view, uri)
     }
 
     get facadeType():string {
@@ -54,7 +54,7 @@ export default class SXSubComponent extends SXThingWithLocation {
             throw new Error('subcomponent has no instanceOf?')
         }
 
-        return new SXComponent(this.graph, uri)
+        return new SXComponent(this.view, uri)
     }
 
     set instanceOf(def:SXComponent) {
@@ -66,37 +66,37 @@ export default class SXSubComponent extends SXThingWithLocation {
     get containingObject():SXIdentified|undefined {
 
         const uri = triple.subjectUri(
-            this.graph.matchOne(null, Predicates.SBOLX.subComponent, this.uri)
+            this.view.graph.matchOne(null, Predicates.SBOLX.subComponent, this.uri)
         )
 
         if(!uri) {
             throw new Error('subcomponent has no containing object?')
         }
 
-        return this.graph.uriToFacade(uri)
+        return this.view.uriToIdentified(uri)
 
     }
 
     get containingComponent():SXComponent {
 
         const uri = triple.subjectUri(
-            this.graph.matchOne(null, Predicates.SBOLX.subComponent, this.uri)
+            this.view.graph.matchOne(null, Predicates.SBOLX.subComponent, this.uri)
         )
 
         if(!uri) {
             throw new Error('subcomponent has no containing object?')
         }
 
-        return this.graph.uriToFacade(uri) as SXComponent
+        return this.view.uriToFacade(uri) as SXComponent
 
     }
 
     get sequenceConstraints():Array<SXSequenceConstraint> {
 
-        return this.graph.match(null, Predicates.SBOLX.subject, this.uri)
+        return this.view.graph.match(null, Predicates.SBOLX.subject, this.uri)
                    .map(triple.subjectUri)
-                   //.filter((uri:string) => this.graph.getType(uri) === Types.SBOLX.SequenceConstraint)
-                   .map((uri:string) => new SXSequenceConstraint(this.graph, uri))
+                   //.filter((uri:string) => this.view.getType(uri) === Types.SBOLX.SequenceConstraint)
+                   .map((uri:string) => new SXSequenceConstraint(this.view, uri))
 
     }
 
@@ -141,16 +141,16 @@ export default class SXSubComponent extends SXThingWithLocation {
 
     getConstraintsWithThisSubject():Array<SXSequenceConstraint> {
 
-        return this.graph.match(null, Predicates.SBOLX.subject, this.uri)
+        return this.view.graph.match(null, Predicates.SBOLX.subject, this.uri)
                     .map(triple.subjectUri)
-                    .map((uri:string) => new SXSequenceConstraint(this.graph, uri))
+                    .map((uri:string) => new SXSequenceConstraint(this.view, uri))
     }
 
     getConstraintsWithThisObject():Array<SXSequenceConstraint> {
 
-        return this.graph.match(null, Predicates.SBOLX.object, this.uri)
+        return this.view.graph.match(null, Predicates.SBOLX.object, this.uri)
                     .map(triple.subjectUri)
-                    .map((uri:string) => new SXSequenceConstraint(this.graph, uri))
+                    .map((uri:string) => new SXSequenceConstraint(this.view, uri))
     }
 
     getConstraints():Array<SXSequenceConstraint> {
@@ -161,17 +161,17 @@ export default class SXSubComponent extends SXThingWithLocation {
 
     get mappings():Array<SXMapsTo> {
 
-        return this.graph.match(null, Predicates.SBOL2.local, this.uri).map(triple.subjectUri)
+        return this.view.graph.match(null, Predicates.SBOL2.local, this.uri).map(triple.subjectUri)
                 .concat(
-                    this.graph.match(null, Predicates.SBOL2.remote, this.uri).map(triple.subjectUri)
+                    this.view.graph.match(null, Predicates.SBOL2.remote, this.uri).map(triple.subjectUri)
                 )
                 .filter((el) => !!el)
-                .map((mapsToUri) => new SXMapsTo(this.graph, mapsToUri as string))
+                .map((mapsToUri) => new SXMapsTo(this.view, mapsToUri as string))
     }
 
     addMapping(mapping:SXMapsTo) {
 
-        this.graph.insertProperties(this.uri, {
+        this.insertProperties({
             [Predicates.SBOL2.mapsTo]: node.createUriNode(mapping.uri)
         })
 
@@ -180,9 +180,9 @@ export default class SXSubComponent extends SXThingWithLocation {
     createMapping(local:SXSubComponent, remote:SXSubComponent)  {
 
         const identified:SXIdentified =
-            SXIdentifiedFactory.createChild(this.graph, Types.SBOL2.MapsTo, this, Predicates.SBOL2.mapsTo, 'mapping_' + local.id + '_' + remote.id, undefined, this.version)
+            SXIdentifiedFactory.createChild(this.view, Types.SBOL2.MapsTo, this, Predicates.SBOL2.mapsTo, 'mapping_' + local.id + '_' + remote.id, undefined, this.version)
 
-        const mapping:SXMapsTo = new SXMapsTo(this.graph, identified.uri)
+        const mapping:SXMapsTo = new SXMapsTo(this.view, identified.uri)
 
         mapping.local = local
         mapping.remote = remote
@@ -240,7 +240,7 @@ export default class SXSubComponent extends SXThingWithLocation {
 
     createProduct(id:string):SXSubComponent {
 
-        let product = this.graph.createComponent(this.uriPrefix, id)
+        let product = this.view.createComponent(this.uriPrefix, id)
 
         let container = this.containingComponent
 
@@ -321,7 +321,7 @@ export default class SXSubComponent extends SXThingWithLocation {
         if(uri === undefined)
             return undefined
         
-        let obj = this.graph.uriToFacade(uri)
+        let obj = this.view.uriToFacade(uri)
 
         if(! (obj instanceof SXLocation)) {
             throw new Error('sourceLocation was not a location')
@@ -345,7 +345,7 @@ export default class SXSubComponent extends SXThingWithLocation {
         if(measure === undefined)
             return
         
-        return new SXMeasure(this.graph, measure)
+        return new SXMeasure(this.view, measure)
     }
 
     set measure(measure:SXMeasure|undefined) {
