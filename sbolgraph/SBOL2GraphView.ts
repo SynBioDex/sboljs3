@@ -1,5 +1,5 @@
 
-import { Graph, Facade, GraphViewBasic, triple, node, changeURIPrefix, serialize } from 'rdfoo'
+import { Graph, Facade, GraphViewBasic, triple, node, changeURIPrefix, serialize, GraphViewHybrid } from 'rdfoo'
 import { Types, Predicates, Specifiers, Prefixes } from 'bioterms'
 
 import rdf = require('rdf-ext')
@@ -26,11 +26,6 @@ import S2MapsTo from "./sbol2/S2MapsTo";
 import S2GenericLocation from "./sbol2/S2GenericLocation";
 import S2IdentifiedFactory from './sbol2/S2IdentifiedFactory';
 import S2Cut from './sbol2/S2Cut';
-import S2ProvAgent from './sbol2/S2ProvAgent';
-import S2ProvAssociation from './sbol2/S2ProvAssociation';
-import S2ProvPlan from './sbol2/S2ProvPlan';
-import S2ProvUsage from './sbol2/S2ProvUsage';
-import S2ProvActivity from './sbol2/S2ProvActivity';
 import parseRDF from './parseRDF';
 import identifyFiletype, { Filetype } from './conversion/identifyFiletype';
 import fastaToSBOL2 from './conversion/fastaToSBOL2';
@@ -44,7 +39,9 @@ import convert1to2 from './conversion/fromSBOL1/toSBOL2';
 import convertXto2 from './conversion/fromSBOLX/toSBOL2';
 import enforceURICompliance from './conversion/enforceURICompliance';
 
-export default class SBOL2GraphView extends GraphViewBasic {
+import { Activity, Association, Agent, Plan, Usage, ProvView } from 'rdfoo-prov'
+
+export default class SBOL2GraphView extends GraphViewHybrid {
 
     _cachedUriPrefixes: Array<string>|null
 
@@ -54,6 +51,8 @@ export default class SBOL2GraphView extends GraphViewBasic {
 
         this._cachedUriPrefixes = null
 
+        this.addView(new SBOL2(this))
+        this.addView(new ProvView(graph))
     }
 
     createComponentDefinition(uriPrefix:string, id:string, version?:string):S2ComponentDefinition {
@@ -161,7 +160,7 @@ export default class SBOL2GraphView extends GraphViewBasic {
 
     }
 
-    createProvActivity(uriPrefix:string, id:string, version?:string):S2ProvActivity {
+    createProvActivity(uriPrefix:string, id:string, version?:string):Activity {
 
         if(arguments.length < 3)
             version = '1'
@@ -169,11 +168,11 @@ export default class SBOL2GraphView extends GraphViewBasic {
         const identified:S2Identified =
             S2IdentifiedFactory.createTopLevel(this, Types.Prov.Activity, uriPrefix, id, undefined, version)
 
-        return new S2ProvActivity(this, identified.uri)
+        return new Activity(this, identified.uri)
 
     }
 
-    createProvAssociation(uriPrefix:string, id:string, version?:string):S2ProvAssociation {
+    createProvAssociation(uriPrefix:string, id:string, version?:string):Association {
 
         if(arguments.length < 3)
             version = '1'
@@ -181,11 +180,11 @@ export default class SBOL2GraphView extends GraphViewBasic {
         const identified:S2Identified =
             S2IdentifiedFactory.createTopLevel(this, Types.Prov.Association, uriPrefix, id, undefined, version)
 
-        return new S2ProvAssociation(this, identified.uri)
+        return new Association(this, identified.uri)
 
     }
 
-    createProvAgent(uriPrefix:string, id:string, version?:string):S2ProvAgent {
+    createProvAgent(uriPrefix:string, id:string, version?:string):Agent {
 
         if(arguments.length < 3)
             version = '1'
@@ -193,11 +192,11 @@ export default class SBOL2GraphView extends GraphViewBasic {
         const identified:S2Identified =
             S2IdentifiedFactory.createTopLevel(this, Types.Prov.Agent, uriPrefix, id, undefined, version)
 
-        return new S2ProvAgent(this, identified.uri)
+        return new Agent(this, identified.uri)
 
     }
 
-    createProvPlan(uriPrefix:string, id:string, version?:string):S2ProvPlan {
+    createProvPlan(uriPrefix:string, id:string, version?:string):Plan {
 
         if(arguments.length < 3)
             version = '1'
@@ -205,11 +204,11 @@ export default class SBOL2GraphView extends GraphViewBasic {
         const identified:S2Identified =
             S2IdentifiedFactory.createTopLevel(this, Types.Prov.Plan, uriPrefix, id, undefined, version)
 
-        return new S2ProvPlan(this, identified.uri)
+        return new Plan(this, identified.uri)
 
     }
 
-    createProvUsage(uriPrefix:string, id:string, version?:string):S2ProvUsage {
+    createProvUsage(uriPrefix:string, id:string, version?:string):Usage {
 
         if(arguments.length < 3)
             version = '1'
@@ -217,7 +216,7 @@ export default class SBOL2GraphView extends GraphViewBasic {
         const identified:S2Identified =
             S2IdentifiedFactory.createTopLevel(this, Types.Prov.Usage, uriPrefix, id, undefined, version)
 
-        return new S2ProvUsage(this, identified.uri)
+        return new Usage(this, identified.uri)
 
     }
 
@@ -288,12 +287,12 @@ export default class SBOL2GraphView extends GraphViewBasic {
 
     }
 
-    getActivity(uri):S2ProvActivity|null {
+    getActivity(uri):Activity|null {
 
         if(this.getType(uri) !== Types.Prov.Activity)
             return null
 
-        return new S2ProvActivity(this, uri)
+        return new Activity(this, uri)
 
     }
 
@@ -376,10 +375,10 @@ export default class SBOL2GraphView extends GraphViewBasic {
     }
 
 
-    get provPlans():Array<S2ProvPlan> {
+    get provPlans():Array<Plan> {
 
         return this.instancesOfType(Types.Prov.Plan)
-                    .map((uri) => new S2ProvPlan(this, uri))
+                    .map((uri) => new Plan(this, uri))
 
     }
 
@@ -584,91 +583,6 @@ export default class SBOL2GraphView extends GraphViewBasic {
         })
     }
 
-    uriToFacade(uri:string):Facade|undefined {
-
-        if(!uri)
-            return undefined
-
-        const type = this.getType(uri)
-
-        if(type === Types.SBOL2.ComponentDefinition)
-            return new S2ComponentDefinition(this, uri)
-
-        if(type === Types.SBOL2.Component)
-            return new S2ComponentInstance(this, uri)
-
-        if(type === Types.SBOL2.FunctionalComponent)
-            return new S2FunctionalComponent(this, uri)
-
-        if(type === Types.SBOL2.Implementation)
-            return new S2Implementation(this, uri)
-
-        if(type === Types.SBOL2.Experiment)
-            return new S2Experiment(this, uri)
-
-        if(type === Types.SBOL2.ExperimentalData)
-            return new S2ExperimentalData(this, uri)
-
-        if(type === Types.SBOL2.Interaction)
-            return new S2Interaction(this, uri)
-
-        if(type === Types.SBOL2.MapsTo)
-            return new S2MapsTo(this, uri)
-
-        if(type === Types.SBOL2.ModuleDefinition)
-            return new S2ModuleDefinition(this, uri)
-
-        if(type === Types.SBOL2.Module)
-            return new S2ModuleInstance(this, uri)
-
-        if(type === Types.SBOL2.Participation)
-            return new S2Participation(this, uri)
-
-        if(type === Types.SBOL2.Range)
-            return new S2Range(this, uri)
-
-        if(type === Types.SBOL2.Cut)
-            return new S2Cut(this, uri)
-
-        if(type === Types.SBOL2.GenericLocation)
-            return new S2GenericLocation(this, uri)
-
-        if(type === Types.SBOL2.SequenceAnnotation)
-            return new S2SequenceAnnotation(this, uri)
-
-        if(type === Types.SBOL2.Sequence)
-            return new S2Sequence(this, uri)
-
-        if(type === Types.SBOL2.Collection)
-            return new S2Collection(this, uri)
-
-        if(type === Types.Prov.Agent)
-            return new S2ProvAgent(this, uri)
-
-        if(type === Types.Prov.Association)
-            return new S2ProvAssociation(this, uri)
-
-        if(type === Types.Prov.Plan)
-            return new S2ProvPlan(this, uri)
-
-        if(type === Types.Prov.Usage)
-            return new S2ProvUsage(this, uri)
-
-        if(type === Types.Prov.Activity)
-            return new S2ProvActivity(this, uri)
-
-        if(type === Types.SBOL2.Model)
-            return new S2Model(this, uri)
-
-        if(type === Types.SBOL2.Attachment)
-            return new S2Attachment(this, uri)
-
-        if(type === Types.Measure.Measure)
-            return new S2Measure(this, uri)
-
-        return super.uriToFacade(uri) || new S2Identified(this, uri)
-    }
-
     uriToIdentified(uri:string):S2Identified|undefined {
 
         let f = this.uriToFacade(uri)
@@ -767,6 +681,85 @@ export default class SBOL2GraphView extends GraphViewBasic {
         enforceURICompliance(this, uriPrefix)
     }
 
+}
+
+class SBOL2 extends GraphViewBasic {
+
+    view:SBOL2GraphView
+
+    constructor(view:SBOL2GraphView) {
+        super(view.graph)
+    }
+
+    uriToFacade(uri:string):Facade|undefined {
+
+        if(!uri)
+            return undefined
+
+        const type = this.getType(uri)
+
+        if(type === Types.SBOL2.ComponentDefinition)
+            return new S2ComponentDefinition(this.view, uri)
+
+        if(type === Types.SBOL2.Component)
+            return new S2ComponentInstance(this.view, uri)
+
+        if(type === Types.SBOL2.FunctionalComponent)
+            return new S2FunctionalComponent(this.view, uri)
+
+        if(type === Types.SBOL2.Implementation)
+            return new S2Implementation(this.view, uri)
+
+        if(type === Types.SBOL2.Experiment)
+            return new S2Experiment(this.view, uri)
+
+        if(type === Types.SBOL2.ExperimentalData)
+            return new S2ExperimentalData(this.view, uri)
+
+        if(type === Types.SBOL2.Interaction)
+            return new S2Interaction(this.view, uri)
+
+        if(type === Types.SBOL2.MapsTo)
+            return new S2MapsTo(this.view, uri)
+
+        if(type === Types.SBOL2.ModuleDefinition)
+            return new S2ModuleDefinition(this.view, uri)
+
+        if(type === Types.SBOL2.Module)
+            return new S2ModuleInstance(this.view, uri)
+
+        if(type === Types.SBOL2.Participation)
+            return new S2Participation(this.view, uri)
+
+        if(type === Types.SBOL2.Range)
+            return new S2Range(this.view, uri)
+
+        if(type === Types.SBOL2.Cut)
+            return new S2Cut(this.view, uri)
+
+        if(type === Types.SBOL2.GenericLocation)
+            return new S2GenericLocation(this.view, uri)
+
+        if(type === Types.SBOL2.SequenceAnnotation)
+            return new S2SequenceAnnotation(this.view, uri)
+
+        if(type === Types.SBOL2.Sequence)
+            return new S2Sequence(this.view, uri)
+
+        if(type === Types.SBOL2.Collection)
+            return new S2Collection(this.view, uri)
+
+        if(type === Types.SBOL2.Model)
+            return new S2Model(this.view, uri)
+
+        if(type === Types.SBOL2.Attachment)
+            return new S2Attachment(this.view, uri)
+
+        if(type === Types.Measure.Measure)
+            return new S2Measure(this.view, uri)
+
+        return super.uriToFacade(uri)
+    }
 }
 
 

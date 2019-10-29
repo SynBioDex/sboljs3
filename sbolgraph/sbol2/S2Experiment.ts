@@ -2,7 +2,7 @@ import S2Identified from './S2Identified'
 import SBOL2GraphView from '../SBOL2GraphView';
 import { node } from 'rdfoo'
 import S2ExperimentalData from './S2ExperimentalData';
-import S2ProvActivity from './S2ProvActivity';
+import { Activity } from 'rdfoo-prov';
 import { Predicates, Types } from 'bioterms';
 import S2Implementation from './S2Implementation';
 
@@ -41,7 +41,7 @@ export default class S2Experiment extends S2Identified {
 
     }
 
-    get activity():S2ProvActivity|undefined {
+    get activity():Activity|undefined {
 
         let activity = this.getUriProperty(Predicates.Prov.wasGeneratedBy)
 
@@ -49,10 +49,10 @@ export default class S2Experiment extends S2Identified {
             return undefined
         }
 
-        return new S2ProvActivity(this.view, activity)
+        return new Activity(this.view, activity)
     }
 
-    set activity(activity:S2ProvActivity|undefined) {
+    set activity(activity:Activity|undefined) {
 
         if(activity === undefined) {
             this.deleteProperty(Predicates.Prov.wasGeneratedBy)

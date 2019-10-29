@@ -2,6 +2,8 @@ A library for the Synthetic Biology Open Language (SBOL) written in TypeScript, 
 
 Unlike existing libraries such as libSBOLj and sboljs, sbolgraph does not attempt to "load" SBOL RDF into an object oriented datastructure.  Instead, sbolgraph keeps the SBOL RDF in an RDF graph, and provides "facade" classes that look like class instances but actually just wrap a URI and query/update the graph in their getters/setters.
 
+sbolgraph is built on [rdfoo](https://github.com/udp/rdfoo), a library for creating object oriented RDF abstractions in TypeScript.  It can therefore be used in conjunction with other rdfoo abstractions.  For example, the PROV-O abstraction used by sbolgraph is provided by [rdfoo-prov](https://github.com/udp/rdfoo-prov).
+
 [Example project using webpack](https://github.com/udp/sbolgraph_example)
 
 # Implemented so far

@@ -3,7 +3,7 @@ import SXIdentified from './SXIdentified'
 import SBOLXGraphView from '../SBOLXGraphView';
 import { node } from 'rdfoo'
 import SXExperimentalData from './SXExperimentalData';
-import SXProvActivity from './SXProvActivity';
+import { Activity }  from 'rdfoo-prov';
 import { Predicates, Types } from 'bioterms';
 import SXImplementation from './SXImplementation';
 
@@ -42,7 +42,7 @@ export default class SXExperiment extends SXIdentified {
 
     }
 
-    get activity():SXProvActivity|undefined {
+    get activity():Activity|undefined {
 
         let activity = this.getUriProperty(Predicates.Prov.wasGeneratedBy)
 
@@ -50,10 +50,10 @@ export default class SXExperiment extends SXIdentified {
             return undefined
         }
 
-        return new SXProvActivity(this.view, activity)
+        return new Activity(this.view, activity)
     }
 
-    set activity(activity:SXProvActivity|undefined) {
+    set activity(activity:Activity|undefined) {
 
         if(activity === undefined) {
             this.deleteProperty(Predicates.Prov.wasGeneratedBy)

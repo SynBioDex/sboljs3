@@ -28,6 +28,7 @@
     "browser-request": "git+https://github.com/adampash/browser-request.git#feat-add-headers-to-response",
     "genbankjs": "0.1.0",
     "rdfoo": "git+https://github.com/udp/rdfoo.git",
+    "rdfoo-prov": "git+https://github.com/udp/rdfoo-prov.git",
     "request": "^2.81.0",
     "shortid": "^2.2.8",
     "uuid": "^3.3.2",

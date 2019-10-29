@@ -1,6 +1,6 @@
 
 
-import { Graph, GraphViewBasic, triple, node, changeURIPrefix, serialize, Facade } from 'rdfoo'
+import { Graph, GraphViewBasic, triple, node, changeURIPrefix, serialize, Facade, GraphViewHybrid } from 'rdfoo'
 import { Types, Predicates, Specifiers, Prefixes } from 'bioterms'
 
 import request = require('request')
@@ -19,11 +19,6 @@ import SXParticipation from './sbolx/SXParticipation'
 import SXInteraction from './sbolx/SXInteraction'
 import SXCollection from './sbolx/SXCollection'
 import SXModel from './sbolx/SXModel'
-import SXProvActivity from './sbolx/SXProvActivity';
-import SXProvAgent from './sbolx/SXProvAgent';
-import SXProvAssociation from './sbolx/SXProvAssociation';
-import SXProvPlan from './sbolx/SXProvPlan';
-import SXProvUsage from './sbolx/SXProvUsage';
 import SXImplementation from './sbolx/SXImplementation';
 import SXExperiment from './sbolx/SXExperiment';
 import SXExperimentalData from './sbolx/SXExperimentalData';
@@ -37,13 +32,16 @@ import convert1to2 from './conversion/fromSBOL1/toSBOL2';
 import convert2toX from './conversion/fromSBOL2/toSBOLX';
 import enforceURICompliance from './conversion/enforceURICompliance';
 import SBOL2GraphView from './SBOL2GraphView';
+import { ProvView } from 'rdfoo-prov';
 
-export default class SBOLXGraphView extends GraphViewBasic {
+export default class SBOLXGraphView extends GraphViewHybrid {
 
     constructor(graph:Graph) {
 
         super(graph)
 
+        this.addView(new SBOLX(this))
+        this.addView(new ProvView(graph))
     }
 
     createComponent(uriPrefix:string, id:string, version?:string):SXComponent {
@@ -353,77 +351,6 @@ export default class SBOLXGraphView extends GraphViewBasic {
         })
     }
 
-    uriToFacade(uri:string):Facade|undefined {
-
-        if(!uri)
-            return undefined
-
-        const types = this.getTypes(uri)
-
-        for(var i = 0; i < types.length; ++ i) {
-
-            let type = types[i]
-
-            if(type === Types.SBOLX.Component)
-                return new SXComponent(this, uri)
-
-            if(type === Types.SBOLX.SubComponent)
-                return new SXSubComponent(this, uri)
-
-            if(type === Types.SBOLX.Interaction)
-                return new SXInteraction(this, uri)
-
-            if(type === Types.SBOLX.Participation)
-                return new SXParticipation(this, uri)
-
-            if(type === Types.SBOLX.Range)
-                return new SXRange(this, uri)
-
-            if(type === Types.SBOLX.OrientedLocation)
-                return new SXOrientedLocation(this, uri)
-
-            if(type === Types.SBOLX.SequenceAnnotation)
-                return new SXSequenceFeature(this, uri)
-
-            if(type === Types.SBOLX.Sequence)
-                return new SXSequence(this, uri)
-
-            if(type === Types.SBOLX.Collection)
-                return new SXCollection(this, uri)
-
-            if(type === Types.SBOLX.Model)
-                return new SXModel(this, uri)
-
-            if(type === Types.SBOLX.Implementation)
-                return new SXImplementation(this, uri)
-
-            if(type === Types.SBOLX.Experiment)
-                return new SXExperiment(this, uri)
-
-            if(type === Types.SBOLX.ExperimentalData)
-                return new SXExperimentalData(this, uri)
-
-            if(type === Types.Prov.Activity)
-                return new SXProvActivity(this, uri)
-
-            if(type === Types.Prov.Agent)
-                return new SXProvAgent(this, uri)
-
-            if(type === Types.Prov.Association)
-                return new SXProvAssociation(this, uri)
-
-            if(type === Types.Prov.Usage)
-                return new SXProvUsage(this, uri)
-
-            if(type === Types.Prov.Plan)
-                return new SXProvPlan(this, uri)
-
-            throw new Error('unknown type: ' + uri + ' a ' + type)
-        }
-
-        return new SXIdentified(this, uri)
-    }
-
     uriToIdentified(uri:string):SXIdentified|undefined {
 
         let f = this.uriToFacade(uri)
@@ -512,6 +439,71 @@ export default class SBOLXGraphView extends GraphViewBasic {
         enforceURICompliance(this, uriPrefix)
     }
 }
+
+class SBOLX extends GraphViewBasic {
+
+    view:SBOLXGraphView
+
+    constructor(view:SBOLXGraphView) {
+        super(view.graph)
+    }
+
+    uriToFacade(uri:string):Facade|undefined {
+
+        if(!uri)
+            return undefined
+
+        const types = this.getTypes(uri)
+
+        for(var i = 0; i < types.length; ++ i) {
+
+            let type = types[i]
+
+            if(type === Types.SBOLX.Component)
+                return new SXComponent(this.view, uri)
+
+            if(type === Types.SBOLX.SubComponent)
+                return new SXSubComponent(this.view, uri)
+
+            if(type === Types.SBOLX.Interaction)
+                return new SXInteraction(this.view, uri)
+
+            if(type === Types.SBOLX.Participation)
+                return new SXParticipation(this.view, uri)
+
+            if(type === Types.SBOLX.Range)
+                return new SXRange(this.view, uri)
+
+            if(type === Types.SBOLX.OrientedLocation)
+                return new SXOrientedLocation(this.view, uri)
+
+            if(type === Types.SBOLX.SequenceAnnotation)
+                return new SXSequenceFeature(this.view, uri)
+
+            if(type === Types.SBOLX.Sequence)
+                return new SXSequence(this.view, uri)
+
+            if(type === Types.SBOLX.Collection)
+                return new SXCollection(this.view, uri)
+
+            if(type === Types.SBOLX.Model)
+                return new SXModel(this.view, uri)
+
+            if(type === Types.SBOLX.Implementation)
+                return new SXImplementation(this.view, uri)
+
+            if(type === Types.SBOLX.Experiment)
+                return new SXExperiment(this.view, uri)
+
+            if(type === Types.SBOLX.ExperimentalData)
+                return new SXExperimentalData(this.view, uri)
+
+            throw new Error('unknown type: ' + uri + ' a ' + type)
+        }
+    }
+
+}
+
 
 
 
