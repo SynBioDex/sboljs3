@@ -1,4 +1,4 @@
-import SBOL2Graph from '../SBOL2Graph';
+import SBOL2GraphView from '../SBOL2GraphView';
 
 import S2Identified from './S2Identified'
 import S2ComponentDefinition from './S2ComponentDefinition'
@@ -15,9 +15,9 @@ import S2Measure from './S2Measure';
 
 export default class S2FunctionalComponent extends S2Identified {
 
-    constructor(graph:SBOL2Graph, uri:string) {
+    constructor(view:SBOL2GraphView, uri:string) {
 
-        super(graph, uri)
+        super(view, uri)
 
         this.direction = Specifiers.SBOL2.Direction.InputAndOutput
         this.access = Specifiers.SBOL2.Access.PublicAccess
@@ -80,7 +80,7 @@ export default class S2FunctionalComponent extends S2Identified {
             throw new Error('fc ' + this.uri + ' has no def?')
         }
 
-        return new S2ComponentDefinition(this.graph, uri)
+        return new S2ComponentDefinition(this.view, uri)
     }
     
     set definition(definition:S2ComponentDefinition) {
@@ -89,21 +89,21 @@ export default class S2FunctionalComponent extends S2Identified {
 
     get mappings():Array<S2MapsTo> {
 
-        return this.graph.match(null, Predicates.SBOL2.local, this.uri).map(triple.subjectUri)
+        return this.view.graph.match(null, Predicates.SBOL2.local, this.uri).map(triple.subjectUri)
                 .concat(
-                    this.graph.match(null, Predicates.SBOL2.remote, this.uri).map(triple.subjectUri)
+                    this.view.graph.match(null, Predicates.SBOL2.remote, this.uri).map(triple.subjectUri)
                 )
                 .filter((el) => !!el)
-                .map((mapsToUri) => new S2MapsTo(this.graph, mapsToUri as string))
+                .map((mapsToUri) => new S2MapsTo(this.view, mapsToUri as string))
     }
 
     createMapping(local:S2FunctionalComponent, remote:S2ComponentInstance, refinement:string):S2MapsTo {
  
         let id = local.displayId + '_mapsto_' + remote.displayId
 
-        let identified = S2IdentifiedFactory.createChild(this.graph, Types.SBOL2.MapsTo, this, id, id, this.version)
+        let identified = S2IdentifiedFactory.createChild(this.view, Types.SBOL2.MapsTo, this, id, id, this.version)
 
-        let mapsTo = new S2MapsTo(this.graph, identified.uri)
+        let mapsTo = new S2MapsTo(this.view, identified.uri)
 
         mapsTo.local = local
         mapsTo.remote = remote
@@ -115,23 +115,23 @@ export default class S2FunctionalComponent extends S2Identified {
     get containingModuleDefinition():S2ModuleDefinition {
 
         const uri = triple.subjectUri(
-            this.graph.matchOne(null, Predicates.SBOL2.functionalComponent, this.uri)
+            this.view.graph.matchOne(null, Predicates.SBOL2.functionalComponent, this.uri)
         )
 
         if(!uri) {
             throw new Error('FC ' + this.uri + ' not contained by a MD?')
         }
 
-        return new S2ModuleDefinition(this.graph, uri)
+        return new S2ModuleDefinition(this.view, uri)
     }
 
 
 
     get participations():Array<S2Participation> {
 
-        return this.graph.match(null, Predicates.SBOL2.participant, this.uri)
+        return this.view.graph.match(null, Predicates.SBOL2.participant, this.uri)
                    .map(triple.subjectUri)
-                   .map((uri) => uri ? new S2Participation(this.graph, uri): undefined)
+                   .map((uri) => uri ? new S2Participation(this.view, uri): undefined)
                    .filter((el) => !!el) as Array<S2Participation>
     }
 
@@ -152,7 +152,7 @@ export default class S2FunctionalComponent extends S2Identified {
         if(measure === undefined)
             return
         
-        return new S2Measure(this.graph, measure)
+        return new S2Measure(this.view, measure)
     }
 
     set measure(measure:S2Measure|undefined) {

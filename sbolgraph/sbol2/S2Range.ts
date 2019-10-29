@@ -3,13 +3,13 @@ import S2OrientedLocation from './S2OrientedLocation'
 
 import { triple } from 'rdfoo'
 import { Types, Predicates, Specifiers } from 'bioterms'
-import SBOL2Graph from "../SBOL2Graph";
+import SBOL2GraphView from "../SBOL2GraphView";
 
 export default class S2Range extends S2OrientedLocation {
 
-    constructor(graph:SBOL2Graph, uri:string) {
+    constructor(view:SBOL2GraphView, uri:string) {
 
-        super(graph, uri)
+        super(view, uri)
 
     }
 

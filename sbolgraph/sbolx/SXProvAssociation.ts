@@ -1,16 +1,16 @@
 
 
 import SXIdentified from "./SXIdentified";
-import SBOLXGraph from "../SBOLXGraph";
+import SBOLXGraphView from "../SBOLXGraphView";
 import SXProvAgent from "./SXProvAgent";
 import SXProvPlan from "./SXProvPlan";
 import { Types, Predicates } from "bioterms";
 
 export default class SXProvAssociation extends SXIdentified {
 
-    constructor(graph:SBOLXGraph, uri:string) {
+    constructor(view:SBOLXGraphView, uri:string) {
 
-        super(graph, uri)
+        super(view, uri)
 
     }
 
@@ -26,7 +26,7 @@ export default class SXProvAssociation extends SXIdentified {
             return undefined
         }
 
-        return new SXProvAgent(this.graph, agent)
+        return new SXProvAgent(this.view, agent)
     }
 
     set agent(agent:SXProvAgent|undefined) {
@@ -46,7 +46,7 @@ export default class SXProvAssociation extends SXIdentified {
             return undefined
         }
 
-        return new SXProvPlan(this.graph, plan)
+        return new SXProvPlan(this.view, plan)
     }
 
     set plan(plan:SXProvPlan|undefined) {

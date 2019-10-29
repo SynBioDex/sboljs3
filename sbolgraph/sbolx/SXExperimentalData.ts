@@ -1,13 +1,13 @@
 
 import SXIdentified from "./SXIdentified";
-import SBOLXGraph from "../SBOLXGraph";
+import SBOLXGraphView from "../SBOLXGraphView";
 import { Types } from "bioterms";
 
 export default class SXExperimentalData extends SXIdentified {
 
-    constructor(graph:SBOLXGraph, uri:string) {
+    constructor(view:SBOLXGraphView, uri:string) {
 
-        super(graph, uri)
+        super(view, uri)
     }
 
     get facadeType():string {

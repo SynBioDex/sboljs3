@@ -4,7 +4,7 @@ import SXThingWithLocation from './SXThingWithLocation'
 
 import { triple, node } from 'rdfoo'
 import { Types, Predicates, Specifiers, Prefixes } from 'bioterms'
-import SBOLXGraph from "../SBOLXGraph";
+import SBOLXGraphView from "../SBOLXGraphView";
 import SXComponent from "./SXComponent";
 import SXSubComponent from "./SXSubComponent";
 import SXIdentifiedFactory from './SXIdentifiedFactory';
@@ -13,9 +13,9 @@ import extractTerm from '../extractTerm'
 
 export default class SXSequenceFeature extends SXThingWithLocation {
 
-    constructor(graph:SBOLXGraph, uri:string) {
+    constructor(view:SBOLXGraphView, uri:string) {
 
-        super(graph, uri)
+        super(view, uri)
 
     }
 
@@ -24,15 +24,15 @@ export default class SXSequenceFeature extends SXThingWithLocation {
     }
 
     hasRole(role:string):boolean {
-        return this.graph.hasMatch(this.uri, Predicates.SBOLX.role, role)
+        return this.view.graph.hasMatch(this.uri, Predicates.SBOLX.role, role)
     }
 
     addRole(role:string):void {
-        this.graph.insert(this.uri, Predicates.SBOLX.role, node.createUriNode(role))
+        this.insertProperty(Predicates.SBOLX.role, node.createUriNode(role))
     }
 
     removeRole(role:string):void {
-        this.graph.removeMatches(this.uri, Predicates.SBOLX.role, role)
+        this.view.graph.removeMatches(this.uri, Predicates.SBOLX.role, role)
     }
 
     get soTerms():string[] {
@@ -52,14 +52,14 @@ export default class SXSequenceFeature extends SXThingWithLocation {
     get containingObject():SXIdentified|undefined {
 
         const uri = triple.subjectUri(
-            this.graph.matchOne(null, Predicates.SBOLX.sequenceAnnotation, this.uri)
+            this.view.graph.matchOne(null, Predicates.SBOLX.sequenceAnnotation, this.uri)
         )
 
         if(!uri) {
             throw new Error('has no containing object?')
         }
 
-        return this.graph.uriToFacade(uri)
+        return this.view.uriToIdentified(uri)
 
     }
 

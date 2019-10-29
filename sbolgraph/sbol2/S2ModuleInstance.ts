@@ -4,7 +4,7 @@ import S2ModuleDefinition from './S2ModuleDefinition'
 
 import { triple } from 'rdfoo'
 import { Types, Predicates, Specifiers } from 'bioterms'
-import SBOL2Graph from "../SBOL2Graph";
+import SBOL2GraphView from "../SBOL2GraphView";
 import S2FunctionalComponent from './S2FunctionalComponent';
 import S2MapsTo from './S2MapsTo';
 import S2IdentifiedFactory from './S2IdentifiedFactory';
@@ -12,9 +12,9 @@ import S2Measure from './S2Measure';
 
 export default class S2ModuleInstance extends S2Identified {
 
-    constructor(graph:SBOL2Graph, uri:string) {
+    constructor(view:SBOL2GraphView, uri:string) {
 
-        super(graph, uri)
+        super(view, uri)
     }
 
     get facadeType():string {
@@ -29,36 +29,36 @@ export default class S2ModuleInstance extends S2Identified {
             throw new Error('module has no definition?')
         }
 
-        return new S2ModuleDefinition(this.graph, uri)
+        return new S2ModuleDefinition(this.view, uri)
     }
 
     get containingObject():S2Identified|undefined {
 
         const uri = triple.subjectUri(
-            this.graph.matchOne(null, Predicates.SBOL2.module, this.uri)
+            this.view.graph.matchOne(null, Predicates.SBOL2.module, this.uri)
         )
 
         if(!uri) {
             throw new Error('ModuleInstance has no containing object?')
         }
 
-        return this.graph.uriToFacade(uri)
+        return this.view.uriToIdentified(uri)
 
     }
 
 
     get mappings():S2MapsTo[] {
 
-        return this.getUriProperties(Predicates.SBOL2.mapsTo).map((mapsTo) => new S2MapsTo(this.graph, mapsTo))
+        return this.getUriProperties(Predicates.SBOL2.mapsTo).map((mapsTo) => new S2MapsTo(this.view, mapsTo))
     }
 
 
     createMapping(local:S2FunctionalComponent, remote:S2FunctionalComponent)  {
 
         const identified:S2Identified =
-            S2IdentifiedFactory.createChild(this.graph, Types.SBOL2.MapsTo, this,  Predicates.SBOL2.mapsTo,'mapping_' + local.displayId + '_' + remote.displayId, undefined, this.version)
+            S2IdentifiedFactory.createChild(this.view, Types.SBOL2.MapsTo, this,  Predicates.SBOL2.mapsTo,'mapping_' + local.displayId + '_' + remote.displayId, undefined, this.version)
 
-        const mapping:S2MapsTo = new S2MapsTo(this.graph, identified.uri)
+        const mapping:S2MapsTo = new S2MapsTo(this.view, identified.uri)
 
         mapping.local = local
         mapping.remote = remote
@@ -73,7 +73,7 @@ export default class S2ModuleInstance extends S2Identified {
         if(measure === undefined)
             return
         
-        return new S2Measure(this.graph, measure)
+        return new S2Measure(this.view, measure)
     }
 
     set measure(measure:S2Measure|undefined) {

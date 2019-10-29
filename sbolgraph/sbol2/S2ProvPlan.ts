@@ -1,13 +1,13 @@
 
 import S2Identified from "./S2Identified";
-import SBOL2Graph from "../SBOL2Graph";
+import SBOL2GraphView from "../SBOL2GraphView";
 import { Types } from "bioterms";
 
 export default class S2ProvPlan extends S2Identified {
 
-    constructor(graph:SBOL2Graph, uri:string) {
+    constructor(view:SBOL2GraphView, uri:string) {
 
-        super(graph, uri)
+        super(view, uri)
 
     }
 

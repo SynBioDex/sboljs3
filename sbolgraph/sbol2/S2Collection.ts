@@ -1,5 +1,5 @@
 
-import SBOL2Graph from '../SBOL2Graph';
+import SBOL2GraphView from '../SBOL2GraphView';
 
 import S2Identified from './S2Identified'
 
@@ -8,9 +8,9 @@ import { Types, Predicates, Specifiers } from 'bioterms'
 
 export default class S2Collection extends S2Identified {
 
-    constructor(graph:SBOL2Graph, uri:string) {
+    constructor(view:SBOL2GraphView, uri:string) {
 
-        super(graph, uri)
+        super(view, uri)
     }
 
     get facadeType():string {
@@ -20,14 +20,14 @@ export default class S2Collection extends S2Identified {
     get members():Array<S2Identified> {
 
         return this.getUriProperties(Predicates.SBOL2.member)
-                   .map((uri:string) => this.graph.uriToFacade(uri))
+                   .map((uri:string) => this.view.uriToFacade(uri))
                    .filter((r:S2Identified) => r !== undefined) as Array<S2Identified>
 
     }
 
     addMember(member:S2Identified):void {
 
-        this.graph.add(this.uri, Predicates.SBOL2.member, node.createUriNode(member.uri))
+        this.insertProperty(Predicates.SBOL2.member, node.createUriNode(member.uri))
 
     }
 

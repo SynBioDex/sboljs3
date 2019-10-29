@@ -2,15 +2,15 @@
 import S2Identified from './S2Identified'
 
 import { Types, Predicates, Specifiers } from 'bioterms'
-import SBOL2Graph from "../SBOL2Graph";
+import SBOL2GraphView from "../SBOL2GraphView";
 
 import { triple } from 'rdfoo'
 
 export default class S2MapsTo extends S2Identified {
 
-    constructor(graph:SBOL2Graph, uri:string) {
+    constructor(view:SBOL2GraphView, uri:string) {
 
-        super(graph, uri)
+        super(view, uri)
     }
 
     get facadeType():string {
@@ -24,7 +24,7 @@ export default class S2MapsTo extends S2Identified {
         if(localUri === undefined)
             return undefined
 
-        return this.graph.uriToFacade(localUri)
+        return this.view.uriToIdentified(localUri)
 
     }
 
@@ -44,7 +44,7 @@ export default class S2MapsTo extends S2Identified {
         if(remoteUri === undefined)
             return undefined
 
-        return this.graph.uriToFacade(remoteUri)
+        return this.view.uriToIdentified(remoteUri)
 
     }
 
@@ -73,14 +73,14 @@ export default class S2MapsTo extends S2Identified {
     get containingObject():S2Identified|undefined {
 
         const uri = triple.subjectUri(
-            this.graph.matchOne(null, Predicates.SBOL2.mapsTo, this.uri)
+            this.view.graph.matchOne(null, Predicates.SBOL2.mapsTo, this.uri)
         )
 
         if(!uri) {
             throw new Error('MapsTo has no containing object?')
         }
 
-        return this.graph.uriToFacade(uri)
+        return this.view.uriToIdentified(uri)
 
     }
 }

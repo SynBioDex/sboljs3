@@ -1,5 +1,5 @@
 
-import SBOLXGraph from '../SBOLXGraph';
+import SBOLXGraphView from '../SBOLXGraphView';
 
 import SXIdentified from './SXIdentified'
 
@@ -8,9 +8,9 @@ import { Types, Predicates, Specifiers } from 'bioterms'
 
 export default class SXCollection extends SXIdentified {
 
-    constructor(graph:SBOLXGraph, uri:string) {
+    constructor(view:SBOLXGraphView, uri:string) {
 
-        super(graph, uri)
+        super(view, uri)
     }
 
     get facadeType():string {
@@ -20,14 +20,14 @@ export default class SXCollection extends SXIdentified {
     get members():Array<SXIdentified> {
 
         return this.getUriProperties(Predicates.SBOLX.member)
-                   .map((uri:string) => this.graph.uriToFacade(uri))
+                   .map((uri:string) => this.view.uriToFacade(uri))
                    .filter((r:SXIdentified) => r !== undefined) as Array<SXIdentified>
 
     }
 
     addMember(member:SXIdentified):void {
 
-        this.graph.insertProperties(this.uri, {
+        this.insertProperties({
             [Predicates.SBOLX.member]: node.createUriNode(member.uri)
         })
 

@@ -3,28 +3,28 @@ import SXIdentified from './SXIdentified'
 
 import { triple } from 'rdfoo'
 import { Types, Predicates, Specifiers } from 'bioterms'
-import SBOLXGraph from "../SBOLXGraph";
+import SBOLXGraphView from "../SBOLXGraphView";
 import SXSequence from "./SXSequence";
 
 export default abstract class SXLocation extends SXIdentified {
 
-    constructor(graph:SBOLXGraph, uri:string) {
+    constructor(view:SBOLXGraphView, uri:string) {
 
-        super(graph, uri)
+        super(view, uri)
 
     }
 
     get containingObject():SXIdentified|undefined {
 
         const uri = triple.subjectUri(
-            this.graph.matchOne(null, Predicates.SBOLX.location, this.uri)
+            this.view.graph.matchOne(null, Predicates.SBOLX.location, this.uri)
         )
 
         if(!uri) {
             throw new Error('Location has no containing object?')
         }
 
-        return this.graph.uriToFacade(uri)
+        return this.view.uriToIdentified(uri)
 
     }
 
@@ -59,7 +59,7 @@ export default abstract class SXLocation extends SXIdentified {
         if(uri === undefined)
             return undefined
         
-        let obj = this.graph.uriToFacade(uri)
+        let obj = this.view.uriToFacade(uri)
 
         if(! (obj instanceof SXSequence)) {
             throw new Error('sequence was not a sequence')

@@ -4,13 +4,13 @@ import SXIdentified from './SXIdentified'
 import { Types, Predicates, Specifiers } from 'bioterms'
 
 import { triple } from 'rdfoo'
-import SBOLXGraph from '../SBOLXGraph';
+import SBOLXGraphView from '../SBOLXGraphView';
 
 export default class SXMapsTo extends SXIdentified {
 
-    constructor(graph:SBOLXGraph, uri:string) {
+    constructor(view:SBOLXGraphView, uri:string) {
 
-        super(graph, uri)
+        super(view, uri)
     }
 
     get facadeType():string {
@@ -24,7 +24,7 @@ export default class SXMapsTo extends SXIdentified {
         if(localUri === undefined)
             return undefined
 
-        return this.graph.uriToFacade(localUri)
+        return this.view.uriToIdentified(localUri)
 
     }
 
@@ -44,7 +44,7 @@ export default class SXMapsTo extends SXIdentified {
         if(remoteUri === undefined)
             return undefined
 
-        return this.graph.uriToFacade(remoteUri)
+        return this.view.uriToIdentified(remoteUri)
 
     }
 
@@ -73,14 +73,14 @@ export default class SXMapsTo extends SXIdentified {
     get containingObject():SXIdentified|undefined {
 
         const uri = triple.subjectUri(
-            this.graph.matchOne(null, Predicates.SBOLX.mapsTo, this.uri)
+            this.view.graph.matchOne(null, Predicates.SBOLX.mapsTo, this.uri)
         )
 
         if(!uri) {
             throw new Error('MapsTo has no containing object?')
         }
 
-        return this.graph.uriToFacade(uri)
+        return this.view.uriToIdentified(uri)
 
     }
 }

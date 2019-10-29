@@ -1,4 +1,5 @@
-import { SBOLXGraph } from '..';
+
+import SBOLXGraphView from '../SBOLXGraphView';
 
 import SXIdentified from './SXIdentified'
 import SXSubComponent from './SXSubComponent'
@@ -10,9 +11,9 @@ import SXMeasure from './SXMeasure';
 
 export default class SXParticipation extends SXIdentified {
 
-    constructor(graph:SBOLXGraph, uri:string) {
+    constructor(view:SBOLXGraphView, uri:string) {
 
-        super(graph, uri)
+        super(view, uri)
 
     }
 
@@ -25,7 +26,7 @@ export default class SXParticipation extends SXIdentified {
         const uri:string|undefined = this.getUriProperty(Predicates.SBOLX.participant)
 
         if(uri) {
-            return new SXSubComponent(this.graph, uri)
+            return new SXSubComponent(this.view, uri)
         }
     }
 
@@ -41,11 +42,11 @@ export default class SXParticipation extends SXIdentified {
     get interaction():SXInteraction|undefined {
 
         const uri:string|undefined = triple.subjectUri(
-            this.graph.matchOne(null, Predicates.SBOLX.participation, this.uri)
+            this.view.graph.matchOne(null, Predicates.SBOLX.participation, this.uri)
         )
 
         if(uri) {
-            return new SXInteraction(this.graph, uri)
+            return new SXInteraction(this.view, uri)
         }
 
     }
@@ -53,29 +54,29 @@ export default class SXParticipation extends SXIdentified {
     get containingObject():SXIdentified|undefined {
 
         const uri = triple.subjectUri(
-            this.graph.matchOne(null, Predicates.SBOLX.participation, this.uri)
+            this.view.graph.matchOne(null, Predicates.SBOLX.participation, this.uri)
         )
 
         if(!uri) {
             throw new Error('Participation has no containing object?')
         }
 
-        return this.graph.uriToFacade(uri)
+        return this.view.uriToIdentified(uri)
 
     }
 
     hasRole(uri:string):boolean {
 
-        return this.graph.hasMatch(this.uri, Predicates.SBOLX.role, uri)
+        return this.view.graph.hasMatch(this.uri, Predicates.SBOLX.role, uri)
     
     }
 
     addRole(role:string):void {
-        this.graph.insert(this.uri, Predicates.SBOLX.role, node.createUriNode(role))
+        this.insertProperty(Predicates.SBOLX.role, node.createUriNode(role))
     }
 
     removeRole(role:string):void {
-        this.graph.removeMatches(this.uri, Predicates.SBOLX.role, role)
+        this.view.graph.removeMatches(this.uri, Predicates.SBOLX.role, role)
     }
 
     get roles():string[] {
@@ -92,7 +93,7 @@ export default class SXParticipation extends SXIdentified {
         if(measure === undefined)
             return
         
-        return new SXMeasure(this.graph, measure)
+        return new SXMeasure(this.view, measure)
     }
 
     set measure(measure:SXMeasure|undefined) {

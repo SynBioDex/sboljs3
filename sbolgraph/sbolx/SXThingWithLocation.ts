@@ -14,7 +14,7 @@ export default class SXThingWithLocation extends SXIdentified {
     get locations():Array<SXLocation> {
 
         return this.getUriProperties(Predicates.SBOLX.location)
-                   .map((uri:string) => this.graph.uriToFacade(uri) as SXLocation)
+                   .map((uri:string) => this.view.uriToFacade(uri) as SXLocation)
     }
 
     get rangeLocations():Array<SXRange> {
@@ -22,7 +22,7 @@ export default class SXThingWithLocation extends SXIdentified {
         return this.locations.filter((location:SXIdentified) => {
             return location.objectType === Types.SBOLX.Range
         }).map((identified:SXIdentified) => {
-            return new SXRange(this.graph, identified.uri)
+            return new SXRange(this.view, identified.uri)
         })
 
     }
@@ -84,9 +84,9 @@ export default class SXThingWithLocation extends SXIdentified {
         const id:string = 'range'
 
         const identified:SXIdentified =
-            SXIdentifiedFactory.createChild(this.graph, Types.SBOLX.Range, this, Predicates.SBOLX.location, id, undefined, this.version)
+            SXIdentifiedFactory.createChild(this.view, Types.SBOLX.Range, this, Predicates.SBOLX.location, id, undefined, this.version)
 
-        const range:SXRange = new SXRange(this.graph, identified.uri)
+        const range:SXRange = new SXRange(this.view, identified.uri)
 
         range.start = start
         range.end = end
@@ -96,9 +96,9 @@ export default class SXThingWithLocation extends SXIdentified {
 
     addOrientedLocation():SXOrientedLocation {
 
-        const loc:SXIdentified = SXIdentifiedFactory.createChild(this.graph, Types.SBOLX.OrientedLocation, this, Predicates.SBOLX.location, 'location', undefined, this.version)
+        const loc:SXIdentified = SXIdentifiedFactory.createChild(this.view, Types.SBOLX.OrientedLocation, this, Predicates.SBOLX.location, 'location', undefined, this.version)
 
-        return new SXOrientedLocation(loc.graph, loc.uri)
+        return new SXOrientedLocation(loc.view, loc.uri)
     }
 
     setOrientation(orientation:string) {

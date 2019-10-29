@@ -1,15 +1,15 @@
 
 import S2Identified from "./S2Identified";
-import SBOL2Graph from "../SBOL2Graph";
+import SBOL2GraphView from "../SBOL2GraphView";
 import { Types, Predicates } from "bioterms";
 import { S2ComponentDefinition, S2ModuleDefinition } from "..";
 import S2ProvActivity from "./S2ProvActivity";
 
 export default class S2Implementation extends S2Identified {
 
-    constructor(graph:SBOL2Graph, uri:string) {
+    constructor(view:SBOL2GraphView, uri:string) {
 
-        super(graph, uri)
+        super(view, uri)
 
     }
 
@@ -26,7 +26,7 @@ export default class S2Implementation extends S2Identified {
             return undefined
         }
 
-        let builtObj = this.graph.uriToFacade(built)
+        let builtObj = this.view.uriToFacade(built)
 
         if(builtObj instanceof S2ComponentDefinition)
             return builtObj as S2ComponentDefinition
@@ -54,7 +54,7 @@ export default class S2Implementation extends S2Identified {
             return undefined
         }
 
-        return new S2ProvActivity(this.graph, activity)
+        return new S2ProvActivity(this.view, activity)
     }
 
     set activity(activity:S2ProvActivity|undefined) {
@@ -74,11 +74,11 @@ export default class S2Implementation extends S2Identified {
             return undefined
         }
 
-        return new S2Identified(this.graph, design_uri)
+        return new S2Identified(this.view, design_uri)
 
-        // console.log(this.graph.getTopLevelsWithPrefix(design_uri))
+        // console.log(this.view.getTopLevelsWithPrefix(design_uri))
 
-        // let design = this.graph.uriToFacade(design_uri)
+        // let design = this.view.uriToFacade(design_uri)
 
         // console.log(design)
 

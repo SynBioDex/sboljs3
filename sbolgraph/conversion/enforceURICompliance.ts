@@ -5,8 +5,10 @@ import { Predicates } from 'bioterms';
 import SXIdentified from '../sbolx/SXIdentified'
 import S2Identified from '../sbol2/S2Identified'
 import URIUtils from '../URIUtils';
+import SBOLXGraphView from 'sbolgraph/SBOLXGraphView';
+import SBOL2GraphView from 'sbolgraph/SBOL2GraphView';
 
-export default function enforceURICompliance(g:SBOL2Graph|SBOLXGraph, uriPrefix:string) {
+export default function enforceURICompliance(g:SBOL2GraphView|SBOLXGraphView, uriPrefix:string) {
 
     var p_id, p_version, p_persistentIdentity
 
@@ -49,7 +51,7 @@ export default function enforceURICompliance(g:SBOL2Graph|SBOLXGraph, uriPrefix:
 
         let contained = object.containedObjects
 
-        g.replaceURI(object.uri, newURI)
+        g.graph.replaceURI(object.uri, newURI)
 
         for(let child of contained) {
             replaceURIs(child, persistentIdentity + '/')

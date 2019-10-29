@@ -3,7 +3,7 @@ import S2Identified from './S2Identified'
 
 import { triple } from 'rdfoo'
 import { Types, Predicates, Specifiers } from 'bioterms'
-import SBOL2Graph from "../SBOL2Graph";
+import SBOL2GraphView from "../SBOL2GraphView";
 import S2SequenceAnnotation from "./S2SequenceAnnotation";
 import S2ComponentDefinition from "./S2ComponentDefinition";
 import S2ComponentInstance from "./S2ComponentInstance";
@@ -11,24 +11,23 @@ import S2Sequence from './S2Sequence';
 
 export default abstract class S2Location extends S2Identified {
 
-    constructor(graph:SBOL2Graph, uri:string) {
+    constructor(view:SBOL2GraphView, uri:string) {
 
-        super(graph, uri)
+        super(view, uri)
 
     }
 
     get containingObject():S2Identified|undefined {
 
         const uri = triple.subjectUri(
-            this.graph.matchOne(null, Predicates.SBOL2.location, this.uri)
+            this.view.graph.matchOne(null, Predicates.SBOL2.location, this.uri)
         )
 
         if(!uri) {
             throw new Error('Location has no containing object?')
         }
 
-        return this.graph.uriToFacade(uri)
-
+        return this.view.uriToIdentified(uri)
     }
 
     get containingSequenceAnnotation():S2SequenceAnnotation {
@@ -67,7 +66,7 @@ export default abstract class S2Location extends S2Identified {
         if(uri === undefined)
             return undefined
         
-        let obj = this.graph.uriToFacade(uri)
+        let obj = this.view.uriToFacade(uri)
 
         if(! (obj instanceof S2Sequence)) {
             throw new Error('sequence was not a sequence')

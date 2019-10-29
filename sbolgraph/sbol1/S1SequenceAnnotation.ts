@@ -7,11 +7,12 @@ import S1Facade from './S1Facade'
 import SBOL1Graph from '../SBOL1Graph'
 import URIUtils from '../URIUtils'
 import S1DnaComponent from './S1DnaComponent';
+import SBOL1GraphView from '../SBOL1GraphView'
 
 export default class S1SequenceAnnotation extends S1Facade {
 
-    constructor(graph:SBOL1Graph, uri:string) {
-        super(graph, uri)
+    constructor(view:SBOL1GraphView, uri:string) {
+        super(view, uri)
     }
 
     get facadeType():string {
@@ -34,12 +35,12 @@ export default class S1SequenceAnnotation extends S1Facade {
         let uri = this.getUriProperty(Predicates.SBOL1.subComponent)
         if(uri === undefined)
             return undefined
-        return new S1DnaComponent(this.graph, uri)
+        return new S1DnaComponent(this.view, uri)
     }
 
     get precedes():S1SequenceAnnotation[] {
         return this.getUriProperties(Predicates.SBOL1.precedes)
-                   .map((uri) => new S1SequenceAnnotation(this.graph, uri))
+                   .map((uri) => new S1SequenceAnnotation(this.view, uri))
     }
 
 }

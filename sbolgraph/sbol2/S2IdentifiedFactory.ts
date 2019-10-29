@@ -2,11 +2,11 @@
 import S2Identified from "./S2Identified";
 import { Predicates } from 'bioterms'
 import { node } from 'rdfoo'
-import SBOL2Graph from '../SBOL2Graph'
+import SBOL2GraphView from '../SBOL2GraphView'
 
 export default class SXIdentifiedFactory {
     
-    static createTopLevel(graph:SBOL2Graph,
+    static createTopLevel(view:SBOL2GraphView,
                           type:string,
                           uriPrefix:string,
                           id:string|undefined,
@@ -17,31 +17,31 @@ export default class SXIdentifiedFactory {
 
         let versionSuffix = version !== undefined ? '/' + version : ''
 
-        const uri:string = graph.generateURI(uriPrefix + id + '$n?$' + versionSuffix)
+        const uri:string = view.graph.generateURI(uriPrefix + id + '$n?$' + versionSuffix)
 
-        graph.insertProperties(uri, {
+        view.graph.insertProperties(uri, {
             [Predicates.a]: node.createUriNode(type),
             [Predicates.SBOL2.displayId]: node.createStringNode(id),
             [Predicates.SBOL2.persistentIdentity]: node.createUriNode(extractPersistentIdentity(uri, version)),
         })
 
         if(version !== undefined) {
-            graph.insertProperties(uri, {
+            view.graph.insertProperties(uri, {
                 [Predicates.SBOL2.version]: node.createStringNode(version)
             })
         }
 
         if(name !== undefined) {
-            graph.insertProperties(uri, {
+            view.graph.insertProperties(uri, {
                 [Predicates.Dcterms.title]: node.createStringNode(name)
             })
         }
 
-        return new S2Identified(graph, uri)
+        return new S2Identified(view, uri)
 
     }
 
-    static createChild(graph:SBOL2Graph,
+    static createChild(view:SBOL2GraphView,
                     type:string,
                     parent:S2Identified,
                     ownershipPredicate:string,
@@ -53,36 +53,32 @@ export default class SXIdentifiedFactory {
 
         let versionSuffix = version !== undefined ? '/' + version : ''
 
-        console.log('VERSION IS ' + versionSuffix)
-
-        const uri:string = graph.generateURI(
+        const uri:string = view.graph.generateURI(
             parent.persistentIdentity + '/' + id + '$n?$' + versionSuffix)
 
-        console.log('URI IS ' + uri)
-
-        graph.insertProperties(uri, {
+        view.graph.insertProperties(uri, {
             [Predicates.a]: node.createUriNode(type),
             [Predicates.SBOL2.displayId]: node.createStringNode(id),
             [Predicates.SBOL2.persistentIdentity]: node.createUriNode(extractPersistentIdentity(uri, version))
         })
 
         if(version !== undefined) {
-            graph.insertProperties(uri, {
+            view.graph.insertProperties(uri, {
                 [Predicates.SBOL2.version]: node.createStringNode(version)
             })
         }
 
         if(name !== undefined) {
-            graph.insertProperties(uri, {
+            view.graph.insertProperties(uri, {
                 [Predicates.Dcterms.title]: node.createStringNode(name)
             })
         }
 
-        graph.insertProperties(parent.uri, {
+        view.graph.insertProperties(parent.uri, {
             [ownershipPredicate]: node.createUriNode(uri)
         })
 
-        return new S2Identified(graph, uri)
+        return new S2Identified(view, uri)
     }
 
 }

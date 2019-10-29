@@ -3,7 +3,7 @@ import SXIdentified from './SXIdentified'
 import SXSubComponent from './SXSubComponent'
 import SXInteraction from './SXInteraction'
 
-import SBOLXGraph from '../SBOLXGraph'
+import SBOLXGraphView from '../SBOLXGraphView'
 
 import { triple, node } from 'rdfoo'
 import { Predicates, Types, Specifiers, Prefixes } from 'bioterms'
@@ -20,9 +20,9 @@ import extractTerm from '../extractTerm'
 
 export default class SXComponent extends SXIdentified {
 
-    constructor(graph:SBOLXGraph, uri:string) {
+    constructor(view:SBOLXGraphView, uri:string) {
 
-        super(graph, uri)
+        super(view, uri)
 
     }
 
@@ -35,15 +35,15 @@ export default class SXComponent extends SXIdentified {
     }
 
     hasType(type:string):boolean {
-        return this.graph.hasMatch(this.uri, Predicates.SBOLX.type, type)
+        return this.view.graph.hasMatch(this.uri, Predicates.SBOLX.type, type)
     }
 
     addType(type:string):void {
-        this.graph.insert(this.uri, Predicates.SBOLX.type, node.createUriNode(type))
+        this.view.graph.insert(this.uri, Predicates.SBOLX.type, node.createUriNode(type))
     }
 
     removeType(type:string):void {
-        this.graph.removeMatches(this.uri, Predicates.SBOLX.type, type)
+        this.view.graph.removeMatches(this.uri, Predicates.SBOLX.type, type)
     }
 
     get roles():Array<string> {
@@ -51,15 +51,15 @@ export default class SXComponent extends SXIdentified {
     }
 
     hasRole(role:string):boolean {
-        return this.graph.hasMatch(this.uri, Predicates.SBOLX.role, role)
+        return this.view.graph.hasMatch(this.uri, Predicates.SBOLX.role, role)
     }
 
     addRole(role:string):void {
-        this.graph.insert(this.uri, Predicates.SBOLX.role, node.createUriNode(role))
+        this.view.graph.insert(this.uri, Predicates.SBOLX.role, node.createUriNode(role))
     }
 
     removeRole(role:string):void {
-        this.graph.removeMatches(this.uri, Predicates.SBOLX.role, role)
+        this.view.graph.removeMatches(this.uri, Predicates.SBOLX.role, role)
     }
 
     get soTerms():string[] {
@@ -79,21 +79,21 @@ export default class SXComponent extends SXIdentified {
     get sequences():Array<SXSequence> {
 
         return this.getUriProperties(Predicates.SBOLX.sequence)
-                   .map((uri:string) => new SXSequence(this.graph, uri))
+                   .map((uri:string) => new SXSequence(this.view, uri))
 
     }
 
     get subComponents():Array<SXSubComponent> {
 
         return this.getUriProperties(Predicates.SBOLX.subComponent)
-                   .map((uri:string) => new SXSubComponent(this.graph, uri))
+                   .map((uri:string) => new SXSubComponent(this.view, uri))
 
     }
 
     get interactions():Array<SXInteraction> {
 
         return this.getUriProperties(Predicates.SBOLX.interaction)
-                    .map((uri:string) => new SXInteraction(this.graph, uri))
+                    .map((uri:string) => new SXInteraction(this.view, uri))
 
     }
 
@@ -104,14 +104,14 @@ export default class SXComponent extends SXIdentified {
     get sequenceConstraints():Array<SXSequenceConstraint> {
 
         return this.getUriProperties(Predicates.SBOLX.sequenceConstraint)
-                   .map((uri:string) => new SXSequenceConstraint(this.graph, uri))
+                   .map((uri:string) => new SXSequenceConstraint(this.view, uri))
 
     }
 
     get sequenceFeatures():Array<SXSequenceFeature> {
 
         return this.getUriProperties(Predicates.SBOLX.sequenceAnnotation)
-                   .map((uri:string) => new SXSequenceFeature(this.graph, uri))
+                   .map((uri:string) => new SXSequenceFeature(this.view, uri))
 
     }
 
@@ -155,9 +155,9 @@ export default class SXComponent extends SXIdentified {
         const id:string|undefined = definition.id
 
         const identified:SXIdentified =
-            SXIdentifiedFactory.createChild(this.graph, Types.SBOLX.SubComponent, this, Predicates.SBOLX.subComponent, id, undefined, this.version)
+            SXIdentifiedFactory.createChild(this.view, Types.SBOLX.SubComponent, this, Predicates.SBOLX.subComponent, id, undefined, this.version)
 
-        const module:SXSubComponent = new SXSubComponent(this.graph, identified.uri)
+        const module:SXSubComponent = new SXSubComponent(this.view, identified.uri)
 
         module.instanceOf = definition
 
@@ -169,9 +169,9 @@ export default class SXComponent extends SXIdentified {
         const id:string = 'feature_' + name
 
         const identified:SXIdentified =
-            SXIdentifiedFactory.createChild(this.graph, Types.SBOLX.SequenceAnnotation, this, Predicates.SBOLX.sequenceAnnotation, id, undefined, this.version)
+            SXIdentifiedFactory.createChild(this.view, Types.SBOLX.SequenceAnnotation, this, Predicates.SBOLX.sequenceAnnotation, id, undefined, this.version)
 
-        return new SXSequenceFeature(this.graph, identified.uri)
+        return new SXSequenceFeature(this.view, identified.uri)
 
     }
 
@@ -186,7 +186,7 @@ export default class SXComponent extends SXIdentified {
 
     wrap(wrapperId?:string):SXComponent {
 
-        const wrapper:SXComponent = this.graph.createComponent(this.uriPrefix, wrapperId || (this.displayName + '_wrapper'), this.version)
+        const wrapper:SXComponent = this.view.createComponent(this.uriPrefix, wrapperId || (this.displayName + '_wrapper'), this.version)
 
         for(let type of this.types) {
             wrapper.addType(type)
@@ -200,9 +200,9 @@ export default class SXComponent extends SXIdentified {
     createConstraint(subject:SXSubComponent, restriction:string, object:SXSubComponent):SXSequenceConstraint {
 
         const identified:SXIdentified =
-            SXIdentifiedFactory.createChild(this.graph, Types.SBOLX.SequenceConstraint, this, Predicates.SBOLX.sequenceConstraint, 'constraint_' + subject.id + '_' + object.id, undefined, this.version)
+            SXIdentifiedFactory.createChild(this.view, Types.SBOLX.SequenceConstraint, this, Predicates.SBOLX.sequenceConstraint, 'constraint_' + subject.id + '_' + object.id, undefined, this.version)
 
-        const constraint:SXSequenceConstraint = new SXSequenceConstraint(this.graph, identified.uri)
+        const constraint:SXSequenceConstraint = new SXSequenceConstraint(this.view, identified.uri)
 
         constraint.subject = subject
         constraint.restriction = restriction
@@ -213,7 +213,7 @@ export default class SXComponent extends SXIdentified {
 
     createSequence():SXSequence {
 
-        const seq:SXSequence = this.graph.createSequence(this.uriPrefix, this.displayName + '_sequence', this.version)
+        const seq:SXSequence = this.view.createSequence(this.uriPrefix, this.displayName + '_sequence', this.version)
 
         this.addSequence(seq)
 
@@ -222,7 +222,7 @@ export default class SXComponent extends SXIdentified {
 
     addSequence(seq:SXSequence):void {
 
-        this.graph.insertProperties(this.uri, {
+        this.view.graph.insertProperties(this.uri, {
             [Predicates.SBOLX.sequence]: node.createUriNode(seq.uri)
         })
 
@@ -231,19 +231,19 @@ export default class SXComponent extends SXIdentified {
     createInteraction(id:string, version?:string):SXInteraction {
 
         const identified:SXIdentified =
-            SXIdentifiedFactory.createChild(this.graph, Types.SBOLX.Interaction, this,  Predicates.SBOLX.interaction, id, undefined, version)
+            SXIdentifiedFactory.createChild(this.view, Types.SBOLX.Interaction, this,  Predicates.SBOLX.interaction, id, undefined, version)
 
-        const interaction:SXInteraction = new SXInteraction(this.graph, identified.uri)
+        const interaction:SXInteraction = new SXInteraction(this.view, identified.uri)
 
         return interaction
     }
 
     addModel(model:SXModel) {
-        this.graph.add(node.createUriNode(this.uri), node.createUriNode(Predicates.SBOLX.model), node.createUriNode(model.uri))
+        this.insertProperty(Predicates.SBOLX.model, node.createUriNode(model.uri))
     }
 
     dissolve() {
-        let instances = this.graph.getInstancesOfComponent(this)
+        let instances = this.view.getInstancesOfComponent(this)
 
         for(let instance of instances) {
             instance.dissolve()

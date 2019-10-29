@@ -1,6 +1,6 @@
 
 import SXIdentified from './SXIdentified'
-import SBOLXGraph from '../SBOLXGraph';
+import SBOLXGraphView from '../SBOLXGraphView';
 import { node } from 'rdfoo'
 import SXExperimentalData from './SXExperimentalData';
 import SXProvActivity from './SXProvActivity';
@@ -10,9 +10,9 @@ import SXImplementation from './SXImplementation';
 
 export default class SXExperiment extends SXIdentified {
 
-    constructor(graph:SBOLXGraph, uri:string) {
+    constructor(view:SBOLXGraphView, uri:string) {
 
-        super(graph, uri)
+        super(view, uri)
     }
 
     get facadeType():string {
@@ -25,20 +25,20 @@ export default class SXExperiment extends SXIdentified {
         let expDataURIs = this.getUriProperties(Predicates.SBOLX.experimentalData)
 
         for (let uri of expDataURIs){
-            result.push(new SXExperimentalData(this.graph, uri))
+            result.push(new SXExperimentalData(this.view, uri))
         }
 
         return result
 
         // return this.getUriProperties('https://github.com/SynBioDex/SEPs/blob/sep21/sep_021.md#experimentalData')
-        //            .map((uri:string) => this.graph.uriToFacade(uri))
+        //            .map((uri:string) => this.view.uriToFacade(uri))
         //            .filter((r:SEP21ExperimentalData) => r !== undefined) as Array<SEP21ExperimentalData>
 
     }
 
     addExperimentalData(member:SXExperimentalData):void {
 
-        this.graph.add(this.uri, Predicates.SBOLX.experimentalData, node.createUriNode(member.uri))
+        this.insertProperty(Predicates.SBOLX.experimentalData, node.createUriNode(member.uri))
 
     }
 
@@ -50,7 +50,7 @@ export default class SXExperiment extends SXIdentified {
             return undefined
         }
 
-        return new SXProvActivity(this.graph, activity)
+        return new SXProvActivity(this.view, activity)
     }
 
     set activity(activity:SXProvActivity|undefined) {
@@ -71,7 +71,7 @@ export default class SXExperiment extends SXIdentified {
             return undefined
         }
 
-        return new SXImplementation(this.graph, construct_uri)
+        return new SXImplementation(this.view, construct_uri)
 
     }
 
@@ -87,7 +87,7 @@ export default class SXExperiment extends SXIdentified {
 
     addConstruct(construct:SXImplementation):void {
 
-        this.graph.add(this.uri, Predicates.Prov.wasDerivedFrom, node.createUriNode(construct.uri))
+        this.insertProperty(Predicates.Prov.wasDerivedFrom, node.createUriNode(construct.uri))
 
     }
 

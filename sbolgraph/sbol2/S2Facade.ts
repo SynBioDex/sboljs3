@@ -1,14 +1,14 @@
 
-import { Facade } from 'rdfoo'
+import { Facade, Graph } from 'rdfoo'
 import SBOL2Graph from '../SBOL2Graph';
+import SBOL2GraphView from '../SBOL2GraphView';
 
 export default abstract class S2Facade extends Facade {
 
-    get graph() {
+    view:SBOL2GraphView
 
-        return this._graph as SBOL2Graph
-
+    constructor(view:SBOL2GraphView, uri:string) {
+        super(view.graph, uri)
+        this.view = view
     }
-
-
 }
