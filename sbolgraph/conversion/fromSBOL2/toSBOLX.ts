@@ -477,15 +477,15 @@ export default function convert2toX(graph:Graph) {
             }
 
             if(p.indexOf(Prefixes.sbol2) !== 0) {
-                graph.insert(b.uri, triple.predicate.nominalValue, triple.object)
+                newGraph.insert(b.uri, triple.predicate.nominalValue, triple.object)
             }
 
             if(p == Predicates.SBOL2.displayId) {
-                graph.insert(b.uri, Predicates.SBOLX.id, triple.object)
+                newGraph.insert(b.uri, Predicates.SBOLX.id, triple.object)
             } else if(p == Predicates.SBOL2.version) {
-                graph.insert(b.uri, Predicates.SBOLX.version, triple.object)
+                newGraph.insert(b.uri, Predicates.SBOLX.version, triple.object)
             } if(p == Predicates.SBOL2.persistentIdentity) {
-                graph.insert(b.uri, Predicates.SBOLX.persistentIdentity, triple.object)
+                newGraph.insert(b.uri, Predicates.SBOLX.persistentIdentity, triple.object)
             }
         }
     }
