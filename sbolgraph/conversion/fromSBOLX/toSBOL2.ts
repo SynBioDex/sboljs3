@@ -30,7 +30,9 @@ import S2Sequence from '../../sbol2/S2Sequence';
 export default function convertXto2(graph:Graph) {
 
     let sbol2View:SBOL2GraphView = new SBOL2GraphView(graph)
-    let sbolxView:SBOLXGraphView = new SBOLXGraphView(graph)
+
+    let newGraph = new Graph()
+    let sbolxView:SBOLXGraphView = new SBOLXGraphView(newGraph)
 
 
     for(let ed of sbolxView.experimentalData) {
@@ -283,7 +285,7 @@ export default function convertXto2(graph:Graph) {
         }
     }
 
-    graph.graph.addAll(sbol2View.graph)
+    graph.addAll(newGraph)
 
     function copyIdentifiedProperties(a:SXIdentified, b:S2Identified) {
 

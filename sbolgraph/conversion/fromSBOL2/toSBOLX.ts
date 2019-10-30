@@ -47,7 +47,9 @@ export default function convert2toX(graph:Graph) {
     const map:Map<string, SXIdentified> = new Map()
 
     let sbol2View:SBOL2GraphView = new SBOL2GraphView(graph)
-    let sbolxView:SBOLXGraphView = new SBOLXGraphView(graph)
+
+    let newGraph:Graph = new Graph()
+    let sbolxView:SBOLXGraphView = new SBOLXGraphView(newGraph)
 
     for(let cd of sbol2View.componentDefinitions) {
         cdToModule(cd)
@@ -445,6 +447,17 @@ export default function convert2toX(graph:Graph) {
             graph.removeMatches(typeTriple.subject, null, null)
         }
     }
+
+
+    // For "generic top levels"
+
+    graph.replaceURI(Predicates.SBOL2.persistentIdentity, Predicates.SBOLX.persistentIdentity)
+    graph.replaceURI(Predicates.SBOL2.displayId, Predicates.SBOLX.id)
+    graph.replaceURI(Predicates.SBOL2.version, Predicates.SBOLX.version)
+
+
+
+    graph.addAll(newGraph)
 
 
 

@@ -24,7 +24,9 @@ export default function convert1to2(graph:Graph) {
     const map:Map<string, S1Facade> = new Map()
 
     let graph1:SBOL1GraphView = new SBOL1GraphView(graph)
-    let graph2:SBOL2GraphView = new SBOL2GraphView(graph)
+
+    let newGraph = new Graph()
+    let graph2:SBOL2GraphView = new SBOL2GraphView(newGraph)
 
 
     for(let sequence of graph1.dnaSequences) {
@@ -135,4 +137,7 @@ export default function convert1to2(graph:Graph) {
             graph.removeMatches(typeTriple.subject, null, null)
         }
     }
+
+
+    graph.addAll(newGraph)
 }
