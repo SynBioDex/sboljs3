@@ -689,6 +689,7 @@ class SBOL2 extends GraphViewBasic {
 
     constructor(view:SBOL2GraphView) {
         super(view.graph)
+        this.view = view
     }
 
     uriToFacade(uri:string):Facade|undefined {

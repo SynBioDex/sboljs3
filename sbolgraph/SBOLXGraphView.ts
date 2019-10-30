@@ -446,6 +446,7 @@ class SBOLX extends GraphViewBasic {
 
     constructor(view:SBOLXGraphView) {
         super(view.graph)
+        this.view = view
     }
 
     uriToFacade(uri:string):Facade|undefined {
