@@ -285,6 +285,16 @@ export default function convertXto2(graph:Graph) {
         }
     }
 
+
+
+    // For "generic top levels"
+
+    graph.replaceURI(Predicates.SBOLX.persistentIdentity, Predicates.SBOL2.persistentIdentity)
+    graph.replaceURI(Predicates.SBOLX.id, Predicates.SBOL2.displayId)
+    graph.replaceURI(Predicates.SBOLX.version, Predicates.SBOL2.version)
+
+
+
     graph.addAll(newGraph)
 
     function copyIdentifiedProperties(a:SXIdentified, b:S2Identified) {
