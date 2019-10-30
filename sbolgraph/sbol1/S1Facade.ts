@@ -1,6 +1,6 @@
 
 import { Facade } from 'rdfoo'
-import SBOL1GraphView from 'sbolgraph/SBOL1GraphView';
+import SBOL1GraphView from '../SBOL1GraphView';
 
 export default abstract class S1Facade extends Facade {
 

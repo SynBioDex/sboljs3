@@ -3,6 +3,10 @@ import SBOL1Graph from './SBOL1Graph'
 import SBOL2Graph from './SBOL2Graph'
 import SBOLXGraph from './SBOLXGraph'
 
+import SBOL1GraphView from './SBOL1GraphView'
+import SBOL2GraphView from './SBOL2GraphView'
+import SBOLXGraphView from './SBOLXGraphView'
+
 import S1Collection from './sbol1/S1Collection'
 import S1DnaComponent from './sbol1/S1DnaComponent'
 import S1DnaSequence from './sbol1/S1DnaSequence'
@@ -56,6 +60,7 @@ export {
 
     // SBOL1
     SBOL1Graph,
+    SBOL1GraphView,
     S1Collection,
     S1DnaComponent,
     S1DnaSequence,
@@ -63,6 +68,7 @@ export {
 
     // SBOL2
     SBOL2Graph,
+    SBOL2GraphView,
     S2Identified,
     S2ComponentInstance,
     S2ModuleInstance,
@@ -86,6 +92,7 @@ export {
 
     // SBOLX
     SBOLXGraph,
+    SBOLXGraphView,
     SXIdentified,
     SXSubComponent,
     SXComponent,
