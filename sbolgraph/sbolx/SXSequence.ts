@@ -203,5 +203,13 @@ export default class SXSequence extends SXIdentified {
     get containingObject():SXIdentified|undefined {
         return undefined
     }
+
+    get referencingComponents():SXComponent[] {
+
+        return this.graph.match(
+            null, Predicates.SBOLX.sequence, this.uri
+        ).map(triple.subjectUri)
+         .map((uri:string) => new SXComponent(this.view, uri))
+    }
 }
 
