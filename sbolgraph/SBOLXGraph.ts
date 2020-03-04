@@ -18,6 +18,10 @@ export default class SBOLXGraph extends SBOLXGraphView {
         }
     }
 
+    clone():SBOLXGraph {
+        return new SBOLXGraph(this.graph.clone())
+    }
+
 }
 
 

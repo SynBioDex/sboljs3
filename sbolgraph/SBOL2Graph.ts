@@ -19,6 +19,10 @@ export default class SBOL2Graph extends SBOL2GraphView {
         }
     }
 
+    clone():SBOL2Graph {
+        return new SBOL2Graph(this.graph.clone())
+    }
+
 }
 
 
