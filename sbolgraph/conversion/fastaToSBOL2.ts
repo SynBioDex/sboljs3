@@ -2,9 +2,9 @@
 import SBOL2Graph from "../SBOL2Graph";
 import { Predicates, Specifiers } from "bioterms";
 import { node } from 'rdfoo'
-import { S2Sequence } from "..";
+import { S2Sequence, SBOL2GraphView } from "..";
 
-export default function fastaToSBOL2(graph:SBOL2Graph, uriPrefix:string, fasta:string) {
+export default function fastaToSBOL2(graph:SBOL2GraphView, uriPrefix:string, fasta:string) {
 
     let lines = fasta.split('\n')
 

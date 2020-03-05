@@ -3,9 +3,9 @@ import SBOL2Graph from "../SBOL2Graph";
 
 import genbank = require('genbankjs')
 import { Specifiers, Prefixes } from "bioterms";
-import { S2Range } from "..";
+import { S2Range, SBOL2GraphView } from "..";
 
-export default function genbankToSBOL2(graph:SBOL2Graph, uriPrefix:string, gb:string) {
+export default function genbankToSBOL2(graph:SBOL2GraphView, uriPrefix:string, gb:string) {
 
     let gbf = genbank.parseGBF(gb)
 
