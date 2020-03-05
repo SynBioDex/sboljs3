@@ -504,6 +504,10 @@ class SBOLX extends GraphViewBasic {
 
 }
 
+export function sbolx(graph:Graph) {
+    return new SBOLXGraphView(graph)
+}
+
 
 
 

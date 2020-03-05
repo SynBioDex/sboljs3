@@ -60,3 +60,7 @@ export default class SBOL1GraphView extends GraphViewBasic {
 
 
 }
+
+export function sbol1(graph:Graph) {
+    return new SBOL1GraphView(graph)
+}

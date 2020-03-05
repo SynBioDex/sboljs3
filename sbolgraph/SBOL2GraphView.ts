@@ -763,6 +763,9 @@ class SBOL2 extends GraphViewBasic {
     }
 }
 
+export function sbol2(graph:Graph) {
+    return new SBOL2GraphView(graph)
+}
 
 
 
