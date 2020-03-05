@@ -3,8 +3,8 @@ import { Predicates } from 'bioterms';
 import S3Identified from '../sbol3/S3Identified'
 import S2Identified from '../sbol2/S2Identified'
 import URIUtils from '../URIUtils';
-import SBOL3GraphView from 'sbolgraph/SBOL3GraphView';
-import SBOL2GraphView from 'sbolgraph/SBOL2GraphView';
+import SBOL3GraphView from '../SBOL3GraphView';
+import SBOL2GraphView from '../SBOL2GraphView';
 
 export default function enforceURICompliance(g:SBOL2GraphView|SBOL3GraphView, uriPrefix:string) {
 
