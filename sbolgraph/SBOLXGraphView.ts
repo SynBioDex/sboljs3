@@ -23,7 +23,6 @@ import SXImplementation from './sbolx/SXImplementation';
 import SXExperiment from './sbolx/SXExperiment';
 import SXExperimentalData from './sbolx/SXExperimentalData';
 import SXMeasure from './sbolx/SXMeasure';
-import SBOL2Graph from './SBOL2Graph'
 
 import SXIdentifiedFactory from './sbolx/SXIdentifiedFactory'
 import identifyFiletype, { Filetype } from './conversion/identifyFiletype';

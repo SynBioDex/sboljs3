@@ -1,6 +1,4 @@
 
-import SBOL2Graph from "../SBOL2Graph";
-
 import genbank = require('genbankjs')
 import { Specifiers, Prefixes } from "bioterms";
 import { S2Range, SBOL2GraphView } from "..";

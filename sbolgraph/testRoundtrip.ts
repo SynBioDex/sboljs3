@@ -1,7 +1,4 @@
 
-import SBOL2Graph from './SBOL2Graph'
-import SBOLXGraph from './SBOLXGraph'
-
 import fs = require('fs')
 
 import glob = require('glob-promise')
@@ -11,6 +8,8 @@ import path = require('path')
 import fetch = require('node-fetch')
 import chalk from 'chalk'
 import { createDiffieHellman } from 'crypto';
+import SBOL2GraphView from './SBOL2GraphView'
+import SBOLXGraphView from './SBOLXGraphView'
 
 
 
@@ -53,7 +52,7 @@ async function main() {
 
         console.log(chalk.cyanBright('🤔 Original -> SBOL2'))
 
-        let g = await SBOL2Graph.loadString(fs.readFileSync(f) + '')
+        let g = await SBOL2GraphView.loadString(fs.readFileSync(f) + '')
         let out2Filename = [ 'out/', path.dirname(f), '/', path.basename(f, path.extname(f)), '_sbol2.xml' ].join('')
         fs.writeFileSync(out2Filename, g.serializeXML())
         await validate(f, out2Filename, f + ' ->SBOL2')
@@ -61,7 +60,7 @@ async function main() {
 
         console.log(chalk.cyanBright('🤔 Original -> SBOL2 -> Compliant SBOL2'))
 
-        let g2C = await SBOL2Graph.loadString(fs.readFileSync(f) + '')
+        let g2C = await SBOL2GraphView.loadString(fs.readFileSync(f) + '')
         g2C.enforceURICompliance('http://compliant/')
         let out2CFilename = [ 'out/', path.dirname(f), '/', path.basename(f, path.extname(f)), '_sbol2_compliant.xml' ].join('')
         fs.writeFileSync(out2CFilename, g2C.serializeXML())
@@ -70,14 +69,14 @@ async function main() {
 
         console.log(chalk.cyanBright('🤔 Original -> SBOLX'))
 
-        let gx = await SBOLXGraph.loadString(fs.readFileSync(f) + '')
+        let gx = await SBOLXGraphView.loadString(fs.readFileSync(f) + '')
         let outXFilename = [ 'out/', path.dirname(f), '/', path.basename(f, path.extname(f)), '_sbolx.xml' ].join('')
         fs.writeFileSync(outXFilename, gx.serializeXML())
 
 
         console.log(chalk.cyanBright('🤔 Original -> SBOLX -> SBOL2'))
 
-        let gRoundtrip = await SBOL2Graph.loadString(gx.serializeXML())
+        let gRoundtrip = await SBOL2GraphView.loadString(gx.serializeXML())
         let outRoundtripFilename = [ 'out/', path.dirname(f), '/', path.basename(f, path.extname(f)), '_roundtrip.xml' ].join('')
         fs.writeFileSync(outRoundtripFilename, gRoundtrip.serializeXML())
         await validate(f, outRoundtripFilename, f + ' ->SBOLX->SBOL2')

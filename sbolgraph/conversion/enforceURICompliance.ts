@@ -1,6 +1,4 @@
 
-import SBOL2Graph from '../SBOL2Graph'
-import SBOLXGraph from '../SBOLXGraph'
 import { Predicates } from 'bioterms';
 import SXIdentified from '../sbolx/SXIdentified'
 import S2Identified from '../sbol2/S2Identified'
@@ -12,7 +10,7 @@ export default function enforceURICompliance(g:SBOL2GraphView|SBOLXGraphView, ur
 
     var p_id, p_version, p_persistentIdentity
 
-    if(g instanceof SBOL2Graph) {
+    if(g instanceof SBOL2GraphView) {
         p_id = Predicates.SBOL2.displayId
         p_version = Predicates.SBOL2.version
         p_persistentIdentity = Predicates.SBOL2.persistentIdentity

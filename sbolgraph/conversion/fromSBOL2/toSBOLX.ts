@@ -1,7 +1,4 @@
 
-import SBOL2Graph from '../../SBOL2Graph'
-import SBOLXGraph from '../../SBOLXGraph'
-
 import S2ComponentDefinition from '../../sbol2/S2ComponentDefinition'
 import S2SequenceAnnotation from '../../sbol2/S2SequenceAnnotation'
 import SXComponent from '../../sbolx/SXComponent'

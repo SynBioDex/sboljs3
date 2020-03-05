@@ -1,5 +1,4 @@
 
-import SBOL2Graph from "../SBOL2Graph";
 import { Predicates, Specifiers } from "bioterms";
 import { node } from 'rdfoo'
 import { S2Sequence, SBOL2GraphView } from "..";

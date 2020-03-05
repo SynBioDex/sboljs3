@@ -1,8 +1,4 @@
 
-import SBOL1Graph from './SBOL1Graph'
-import SBOL2Graph from './SBOL2Graph'
-import SBOLXGraph from './SBOLXGraph'
-
 import SBOL1GraphView from './SBOL1GraphView'
 import SBOL2GraphView from './SBOL2GraphView'
 import SBOLXGraphView from './SBOLXGraphView'
@@ -59,7 +55,6 @@ import { Graph, Watcher, node, triple, serialize, Facade } from 'rdfoo'
 export {
 
     // SBOL1
-    SBOL1Graph,
     SBOL1GraphView,
     S1Collection,
     S1DnaComponent,
@@ -67,7 +62,6 @@ export {
     S1SequenceAnnotation,
 
     // SBOL2
-    SBOL2Graph,
     SBOL2GraphView,
     S2Identified,
     S2ComponentInstance,
@@ -91,7 +85,6 @@ export {
     S2Attachment,
 
     // SBOLX
-    SBOLXGraph,
     SBOLXGraphView,
     SXIdentified,
     SXSubComponent,
