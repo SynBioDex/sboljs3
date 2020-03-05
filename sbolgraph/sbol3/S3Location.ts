@@ -1,23 +1,23 @@
 
-import SXIdentified from './SXIdentified'
+import S3Identified from './S3Identified'
 
 import { triple } from 'rdfoo'
 import { Types, Predicates, Specifiers } from 'bioterms'
-import SBOLXGraphView from "../SBOLXGraphView";
-import SXSequence from "./SXSequence";
+import SBOL3GraphView from "../SBOL3GraphView";
+import S3Sequence from "./S3Sequence";
 
-export default abstract class SXLocation extends SXIdentified {
+export default abstract class S3Location extends S3Identified {
 
-    constructor(view:SBOLXGraphView, uri:string) {
+    constructor(view:SBOL3GraphView, uri:string) {
 
         super(view, uri)
 
     }
 
-    get containingObject():SXIdentified|undefined {
+    get containingObject():S3Identified|undefined {
 
         const uri = triple.subjectUri(
-            this.view.graph.matchOne(null, Predicates.SBOLX.location, this.uri)
+            this.view.graph.matchOne(null, Predicates.SBOL3.location, this.uri)
         )
 
         if(!uri) {
@@ -30,7 +30,7 @@ export default abstract class SXLocation extends SXIdentified {
 
     isFixed():boolean {
 
-        return this.facadeType === Types.SBOLX.Range // TODO || this.facadeType === Types.SBOLX.Cut
+        return this.facadeType === Types.SBOL3.Range // TODO || this.facadeType === Types.SBOL3.Cut
    
     }
 
@@ -41,7 +41,7 @@ export default abstract class SXLocation extends SXIdentified {
         if(name !== undefined)
             return name
 
-        const containingObject:SXIdentified|undefined = this.containingObject
+        const containingObject:S3Identified|undefined = this.containingObject
 
         if(containingObject === undefined) {
             throw new Error('???')
@@ -52,23 +52,23 @@ export default abstract class SXLocation extends SXIdentified {
 
     }
 
-    get sequence():SXSequence|undefined {
+    get sequence():S3Sequence|undefined {
 
-        let uri = this.getUriProperty(Predicates.SBOLX.sequence)
+        let uri = this.getUriProperty(Predicates.SBOL3.sequence)
 
         if(uri === undefined)
             return undefined
         
         let obj = this.view.uriToFacade(uri)
 
-        if(! (obj instanceof SXSequence)) {
+        if(! (obj instanceof S3Sequence)) {
             throw new Error('sequence was not a sequence')
         }
 
         return obj
     }
 
-    set sequence(sequence:SXSequence|undefined) {
+    set sequence(sequence:S3Sequence|undefined) {
 
         if(sequence !== undefined)
             this.setUriProperty(Predicates.SBOL2.sequence, sequence.uri)

@@ -9,7 +9,7 @@ import fetch = require('node-fetch')
 import chalk from 'chalk'
 import { createDiffieHellman } from 'crypto';
 import SBOL2GraphView from './SBOL2GraphView'
-import SBOLXGraphView from './SBOLXGraphView'
+import SBOL3GraphView from './SBOL3GraphView'
 
 
 
@@ -67,19 +67,19 @@ async function main() {
         await validate(f, out2CFilename, f + ' ->SBOL2->compliant')
 
 
-        console.log(chalk.cyanBright('🤔 Original -> SBOLX'))
+        console.log(chalk.cyanBright('🤔 Original -> SBOL3'))
 
-        let gx = await SBOLXGraphView.loadString(fs.readFileSync(f) + '')
-        let outXFilename = [ 'out/', path.dirname(f), '/', path.basename(f, path.extname(f)), '_sbolx.xml' ].join('')
+        let gx = await SBOL3GraphView.loadString(fs.readFileSync(f) + '')
+        let outXFilename = [ 'out/', path.dirname(f), '/', path.basename(f, path.extname(f)), '_sbol3.xml' ].join('')
         fs.writeFileSync(outXFilename, gx.serializeXML())
 
 
-        console.log(chalk.cyanBright('🤔 Original -> SBOLX -> SBOL2'))
+        console.log(chalk.cyanBright('🤔 Original -> SBOL3 -> SBOL2'))
 
         let gRoundtrip = await SBOL2GraphView.loadString(gx.serializeXML())
         let outRoundtripFilename = [ 'out/', path.dirname(f), '/', path.basename(f, path.extname(f)), '_roundtrip.xml' ].join('')
         fs.writeFileSync(outRoundtripFilename, gRoundtrip.serializeXML())
-        await validate(f, outRoundtripFilename, f + ' ->SBOLX->SBOL2')
+        await validate(f, outRoundtripFilename, f + ' ->SBOL3->SBOL2')
     }
 
 

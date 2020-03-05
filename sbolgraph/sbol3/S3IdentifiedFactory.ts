@@ -1,17 +1,17 @@
 
-import SXIdentified from "./SXIdentified";
+import S3Identified from "./S3Identified";
 import { Predicates } from 'bioterms'
 import { node } from 'rdfoo'
-import SBOLXGraphView from '../SBOLXGraphView'
+import SBOL3GraphView from '../SBOL3GraphView'
 
-export default class SXIdentifiedFactory {
+export default class S3IdentifiedFactory {
     
-    static createTopLevel(view:SBOLXGraphView,
+    static createTopLevel(view:SBOL3GraphView,
                           type:string,
                           uriPrefix:string,
                           id:string|undefined,
                           name:string|undefined,
-                          version?:string|undefined):SXIdentified {
+                          version?:string|undefined):S3Identified {
 
         id = id ? nameToID(id) : 'anon'
 
@@ -21,13 +21,13 @@ export default class SXIdentifiedFactory {
 
         view.graph.insertProperties(uri, {
             [Predicates.a]: node.createUriNode(type),
-            [Predicates.SBOLX.id]: node.createStringNode(extractID(uri, version)),
-            [Predicates.SBOLX.persistentIdentity]: node.createUriNode(extractPersistentIdentity(uri, version)),
+            [Predicates.SBOL3.id]: node.createStringNode(extractID(uri, version)),
+            [Predicates.SBOL3.persistentIdentity]: node.createUriNode(extractPersistentIdentity(uri, version)),
         })
 
         if(version !== undefined) {
             view.graph.insertProperties(uri, {
-                [Predicates.SBOLX.version]: node.createStringNode(version)
+                [Predicates.SBOL3.version]: node.createStringNode(version)
             })
         }
 
@@ -37,17 +37,17 @@ export default class SXIdentifiedFactory {
             })
         }
 
-        return new SXIdentified(view, uri)
+        return new S3Identified(view, uri)
 
     }
     
-    static createChild(view:SBOLXGraphView,
+    static createChild(view:SBOL3GraphView,
                     type:string,
-                    parent:SXIdentified,
+                    parent:S3Identified,
                     ownershipPredicate:string,
                     id:string|undefined,
                     name:string|undefined,
-                    version?:string|undefined):SXIdentified {
+                    version?:string|undefined):S3Identified {
 
         id = id ? nameToID(id) : 'anon'
 
@@ -58,13 +58,13 @@ export default class SXIdentifiedFactory {
 
         view.graph.insertProperties(uri, {
             [Predicates.a]: node.createUriNode(type),
-            [Predicates.SBOLX.id]: node.createStringNode(extractID(uri, version)),
-            [Predicates.SBOLX.persistentIdentity]: node.createUriNode(extractPersistentIdentity(uri, version))
+            [Predicates.SBOL3.id]: node.createStringNode(extractID(uri, version)),
+            [Predicates.SBOL3.persistentIdentity]: node.createUriNode(extractPersistentIdentity(uri, version))
         })
 
         if(version !== undefined) {
             view.graph.insertProperties(uri, {
-                [Predicates.SBOLX.version]: node.createStringNode(version)
+                [Predicates.SBOL3.version]: node.createStringNode(version)
             })
         }
 
@@ -78,7 +78,7 @@ export default class SXIdentifiedFactory {
             [ownershipPredicate]: node.createUriNode(uri)
         })
 
-        return new SXIdentified(view, uri)
+        return new S3Identified(view, uri)
     }
 
 }

@@ -1,28 +1,28 @@
 
-import SXIdentified from './SXIdentified'
-import SXLocation from './SXLocation'
-import SXRange from './SXRange'
-import SXIdentifiedFactory from './SXIdentifiedFactory'
+import S3Identified from './S3Identified'
+import S3Location from './S3Location'
+import S3Range from './S3Range'
+import S3IdentifiedFactory from './S3IdentifiedFactory'
 
 import { node } from 'rdfoo'
 
 import { Predicates, Types } from 'bioterms'
-import SXOrientedLocation from './SXOrientedLocation';
+import S3OrientedLocation from './S3OrientedLocation';
 
-export default class SXThingWithLocation extends SXIdentified {
+export default class S3ThingWithLocation extends S3Identified {
 
-    get locations():Array<SXLocation> {
+    get locations():Array<S3Location> {
 
-        return this.getUriProperties(Predicates.SBOLX.location)
-                   .map((uri:string) => this.view.uriToFacade(uri) as SXLocation)
+        return this.getUriProperties(Predicates.SBOL3.location)
+                   .map((uri:string) => this.view.uriToFacade(uri) as S3Location)
     }
 
-    get rangeLocations():Array<SXRange> {
+    get rangeLocations():Array<S3Range> {
 
-        return this.locations.filter((location:SXIdentified) => {
-            return location.objectType === Types.SBOLX.Range
-        }).map((identified:SXIdentified) => {
-            return new SXRange(this.view, identified.uri)
+        return this.locations.filter((location:S3Identified) => {
+            return location.objectType === Types.SBOL3.Range
+        }).map((identified:S3Identified) => {
+            return new S3Range(this.view, identified.uri)
         })
 
     }
@@ -31,7 +31,7 @@ export default class SXThingWithLocation extends SXIdentified {
 
         var n:number = Number.MAX_VALUE
 
-        this.rangeLocations.forEach((range:SXRange) => {
+        this.rangeLocations.forEach((range:S3Range) => {
 
             const start:number|undefined = range.start
             const end:number|undefined = range.end
@@ -50,7 +50,7 @@ export default class SXThingWithLocation extends SXIdentified {
 
         var n:number = Number.MIN_VALUE
 
-        this.rangeLocations.forEach((range:SXRange) => {
+        this.rangeLocations.forEach((range:S3Range) => {
 
             const start:number|undefined = range.start
             const end:number|undefined = range.end
@@ -79,14 +79,14 @@ export default class SXThingWithLocation extends SXIdentified {
         return false
     }
 
-    addRange(start:number, end:number):SXRange {
+    addRange(start:number, end:number):S3Range {
 
         const id:string = 'range'
 
-        const identified:SXIdentified =
-            SXIdentifiedFactory.createChild(this.view, Types.SBOLX.Range, this, Predicates.SBOLX.location, id, undefined, this.version)
+        const identified:S3Identified =
+            S3IdentifiedFactory.createChild(this.view, Types.SBOL3.Range, this, Predicates.SBOL3.location, id, undefined, this.version)
 
-        const range:SXRange = new SXRange(this.view, identified.uri)
+        const range:S3Range = new S3Range(this.view, identified.uri)
 
         range.start = start
         range.end = end
@@ -94,11 +94,11 @@ export default class SXThingWithLocation extends SXIdentified {
         return range
     }
 
-    addOrientedLocation():SXOrientedLocation {
+    addOrientedLocation():S3OrientedLocation {
 
-        const loc:SXIdentified = SXIdentifiedFactory.createChild(this.view, Types.SBOLX.OrientedLocation, this, Predicates.SBOLX.location, 'location', undefined, this.version)
+        const loc:S3Identified = S3IdentifiedFactory.createChild(this.view, Types.SBOL3.OrientedLocation, this, Predicates.SBOL3.location, 'location', undefined, this.version)
 
-        return new SXOrientedLocation(loc.view, loc.uri)
+        return new S3OrientedLocation(loc.view, loc.uri)
     }
 
     setOrientation(orientation:string) {
@@ -107,7 +107,7 @@ export default class SXThingWithLocation extends SXIdentified {
 
         if(this.locations.length > 0) {
             for(let location of this.locations) {
-                if(location instanceof SXOrientedLocation) {
+                if(location instanceof S3OrientedLocation) {
                     location.orientation = orientation
                     hadOrientedLocation = true
                 }
@@ -124,7 +124,7 @@ export default class SXThingWithLocation extends SXIdentified {
     getOrientation():string|undefined {
 
         for (let location of this.locations) {
-            if (location instanceof SXOrientedLocation) {
+            if (location instanceof S3OrientedLocation) {
                 return location.orientation
             }
         }

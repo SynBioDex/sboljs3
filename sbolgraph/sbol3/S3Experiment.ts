@@ -1,31 +1,31 @@
 
-import SXIdentified from './SXIdentified'
-import SBOLXGraphView from '../SBOLXGraphView';
+import S3Identified from './S3Identified'
+import SBOL3GraphView from '../SBOL3GraphView';
 import { node } from 'rdfoo'
-import SXExperimentalData from './SXExperimentalData';
+import S3ExperimentalData from './S3ExperimentalData';
 import { Activity }  from 'rdfoo-prov';
 import { Predicates, Types } from 'bioterms';
-import SXImplementation from './SXImplementation';
+import S3Implementation from './S3Implementation';
 
 
-export default class SXExperiment extends SXIdentified {
+export default class S3Experiment extends S3Identified {
 
-    constructor(view:SBOLXGraphView, uri:string) {
+    constructor(view:SBOL3GraphView, uri:string) {
 
         super(view, uri)
     }
 
     get facadeType():string {
-        return Types.SBOLX.Experiment
+        return Types.SBOL3.Experiment
     }
 
-    get experimentalData():Array<SXExperimentalData> {
+    get experimentalData():Array<S3ExperimentalData> {
 
-        let result:SXExperimentalData[] = []
-        let expDataURIs = this.getUriProperties(Predicates.SBOLX.experimentalData)
+        let result:S3ExperimentalData[] = []
+        let expDataURIs = this.getUriProperties(Predicates.SBOL3.experimentalData)
 
         for (let uri of expDataURIs){
-            result.push(new SXExperimentalData(this.view, uri))
+            result.push(new S3ExperimentalData(this.view, uri))
         }
 
         return result
@@ -36,9 +36,9 @@ export default class SXExperiment extends SXIdentified {
 
     }
 
-    addExperimentalData(member:SXExperimentalData):void {
+    addExperimentalData(member:S3ExperimentalData):void {
 
-        this.insertProperty(Predicates.SBOLX.experimentalData, node.createUriNode(member.uri))
+        this.insertProperty(Predicates.SBOL3.experimentalData, node.createUriNode(member.uri))
 
     }
 
@@ -63,7 +63,7 @@ export default class SXExperiment extends SXIdentified {
     }
 
 
-    get construct():SXImplementation|undefined{
+    get construct():S3Implementation|undefined{
 
         let construct_uri = this.getUriProperty(Predicates.Prov.wasDerivedFrom)
 
@@ -71,11 +71,11 @@ export default class SXExperiment extends SXIdentified {
             return undefined
         }
 
-        return new SXImplementation(this.view, construct_uri)
+        return new S3Implementation(this.view, construct_uri)
 
     }
 
-    // set construct(construct:SXImplementation|undefined) {
+    // set construct(construct:S3Implementation|undefined) {
 
     //     if(construct === undefined) {
     //         this.deleteProperty(Predicates.Prov.wasDerivedFrom)
@@ -85,7 +85,7 @@ export default class SXExperiment extends SXIdentified {
     // }
 
 
-    addConstruct(construct:SXImplementation):void {
+    addConstruct(construct:S3Implementation):void {
 
         this.insertProperty(Predicates.Prov.wasDerivedFrom, node.createUriNode(construct.uri))
 

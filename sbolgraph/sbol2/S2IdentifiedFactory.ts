@@ -4,7 +4,7 @@ import { Predicates } from 'bioterms'
 import { node } from 'rdfoo'
 import SBOL2GraphView from '../SBOL2GraphView'
 
-export default class SXIdentifiedFactory {
+export default class S3IdentifiedFactory {
     
     static createTopLevel(view:SBOL2GraphView,
                           type:string,

@@ -1,14 +1,14 @@
 
-import SXIdentified from "./SXIdentified";
+import S3Identified from "./S3Identified";
 import SBOL2GraphView from "../SBOL2GraphView";
 import { Types, Predicates } from "bioterms";
-import SXComponent from './SXComponent'
+import S3Component from './S3Component'
 import { Activity } from "rdfoo-prov";
-import SBOLXGraphView from "../SBOLXGraphView";
+import SBOL3GraphView from "../SBOL3GraphView";
 
-export default class SXImplementation extends SXIdentified {
+export default class S3Implementation extends S3Identified {
 
-    constructor(view:SBOLXGraphView, uri:string) {
+    constructor(view:SBOL3GraphView, uri:string) {
 
         super(view, uri)
 
@@ -19,7 +19,7 @@ export default class SXImplementation extends SXIdentified {
     }
 
 
-    get built():SXComponent|undefined {
+    get built():S3Component|undefined {
 
         let built = this.getUriProperty(Predicates.SBOL2.built)
 
@@ -29,13 +29,13 @@ export default class SXImplementation extends SXIdentified {
 
         let builtObj = this.view.uriToFacade(built)
 
-        if(builtObj instanceof SXComponent)
-            return builtObj as SXComponent
+        if(builtObj instanceof S3Component)
+            return builtObj as S3Component
 
         throw new Error('built has wrong type')
     }
 
-    set built(built:SXComponent|undefined) {
+    set built(built:S3Component|undefined) {
 
         if(built === undefined) {
             this.deleteProperty(Predicates.SBOL2.built)
@@ -64,7 +64,7 @@ export default class SXImplementation extends SXIdentified {
         }
     }
 
-    get design():SXIdentified|undefined{
+    get design():S3Identified|undefined{
 
         let design_uri = this.getUriProperty(Predicates.Prov.wasDerivedFrom)
 
@@ -72,7 +72,7 @@ export default class SXImplementation extends SXIdentified {
             return undefined
         }
 
-        return new SXIdentified(this.view, design_uri)
+        return new S3Identified(this.view, design_uri)
 
         // console.log(this.view.getTopLevelsWithPrefix(design_uri))
 
@@ -80,16 +80,16 @@ export default class SXImplementation extends SXIdentified {
 
         // console.log(design)
 
-        // if(design instanceof SXComponentDefinition)
-        //     return design as SXComponentDefinition
+        // if(design instanceof S3ComponentDefinition)
+        //     return design as S3ComponentDefinition
 
-        // if (design instanceof SXModuleDefinition)
-        //     return design as SXModuleDefinition
+        // if (design instanceof S3ModuleDefinition)
+        //     return design as S3ModuleDefinition
 
         // throw new Error('design has wrong type')
     }
 
-    set design(design:SXIdentified|undefined) {
+    set design(design:S3Identified|undefined) {
 
         if(design === undefined) {
             this.deleteProperty(Predicates.Prov.wasDerivedFrom)

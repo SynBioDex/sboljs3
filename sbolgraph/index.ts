@@ -1,11 +1,11 @@
 
 import SBOL1GraphView from './SBOL1GraphView'
 import SBOL2GraphView from './SBOL2GraphView'
-import SBOLXGraphView from './SBOLXGraphView'
+import SBOL3GraphView from './SBOL3GraphView'
 
 import { sbol1 } from './SBOL1GraphView'
 import { sbol2 } from './SBOL2GraphView'
-import { sbolx }  from './SBOLXGraphView'
+import { sbol3 }  from './SBOL3GraphView'
 
 import S1Collection from './sbol1/S1Collection'
 import S1DnaComponent from './sbol1/S1DnaComponent'
@@ -33,23 +33,23 @@ import S2Interaction from './sbol2/S2Interaction'
 import S2MapsTo from './sbol2/S2MapsTo'
 import S2Attachment from './sbol2/S2Attachment'
 
-import SXIdentified from './sbolx/SXIdentified'
-import SXSubComponent from './sbolx/SXSubComponent'
-import SXComponent from './sbolx/SXComponent'
-import SXSequence from './sbolx/SXSequence'
-import SXSequenceConstraint from './sbolx/SXSequenceConstraint'
-import SXLocation from './sbolx/SXLocation'
-import SXOrientedLocation from './sbolx/SXOrientedLocation'
-import SXRange from './sbolx/SXRange'
-import SXSequenceFeature from './sbolx/SXSequenceFeature'
-import SXInteraction from './sbolx/SXInteraction'
-import SXParticipation from './sbolx/SXParticipation'
-import SXCollection from './sbolx/SXCollection'
-import SXThingWithLocation from './sbolx/SXThingWithLocation'
-import SXMapsTo from './sbolx/SXMapsTo'
-import SXModel from './sbolx/SXModel'
-import SXExperiment from './sbolx/SXExperiment'
-import SXExperimentalData from './sbolx/SXExperimentalData'
+import S3Identified from './sbol3/S3Identified'
+import S3SubComponent from './sbol3/S3SubComponent'
+import S3Component from './sbol3/S3Component'
+import S3Sequence from './sbol3/S3Sequence'
+import S3SequenceConstraint from './sbol3/S3SequenceConstraint'
+import S3Location from './sbol3/S3Location'
+import S3OrientedLocation from './sbol3/S3OrientedLocation'
+import S3Range from './sbol3/S3Range'
+import S3SequenceFeature from './sbol3/S3SequenceFeature'
+import S3Interaction from './sbol3/S3Interaction'
+import S3Participation from './sbol3/S3Participation'
+import S3Collection from './sbol3/S3Collection'
+import S3ThingWithLocation from './sbol3/S3ThingWithLocation'
+import S3MapsTo from './sbol3/S3MapsTo'
+import S3Model from './sbol3/S3Model'
+import S3Experiment from './sbol3/S3Experiment'
+import S3ExperimentalData from './sbol3/S3ExperimentalData'
 
 import Repository from './SBOL2Repository'
 import { SearchQuery, SearchResult } from './SBOL2Repository'
@@ -90,26 +90,26 @@ export {
     S2MapsTo,
     S2Attachment,
 
-    // SBOLX
-    SBOLXGraphView,
-    sbolx,
-    SXIdentified,
-    SXSubComponent,
-    SXComponent,
-    SXSequence,
-    SXLocation,
-    SXThingWithLocation,
-    SXOrientedLocation,
-    SXRange,
-    SXSequenceConstraint,
-    SXSequenceFeature,
-    SXInteraction,
-    SXParticipation,
-    SXCollection,
-    SXMapsTo,
-    SXModel,
-    SXExperiment,
-    SXExperimentalData,
+    // SBOL3
+    SBOL3GraphView,
+    sbol3,
+    S3Identified,
+    S3SubComponent,
+    S3Component,
+    S3Sequence,
+    S3Location,
+    S3ThingWithLocation,
+    S3OrientedLocation,
+    S3Range,
+    S3SequenceConstraint,
+    S3SequenceFeature,
+    S3Interaction,
+    S3Participation,
+    S3Collection,
+    S3MapsTo,
+    S3Model,
+    S3Experiment,
+    S3ExperimentalData,
 
     // etc
     Graph,

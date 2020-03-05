@@ -1,39 +1,39 @@
 
-import SBOLXGraphView from '../SBOLXGraphView'
+import SBOL3GraphView from '../SBOL3GraphView'
 
-import SXIdentified from './SXIdentified'
+import S3Identified from './S3Identified'
 
 import { Types, Predicates, Specifiers } from 'bioterms'
 
 import { triple } from 'rdfoo'
-import SXComponent from "./SXComponent";
-import SXSequenceFeature from "./SXSequenceFeature";
-import SXLocation from "./SXLocation";
-import SXRange from "./SXRange";
-import SXSubComponent from './SXSubComponent';
+import S3Component from "./S3Component";
+import S3SequenceFeature from "./S3SequenceFeature";
+import S3Location from "./S3Location";
+import S3Range from "./S3Range";
+import S3SubComponent from './S3SubComponent';
 
-export default class SXSequence extends SXIdentified {
+export default class S3Sequence extends S3Identified {
 
-    constructor(view:SBOLXGraphView, uri:string) {
+    constructor(view:SBOL3GraphView, uri:string) {
 
         super(view, uri)
 
     }
 
     get facadeType():string {
-        return Types.SBOLX.Sequence
+        return Types.SBOL3.Sequence
     }
 
     get elements():string|undefined {
-        return this.getStringProperty(Predicates.SBOLX.elements)
+        return this.getStringProperty(Predicates.SBOL3.elements)
     }
 
     set elements(elements:string|undefined) {
 
         if(elements === undefined) {
-            this.deleteProperty(Predicates.SBOLX.elements)
+            this.deleteProperty(Predicates.SBOL3.elements)
         } else {
-            this.setStringProperty(Predicates.SBOLX.elements, elements)
+            this.setStringProperty(Predicates.SBOL3.elements, elements)
         }
     }
 
@@ -65,30 +65,30 @@ export default class SXSequence extends SXIdentified {
         if(pos < 0 || pos >= elements.length)
             return
 
-        const containingModules:Array<SXComponent> =
-            this.view.graph.match(null, Predicates.SBOLX.sequence, this.uri)
+        const containingModules:Array<S3Component> =
+            this.view.graph.match(null, Predicates.SBOL3.sequence, this.uri)
                 .map(triple.subjectUri)
-                .map((uri:string) => new SXComponent(this.view, uri))
+                .map((uri:string) => new S3Component(this.view, uri))
 
-        containingModules.forEach((module:SXComponent) => {
+        containingModules.forEach((module:S3Component) => {
 
-            module.sequenceFeatures.forEach((sa:SXSequenceFeature) => {
-                sa.locations.forEach((location:SXLocation) => {
+            module.sequenceFeatures.forEach((sa:S3SequenceFeature) => {
+                sa.locations.forEach((location:S3Location) => {
                     updateLocation(location)
                 })
             })
 
-            module.subComponents.forEach((sm:SXSubComponent) => {
-                sm.locations.forEach((location:SXLocation) => {
+            module.subComponents.forEach((sm:S3SubComponent) => {
+                sm.locations.forEach((location:S3Location) => {
                     updateLocation(location)
                 })
             })
 
-            function updateLocation(location:SXLocation) {
+            function updateLocation(location:S3Location) {
 
-                if(location instanceof SXRange) {
+                if(location instanceof S3Range) {
 
-                    const range:SXRange = location as SXRange
+                    const range:S3Range = location as S3Range
 
                     const start:number|undefined = range.start
                     const end:number|undefined = range.end
@@ -133,30 +133,30 @@ export default class SXSequence extends SXIdentified {
         if(pos < 0 || pos >= elements.length)
             return
 
-        const containingCDs:Array<SXComponent> =
-            this.view.graph.match(null, Predicates.SBOLX.sequence, this.uri)
+        const containingCDs:Array<S3Component> =
+            this.view.graph.match(null, Predicates.SBOL3.sequence, this.uri)
                 .map(triple.subjectUri)
-                .map((uri:string) => new SXComponent(this.view, uri))
+                .map((uri:string) => new S3Component(this.view, uri))
 
-        containingCDs.forEach((cd:SXComponent) => {
+        containingCDs.forEach((cd:S3Component) => {
 
-            cd.sequenceFeatures.forEach((sa:SXSequenceFeature) => {
-                sa.locations.forEach((location:SXLocation) => {
+            cd.sequenceFeatures.forEach((sa:S3SequenceFeature) => {
+                sa.locations.forEach((location:S3Location) => {
                     updateLocation(location)
                 })
             })
 
-            cd.subComponents.forEach((sm:SXSubComponent) => {
-                sm.locations.forEach((location:SXLocation) => {
+            cd.subComponents.forEach((sm:S3SubComponent) => {
+                sm.locations.forEach((location:S3Location) => {
                     updateLocation(location)
                 })
             })
 
-            function updateLocation(location:SXLocation) {
+            function updateLocation(location:S3Location) {
 
-                if(location instanceof SXRange) {
+                if(location instanceof S3Range) {
 
-                    const range:SXRange = location as SXRange
+                    const range:S3Range = location as S3Range
 
                     const start:number|undefined = range.start
                     const end:number|undefined = range.end
@@ -188,28 +188,28 @@ export default class SXSequence extends SXIdentified {
     }
 
     get encoding():string|undefined {
-        return this.getUriProperty(Predicates.SBOLX.encoding)
+        return this.getUriProperty(Predicates.SBOL3.encoding)
     }
 
     set encoding(encoding:string|undefined) {
 
         if(encoding === undefined) {
-            this.deleteProperty(Predicates.SBOLX.encoding)
+            this.deleteProperty(Predicates.SBOL3.encoding)
         } else {
-            this.setUriProperty(Predicates.SBOLX.encoding, encoding)
+            this.setUriProperty(Predicates.SBOL3.encoding, encoding)
         }
     }
 
-    get containingObject():SXIdentified|undefined {
+    get containingObject():S3Identified|undefined {
         return undefined
     }
 
-    get referencingComponents():SXComponent[] {
+    get referencingComponents():S3Component[] {
 
         return this.graph.match(
-            null, Predicates.SBOLX.sequence, this.uri
+            null, Predicates.SBOL3.sequence, this.uri
         ).map(triple.subjectUri)
-         .map((uri:string) => new SXComponent(this.view, uri))
+         .map((uri:string) => new S3Component(this.view, uri))
     }
 }
 

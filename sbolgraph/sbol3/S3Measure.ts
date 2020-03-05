@@ -1,14 +1,14 @@
 
-import SXIdentified from './SXIdentified'
+import S3Identified from './S3Identified'
 
 import { Types, Predicates, Specifiers } from 'bioterms'
-import SBOLXGraphView from "../SBOLXGraphView";
+import SBOL3GraphView from "../SBOL3GraphView";
 
 import { triple } from 'rdfoo'
 
-export default class SXMeasure extends SXIdentified {
+export default class S3Measure extends S3Identified {
 
-    constructor(view:SBOLXGraphView, uri:string) {
+    constructor(view:SBOL3GraphView, uri:string) {
 
         super(view, uri)
     }

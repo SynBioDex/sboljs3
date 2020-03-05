@@ -1,28 +1,28 @@
 
-import SXIdentified from './SXIdentified'
-import SXThingWithLocation from './SXThingWithLocation'
-import SXComponent from './SXComponent'
-import SXSequenceConstraint from './SXSequenceConstraint'
-import SXOrientedLocation from './SXOrientedLocation'
-import SXIdentifiedFactory from './SXIdentifiedFactory'
+import S3Identified from './S3Identified'
+import S3ThingWithLocation from './S3ThingWithLocation'
+import S3Component from './S3Component'
+import S3SequenceConstraint from './S3SequenceConstraint'
+import S3OrientedLocation from './S3OrientedLocation'
+import S3IdentifiedFactory from './S3IdentifiedFactory'
 
 import { triple, node } from 'rdfoo'
 import { Types, Predicates, Specifiers, Prefixes } from 'bioterms'
-import SBOLXGraphView from "../SBOLXGraphView";
-import SXMapsTo from './SXMapsTo';
-import SXInteraction from './SXInteraction'
-import SXLocation from './SXLocation'
-import SXMeasure from './SXMeasure';
+import SBOL3GraphView from "../SBOL3GraphView";
+import S3MapsTo from './S3MapsTo';
+import S3Interaction from './S3Interaction'
+import S3Location from './S3Location'
+import S3Measure from './S3Measure';
 
-export default class SXSubComponent extends SXThingWithLocation {
+export default class S3SubComponent extends S3ThingWithLocation {
 
-    constructor(view:SBOLXGraphView, uri:string) {
+    constructor(view:SBOL3GraphView, uri:string) {
 
         super(view, uri)
     }
 
     get facadeType():string {
-        return Types.SBOLX.SubComponent
+        return Types.SBOL3.SubComponent
     }
 
     get displayName():string|undefined {
@@ -43,30 +43,30 @@ export default class SXSubComponent extends SXThingWithLocation {
         } catch(e) {
         }
 
-        return this.getStringProperty(Predicates.SBOLX.id) || this.uri
+        return this.getStringProperty(Predicates.SBOL3.id) || this.uri
     }
 
-    get instanceOf():SXComponent {
+    get instanceOf():S3Component {
 
-        const uri:string|undefined = this.getUriProperty(Predicates.SBOLX.instanceOf)
+        const uri:string|undefined = this.getUriProperty(Predicates.SBOL3.instanceOf)
 
         if(uri === undefined) {
             throw new Error('subcomponent has no instanceOf?')
         }
 
-        return new SXComponent(this.view, uri)
+        return new S3Component(this.view, uri)
     }
 
-    set instanceOf(def:SXComponent) {
+    set instanceOf(def:S3Component) {
 
-        this.setUriProperty(Predicates.SBOLX.instanceOf, def.uri)
+        this.setUriProperty(Predicates.SBOL3.instanceOf, def.uri)
 
     }
 
-    get containingObject():SXIdentified|undefined {
+    get containingObject():S3Identified|undefined {
 
         const uri = triple.subjectUri(
-            this.view.graph.matchOne(null, Predicates.SBOLX.subComponent, this.uri)
+            this.view.graph.matchOne(null, Predicates.SBOL3.subComponent, this.uri)
         )
 
         if(!uri) {
@@ -77,41 +77,41 @@ export default class SXSubComponent extends SXThingWithLocation {
 
     }
 
-    get containingComponent():SXComponent {
+    get containingComponent():S3Component {
 
         const uri = triple.subjectUri(
-            this.view.graph.matchOne(null, Predicates.SBOLX.subComponent, this.uri)
+            this.view.graph.matchOne(null, Predicates.SBOL3.subComponent, this.uri)
         )
 
         if(!uri) {
             throw new Error('subcomponent has no containing object?')
         }
 
-        return this.view.uriToFacade(uri) as SXComponent
+        return this.view.uriToFacade(uri) as S3Component
 
     }
 
-    get sequenceConstraints():Array<SXSequenceConstraint> {
+    get sequenceConstraints():Array<S3SequenceConstraint> {
 
-        return this.view.graph.match(null, Predicates.SBOLX.subject, this.uri)
+        return this.view.graph.match(null, Predicates.SBOL3.subject, this.uri)
                    .map(triple.subjectUri)
-                   //.filter((uri:string) => this.view.getType(uri) === Types.SBOLX.SequenceConstraint)
-                   .map((uri:string) => new SXSequenceConstraint(this.view, uri))
+                   //.filter((uri:string) => this.view.getType(uri) === Types.SBOL3.SequenceConstraint)
+                   .map((uri:string) => new S3SequenceConstraint(this.view, uri))
 
     }
 
-    createAfter(component:SXComponent):SXSubComponent {
+    createAfter(component:S3Component):S3SubComponent {
 
-        const container:SXComponent = this.containingComponent
+        const container:S3Component = this.containingComponent
 
-        const sc:SXSubComponent = container.createSubComponent(component)
+        const sc:S3SubComponent = container.createSubComponent(component)
 
-        let existingConstraints:Array<SXSequenceConstraint> = this.getConstraintsWithThisSubject()
+        let existingConstraints:Array<S3SequenceConstraint> = this.getConstraintsWithThisSubject()
 
-        container.createConstraint(this, Specifiers.SBOLX.SequenceConstraint.Precedes, sc)
+        container.createConstraint(this, Specifiers.SBOL3.SequenceConstraint.Precedes, sc)
 
         for(let c of existingConstraints) {
-            if(c.restriction === Specifiers.SBOLX.SequenceConstraint.Precedes) {
+            if(c.restriction === Specifiers.SBOL3.SequenceConstraint.Precedes) {
                 c.subject = sc
             }
         }
@@ -119,19 +119,19 @@ export default class SXSubComponent extends SXThingWithLocation {
         return sc
     }
 
-    createBefore(component:SXComponent):SXSubComponent {
+    createBefore(component:S3Component):S3SubComponent {
 
-        const container:SXComponent = this.containingComponent
+        const container:S3Component = this.containingComponent
 
-        const sc:SXSubComponent = container.createSubComponent(component)
+        const sc:S3SubComponent = container.createSubComponent(component)
 
 
-        let existingConstraints:Array<SXSequenceConstraint> = this.getConstraintsWithThisObject()
+        let existingConstraints:Array<S3SequenceConstraint> = this.getConstraintsWithThisObject()
 
-        container.createConstraint(sc, Specifiers.SBOLX.SequenceConstraint.Precedes, this)
+        container.createConstraint(sc, Specifiers.SBOL3.SequenceConstraint.Precedes, this)
 
         for(let c of existingConstraints) {
-            if(c.restriction === Specifiers.SBOLX.SequenceConstraint.Precedes) {
+            if(c.restriction === Specifiers.SBOL3.SequenceConstraint.Precedes) {
                 c.object = sc
             }
         }
@@ -139,37 +139,37 @@ export default class SXSubComponent extends SXThingWithLocation {
         return sc
     }
 
-    getConstraintsWithThisSubject():Array<SXSequenceConstraint> {
+    getConstraintsWithThisSubject():Array<S3SequenceConstraint> {
 
-        return this.view.graph.match(null, Predicates.SBOLX.subject, this.uri)
+        return this.view.graph.match(null, Predicates.SBOL3.subject, this.uri)
                     .map(triple.subjectUri)
-                    .map((uri:string) => new SXSequenceConstraint(this.view, uri))
+                    .map((uri:string) => new S3SequenceConstraint(this.view, uri))
     }
 
-    getConstraintsWithThisObject():Array<SXSequenceConstraint> {
+    getConstraintsWithThisObject():Array<S3SequenceConstraint> {
 
-        return this.view.graph.match(null, Predicates.SBOLX.object, this.uri)
+        return this.view.graph.match(null, Predicates.SBOL3.object, this.uri)
                     .map(triple.subjectUri)
-                    .map((uri:string) => new SXSequenceConstraint(this.view, uri))
+                    .map((uri:string) => new S3SequenceConstraint(this.view, uri))
     }
 
-    getConstraints():Array<SXSequenceConstraint> {
+    getConstraints():Array<S3SequenceConstraint> {
 
         return this.getConstraintsWithThisSubject().concat(this.getConstraintsWithThisObject())
 
     }
 
-    get mappings():Array<SXMapsTo> {
+    get mappings():Array<S3MapsTo> {
 
         return this.view.graph.match(null, Predicates.SBOL2.local, this.uri).map(triple.subjectUri)
                 .concat(
                     this.view.graph.match(null, Predicates.SBOL2.remote, this.uri).map(triple.subjectUri)
                 )
                 .filter((el) => !!el)
-                .map((mapsToUri) => new SXMapsTo(this.view, mapsToUri as string))
+                .map((mapsToUri) => new S3MapsTo(this.view, mapsToUri as string))
     }
 
-    addMapping(mapping:SXMapsTo) {
+    addMapping(mapping:S3MapsTo) {
 
         this.insertProperties({
             [Predicates.SBOL2.mapsTo]: node.createUriNode(mapping.uri)
@@ -177,12 +177,12 @@ export default class SXSubComponent extends SXThingWithLocation {
 
     }
 
-    createMapping(local:SXSubComponent, remote:SXSubComponent)  {
+    createMapping(local:S3SubComponent, remote:S3SubComponent)  {
 
-        const identified:SXIdentified =
-            SXIdentifiedFactory.createChild(this.view, Types.SBOL2.MapsTo, this, Predicates.SBOL2.mapsTo, 'mapping_' + local.id + '_' + remote.id, undefined, this.version)
+        const identified:S3Identified =
+            S3IdentifiedFactory.createChild(this.view, Types.SBOL2.MapsTo, this, Predicates.SBOL2.mapsTo, 'mapping_' + local.id + '_' + remote.id, undefined, this.version)
 
-        const mapping:SXMapsTo = new SXMapsTo(this.view, identified.uri)
+        const mapping:S3MapsTo = new S3MapsTo(this.view, identified.uri)
 
         mapping.local = local
         mapping.remote = remote
@@ -191,7 +191,7 @@ export default class SXSubComponent extends SXThingWithLocation {
 
     }
 
-    swapWith(otherSubComponent:SXSubComponent) {
+    swapWith(otherSubComponent:S3SubComponent) {
 
         let a = this.getConstraintsWithThisObject()
         let b = this.getConstraintsWithThisSubject()
@@ -217,7 +217,7 @@ export default class SXSubComponent extends SXThingWithLocation {
         // TODO locations
     }
 
-    createInteractionWith(other:SXSubComponent, id:string, interactionType:string, ourRole:string, theirRole:string):SXInteraction {
+    createInteractionWith(other:S3SubComponent, id:string, interactionType:string, ourRole:string, theirRole:string):S3Interaction {
 
         if(!other.isSiblingOf(this)) {
             throw new Error('???')
@@ -238,7 +238,7 @@ export default class SXSubComponent extends SXThingWithLocation {
         return interaction
     }
 
-    createProduct(id:string):SXSubComponent {
+    createProduct(id:string):S3SubComponent {
 
         let product = this.view.createComponent(this.uriPrefix, id)
 
@@ -251,7 +251,7 @@ export default class SXSubComponent extends SXThingWithLocation {
         return productSC
     }
 
-    getInteractions():Array<SXInteraction> {
+    getInteractions():Array<S3Interaction> {
 
         let container = this.containingComponent
 
@@ -261,7 +261,7 @@ export default class SXSubComponent extends SXThingWithLocation {
 
     }
 
-    getProducts():Array<SXSubComponent> {
+    getProducts():Array<S3SubComponent> {
 
         let interactions = this.getInteractions()
 
@@ -269,7 +269,7 @@ export default class SXSubComponent extends SXThingWithLocation {
             return interaction.hasType(Prefixes.sbo + 'SBO:0000589')
         })
 
-        let products:SXSubComponent[] = []
+        let products:S3SubComponent[] = []
         
         for(let i of productionInteractions) {
             for(let p of i.participations) {
@@ -314,46 +314,46 @@ export default class SXSubComponent extends SXThingWithLocation {
         this.destroy()
     }
 
-    get sourceLocation():SXLocation|undefined {
+    get sourceLocation():S3Location|undefined {
 
-        let uri = this.getUriProperty(Predicates.SBOLX.sourceLocation)
+        let uri = this.getUriProperty(Predicates.SBOL3.sourceLocation)
 
         if(uri === undefined)
             return undefined
         
         let obj = this.view.uriToFacade(uri)
 
-        if(! (obj instanceof SXLocation)) {
+        if(! (obj instanceof S3Location)) {
             throw new Error('sourceLocation was not a location')
         }
 
         return obj
     }
 
-    set sourceLocation(location:SXLocation|undefined) {
+    set sourceLocation(location:S3Location|undefined) {
 
         if(location !== undefined)
-            this.setUriProperty(Predicates.SBOLX.sourceLocation, location.uri)
+            this.setUriProperty(Predicates.SBOL3.sourceLocation, location.uri)
         else
-            this.deleteProperty(Predicates.SBOLX.sourceLocation)
+            this.deleteProperty(Predicates.SBOL3.sourceLocation)
 
     }
 
-    get measure():SXMeasure|undefined {
-        let measure = this.getUriProperty(Predicates.SBOLX.measure)
+    get measure():S3Measure|undefined {
+        let measure = this.getUriProperty(Predicates.SBOL3.measure)
 
         if(measure === undefined)
             return
         
-        return new SXMeasure(this.view, measure)
+        return new S3Measure(this.view, measure)
     }
 
-    set measure(measure:SXMeasure|undefined) {
+    set measure(measure:S3Measure|undefined) {
 
         if(measure === undefined)
-            this.deleteProperty(Predicates.SBOLX.measure)
+            this.deleteProperty(Predicates.SBOL3.measure)
         else
-            this.setUriProperty(Predicates.SBOLX.measure, measure.uri)
+            this.setUriProperty(Predicates.SBOL3.measure, measure.uri)
 
     }
 

@@ -2,14 +2,14 @@
 import { triple } from 'rdfoo'
 import { Types, Predicates, Specifiers } from 'bioterms'
 
-import SXFacade from './SXFacade'
+import S3Facade from './S3Facade'
 
 import URIUtils from '../URIUtils';
-import SBOLXGraphView from '../SBOLXGraphView';
+import SBOL3GraphView from '../SBOL3GraphView';
 
-export default class SXIdentified extends SXFacade {
+export default class S3Identified extends S3Facade {
 
-    constructor(view:SBOLXGraphView, uri:string) {
+    constructor(view:SBOL3GraphView, uri:string) {
         super(view, uri)
     }
 
@@ -23,7 +23,7 @@ export default class SXIdentified extends SXFacade {
 
     // Should never throw; make sure not dependent on any getRequiredProperties
     get displayName():string|undefined {
-        return this.name || this.getStringProperty(Predicates.SBOLX.id) || this.uri
+        return this.name || this.getStringProperty(Predicates.SBOL3.id) || this.uri
     }
 
     set name(name:string|undefined) {
@@ -43,15 +43,15 @@ export default class SXIdentified extends SXFacade {
     }
 
     get id():string|undefined {
-        return this.getStringProperty(Predicates.SBOLX.id)
+        return this.getStringProperty(Predicates.SBOL3.id)
     }
 
     set id(id:string|undefined) {
-        this.setStringProperty(Predicates.SBOLX.id, id)
+        this.setStringProperty(Predicates.SBOL3.id, id)
     }
 
     get version():string|undefined {
-        return this.getStringProperty(Predicates.SBOLX.version)
+        return this.getStringProperty(Predicates.SBOL3.version)
     }
 
     setCompliantIdentity(id:string, version?:string, newPrefix?:string) {
@@ -102,22 +102,22 @@ export default class SXIdentified extends SXFacade {
     set version(version:string|undefined) {
 
         if(version !== undefined) {
-            this.setStringProperty(Predicates.SBOLX.version, version)
+            this.setStringProperty(Predicates.SBOL3.version, version)
         } else {
-            this.deleteProperty(Predicates.SBOLX.version)
+            this.deleteProperty(Predicates.SBOL3.version)
         }
     }
 
     get persistentIdentity():string|undefined {
-        return this.getUriProperty(Predicates.SBOLX.persistentIdentity)
+        return this.getUriProperty(Predicates.SBOL3.persistentIdentity)
     }
 
     set persistentIdentity(uri:string|undefined) {
 
         if(uri !== undefined) {
-            this.setUriProperty(Predicates.SBOLX.persistentIdentity, uri)
+            this.setUriProperty(Predicates.SBOL3.persistentIdentity, uri)
         } else {
-            this.deleteProperty(Predicates.SBOLX.persistentIdentity)
+            this.deleteProperty(Predicates.SBOL3.persistentIdentity)
         }
     }
 
@@ -125,19 +125,19 @@ export default class SXIdentified extends SXFacade {
         return URIUtils.getPrefix(this.uri)
     }
 
-    get containingObject():SXIdentified|undefined {
+    get containingObject():S3Identified|undefined {
 
         return undefined
 
     }
 
-    get containedObjects():Array<SXIdentified> {
+    get containedObjects():Array<S3Identified> {
 
         return []
 
     }
 
-    isSiblingOf(other:SXIdentified):boolean {
+    isSiblingOf(other:S3Identified):boolean {
 
         let ourContainer = this.containingObject
         let theirContainer = other.containingObject
@@ -157,7 +157,7 @@ export default class SXIdentified extends SXFacade {
         }
     }
 
-    getSiblings():Array<SXIdentified> {
+    getSiblings():Array<S3Identified> {
 
         let ourContainer = this.containingObject
 

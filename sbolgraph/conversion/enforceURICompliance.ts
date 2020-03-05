@@ -1,12 +1,12 @@
 
 import { Predicates } from 'bioterms';
-import SXIdentified from '../sbolx/SXIdentified'
+import S3Identified from '../sbol3/S3Identified'
 import S2Identified from '../sbol2/S2Identified'
 import URIUtils from '../URIUtils';
-import SBOLXGraphView from 'sbolgraph/SBOLXGraphView';
+import SBOL3GraphView from 'sbolgraph/SBOL3GraphView';
 import SBOL2GraphView from 'sbolgraph/SBOL2GraphView';
 
-export default function enforceURICompliance(g:SBOL2GraphView|SBOLXGraphView, uriPrefix:string) {
+export default function enforceURICompliance(g:SBOL2GraphView|SBOL3GraphView, uriPrefix:string) {
 
     var p_id, p_version, p_persistentIdentity
 
@@ -15,9 +15,9 @@ export default function enforceURICompliance(g:SBOL2GraphView|SBOLXGraphView, ur
         p_version = Predicates.SBOL2.version
         p_persistentIdentity = Predicates.SBOL2.persistentIdentity
     } else {
-        p_id = Predicates.SBOLX.id
-        p_version = Predicates.SBOLX.version
-        p_persistentIdentity = Predicates.SBOLX.persistentIdentity
+        p_id = Predicates.SBOL3.id
+        p_version = Predicates.SBOL3.version
+        p_persistentIdentity = Predicates.SBOL3.persistentIdentity
     }
 
     for(let topLevel of g.topLevels) {
@@ -40,7 +40,7 @@ export default function enforceURICompliance(g:SBOL2GraphView|SBOLXGraphView, ur
 
     }
 
-    function replaceURIs(object:SXIdentified|S2Identified, prefix:string) {
+    function replaceURIs(object:S3Identified|S2Identified, prefix:string) {
 
         let persistentIdentity = prefix + object.getStringProperty(p_id)
         let newURI = persistentIdentity + '/' + object.getStringProperty(p_version)
@@ -56,7 +56,7 @@ export default function enforceURICompliance(g:SBOL2GraphView|SBOLXGraphView, ur
         }
     }
 
-    function addMissingProperties(object:SXIdentified|S2Identified, version:string) {
+    function addMissingProperties(object:S3Identified|S2Identified, version:string) {
 
         object.version = version
 
@@ -72,7 +72,7 @@ export default function enforceURICompliance(g:SBOL2GraphView|SBOLXGraphView, ur
 
     }
 
-    function makeUpID(object:SXIdentified|S2Identified):string {
+    function makeUpID(object:S3Identified|S2Identified):string {
 
         let name = object.name
 

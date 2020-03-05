@@ -1,22 +1,22 @@
 
 import SBOL2GraphView from '../../SBOL2GraphView'
-import SBOLXGraphView from '../../SBOLXGraphView'
+import SBOL3GraphView from '../../SBOL3GraphView'
 
 import S2ComponentDefinition from '../../sbol2/S2ComponentDefinition'
-import SXComponent from '../../sbolx/SXComponent'
-import SXRange from '../../sbolx/SXRange'
-import SXOrientedLocation from '../../sbolx/SXOrientedLocation'
-import SXThingWithLocation from '../../sbolx/SXThingWithLocation'
+import S3Component from '../../sbol3/S3Component'
+import S3Range from '../../sbol3/S3Range'
+import S3OrientedLocation from '../../sbol3/S3OrientedLocation'
+import S3ThingWithLocation from '../../sbol3/S3ThingWithLocation'
 import S2ModuleDefinition from '../../sbol2/S2ModuleDefinition'
 import S2FunctionalComponent from '../../sbol2/S2FunctionalComponent'
 import S2SequenceAnnotation from '../../sbol2/S2SequenceAnnotation'
 import S2GenericLocation from '../../sbol2/S2GenericLocation'
 import S2Experiment from '../../sbol2/S2Experiment'
 import S2ExperimentalData from '../../sbol2/S2ExperimentalData'
-import SXExperiment from '../../sbolx/SXExperiment'
-import SXExperimentalData from '../../sbolx/SXExperimentalData'
+import S3Experiment from '../../sbol3/S3Experiment'
+import S3ExperimentalData from '../../sbol3/S3ExperimentalData'
 import S2Range from '../../sbol2/S2Range'
-import SXIdentified from '../../sbolx/SXIdentified'
+import S3Identified from '../../sbol3/S3Identified'
 import S2Identified from '../../sbol2/S2Identified'
 import { Graph } from 'rdfoo'
 
@@ -32,25 +32,25 @@ export default function convertXto2(graph:Graph) {
     let sbol2View:SBOL2GraphView = new SBOL2GraphView(graph)
 
     let newGraph = new Graph()
-    let sbolxView:SBOLXGraphView = new SBOLXGraphView(newGraph)
+    let sbol3View:SBOL3GraphView = new SBOL3GraphView(newGraph)
 
 
-    for(let ed of sbolxView.experimentalData) {
+    for(let ed of sbol3View.experimentalData) {
         let ed2 = new S2ExperimentalData(sbol2View, ed.uri)
         ed2.setUriProperty(Predicates.a, Types.SBOL2.ExperimentalData)
         copyIdentifiedProperties(ed, ed2)
     }
 
-    for(let ex of sbolxView.experiments) {
+    for(let ex of sbol3View.experiments) {
         let ex2 = new S2Experiment(sbol2View, ex.uri)
         ex2.setUriProperty(Predicates.a, Types.SBOL2.Experiment)
         copyIdentifiedProperties(ex, ex2)
         for(let ed of ex.experimentalData) {
-            ex2.insertUriProperty(Predicates.SBOLX.experimentalData, ed.uri)
+            ex2.insertUriProperty(Predicates.SBOL3.experimentalData, ed.uri)
         }
     }
 
-    for(let seq of sbolxView.sequences) {
+    for(let seq of sbol3View.sequences) {
         let seq2 = new S2Sequence(sbol2View, seq.uri)
         seq2.setUriProperty(Predicates.a, Types.SBOL2.Sequence)
         copyIdentifiedProperties(seq, seq2)
@@ -81,7 +81,7 @@ export default function convertXto2(graph:Graph) {
 
     // Create CDs and MDs for every component, where the MD contains the CD as an FC
     //
-    for(let component of sbolxView.components) {
+    for(let component of sbol3View.components) {
 
         let cdUri = component.uri
         let mdUri = component.uri
@@ -156,7 +156,7 @@ export default function convertXto2(graph:Graph) {
     }
 
     // Make subcomponents into both SBOL2 subcomponents and SBOL2 functionalcomponents
-    for(let component of sbolxView.components) {
+    for(let component of sbol3View.components) {
 
         let mapping = getCDandMD(component.uri)
 
@@ -168,7 +168,7 @@ export default function convertXto2(graph:Graph) {
 
         for(let subcomponent of component.subComponents) {
 
-            let defUri = subcomponent.getRequiredUriProperty(Predicates.SBOLX.instanceOf)
+            let defUri = subcomponent.getRequiredUriProperty(Predicates.SBOL3.instanceOf)
             
             let newDefOfSubcomponent = getCDandMD(defUri)
 
@@ -188,7 +188,7 @@ export default function convertXto2(graph:Graph) {
             copyIdentifiedProperties(subcomponent, mdSubcomponent)
 
             if(subcomponent.sourceLocation) {
-                cdSubcomponent.setUriProperty(Predicates.SBOLX.sourceLocation, subcomponent.sourceLocation.uri)
+                cdSubcomponent.setUriProperty(Predicates.SBOL3.sourceLocation, subcomponent.sourceLocation.uri)
             }
 
             if(subcomponent.locations.length > 0) {
@@ -212,7 +212,7 @@ export default function convertXto2(graph:Graph) {
     }
 
     // Port interactions
-    for(let component of sbolxView.components) {
+    for(let component of sbol3View.components) {
 
         let mapping = getCDandMD(component.uri)
 
@@ -266,7 +266,7 @@ export default function convertXto2(graph:Graph) {
     //   & if there is ONLY a module left, remove its _module suffix
     //
     // It's easier to do this on the generated SBOL2 because it means we don't
-    // have to make assumptions about how the SBOLX will map to SBOL2.
+    // have to make assumptions about how the SBOL3 will map to SBOL2.
     //
 
 
@@ -277,10 +277,10 @@ export default function convertXto2(graph:Graph) {
     }
 
 
-    // Delete anything with an SBOLX type from the graph
+    // Delete anything with an SBOL3 type from the graph
 
     for(let typeTriple of graph.match(null, Predicates.a, null)) {
-        if(typeTriple.object.toString().indexOf(Prefixes.sbolx) === 0) {
+        if(typeTriple.object.toString().indexOf(Prefixes.sbol3) === 0) {
             graph.removeMatches(typeTriple.subject, null, null)
         }
     }
@@ -289,15 +289,15 @@ export default function convertXto2(graph:Graph) {
 
     // For "generic top levels"
 
-    graph.replaceURI(Predicates.SBOLX.persistentIdentity, Predicates.SBOL2.persistentIdentity)
-    graph.replaceURI(Predicates.SBOLX.id, Predicates.SBOL2.displayId)
-    graph.replaceURI(Predicates.SBOLX.version, Predicates.SBOL2.version)
+    graph.replaceURI(Predicates.SBOL3.persistentIdentity, Predicates.SBOL2.persistentIdentity)
+    graph.replaceURI(Predicates.SBOL3.id, Predicates.SBOL2.displayId)
+    graph.replaceURI(Predicates.SBOL3.version, Predicates.SBOL2.version)
 
 
 
     graph.addAll(newGraph)
 
-    function copyIdentifiedProperties(a:SXIdentified, b:S2Identified) {
+    function copyIdentifiedProperties(a:S3Identified, b:S2Identified) {
 
         let aTriples = graph.match(a.uri, null, null)
 
@@ -309,17 +309,17 @@ export default function convertXto2(graph:Graph) {
                 continue
             }
 
-            if(p === Predicates.SBOLX.id) {
+            if(p === Predicates.SBOL3.id) {
                 b.graph.insert(b.uri, Predicates.SBOL2.displayId, triple.object)
                 continue
             }
 
-            if(p === Predicates.SBOLX.persistentIdentity) {
+            if(p === Predicates.SBOL3.persistentIdentity) {
                 b.graph.insert(b.uri, Predicates.SBOL2.persistentIdentity, triple.object)
                 continue
             }
 
-            if(p === Predicates.SBOLX.version) {
+            if(p === Predicates.SBOL3.version) {
                 b.graph.insert(b.uri, Predicates.SBOL2.version, triple.object)
                 continue
             }
@@ -329,17 +329,17 @@ export default function convertXto2(graph:Graph) {
                 continue
             }
 
-            if(p.indexOf(Prefixes.sbolx) !== 0) {
+            if(p.indexOf(Prefixes.sbol3) !== 0) {
                 b.graph.insert(b.uri, triple.predicate.nominalValue, triple.object)
             }
         }
     }
 
 
-    function copyLocations(sbol2View:SBOL2GraphView, oldThing:SXThingWithLocation, newThing:S2SequenceAnnotation) {
+    function copyLocations(sbol2View:SBOL2GraphView, oldThing:S3ThingWithLocation, newThing:S2SequenceAnnotation) {
 
         for(let location of oldThing.locations) {
-            if(location instanceof SXRange) {
+            if(location instanceof S3Range) {
 
                 let newLocIdent = S2IdentifiedFactory.createChild(sbol2View, Types.SBOL2.Range, newThing, Predicates.SBOL2.location, location.id, location.version)
                 let newLoc = new S2Range(sbol2View, newLocIdent.uri)
@@ -351,10 +351,10 @@ export default function convertXto2(graph:Graph) {
                 newLoc.start = location.start
                 newLoc.end = location.end
 
-                newLoc.orientation = location.orientation === Specifiers.SBOLX.Orientation.ReverseComplement ?
+                newLoc.orientation = location.orientation === Specifiers.SBOL3.Orientation.ReverseComplement ?
                         Specifiers.SBOL2.Orientation.ReverseComplement : Specifiers.SBOL2.Orientation.Inline
 
-            } else if(location instanceof SXOrientedLocation) {
+            } else if(location instanceof S3OrientedLocation) {
 
                 let newLocIdent = S2IdentifiedFactory.createChild(sbol2View, Types.SBOL2.GenericLocation, newThing, Predicates.SBOL2.location, location.id, location.version)
                 let newLoc = new S2GenericLocation(sbol2View, newLocIdent.uri)
@@ -363,7 +363,7 @@ export default function convertXto2(graph:Graph) {
                     newLoc.setUriProperty(Predicates.SBOL2.sequence, location.sequence.uri)
                 }
 
-                newLoc.orientation = location.orientation === Specifiers.SBOLX.Orientation.ReverseComplement ?
+                newLoc.orientation = location.orientation === Specifiers.SBOL3.Orientation.ReverseComplement ?
                         Specifiers.SBOL2.Orientation.ReverseComplement : Specifiers.SBOL2.Orientation.Inline
 
             } else {

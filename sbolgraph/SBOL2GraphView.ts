@@ -36,7 +36,7 @@ import S2ExperimentalData from './sbol2/S2ExperimentalData';
 import { S2Attachment } from '.';
 
 import convert1to2 from './conversion/fromSBOL1/toSBOL2';
-import convertXto2 from './conversion/fromSBOLX/toSBOL2';
+import convertXto2 from './conversion/fromSBOL3/toSBOL2';
 import enforceURICompliance from './conversion/enforceURICompliance';
 
 import { Activity, Association, Agent, Plan, Usage, ProvView } from 'rdfoo-prov'
