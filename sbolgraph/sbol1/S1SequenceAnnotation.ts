@@ -4,7 +4,6 @@ import { Types, Predicates, Specifiers } from 'bioterms'
 
 import S1Facade from './S1Facade'
 
-import SBOL1Graph from '../SBOL1Graph'
 import URIUtils from '../URIUtils'
 import S1DnaComponent from './S1DnaComponent';
 import SBOL1GraphView from '../SBOL1GraphView'
