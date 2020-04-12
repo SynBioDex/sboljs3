@@ -55,6 +55,7 @@ import Repository from './SBOL2Repository'
 import { SearchQuery, SearchResult } from './SBOL2Repository'
 
 import { Graph, Watcher, node, triple, serialize, Facade } from 'rdfoo'
+import SBOLImporter from './SBOLImporter'
 
 export {
 
@@ -112,6 +113,7 @@ export {
     S3ExperimentalData,
 
     // etc
+    SBOLImporter,
     Graph,
     Watcher,
     node,

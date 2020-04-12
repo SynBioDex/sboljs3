@@ -1,11 +1,9 @@
 
 
-import { Graph, GraphViewBasic, triple, node, changeURIPrefix, serialize, Facade, GraphViewHybrid } from 'rdfoo'
+import { Graph, GraphViewBasic, triple, node, changeURIPrefix, serialize, Facade, GraphViewHybrid, parseRDF } from 'rdfoo'
 import { Types, Predicates, Specifiers, Prefixes } from 'bioterms'
 
 import request = require('request')
-
-import parseRDF from './parseRDF';
 
 import S3Identified from './sbol3/S3Identified'
 import S3Sequence from './sbol3/S3Sequence'
@@ -25,7 +23,7 @@ import S3ExperimentalData from './sbol3/S3ExperimentalData';
 import S3Measure from './sbol3/S3Measure';
 
 import S3IdentifiedFactory from './sbol3/S3IdentifiedFactory'
-import identifyFiletype, { Filetype } from './conversion/identifyFiletype';
+import { identifyFiletype, Filetype } from 'rdfoo'
 
 import convert1to2 from './conversion/fromSBOL1/toSBOL2';
 import convert2toX from './conversion/fromSBOL2/toSBOL3';

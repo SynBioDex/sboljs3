@@ -2,7 +2,7 @@ import S2Identified from './S2Identified'
 import SBOL2GraphView from '../SBOL2GraphView';
 import { node } from 'rdfoo'
 import S2ExperimentalData from './S2ExperimentalData';
-import { Activity } from 'rdfoo-prov';
+import { Activity, ProvView } from 'rdfoo-prov';
 import { Predicates, Types } from 'bioterms';
 import S2Implementation from './S2Implementation';
 
@@ -49,7 +49,7 @@ export default class S2Experiment extends S2Identified {
             return undefined
         }
 
-        return new Activity(this.view, activity)
+        return new Activity(new ProvView(this.graph), activity)
     }
 
     set activity(activity:Activity|undefined) {

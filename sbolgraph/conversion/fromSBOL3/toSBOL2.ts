@@ -27,7 +27,7 @@ import URIUtils from '../../URIUtils';
 import S2Sequence from '../../sbol2/S2Sequence';
 
 
-export default function convertXto2(graph:Graph) {
+export default function convert3to2(graph:Graph) {
 
     let sbol2View:SBOL2GraphView = new SBOL2GraphView(graph)
 

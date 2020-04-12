@@ -26,8 +26,8 @@ import S2MapsTo from "./sbol2/S2MapsTo";
 import S2GenericLocation from "./sbol2/S2GenericLocation";
 import S2IdentifiedFactory from './sbol2/S2IdentifiedFactory';
 import S2Cut from './sbol2/S2Cut';
-import parseRDF from './parseRDF';
-import identifyFiletype, { Filetype } from './conversion/identifyFiletype';
+import { parseRDF } from 'rdfoo';
+import { identifyFiletype, Filetype } from 'rdfoo';
 import fastaToSBOL2 from './conversion/fastaToSBOL2';
 import genbankToSBOL2 from './conversion/genbankToSBOL2';
 import S2Implementation from './sbol2/S2Implementation';
@@ -157,66 +157,6 @@ export default class SBOL2GraphView extends GraphViewHybrid {
             S2IdentifiedFactory.createTopLevel(this, Types.SBOL2.ExperimentalData, uriPrefix, id, undefined, version)
 
         return new S2ExperimentalData(this, identified.uri)
-
-    }
-
-    createProvActivity(uriPrefix:string, id:string, version?:string):Activity {
-
-        if(arguments.length < 3)
-            version = '1'
-
-        const identified:S2Identified =
-            S2IdentifiedFactory.createTopLevel(this, Types.Prov.Activity, uriPrefix, id, undefined, version)
-
-        return new Activity(this, identified.uri)
-
-    }
-
-    createProvAssociation(uriPrefix:string, id:string, version?:string):Association {
-
-        if(arguments.length < 3)
-            version = '1'
-
-        const identified:S2Identified =
-            S2IdentifiedFactory.createTopLevel(this, Types.Prov.Association, uriPrefix, id, undefined, version)
-
-        return new Association(this, identified.uri)
-
-    }
-
-    createProvAgent(uriPrefix:string, id:string, version?:string):Agent {
-
-        if(arguments.length < 3)
-            version = '1'
-
-        const identified:S2Identified =
-            S2IdentifiedFactory.createTopLevel(this, Types.Prov.Agent, uriPrefix, id, undefined, version)
-
-        return new Agent(this, identified.uri)
-
-    }
-
-    createProvPlan(uriPrefix:string, id:string, version?:string):Plan {
-
-        if(arguments.length < 3)
-            version = '1'
-
-        const identified:S2Identified =
-            S2IdentifiedFactory.createTopLevel(this, Types.Prov.Plan, uriPrefix, id, undefined, version)
-
-        return new Plan(this, identified.uri)
-
-    }
-
-    createProvUsage(uriPrefix:string, id:string, version?:string):Usage {
-
-        if(arguments.length < 3)
-            version = '1'
-
-        const identified:S2Identified =
-            S2IdentifiedFactory.createTopLevel(this, Types.Prov.Usage, uriPrefix, id, undefined, version)
-
-        return new Usage(this, identified.uri)
 
     }
 

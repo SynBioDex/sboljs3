@@ -39,7 +39,7 @@ import S3Measure from '../../sbol3/S3Measure';
 import SBOL3GraphView from '../../SBOL3GraphView'
 import SBOL2GraphView from '../../SBOL2GraphView'
 
-export default function convert2toX(graph:Graph) {
+export default function convert2to3(graph:Graph) {
 
     const map:Map<string, S3Identified> = new Map()
 

@@ -5,6 +5,7 @@ import S1DnaComponent from './sbol1/S1DnaComponent'
 import S1Collection from './sbol1/S1Collection'
 import S1SequenceAnnotation from './sbol1/S1SequenceAnnotation'
 import { Types } from 'bioterms'
+import S1Facade from './sbol1/S1Facade'
 
 export default class SBOL1GraphView extends GraphViewBasic {
 
@@ -58,6 +59,16 @@ export default class SBOL1GraphView extends GraphViewBasic {
         return undefined
     }
 
+    get topLevels():S1Facade[] {
+
+        const topLevels = []
+
+        Array.prototype.push.apply(topLevels, this.instancesOfType(Types.SBOL1.DnaSequence))
+        Array.prototype.push.apply(topLevels, this.instancesOfType(Types.SBOL1.DnaComponent))
+        Array.prototype.push.apply(topLevels, this.instancesOfType(Types.SBOL1.Collection))
+
+        return topLevels.map((topLevel) => this.uriToFacade(topLevel) as S1Facade)
+    }
 
 }
 
