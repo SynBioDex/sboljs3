@@ -232,7 +232,7 @@ export default class SBOL2GraphView extends GraphViewHybrid {
         if(this.getType(uri) !== Types.Prov.Activity)
             return null
 
-        return new Activity(this, uri)
+        return new Activity(new ProvView(this.graph), uri)
 
     }
 
@@ -318,7 +318,7 @@ export default class SBOL2GraphView extends GraphViewHybrid {
     get provPlans():Array<Plan> {
 
         return this.instancesOfType(Types.Prov.Plan)
-                    .map((uri) => new Plan(this, uri))
+                    .map((uri) => new Plan(new ProvView(this.graph), uri))
 
     }
 

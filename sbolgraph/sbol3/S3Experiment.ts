@@ -3,7 +3,7 @@ import S3Identified from './S3Identified'
 import SBOL3GraphView from '../SBOL3GraphView';
 import { node } from 'rdfoo'
 import S3ExperimentalData from './S3ExperimentalData';
-import { Activity }  from 'rdfoo-prov';
+import { Activity, ProvView }  from 'rdfoo-prov';
 import { Predicates, Types } from 'bioterms';
 import S3Implementation from './S3Implementation';
 
@@ -50,7 +50,7 @@ export default class S3Experiment extends S3Identified {
             return undefined
         }
 
-        return new Activity(this.view, activity)
+        return new Activity(new ProvView(this.graph), activity)
     }
 
     set activity(activity:Activity|undefined) {
