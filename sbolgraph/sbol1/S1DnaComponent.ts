@@ -7,6 +7,7 @@ import S1Facade from './S1Facade'
 import SBOL1GraphView from '../SBOL1GraphView'
 import URIUtils from '../URIUtils'
 import S1SequenceAnnotation from './S1SequenceAnnotation'
+import { S1DnaSequence } from 'sbolgraph'
 
 export default class S1DnaComponent extends S1Facade {
 
@@ -33,6 +34,14 @@ export default class S1DnaComponent extends S1Facade {
 
     get description():string|undefined {
         return this.getStringProperty(Predicates.SBOL1.description)
+    }
+
+    get subComponents():S1DnaComponent[] {
+        return this.getUriProperties(Predicates.SBOL1.subComponent).map(sc => new S1DnaComponent(this.view, sc))
+    }
+
+    get dnaSequences():S1DnaSequence[] {
+        return this.getUriProperties(Predicates.SBOL1.dnaSequence).map(sc => new S1DnaSequence(this.view, sc))
     }
 
 

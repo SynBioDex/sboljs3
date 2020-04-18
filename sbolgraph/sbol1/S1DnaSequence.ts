@@ -21,4 +21,9 @@ export default class S1DnaSequence extends S1Facade {
         return this.getStringProperty(Predicates.SBOL1.nucleotides)
     }
 
+    get name():string|undefined {
+        return this.getStringProperty(Predicates.SBOL1.name)
+    }
+
 }
+
