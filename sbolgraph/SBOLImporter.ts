@@ -15,8 +15,12 @@ export default class SBOLImporter {
         return await this.sbol1GraphFromString(await get(url), defaultURIPrefix)
     }
 
-    static async sbol1GraphFromFilename(str:string, defaultURIPrefix?:string, mimeType?:string):Promise<Graph> {
+    static async sbol1GraphFromFilename(str: string, defaultURIPrefix?: string, mimeType?: string): Promise<Graph> {
         return await this.sbol1GraphFromString(await load(str), defaultURIPrefix)
+    }
+
+    static async sbol1GraphFromFilenameOrURL(str: string, defaultURIPrefix?: string, mimeType?: string): Promise<Graph> {
+        return isURL(str) ? this.sbol1GraphFromURL(str) : this.sbol1GraphFromFilename(str)
     }
 
     static async sbol1GraphFromString(str:string,  defaultURIPrefix?:string):Promise<Graph> {
@@ -42,6 +46,10 @@ export default class SBOLImporter {
 
     static async sbol2GraphFromFilename(filename:string, defaultURIPrefix?:string):Promise<Graph> {
         return await this.sbol2GraphFromString(await load(filename), defaultURIPrefix)
+    }
+
+    static async sbol2GraphFromFilenameOrURL(str: string, defaultURIPrefix?: string, mimeType?: string): Promise<Graph> {
+        return isURL(str) ? this.sbol2GraphFromURL(str) : this.sbol2GraphFromFilename(str)
     }
 
     static async sbol2GraphFromString(str:string,  defaultURIPrefix?:string):Promise<Graph> {
@@ -93,6 +101,10 @@ export default class SBOLImporter {
 
     static async sbol3GraphFromFilename(filename:string, defaultURIPrefix?:string):Promise<Graph> {
         return await this.sbol3GraphFromString(await load(filename), defaultURIPrefix)
+    }
+
+    static async sbol3GraphFromFilenameOrURL(str: string, defaultURIPrefix?: string, mimeType?: string): Promise<Graph> {
+        return isURL(str) ? this.sbol3GraphFromURL(str) : this.sbol3GraphFromFilename(str)
     }
 
     static async sbol3GraphFromString(str:string,  defaultURIPrefix?:string):Promise<Graph> {
@@ -163,4 +175,8 @@ async function load(filename:string):Promise<string> {
                 resolve(file.toString())
         })
     })
+}
+
+function isURL(str:string):boolean {
+    return str.indexOf('://') !== -1 // TODO!
 }
