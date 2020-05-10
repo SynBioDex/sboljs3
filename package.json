@@ -29,13 +29,11 @@
     "rdf-graph-array-sboljs": "^0.3.1",
     "rdf-parser-n3": "^0.3.0",
     "rdf-parser-rdfxml": "^0.3.1",
-    "rdfoo": "^0.5.0",
+    "rdfoo": "^0.6.0",
     "rdfoo-prov": "^0.3.0",
     "request": "^2.81.0",
     "shortid": "^2.2.8",
-    "uuid": "^3.3.2"
-  },
-  "devDependencies": {
+    "uuid": "^3.3.2",
     "@types/mz": "0.0.32",
     "@types/node": "^8.0.34",
     "chalk": "^2.4.2",
