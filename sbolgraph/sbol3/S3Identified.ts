@@ -23,7 +23,7 @@ export default class S3Identified extends S3Facade {
 
     // Should never throw; make sure not dependent on any getRequiredProperties
     get displayName():string|undefined {
-        return this.name || this.getStringProperty(Predicates.SBOL3.id) || this.uri
+        return this.name || this.getStringProperty(Predicates.SBOL3.displayId) || this.uri
     }
 
     set name(name:string|undefined) {
@@ -42,12 +42,12 @@ export default class S3Identified extends S3Facade {
         return this.description
     }
 
-    get id():string|undefined {
-        return this.getStringProperty(Predicates.SBOL3.id)
+    get displayId():string|undefined {
+        return this.getStringProperty(Predicates.SBOL3.displayId)
     }
 
     set id(id:string|undefined) {
-        this.setStringProperty(Predicates.SBOL3.id, id)
+        this.setStringProperty(Predicates.SBOL3.displayId, id)
     }
 
     get version():string|undefined {

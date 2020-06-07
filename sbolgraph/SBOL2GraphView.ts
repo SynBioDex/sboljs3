@@ -637,67 +637,72 @@ class SBOL2 extends GraphViewBasic {
         if(!uri)
             return undefined
 
-        const type = this.getType(uri)
+        const types = this.getTypes(uri)
 
-        if(type === Types.SBOL2.ComponentDefinition)
-            return new S2ComponentDefinition(this.view, uri)
+        for(var i = 0; i < types.length; ++ i) {
 
-        if(type === Types.SBOL2.Component)
-            return new S2ComponentInstance(this.view, uri)
+            let type = types[i]
 
-        if(type === Types.SBOL2.FunctionalComponent)
-            return new S2FunctionalComponent(this.view, uri)
+            if(type === Types.SBOL2.ComponentDefinition)
+                return new S2ComponentDefinition(this.view, uri)
 
-        if(type === Types.SBOL2.Implementation)
-            return new S2Implementation(this.view, uri)
+            if(type === Types.SBOL2.Component)
+                return new S2ComponentInstance(this.view, uri)
 
-        if(type === Types.SBOL2.Experiment)
-            return new S2Experiment(this.view, uri)
+            if(type === Types.SBOL2.FunctionalComponent)
+                return new S2FunctionalComponent(this.view, uri)
 
-        if(type === Types.SBOL2.ExperimentalData)
-            return new S2ExperimentalData(this.view, uri)
+            if(type === Types.SBOL2.Implementation)
+                return new S2Implementation(this.view, uri)
 
-        if(type === Types.SBOL2.Interaction)
-            return new S2Interaction(this.view, uri)
+            if(type === Types.SBOL2.Experiment)
+                return new S2Experiment(this.view, uri)
 
-        if(type === Types.SBOL2.MapsTo)
-            return new S2MapsTo(this.view, uri)
+            if(type === Types.SBOL2.ExperimentalData)
+                return new S2ExperimentalData(this.view, uri)
 
-        if(type === Types.SBOL2.ModuleDefinition)
-            return new S2ModuleDefinition(this.view, uri)
+            if(type === Types.SBOL2.Interaction)
+                return new S2Interaction(this.view, uri)
 
-        if(type === Types.SBOL2.Module)
-            return new S2ModuleInstance(this.view, uri)
+            if(type === Types.SBOL2.MapsTo)
+                return new S2MapsTo(this.view, uri)
 
-        if(type === Types.SBOL2.Participation)
-            return new S2Participation(this.view, uri)
+            if(type === Types.SBOL2.ModuleDefinition)
+                return new S2ModuleDefinition(this.view, uri)
 
-        if(type === Types.SBOL2.Range)
-            return new S2Range(this.view, uri)
+            if(type === Types.SBOL2.Module)
+                return new S2ModuleInstance(this.view, uri)
 
-        if(type === Types.SBOL2.Cut)
-            return new S2Cut(this.view, uri)
+            if(type === Types.SBOL2.Participation)
+                return new S2Participation(this.view, uri)
 
-        if(type === Types.SBOL2.GenericLocation)
-            return new S2GenericLocation(this.view, uri)
+            if(type === Types.SBOL2.Range)
+                return new S2Range(this.view, uri)
 
-        if(type === Types.SBOL2.SequenceAnnotation)
-            return new S2SequenceAnnotation(this.view, uri)
+            if(type === Types.SBOL2.Cut)
+                return new S2Cut(this.view, uri)
 
-        if(type === Types.SBOL2.Sequence)
-            return new S2Sequence(this.view, uri)
+            if(type === Types.SBOL2.GenericLocation)
+                return new S2GenericLocation(this.view, uri)
 
-        if(type === Types.SBOL2.Collection)
-            return new S2Collection(this.view, uri)
+            if(type === Types.SBOL2.SequenceAnnotation)
+                return new S2SequenceAnnotation(this.view, uri)
 
-        if(type === Types.SBOL2.Model)
-            return new S2Model(this.view, uri)
+            if(type === Types.SBOL2.Sequence)
+                return new S2Sequence(this.view, uri)
 
-        if(type === Types.SBOL2.Attachment)
-            return new S2Attachment(this.view, uri)
+            if(type === Types.SBOL2.Collection)
+                return new S2Collection(this.view, uri)
 
-        if(type === Types.Measure.Measure)
-            return new S2Measure(this.view, uri)
+            if(type === Types.SBOL2.Model)
+                return new S2Model(this.view, uri)
+
+            if(type === Types.SBOL2.Attachment)
+                return new S2Attachment(this.view, uri)
+
+            if(type === Types.Measure.Measure)
+                return new S2Measure(this.view, uri)
+        }
 
         return super.uriToFacade(uri)
     }

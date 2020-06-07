@@ -15,7 +15,7 @@ export default function enforceURICompliance(g:SBOL2GraphView|SBOL3GraphView, ur
         p_version = Predicates.SBOL2.version
         p_persistentIdentity = Predicates.SBOL2.persistentIdentity
     } else {
-        p_id = Predicates.SBOL3.id
+        p_id = Predicates.SBOL3.displayId
         p_version = Predicates.SBOL3.version
         p_persistentIdentity = Predicates.SBOL3.persistentIdentity
     }

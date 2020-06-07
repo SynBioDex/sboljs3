@@ -21,7 +21,7 @@ export default class S3IdentifiedFactory {
 
         view.graph.insertProperties(uri, {
             [Predicates.a]: node.createUriNode(type),
-            [Predicates.SBOL3.id]: node.createStringNode(extractID(uri, version)),
+            [Predicates.SBOL3.displayId]: node.createStringNode(extractID(uri, version)),
             [Predicates.SBOL3.persistentIdentity]: node.createUriNode(extractPersistentIdentity(uri, version)),
         })
 
@@ -58,7 +58,7 @@ export default class S3IdentifiedFactory {
 
         view.graph.insertProperties(uri, {
             [Predicates.a]: node.createUriNode(type),
-            [Predicates.SBOL3.id]: node.createStringNode(extractID(uri, version)),
+            [Predicates.SBOL3.displayId]: node.createStringNode(extractID(uri, version)),
             [Predicates.SBOL3.persistentIdentity]: node.createUriNode(extractPersistentIdentity(uri, version))
         })
 

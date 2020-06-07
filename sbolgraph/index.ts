@@ -7,6 +7,7 @@ import { sbol1 } from './SBOL1GraphView'
 import { sbol2 } from './SBOL2GraphView'
 import { sbol3 }  from './SBOL3GraphView'
 
+import S1Facade from './sbol1/S1Facade'
 import S1Collection from './sbol1/S1Collection'
 import S1DnaComponent from './sbol1/S1DnaComponent'
 import S1DnaSequence from './sbol1/S1DnaSequence'
@@ -63,6 +64,7 @@ export {
     // SBOL1
     SBOL1GraphView,
     sbol1,
+    S1Facade,
     S1Collection,
     S1DnaComponent,
     S1DnaSequence,

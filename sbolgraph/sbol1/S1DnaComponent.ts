@@ -36,12 +36,24 @@ export default class S1DnaComponent extends S1Facade {
         return this.getStringProperty(Predicates.SBOL1.description)
     }
 
-    get subComponents():S1DnaComponent[] {
-        return this.getUriProperties(Predicates.SBOL1.subComponent).map(sc => new S1DnaComponent(this.view, sc))
-    }
-
     get dnaSequences():S1DnaSequence[] {
         return this.getUriProperties(Predicates.SBOL1.dnaSequence).map(sc => new S1DnaSequence(this.view, sc))
+    }
+
+    get subComponents():S1DnaComponent[] {
+
+        let scs:string[] = []
+
+        for (let anno of this.annotations) {
+
+            let sc = anno.subComponent
+
+            if(sc && scs.indexOf(sc.uri) === -1) {
+                scs.push(sc.uri)
+            }
+        }
+
+        return scs.map(uri => new S1DnaComponent(this.view, uri))
     }
 
 

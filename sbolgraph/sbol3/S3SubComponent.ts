@@ -43,7 +43,7 @@ export default class S3SubComponent extends S3ThingWithLocation {
         } catch(e) {
         }
 
-        return this.getStringProperty(Predicates.SBOL3.id) || this.uri
+        return this.getStringProperty(Predicates.SBOL3.displayId) || this.uri
     }
 
     get instanceOf():S3Component {

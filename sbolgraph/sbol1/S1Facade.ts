@@ -10,6 +10,7 @@ export default abstract class S1Facade extends Facade {
         super(view.graph, uri)
         this.view = view
     }
+    
 
 
 }

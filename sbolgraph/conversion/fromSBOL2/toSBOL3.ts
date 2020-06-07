@@ -449,7 +449,7 @@ export default function convert2to3(graph:Graph) {
     // For "generic top levels"
 
     graph.replaceURI(Predicates.SBOL2.persistentIdentity, Predicates.SBOL3.persistentIdentity)
-    graph.replaceURI(Predicates.SBOL2.displayId, Predicates.SBOL3.id)
+    graph.replaceURI(Predicates.SBOL2.displayId, Predicates.SBOL3.displayId)
     graph.replaceURI(Predicates.SBOL2.version, Predicates.SBOL3.version)
 
 
@@ -478,7 +478,7 @@ export default function convert2to3(graph:Graph) {
             }
 
             if(p == Predicates.SBOL2.displayId) {
-                newGraph.insert(b.uri, Predicates.SBOL3.id, triple.object)
+                newGraph.insert(b.uri, Predicates.SBOL3.displayId, triple.object)
             } else if(p == Predicates.SBOL2.version) {
                 newGraph.insert(b.uri, Predicates.SBOL3.version, triple.object)
             } if(p == Predicates.SBOL2.persistentIdentity) {

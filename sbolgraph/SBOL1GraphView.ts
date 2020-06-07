@@ -42,18 +42,18 @@ export default class SBOL1GraphView extends GraphViewBasic {
         if(!uri)
             return undefined
 
-        const type = this.getType(uri)
+        const types = this.getTypes(uri)
 
-        if(type === Types.SBOL1.DnaSequence)
+        if(types.indexOf(Types.SBOL1.DnaSequence) !== -1)
             return new S1DnaSequence(this, uri)
 
-        if(type === Types.SBOL1.DnaComponent)
+        if(types.indexOf(Types.SBOL1.DnaComponent) !== -1)
             return new S1DnaComponent(this, uri)
 
-        if(type === Types.SBOL1.Collection)
+        if(types.indexOf(Types.SBOL1.Collection) !== -1)
             return new S1Collection(this, uri)
 
-        if(type === Types.SBOL1.SequenceAnnotation)
+        if(types.indexOf(Types.SBOL1.SequenceAnnotation) !== -1)
             return new S1SequenceAnnotation(this, uri)
 
         return undefined
@@ -110,6 +110,14 @@ export default class SBOL1GraphView extends GraphViewBasic {
 
             return node.nominalValue
         }
+    }
+
+    get rootDnaComponents():Array<S1DnaComponent> {
+
+        return this.instancesOfType(Types.SBOL1.DnaComponent).filter((uri) => {
+            return !this.graph.hasMatch(null, Predicates.SBOL1.subComponent, uri)
+        }).map((uri) => new S1DnaComponent(this, uri))
+
     }
 }
 
