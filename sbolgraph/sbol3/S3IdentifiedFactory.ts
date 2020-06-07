@@ -3,33 +3,24 @@ import S3Identified from "./S3Identified";
 import { Predicates } from 'bioterms'
 import { node } from 'rdfoo'
 import SBOL3GraphView from '../SBOL3GraphView'
+import URIUtils from "../URIUtils";
 
 export default class S3IdentifiedFactory {
     
     static createTopLevel(view:SBOL3GraphView,
                           type:string,
                           uriPrefix:string,
-                          id:string|undefined,
-                          name:string|undefined,
-                          version?:string|undefined):S3Identified {
+                          displayId:string|undefined,
+                          name:string|undefined):S3Identified {
 
-        id = id ? nameToID(id) : 'anon'
+        displayId = displayId ? nameToID(displayId) : 'anon'
 
-        let versionSuffix = version !== undefined ? '/' + version : ''
-
-        const uri:string = view.graph.generateURI(uriPrefix + id + '$n?$' + versionSuffix)
+        const uri:string = view.graph.generateURI(uriPrefix + displayId + '$n?$')
 
         view.graph.insertProperties(uri, {
             [Predicates.a]: node.createUriNode(type),
-            [Predicates.SBOL3.displayId]: node.createStringNode(extractID(uri, version)),
-            [Predicates.SBOL3.persistentIdentity]: node.createUriNode(extractPersistentIdentity(uri, version)),
+            [Predicates.SBOL3.displayId]: node.createStringNode(displayId)
         })
-
-        if(version !== undefined) {
-            view.graph.insertProperties(uri, {
-                [Predicates.SBOL3.version]: node.createStringNode(version)
-            })
-        }
 
         if(name !== undefined) {
             view.graph.insertProperties(uri, {
@@ -45,28 +36,18 @@ export default class S3IdentifiedFactory {
                     type:string,
                     parent:S3Identified,
                     ownershipPredicate:string,
-                    id:string|undefined,
-                    name:string|undefined,
-                    version?:string|undefined):S3Identified {
+                    displayId:string|undefined,
+                    name:string|undefined):S3Identified {
 
-        id = id ? nameToID(id) : 'anon'
-
-        let versionSuffix = version !== undefined ? '/' + version : ''
+        displayId = displayId ? nameToID(displayId) : 'anon'
 
         const uri:string = view.graph.generateURI(
-            parent.persistentIdentity + '/' + id + '$n?$' + versionSuffix)
+            URIUtils.getPrefix(parent.uri) + displayId + '$n?$')
 
         view.graph.insertProperties(uri, {
             [Predicates.a]: node.createUriNode(type),
-            [Predicates.SBOL3.displayId]: node.createStringNode(extractID(uri, version)),
-            [Predicates.SBOL3.persistentIdentity]: node.createUriNode(extractPersistentIdentity(uri, version))
+            [Predicates.SBOL3.displayId]: node.createStringNode(displayId)
         })
-
-        if(version !== undefined) {
-            view.graph.insertProperties(uri, {
-                [Predicates.SBOL3.version]: node.createStringNode(version)
-            })
-        }
 
         if(name !== undefined) {
             view.graph.insertProperties(uri, {

@@ -6,7 +6,7 @@ import URIUtils from '../URIUtils';
 import SBOL3GraphView from '../SBOL3GraphView';
 import SBOL2GraphView from '../SBOL2GraphView';
 
-export default function enforceURICompliance(g:SBOL2GraphView|SBOL3GraphView, uriPrefix:string) {
+export default function enforceURICompliance(g:SBOL2GraphView, uriPrefix:string) {
 
     var p_id, p_version, p_persistentIdentity
 
@@ -15,9 +15,10 @@ export default function enforceURICompliance(g:SBOL2GraphView|SBOL3GraphView, ur
         p_version = Predicates.SBOL2.version
         p_persistentIdentity = Predicates.SBOL2.persistentIdentity
     } else {
-        p_id = Predicates.SBOL3.displayId
-        p_version = Predicates.SBOL3.version
-        p_persistentIdentity = Predicates.SBOL3.persistentIdentity
+        // p_id = Predicates.SBOL3.displayId
+        // p_version = Predicates.SBOL3.version
+        // p_persistentIdentity = Predicates.SBOL3.persistentIdentity
+        throw new Error('sbol3 not supported')
     }
 
     for(let topLevel of g.topLevels) {
@@ -40,7 +41,7 @@ export default function enforceURICompliance(g:SBOL2GraphView|SBOL3GraphView, ur
 
     }
 
-    function replaceURIs(object:S3Identified|S2Identified, prefix:string) {
+    function replaceURIs(object:S2Identified, prefix:string) {
 
         let persistentIdentity = prefix + object.getStringProperty(p_id)
         let newURI = persistentIdentity + '/' + object.getStringProperty(p_version)
@@ -56,7 +57,7 @@ export default function enforceURICompliance(g:SBOL2GraphView|SBOL3GraphView, ur
         }
     }
 
-    function addMissingProperties(object:S3Identified|S2Identified, version:string) {
+    function addMissingProperties(object:S2Identified, version:string) {
 
         object.version = version
 
@@ -72,7 +73,7 @@ export default function enforceURICompliance(g:SBOL2GraphView|SBOL3GraphView, ur
 
     }
 
-    function makeUpID(object:S3Identified|S2Identified):string {
+    function makeUpID(object:S2Identified):string {
 
         let name = object.name
 

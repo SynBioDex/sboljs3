@@ -97,7 +97,7 @@ export default class S3Interaction extends S3Identified {
     createParticipation(id:string, version?:string):S3Participation {
 
         const identified:S3Identified =
-            S3IdentifiedFactory.createChild(this.view, Types.SBOL3.Participation, this, Predicates.SBOL3.participation, id, undefined, version)
+            S3IdentifiedFactory.createChild(this.view, Types.SBOL3.Participation, this, Predicates.SBOL3.participation, id, undefined)
 
         const participation:S3Participation = new S3Participation(this.view, identified.uri)
 

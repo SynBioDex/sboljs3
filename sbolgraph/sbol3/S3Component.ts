@@ -152,10 +152,10 @@ export default class S3Component extends S3Identified {
 
     createSubComponent(definition:S3Component):S3SubComponent {
 
-        const id:string|undefined = definition.id
+        const id:string|undefined = definition.displayId
 
         const identified:S3Identified =
-            S3IdentifiedFactory.createChild(this.view, Types.SBOL3.SubComponent, this, Predicates.SBOL3.subComponent, id, undefined, this.version)
+            S3IdentifiedFactory.createChild(this.view, Types.SBOL3.SubComponent, this, Predicates.SBOL3.subComponent, id, undefined)
 
         const module:S3SubComponent = new S3SubComponent(this.view, identified.uri)
 
@@ -169,7 +169,7 @@ export default class S3Component extends S3Identified {
         const id:string = 'feature_' + name
 
         const identified:S3Identified =
-            S3IdentifiedFactory.createChild(this.view, Types.SBOL3.SequenceAnnotation, this, Predicates.SBOL3.sequenceAnnotation, id, undefined, this.version)
+            S3IdentifiedFactory.createChild(this.view, Types.SBOL3.SequenceAnnotation, this, Predicates.SBOL3.sequenceAnnotation, id, undefined)
 
         return new S3SequenceFeature(this.view, identified.uri)
 
@@ -186,7 +186,7 @@ export default class S3Component extends S3Identified {
 
     wrap(wrapperId?:string):S3Component {
 
-        const wrapper:S3Component = this.view.createComponent(this.uriPrefix, wrapperId || (this.displayName + '_wrapper'), this.version)
+        const wrapper:S3Component = this.view.createComponent(this.uriPrefix, wrapperId || (this.displayName + '_wrapper'))
 
         for(let type of this.types) {
             wrapper.addType(type)
@@ -200,7 +200,7 @@ export default class S3Component extends S3Identified {
     createConstraint(subject:S3SubComponent, restriction:string, object:S3SubComponent):S3SequenceConstraint {
 
         const identified:S3Identified =
-            S3IdentifiedFactory.createChild(this.view, Types.SBOL3.SequenceConstraint, this, Predicates.SBOL3.sequenceConstraint, 'constraint_' + subject.id + '_' + object.id, undefined, this.version)
+            S3IdentifiedFactory.createChild(this.view, Types.SBOL3.SequenceConstraint, this, Predicates.SBOL3.sequenceConstraint, 'constraint_' + subject.displayId + '_' + object.displayId, undefined)
 
         const constraint:S3SequenceConstraint = new S3SequenceConstraint(this.view, identified.uri)
 
@@ -213,7 +213,7 @@ export default class S3Component extends S3Identified {
 
     createSequence():S3Sequence {
 
-        const seq:S3Sequence = this.view.createSequence(this.uriPrefix, this.displayName + '_sequence', this.version)
+        const seq:S3Sequence = this.view.createSequence(this.uriPrefix, this.displayName + '_sequence')
 
         this.addSequence(seq)
 
@@ -231,7 +231,7 @@ export default class S3Component extends S3Identified {
     createInteraction(id:string, version?:string):S3Interaction {
 
         const identified:S3Identified =
-            S3IdentifiedFactory.createChild(this.view, Types.SBOL3.Interaction, this,  Predicates.SBOL3.interaction, id, undefined, version)
+            S3IdentifiedFactory.createChild(this.view, Types.SBOL3.Interaction, this,  Predicates.SBOL3.interaction, id, undefined)
 
         const interaction:S3Interaction = new S3Interaction(this.view, identified.uri)
 

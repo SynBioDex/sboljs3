@@ -180,7 +180,7 @@ export default class S3SubComponent extends S3ThingWithLocation {
     createMapping(local:S3SubComponent, remote:S3SubComponent)  {
 
         const identified:S3Identified =
-            S3IdentifiedFactory.createChild(this.view, Types.SBOL2.MapsTo, this, Predicates.SBOL2.mapsTo, 'mapping_' + local.id + '_' + remote.id, undefined, this.version)
+            S3IdentifiedFactory.createChild(this.view, Types.SBOL2.MapsTo, this, Predicates.SBOL2.mapsTo, 'mapping_' + local.displayId + '_' + remote.displayId, undefined)
 
         const mapping:S3MapsTo = new S3MapsTo(this.view, identified.uri)
 

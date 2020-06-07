@@ -110,7 +110,7 @@ export default function convert3to2(graph:Graph) {
         let cd = new S2ComponentDefinition(sbol2View, cdUri)
         cd.setUriProperty(Predicates.a, Types.SBOL2.ComponentDefinition)
         copyIdentifiedProperties(component, cd)
-        cd.displayId = component.id + cdSuffix
+        cd.displayId = component.displayId + cdSuffix
 
         let md = new S2ModuleDefinition(sbol2View, mdUri)
         md.setUriProperty(Predicates.a, Types.SBOL2.ModuleDefinition)
@@ -176,8 +176,8 @@ export default function convert3to2(graph:Graph) {
                 throw new Error('???')
             }
 
-            let cdSubcomponent = cd.addComponentByDefinition(newDefOfSubcomponent.cd, subcomponent.id, subcomponent.name, subcomponent.version)
-            let mdSubcomponent = md.createFunctionalComponent(newDefOfSubcomponent.cd, subcomponent.id,  subcomponent.name, subcomponent.version)
+            let cdSubcomponent = cd.addComponentByDefinition(newDefOfSubcomponent.cd, subcomponent.displayId, subcomponent.name, subcomponent.getStringProperty(Predicates.SBOL2.version))
+            let mdSubcomponent = md.createFunctionalComponent(newDefOfSubcomponent.cd, subcomponent.displayId,  subcomponent.name, subcomponent.getStringProperty(Predicates.SBOL2.version))
 
             subcomponentToFC.set(subcomponent.uri, mdSubcomponent)
 
@@ -198,10 +198,10 @@ export default function convert3to2(graph:Graph) {
                 let saDisplayId = subcomponent.getStringProperty('http://biocad.io/terms/backport#sequenceAnnotationDisplayId')
 
                 if(!saDisplayId) {
-                    saDisplayId = subcomponent.id + '_anno'
+                    saDisplayId = subcomponent.displayId + '_anno'
                 }
 
-                let saIdent = S2IdentifiedFactory.createChild(sbol2View, Types.SBOL2.SequenceAnnotation, cd, Predicates.SBOL2.sequenceAnnotation, saDisplayId, subcomponent.version)
+                let saIdent = S2IdentifiedFactory.createChild(sbol2View, Types.SBOL2.SequenceAnnotation, cd, Predicates.SBOL2.sequenceAnnotation, saDisplayId, subcomponent.getStringProperty(Predicates.SBOL2.version))
                 let sa = new S2SequenceAnnotation(sbol2View, saIdent.uri)
 
                 copyLocations(sbol2View, subcomponent, sa)
@@ -224,7 +224,7 @@ export default function convert3to2(graph:Graph) {
 
         for(let interaction of component.interactions) {
 
-            let newInteraction = md.createInteraction(interaction.id, interaction.version)
+            let newInteraction = md.createInteraction(interaction.displayId, interaction.getStringProperty(Predicates.SBOL2.version))
             copyIdentifiedProperties(interaction, newInteraction)
 
             if (interaction.measure) {
@@ -233,7 +233,7 @@ export default function convert3to2(graph:Graph) {
 
             for(let participation of interaction.participations) {
 
-                let newParticipation = newInteraction.createParticipation(participation.id, participation.version)
+                let newParticipation = newInteraction.createParticipation(participation.displayId, participation.getStringProperty(Predicates.SBOL2.version))
                 copyIdentifiedProperties(participation, newParticipation)
 
                 if (participation.measure) {
@@ -341,7 +341,7 @@ export default function convert3to2(graph:Graph) {
         for(let location of oldThing.locations) {
             if(location instanceof S3Range) {
 
-                let newLocIdent = S2IdentifiedFactory.createChild(sbol2View, Types.SBOL2.Range, newThing, Predicates.SBOL2.location, location.id, location.version)
+                let newLocIdent = S2IdentifiedFactory.createChild(sbol2View, Types.SBOL2.Range, newThing, Predicates.SBOL2.location, location.displayId, location.getStringProperty(Predicates.SBOL2.version))
                 let newLoc = new S2Range(sbol2View, newLocIdent.uri)
 
                 if(location.sequence) {
@@ -356,7 +356,7 @@ export default function convert3to2(graph:Graph) {
 
             } else if(location instanceof S3OrientedLocation) {
 
-                let newLocIdent = S2IdentifiedFactory.createChild(sbol2View, Types.SBOL2.GenericLocation, newThing, Predicates.SBOL2.location, location.id, location.version)
+                let newLocIdent = S2IdentifiedFactory.createChild(sbol2View, Types.SBOL2.GenericLocation, newThing, Predicates.SBOL2.location, location.displayId, location.getStringProperty(Predicates.SBOL2.version))
                 let newLoc = new S2GenericLocation(sbol2View, newLocIdent.uri)
 
                 if(location.sequence) {

@@ -47,7 +47,7 @@ export default class SBOL3GraphView extends GraphViewHybrid {
             version = '1'
 
         const identified:S3Identified =
-            S3IdentifiedFactory.createTopLevel(this, Types.SBOL3.Component, uriPrefix, id, undefined, version)
+            S3IdentifiedFactory.createTopLevel(this, Types.SBOL3.Component, uriPrefix, id, undefined)
 
         return new S3Component(this, identified.uri)
 
@@ -59,7 +59,7 @@ export default class SBOL3GraphView extends GraphViewHybrid {
             version = '1'
 
         const identified:S3Identified =
-            S3IdentifiedFactory.createTopLevel(this, Types.SBOL3.Collection, uriPrefix, id, undefined, version)
+            S3IdentifiedFactory.createTopLevel(this, Types.SBOL3.Collection, uriPrefix, id, undefined)
 
         return new S3Collection(this, identified.uri)
 
@@ -71,7 +71,7 @@ export default class SBOL3GraphView extends GraphViewHybrid {
             version = '1'
 
         const identified:S3Identified =
-            S3IdentifiedFactory.createTopLevel(this, Types.SBOL3.Sequence, uriPrefix, id, undefined, version)
+            S3IdentifiedFactory.createTopLevel(this, Types.SBOL3.Sequence, uriPrefix, id, undefined)
 
         const seq:S3Sequence = new S3Sequence(this, identified.uri)
 
@@ -87,7 +87,7 @@ export default class SBOL3GraphView extends GraphViewHybrid {
             version = '1'
 
         const identified:S3Identified =
-            S3IdentifiedFactory.createTopLevel(this, Types.SBOL2.Model, uriPrefix, id, undefined, version)
+            S3IdentifiedFactory.createTopLevel(this, Types.SBOL2.Model, uriPrefix, id, undefined)
 
         const model:S3Model = new S3Model(this, identified.uri)
 
@@ -421,7 +421,7 @@ export default class SBOL3GraphView extends GraphViewHybrid {
 
     printTree() {
         for(let cd of this.components) {
-            console.log('component:' + cd.uri + ' (' + cd.id + ')')
+            console.log('component:' + cd.uri + ' (' + cd.displayId + ')')
             for(let c of cd.subComponents) {
                 console.log(indent(1) + 'sc-> ' + c.instanceOf.uri)
             }
@@ -430,10 +430,6 @@ export default class SBOL3GraphView extends GraphViewHybrid {
         function indent(n) {
             return '        '.slice(8 - n)
         }
-    }
-
-    enforceURICompliance(uriPrefix:string) {
-        enforceURICompliance(this, uriPrefix)
     }
 }
 

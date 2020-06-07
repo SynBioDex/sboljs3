@@ -46,79 +46,8 @@ export default class S3Identified extends S3Facade {
         return this.getStringProperty(Predicates.SBOL3.displayId)
     }
 
-    set id(id:string|undefined) {
-        this.setStringProperty(Predicates.SBOL3.displayId, id)
-    }
-
-    get version():string|undefined {
-        return this.getStringProperty(Predicates.SBOL3.version)
-    }
-
-    setCompliantIdentity(id:string, version?:string, newPrefix?:string) {
-
-        let uriPrefix = newPrefix || this.uriPrefix
-
-        this.id = id
-        this.version = version
-
-        let newPersistentIdentity = uriPrefix + id
-        let newURI = newPersistentIdentity
-
-        if(version)
-            newURI += '/' + version
-
-        let curPersistentIdentity = this.persistentIdentity
-
-        if(newURI !== this.uri) {
-
-            console.log(this.view.serializeXML())
-            console.log('replace ' + this.uri + ' -> ' + newURI)
-            this.graph.replaceURI(this.uri, newURI)
-            console.log(this.view.serializeXML())
-
-            this.uri = newURI
-        }
-
-        if (curPersistentIdentity) {
-            this.graph.replaceURI(curPersistentIdentity, newPersistentIdentity)
-        }
-
-        this.persistentIdentity = newPersistentIdentity
-
-        let childPrefix = this.persistentIdentity + '/'
-
-        for(let contained of this.containedObjects) {
-
-            let containedID = contained.id
-
-            if(containedID) {
-                contained.setCompliantIdentity(containedID, contained.version, childPrefix)
-            } else {
-                // not compliant; can't do anything
-            }
-        }
-    }
-
-    set version(version:string|undefined) {
-
-        if(version !== undefined) {
-            this.setStringProperty(Predicates.SBOL3.version, version)
-        } else {
-            this.deleteProperty(Predicates.SBOL3.version)
-        }
-    }
-
-    get persistentIdentity():string|undefined {
-        return this.getUriProperty(Predicates.SBOL3.persistentIdentity)
-    }
-
-    set persistentIdentity(uri:string|undefined) {
-
-        if(uri !== undefined) {
-            this.setUriProperty(Predicates.SBOL3.persistentIdentity, uri)
-        } else {
-            this.deleteProperty(Predicates.SBOL3.persistentIdentity)
-        }
+    set displayId(displayId:string|undefined) {
+        this.setStringProperty(Predicates.SBOL3.displayId, displayId)
     }
 
     get uriPrefix():string {
