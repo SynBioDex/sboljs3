@@ -11,19 +11,19 @@ import genbankToSBOL2 from "./conversion/genbankToSBOL2";
 
 export default class SBOLImporter {
 
-    static async sbol1GraphFromURL(url:string, defaultURIPrefix?:string):Promise<Graph> {
-        return await this.sbol1GraphFromString(await get(url), defaultURIPrefix)
+    static async sbol1GraphFromURL(url:string,convertBetweenSBOLVersions?:boolean,  defaultURIPrefix?:string):Promise<Graph> {
+        return await this.sbol1GraphFromString(await get(url), convertBetweenSBOLVersions, defaultURIPrefix)
     }
 
-    static async sbol1GraphFromFilename(str: string, defaultURIPrefix?: string, mimeType?: string): Promise<Graph> {
-        return await this.sbol1GraphFromString(await load(str), defaultURIPrefix)
+    static async sbol1GraphFromFilename(str: string,convertBetweenSBOLVersions?:boolean,  defaultURIPrefix?: string, mimeType?: string): Promise<Graph> {
+        return await this.sbol1GraphFromString(await load(str), convertBetweenSBOLVersions, defaultURIPrefix)
     }
 
-    static async sbol1GraphFromFilenameOrURL(str: string, defaultURIPrefix?: string, mimeType?: string): Promise<Graph> {
-        return isURL(str) ? this.sbol1GraphFromURL(str) : this.sbol1GraphFromFilename(str)
+    static async sbol1GraphFromFilenameOrURL(str: string,convertBetweenSBOLVersions?:boolean,  defaultURIPrefix?: string, mimeType?: string): Promise<Graph> {
+        return isURL(str) ? this.sbol1GraphFromURL(str, convertBetweenSBOLVersions, defaultURIPrefix) : this.sbol1GraphFromFilename(str, convertBetweenSBOLVersions, defaultURIPrefix)
     }
 
-    static async sbol1GraphFromString(str:string,  defaultURIPrefix?:string):Promise<Graph> {
+    static async sbol1GraphFromString(str:string, convertBetweenSBOLVersions?:boolean, defaultURIPrefix?:string):Promise<Graph> {
 
         let filetype = identifyFiletype(str, '')
 
@@ -40,19 +40,21 @@ export default class SBOLImporter {
         }
     }
 
-    static async sbol2GraphFromURL(url:string, defaultURIPrefix?:string):Promise<Graph> {
-        return await this.sbol2GraphFromString(await get(url), defaultURIPrefix)
+    static async sbol2GraphFromURL(url:string, convertBetweenSBOLVersions?:boolean,  defaultURIPrefix?:string):Promise<Graph> {
+        return await this.sbol2GraphFromString(await get(url), convertBetweenSBOLVersions, defaultURIPrefix)
     }
 
-    static async sbol2GraphFromFilename(filename:string, defaultURIPrefix?:string):Promise<Graph> {
-        return await this.sbol2GraphFromString(await load(filename), defaultURIPrefix)
+    static async sbol2GraphFromFilename(filename:string, convertBetweenSBOLVersions?:boolean,  defaultURIPrefix?:string):Promise<Graph> {
+        return await this.sbol2GraphFromString(await load(filename), convertBetweenSBOLVersions, defaultURIPrefix)
     }
 
-    static async sbol2GraphFromFilenameOrURL(str: string, defaultURIPrefix?: string, mimeType?: string): Promise<Graph> {
-        return isURL(str) ? this.sbol2GraphFromURL(str) : this.sbol2GraphFromFilename(str)
+    static async sbol2GraphFromFilenameOrURL(str: string, convertBetweenSBOLVersions?:boolean, defaultURIPrefix?: string, mimeType?: string): Promise<Graph> {
+        return isURL(str) ?
+            this.sbol2GraphFromURL(str, convertBetweenSBOLVersions, defaultURIPrefix)
+            : this.sbol2GraphFromFilename(str, convertBetweenSBOLVersions, defaultURIPrefix)
     }
 
-    static async sbol2GraphFromString(str:string,  defaultURIPrefix?:string):Promise<Graph> {
+    static async sbol2GraphFromString(str:string, convertBetweenSBOLVersions?:boolean, defaultURIPrefix?:string):Promise<Graph> {
 
         let filetype = identifyFiletype(str, '')
 
@@ -65,8 +67,10 @@ export default class SBOLImporter {
 
                 await parseRDF(graph, str, filetype)
 
-                convert3to2(graph)
-                convert1to2(graph)
+                if(convertBetweenSBOLVersions !== false) {
+                    convert3to2(graph)
+                    convert1to2(graph)
+                }
 
                 return graph
             
@@ -95,19 +99,19 @@ export default class SBOLImporter {
         }
     }
 
-    static async sbol3GraphFromURL(url:string, defaultURIPrefix?:string):Promise<Graph> {
-        return await this.sbol3GraphFromString(await get(url), defaultURIPrefix)
+    static async sbol3GraphFromURL(url:string, convertBetweenSBOLVersions?:boolean, defaultURIPrefix?:string):Promise<Graph> {
+        return await this.sbol3GraphFromString(await get(url), convertBetweenSBOLVersions, defaultURIPrefix)
     }
 
-    static async sbol3GraphFromFilename(filename:string, defaultURIPrefix?:string):Promise<Graph> {
-        return await this.sbol3GraphFromString(await load(filename), defaultURIPrefix)
+    static async sbol3GraphFromFilename(filename:string, convertBetweenSBOLVersions?:boolean, defaultURIPrefix?:string):Promise<Graph> {
+        return await this.sbol3GraphFromString(await load(filename), convertBetweenSBOLVersions, defaultURIPrefix)
     }
 
-    static async sbol3GraphFromFilenameOrURL(str: string, defaultURIPrefix?: string, mimeType?: string): Promise<Graph> {
-        return isURL(str) ? this.sbol3GraphFromURL(str) : this.sbol3GraphFromFilename(str)
+    static async sbol3GraphFromFilenameOrURL(str: string,convertBetweenSBOLVersions?:boolean,  defaultURIPrefix?: string, mimeType?: string): Promise<Graph> {
+        return isURL(str) ? this.sbol3GraphFromURL(str, convertBetweenSBOLVersions, defaultURIPrefix) : this.sbol3GraphFromFilename(str, convertBetweenSBOLVersions, defaultURIPrefix)
     }
 
-    static async sbol3GraphFromString(str:string,  defaultURIPrefix?:string):Promise<Graph> {
+    static async sbol3GraphFromString(str:string, convertBetweenSBOLVersions?:boolean, defaultURIPrefix?:string):Promise<Graph> {
 
         let filetype = identifyFiletype(str, '')
         let graph = new Graph()
@@ -119,8 +123,10 @@ export default class SBOLImporter {
 
                 await parseRDF(graph, str, filetype)
 
-                convert1to2(graph)
-                convert2to3(graph)
+                if(convertBetweenSBOLVersions !== false) {
+                    convert1to2(graph)
+                    convert2to3(graph)
+                }
 
                 return graph
             
