@@ -16,6 +16,7 @@ import S3Range from './sbol3/S3Range'
 import S3Participation from './sbol3/S3Participation'
 import S3Interaction from './sbol3/S3Interaction'
 import S3Collection from './sbol3/S3Collection'
+import S3Namespace from './sbol3/S3Namespace'
 import S3Model from './sbol3/S3Model'
 import S3Implementation from './sbol3/S3Implementation';
 import S3Experiment from './sbol3/S3Experiment';
@@ -42,10 +43,7 @@ export default class SBOL3GraphView extends GraphViewHybrid {
         this.addView(new ProvView(graph))
     }
 
-    createComponent(uriPrefix:string, id:string, version?:string):S3Component {
-
-        if(arguments.length < 3)
-            version = '1'
+    createComponent(uriPrefix:string, id:string):S3Component {
 
         const identified:S3Identified =
             S3IdentifiedFactory.createTopLevel(this, Types.SBOL3.Component, uriPrefix, id, undefined)
@@ -54,10 +52,7 @@ export default class SBOL3GraphView extends GraphViewHybrid {
 
     }
 
-    createCollection(uriPrefix:string, id:string, version?:string):S3Collection {
-
-        if(arguments.length < 3)
-            version = '1'
+    createCollection(uriPrefix:string, id:string):S3Collection {
 
         const identified:S3Identified =
             S3IdentifiedFactory.createTopLevel(this, Types.SBOL3.Collection, uriPrefix, id, undefined)
@@ -66,10 +61,7 @@ export default class SBOL3GraphView extends GraphViewHybrid {
 
     }
 
-    createSequence(uriPrefix:string, id:string, version?:string):S3Sequence {
-
-        if(arguments.length < 3)
-            version = '1'
+    createSequence(uriPrefix:string, id:string):S3Sequence {
 
         const identified:S3Identified =
             S3IdentifiedFactory.createTopLevel(this, Types.SBOL3.Sequence, uriPrefix, id, undefined)
@@ -82,10 +74,7 @@ export default class SBOL3GraphView extends GraphViewHybrid {
         return seq
     }
 
-    createModel(uriPrefix:string, id:string, version?:string):S3Model {
-
-        if(arguments.length < 3)
-            version = '1'
+    createModel(uriPrefix:string, id:string):S3Model {
 
         const identified:S3Identified =
             S3IdentifiedFactory.createTopLevel(this, Types.SBOL2.Model, uriPrefix, id, undefined)
@@ -93,6 +82,17 @@ export default class SBOL3GraphView extends GraphViewHybrid {
         const model:S3Model = new S3Model(this, identified.uri)
 
         return model
+    }
+
+    createNamespace(uri:string):S3Namespace {
+
+        const namespace:S3Namespace = new S3Namespace(this, uri)
+
+        this.graph.insertProperties(uri, {
+            [Predicates.a]: node.createUriNode(Types.SBOL3.Namespace)
+        })
+
+        return namespace
     }
 
     get sequences():Array<S3Sequence> {
@@ -113,6 +113,13 @@ export default class SBOL3GraphView extends GraphViewHybrid {
 
         return this.instancesOfType(Types.SBOL3.Collection)
                     .map((uri) => new S3Collection(this, uri))
+
+    }
+
+    get namespaces():Array<S3Namespace> {
+
+        return this.instancesOfType(Types.SBOL3.Namespace)
+                    .map((uri) => new S3Namespace(this, uri))
 
     }
 
@@ -272,6 +279,7 @@ export default class SBOL3GraphView extends GraphViewHybrid {
         Array.prototype.push.apply(topLevels, this.instancesOfType(Types.SBOL3.Component))
         Array.prototype.push.apply(topLevels, this.instancesOfType(Types.SBOL3.Sequence))
         Array.prototype.push.apply(topLevels, this.instancesOfType(Types.SBOL3.Collection))
+        Array.prototype.push.apply(topLevels, this.instancesOfType(Types.SBOL3.Namespace))
 
         return topLevels.map((topLevel) => this.uriToFacade(topLevel) as S3Identified)
     }

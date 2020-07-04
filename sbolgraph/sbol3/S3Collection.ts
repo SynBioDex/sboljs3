@@ -14,7 +14,7 @@ export default class S3Collection extends S3Identified {
     }
 
     get facadeType():string {
-        return Types.SBOL2.Collection
+        return Types.SBOL3.Collection
     }
 
     get members():Array<S3Identified> {

@@ -125,7 +125,7 @@ export default function convert2to3(graph:Graph) {
 
     for(let collection of sbol2View.collections) {
 
-        const xcollection:S3Collection = sbol3View.createCollection(collection.uriPrefix, collection.displayId || 'collection', collection.version)
+        const xcollection:S3Collection = sbol3View.createCollection(collection.uriPrefix, collection.displayId || 'collection')
         copyIdentifiedProperties(collection, xcollection)
 
         for(let member of collection.members) {
@@ -321,7 +321,7 @@ export default function convert2to3(graph:Graph) {
         module.setUriProperty(Predicates.a, Types.SBOL3.Component)
         copyIdentifiedProperties(md, module)
 
-        module.setUriProperty('http://biocad.io/terms/backport#prevType', Types.SBOL2.ModuleDefinition)
+        module.setUriProperty('http://sboltools.org/backport#prevType', Types.SBOL2.ModuleDefinition)
 
         map.set(md.uri, module)
 
@@ -480,7 +480,7 @@ export default function convert2to3(graph:Graph) {
             if(p == Predicates.SBOL2.displayId) {
                 newGraph.insert(b.uri, Predicates.SBOL3.displayId, triple.object)
             } else if(p == Predicates.SBOL2.version) {
-                newGraph.insert(b.uri, Predicates.SBOL3.version, triple.object)
+                newGraph.insert(b.uri, 'http://sboltools.org/backport#version', triple.object)
             } if(p == Predicates.SBOL2.persistentIdentity) {
                 newGraph.insert(b.uri, Predicates.SBOL3.persistentIdentity, triple.object)
             }
