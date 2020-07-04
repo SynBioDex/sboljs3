@@ -6,6 +6,7 @@ import S1Collection from './sbol1/S1Collection'
 import S1SequenceAnnotation from './sbol1/S1SequenceAnnotation'
 import { Types, Prefixes, Predicates } from 'bioterms'
 import S1Facade from './sbol1/S1Facade'
+import isOwnershipRelation from './isOwnershipRelation'
 
 export default class SBOL1GraphView extends GraphViewBasic {
 
@@ -82,34 +83,7 @@ export default class SBOL1GraphView extends GraphViewBasic {
             [ 'om', Prefixes.measure ],
         ]
 
-        let ownershipPredicates = [
-            Predicates.SBOL1.subComponent,
-            Predicates.SBOL1.annotation
-        ]
-
-        let isOwnershipRelation = (triple:any):boolean => {
-
-            let p = nodeToURI(triple.predicate)
-
-            if(ownershipPredicates.indexOf(p) !== -1) {
-                return true
-            }
-
-            return false
-        }
-
-        return serialize(this.graph, new Map(defaultPrefixes), isOwnershipRelation)
-
-        function nodeToURI(node):string {
-
-            if(node.interfaceName !== 'NamedNode')
-                throw new Error('expected NamedNode but found ' + JSON.stringify(node))
-
-            if(typeof node.nominalValue !== 'string')
-                throw new Error('nominalValue not a string?')
-
-            return node.nominalValue
-        }
+        return serialize(this.graph, new Map(defaultPrefixes), t => isOwnershipRelation(this.graph, t))
     }
 
     get rootDnaComponents():Array<S1DnaComponent> {

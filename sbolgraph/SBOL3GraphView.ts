@@ -30,6 +30,7 @@ import convert2toX from './conversion/fromSBOL2/toSBOL3';
 import enforceURICompliance from './conversion/enforceURICompliance';
 import SBOL2GraphView from './SBOL2GraphView';
 import { ProvView } from 'rdfoo-prov';
+import isOwnershipRelation from './isOwnershipRelation'
 
 export default class SBOL3GraphView extends GraphViewHybrid {
 
@@ -259,40 +260,7 @@ export default class SBOL3GraphView extends GraphViewHybrid {
             [ 'om', Prefixes.measure ],
         ]
 
-        let ownershipPredicates = [
-            Predicates.SBOL3.sequenceConstraint,
-            Predicates.SBOL3.sequenceAnnotation,
-            Predicates.SBOL3.subComponent,
-            Predicates.SBOL3.participation,
-            Predicates.SBOL3.location,
-            Predicates.SBOL3.sourceLocation,
-            Predicates.SBOL3.interaction,
-            Predicates.SBOL3.measure
-        ]
-
-        let isOwnershipRelation = (triple:any):boolean => {
-
-            let p = nodeToURI(triple.predicate)
-
-            if(ownershipPredicates.indexOf(p) !== -1) {
-                return true
-            }
-
-            return false
-        }
-
-        return serialize(this.graph, new Map(defaultPrefixes), isOwnershipRelation)
-
-        function nodeToURI(node):string {
-
-            if(node.interfaceName !== 'NamedNode')
-                throw new Error('expected NamedNode but found ' + JSON.stringify(node))
-
-            if(typeof node.nominalValue !== 'string')
-                throw new Error('nominalValue not a string?')
-
-            return node.nominalValue
-        }
+        return serialize(this.graph, new Map(defaultPrefixes), t => isOwnershipRelation(this.graph, t))
     }
 
     // TODO
