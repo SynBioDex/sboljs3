@@ -291,8 +291,7 @@ export default function convert3to2(graph:Graph) {
 
     graph.replaceURI(Predicates.SBOL3.persistentIdentity, Predicates.SBOL2.persistentIdentity)
     graph.replaceURI(Predicates.SBOL3.displayId, Predicates.SBOL2.displayId)
-    graph.replaceURI(Predicates.SBOL3.version, Predicates.SBOL2.version)
-
+    graph.replaceURI('http://sboltools.org/backport#version', Predicates.SBOL2.version)
 
 
     graph.addAll(newGraph)
@@ -319,13 +318,13 @@ export default function convert3to2(graph:Graph) {
                 continue
             }
 
-            if(p === Predicates.SBOL3.version) {
+            if(p === 'http://sboltools.org/backport#version') {
                 b.graph.insert(b.uri, Predicates.SBOL2.version, triple.object)
                 continue
             }
 
 
-            if(p.indexOf('http://biocad.io/terms/backport#') !== -1) {
+            if(p.indexOf('http://sboltools.org/backport') !== -1) {
                 continue
             }
 

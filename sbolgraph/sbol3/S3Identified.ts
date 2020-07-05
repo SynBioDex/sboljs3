@@ -6,6 +6,7 @@ import S3Facade from './S3Facade'
 
 import URIUtils from '../URIUtils';
 import SBOL3GraphView from '../SBOL3GraphView';
+import { S3Namespace } from '..';
 
 export default class S3Identified extends S3Facade {
 
@@ -52,6 +53,19 @@ export default class S3Identified extends S3Facade {
 
     get uriPrefix():string {
         return URIUtils.getPrefix(this.uri)
+    }
+
+    get namespace():S3Namespace|undefined {
+        let n = this.view.uriToFacade(
+            this.graph.match(null, Predicates.SBOL3.member, this.uri)
+                .map(triple.subjectUri)
+                .filter(uri => this.graph.hasMatch(uri as string, Predicates.a, Types.SBOL3.Namespace))[0] as string
+        ) 
+
+        if(n === undefined)
+            return
+
+        return n as S3Namespace
     }
 
     get containingObject():S3Identified|undefined {

@@ -456,6 +456,9 @@ class SBOL3 extends GraphViewBasic {
             if(type === Types.SBOL3.Collection)
                 return new S3Collection(this.view, uri)
 
+            if(type === Types.SBOL3.Namespace)
+                return new S3Namespace(this.view, uri)
+
             if(type === Types.SBOL3.Model)
                 return new S3Model(this.view, uri)
 

@@ -450,7 +450,7 @@ export default function convert2to3(graph:Graph) {
 
     graph.replaceURI(Predicates.SBOL2.persistentIdentity, Predicates.SBOL3.persistentIdentity)
     graph.replaceURI(Predicates.SBOL2.displayId, Predicates.SBOL3.displayId)
-    graph.replaceURI(Predicates.SBOL2.version, Predicates.SBOL3.version)
+    graph.replaceURI(Predicates.SBOL2.version, 'http://sboltools.org/backport#version')
 
 
 
@@ -462,6 +462,16 @@ export default function convert2to3(graph:Graph) {
 
 
     function copyIdentifiedProperties(a:S2Identified, b:S3Identified) {
+
+
+        let uriPrefix = a.uriPrefix
+
+        newGraph.insertProperties(uriPrefix, {
+            [Predicates.a]: node.createUriNode(Types.SBOL3.Namespace),
+            [Predicates.SBOL3.member]: node.createUriNode(b.uri)
+        })
+
+
 
         let aTriples = graph.match(a.uri, null, null)
 
