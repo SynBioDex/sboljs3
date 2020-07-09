@@ -1,6 +1,6 @@
 {
   "name": "sbolgraph",
-  "version": "0.31.0",
+  "version": "0.32.0",
   "description": "A library for the Synthetic Biology Open Language (SBOL) written in TypeScript, for JavaScript/TypeScript applications in the browser or node.js.",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -25,7 +25,7 @@
     "@types/mz": "0.0.32",
     "@types/node": "^8.0.34",
     "@types/uuid": "^3.4.4",
-    "bioterms": "^0.13.0",
+    "bioterms": "^0.15.0",
     "browser-request": "git+https://github.com/adampash/browser-request.git#feat-add-headers-to-response",
     "chalk": "^2.4.2",
     "genbankjs": "0.1.0",
