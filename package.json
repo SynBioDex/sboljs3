@@ -9,7 +9,7 @@
   },
   "scripts": {
     "test": "bash test.sh",
-    "prepare": "tsc -d -p ./ --outDir dist/"
+    "prepare": "./node_modules/typescript/bin/tsc -d -p ./ --outDir dist/"
   },
   "repository": {
     "type": "git",
@@ -42,5 +42,8 @@
     "request": "^2.81.0",
     "shortid": "^2.2.8",
     "uuid": "^3.3.2"
+  },
+  "devDependencies": {
+    "typescript": "^3.9.7"
   }
 }
