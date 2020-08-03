@@ -77,9 +77,7 @@ export default class SBOL1GraphView extends GraphViewBasic {
             [ 'rdf', Prefixes.rdf ],
             [ 'dcterms', Prefixes.dcterms ],
             [ 'prov', Prefixes.prov ],
-            [ 'sbol', Prefixes.sbol2 ],
-            [ 'sbol3', Prefixes.sbol3 ],
-            [ 'backport', 'http://biocad.io/terms/backport#' ],
+            [ 'sbol', Prefixes.sbol1 ],
             [ 'om', Prefixes.measure ],
         ]
 
