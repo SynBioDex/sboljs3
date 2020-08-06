@@ -78,10 +78,12 @@ export default class SBOL1GraphView extends GraphViewBasic {
             [ 'dcterms', Prefixes.dcterms ],
             [ 'prov', Prefixes.prov ],
             [ 'sbol', Prefixes.sbol1 ],
+            [ 'sbol2', Prefixes.sbol2 ],
+            [ 'sbol3', Prefixes.sbol3 ],
             [ 'om', Prefixes.measure ],
         ]
 
-        return serialize(this.graph, new Map(defaultPrefixes), t => isOwnershipRelation(this.graph, t))
+        return serialize(this.graph, new Map(defaultPrefixes), t => isOwnershipRelation(this.graph, t), Prefixes.sbol1)
     }
 
     get rootDnaComponents():Array<S1DnaComponent> {

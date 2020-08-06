@@ -4,6 +4,7 @@ import { Graph } from "rdfoo"
 let ownershipPredicates = [
     Predicates.SBOL1.subComponent,
     Predicates.SBOL1.annotation,
+    Predicates.SBOL1.dnaSequence,
 
     Predicates.SBOL2.sequenceConstraint,
     Predicates.SBOL2.sequenceAnnotation,

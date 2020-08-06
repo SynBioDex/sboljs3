@@ -262,12 +262,13 @@ export default class SBOL3GraphView extends GraphViewHybrid {
             [ 'dcterms', Prefixes.dcterms ],
             [ 'prov', Prefixes.prov ],
             [ 'sbol', Prefixes.sbol2 ],
+            [ 'sbol1', Prefixes.sbol1 ],
             [ 'sbol3', Prefixes.sbol3 ],
             [ 'backport', 'http://biocad.io/terms/backport#' ],
             [ 'om', Prefixes.measure ],
         ]
 
-        return serialize(this.graph, new Map(defaultPrefixes), t => isOwnershipRelation(this.graph, t))
+        return serialize(this.graph, new Map(defaultPrefixes), t => isOwnershipRelation(this.graph, t), Prefixes.sbol3)
     }
 
     // TODO
