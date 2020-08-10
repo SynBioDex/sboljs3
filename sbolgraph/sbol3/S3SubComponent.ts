@@ -286,20 +286,6 @@ export default class S3SubComponent extends S3ThingWithLocation {
         return products
     }
 
-    destroy() {
-
-        for(let c of this.getConstraints()) {
-            c.destroy()
-        }
-
-        for(let m of this.mappings) {
-            m.destroy()
-        }
-
-        super.destroy()
-
-    }
-
     dissolve() {
 
         let containingComponent = this.containingComponent

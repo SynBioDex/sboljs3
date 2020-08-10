@@ -242,15 +242,6 @@ export default class S3Component extends S3Identified {
         this.insertProperty(Predicates.SBOL3.model, node.createUriNode(model.uri))
     }
 
-    dissolve() {
-        let instances = this.view.getInstancesOfComponent(this)
-
-        for(let instance of instances) {
-            instance.dissolve()
-        }
-
-        this.destroy()
-    }
 
 }
 

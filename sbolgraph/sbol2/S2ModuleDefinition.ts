@@ -129,16 +129,6 @@ export default class S2ModuleDefinition extends S2Identified {
         return "Design"
     }
 
-    destroy() {
-
-        let contained = this.containedObjects
-
-        super.destroy()
-
-        for(let obj of contained) {
-            obj.destroy()
-        }
-    }
 }
 
 

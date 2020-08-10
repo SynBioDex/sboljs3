@@ -350,7 +350,7 @@ export default class SBOL3GraphView extends GraphViewHybrid {
             if(identified === undefined)
                 throw new Error('???')
 
-            identified = identified.containingObject
+            identified = identified.owningObject as S3Identified
 
             if(identified === undefined) {
                 return undefined

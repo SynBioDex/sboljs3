@@ -63,13 +63,6 @@ export default class S2ComponentDefinition extends S2Identified {
         return "Design"
     }
 
-    get containedObjects():Array<S2Identified> {
-
-        return (this.components as S2Identified[])
-                   .concat(this.sequenceConstraints)
-                   .concat(this.sequenceAnnotations)
-    }
-
     get components():Array<S2ComponentInstance> {
 
         return this.getUriProperties(Predicates.SBOL2.component)

@@ -41,6 +41,7 @@ import enforceURICompliance from './conversion/enforceURICompliance';
 
 import { Activity, Association, Agent, Plan, Usage, ProvView } from 'rdfoo-prov'
 import isOwnershipRelation from './isOwnershipRelation'
+import S2SequenceConstraint from './sbol2/S2SequenceConstraint'
 
 export default class SBOL2GraphView extends GraphViewHybrid {
 
@@ -640,6 +641,9 @@ class SBOL2 extends GraphViewBasic {
 
             if(type === Types.SBOL2.SequenceAnnotation)
                 return new S2SequenceAnnotation(this.view, uri)
+
+            if(type === Types.SBOL2.SequenceConstraint)
+                return new S2SequenceConstraint(this.view, uri)
 
             if(type === Types.SBOL2.Sequence)
                 return new S2Sequence(this.view, uri)
