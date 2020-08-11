@@ -8,6 +8,7 @@ import request = require("request");
 import fs = require('fs')
 import fastaToSBOL2 from "./conversion/fastaToSBOL2";
 import genbankToSBOL2 from "./conversion/genbankToSBOL2";
+import convert2to1 from "./conversion/fromSBOL2/toSBOL1";
 
 export default class SBOLImporter {
 
@@ -33,6 +34,12 @@ export default class SBOLImporter {
             case Filetype.RDFXML:
             case Filetype.NTriples:
                 await parseRDF(graph, str, filetype)
+
+                if(convertBetweenSBOLVersions !== false) {
+                    convert3to2(graph)
+                    convert2to1(graph)
+                }
+
                 return graph
 
             default:

@@ -36,8 +36,11 @@ export default class S1DnaComponent extends S1Facade {
         return this.getStringProperty(Predicates.SBOL1.description)
     }
 
-    get dnaSequences():S1DnaSequence[] {
-        return this.getUriProperties(Predicates.SBOL1.dnaSequence).map(sc => new S1DnaSequence(this.view, sc))
+    get dnaSequence():S1DnaSequence|undefined {
+        let uri = this.getUriProperty(Predicates.SBOL1.dnaSequence)
+        if(uri) {
+            return new S1DnaSequence(this.view, uri)
+        }
     }
 
     get subComponents():S1DnaComponent[] {

@@ -1,5 +1,5 @@
 
-import { Graph } from 'rdfoo'
+import { Graph, node } from 'rdfoo'
 
 import SBOL1GraphView from '../../SBOL1GraphView'
 import SBOL2GraphView from '../../SBOL2GraphView'
@@ -18,6 +18,7 @@ import S2GenericLocation from '../../sbol2/S2GenericLocation';
 import S2Collection from '../../sbol2/S2Collection';
 
 import URIUtils from '../../URIUtils'
+import { assert } from 'console'
 
 export default function convert1to2(graph:Graph) {
 
@@ -48,6 +49,10 @@ export default function convert1to2(graph:Graph) {
         component2.description = component.description
         component2.displayId = component.displayId
 
+        if(component.dnaSequence) {
+            component2.insertProperty(Predicates.SBOL2.sequence, node.createUriNode(component.dnaSequence.uri))
+        }
+
         for(let type of component.getUriProperties(Predicates.a)) {
             if(type.indexOf(Prefixes.sbol1) === 0) {
                 continue
@@ -59,6 +64,8 @@ export default function convert1to2(graph:Graph) {
             }
         }
 
+        let precedesN = 0
+
         for(let anno of component.annotations) {
 
             let anno2 = new S2SequenceAnnotation(graph2, anno.uri)
@@ -68,15 +75,32 @@ export default function convert1to2(graph:Graph) {
 
             let subComponent = anno.subComponent
 
-            if(subComponent) {
+            if(subComponent
+                // any participation in precedes relations requires a subcomponent in SBOL2
+                //
+                || graph.hasMatch(null, Predicates.SBOL1.precedes, anno.uri)
+                || graph.hasMatch(anno.uri, Predicates.SBOL1.precedes, null)
+            ) {
 
                 let subComponent2 = new S2ComponentInstance(graph2, URIUtils.addSuffix(anno.uri, '/component'))
                 subComponent2.setUriProperty(Predicates.a, Types.SBOL2.Component)
-                subComponent2.setUriProperty(Predicates.SBOL2.definition, subComponent.uri)
+
+                if(subComponent !== undefined) {
+                    // an actual SBOL1 composition
+                    subComponent2.setUriProperty(Predicates.SBOL2.definition, subComponent.uri)
+                } else {
+                    // forced subcomponent creation for precedes
+                    subComponent2.setUriProperty(Predicates.SBOL2.definition, 'http://sboltools.org/terms/stub')
+                }
 
                 anno2.insertUriProperty(Predicates.SBOL2.component, subComponent2.uri)
                 component2.insertUriProperty(Predicates.SBOL2.component, subComponent2.uri)
             }
+        }
+
+        for(let anno of component.annotations) {
+
+            let anno2 = new S2SequenceAnnotation(graph2, anno.uri)
 
             let start = anno.bioStart
             let end = anno.bioEnd
@@ -108,9 +132,19 @@ export default function convert1to2(graph:Graph) {
                 anno2.insertUriProperty(Predicates.SBOL2.location, genericLocation.uri)
             }
 
-
             for(let precedes of anno.precedes) {
-                // TODO
+                
+                let constraint = new S2SequenceConstraint(graph2, URIUtils.addSuffix(component.uri, '/precedes' + (++ precedesN)))
+                constraint.setUriProperty(Predicates.a, Types.SBOL2.SequenceConstraint)
+
+                component2.insertUriProperty(Predicates.SBOL2.sequenceConstraint, constraint.uri)
+
+                let precedes2 = new S2SequenceAnnotation(graph2, precedes.uri)
+                assert(precedes2.component)
+
+                constraint.setProperty(Predicates.SBOL2.subject, node.createUriNode(component.uri))
+                constraint.setProperty(Predicates.SBOL2.restriction, node.createUriNode(Specifiers.SBOL2.SequenceConstraint.Precedes))
+                constraint.setProperty(Predicates.SBOL2.object, node.createUriNode(precedes2.component?.uri as string))
             }
         }
     }

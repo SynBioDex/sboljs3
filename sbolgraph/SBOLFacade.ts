@@ -10,6 +10,10 @@ export default abstract class SBOLFacade extends Facade {
         this.view = view
     }
 
+    hasProperty(predicate:string) {
+        return this.graph.hasMatch(this.uri, predicate, null)
+    }
+
     get owningObject():SBOLFacade|undefined {
 
         let ownageTriples = this.graph.match(null, null, this.uri)
