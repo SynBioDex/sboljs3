@@ -420,7 +420,7 @@ export default class SBOL2GraphView extends GraphViewHybrid {
             [ 'sbol', Prefixes.sbol2 ],
             [ 'sbol1', Prefixes.sbol1 ],
             [ 'sbol3', Prefixes.sbol3 ],
-            [ 'backport', 'http://biocad.io/terms/backport#' ],
+            [ 'backport', 'http://sboltools.org/backport#' ],
             [ 'om', Prefixes.measure ],
         ]
 

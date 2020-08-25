@@ -169,10 +169,16 @@ export default function convert2to1(graph:Graph) {
 
     function copyIdentifiedProperties(identified:S2Identified) {
 
-        if(identified.hasProperty(Predicates.SBOL2.displayId)) {
+        if(identified.hasProperty('http://sboltools.org/backport#sbol1displayId')) {
             newGraph.insertProperties(identified.uri, {
-                [Predicates.SBOL1.displayId]: node.createStringNode(identified.displayId as string)
+                [Predicates.SBOL1.displayId]: node.createStringNode(identified.getStringProperty('http://sboltools.org/backport#sbol1displayId') as string)
             })
+        } else {
+            if(identified.hasProperty(Predicates.SBOL2.displayId)) {
+                newGraph.insertProperties(identified.uri, {
+                    [Predicates.SBOL1.displayId]: node.createStringNode(identified.displayId as string)
+                })
+            }
         }
 
         if(identified.hasProperty(Predicates.Dcterms.title)) {

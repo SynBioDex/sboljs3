@@ -91,7 +91,7 @@ export default function convert3to2(graph:Graph) {
 
         // both URIs need to be different, but want to try to keep the old SBOL2 URI for the correct object if we can
         //
-        switch(component.getUriProperty('http://biocad.io/terms/backport#prevType')) {
+        switch(component.getUriProperty('http://sboltools.org/backport#prevType')) {
             case Types.SBOL2.ModuleDefinition:
                 mdSuffix = ''
                 break
@@ -195,7 +195,7 @@ export default function convert3to2(graph:Graph) {
 
                 // if it has locations it needs a SA
 
-                let saDisplayId = subcomponent.getStringProperty('http://biocad.io/terms/backport#sequenceAnnotationDisplayId')
+                let saDisplayId = subcomponent.getStringProperty('http://sboltools.org/backport#sequenceAnnotationDisplayId')
 
                 if(!saDisplayId) {
                     saDisplayId = subcomponent.displayId + '_anno'

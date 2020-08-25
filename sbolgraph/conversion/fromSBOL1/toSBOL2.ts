@@ -1,5 +1,5 @@
 
-import { Graph, node } from 'rdfoo'
+import { Graph, node, Facade } from 'rdfoo'
 
 import SBOL1GraphView from '../../SBOL1GraphView'
 import SBOL2GraphView from '../../SBOL2GraphView'
@@ -18,7 +18,8 @@ import S2GenericLocation from '../../sbol2/S2GenericLocation';
 import S2Collection from '../../sbol2/S2Collection';
 
 import URIUtils from '../../URIUtils'
-import { assert } from 'console'
+import { strict as assert } from 'assert'
+import { S2Location } from '../..'
 
 export default function convert1to2(graph:Graph) {
 
@@ -39,44 +40,46 @@ export default function convert1to2(graph:Graph) {
         sequence2.elements = sequence.nucleotides
     }
 
-    for(let component of graph1.dnaComponents) {
+    for(let dnaComponent of graph1.dnaComponents) {
 
-        let component2 = new S2ComponentDefinition(graph2, component.uri)
+        let component2 = new S2ComponentDefinition(graph2, dnaComponent.uri)
         component2.setUriProperty(Predicates.a, Types.SBOL2.ComponentDefinition)
 
         component2.addType(Specifiers.SBOL2.Type.DNA)
-        component2.name = component.name
-        component2.description = component.description
-        component2.displayId = component.displayId
+        component2.name = dnaComponent.name
+        component2.description = dnaComponent.description
+        copyDisplayId(dnaComponent, component2)
 
-        if(component.dnaSequence) {
-            component2.insertProperty(Predicates.SBOL2.sequence, node.createUriNode(component.dnaSequence.uri))
+        if(dnaComponent.dnaSequence) {
+            component2.insertProperty(Predicates.SBOL2.sequence, node.createUriNode(dnaComponent.dnaSequence.uri))
         }
 
-        for(let type of component.getUriProperties(Predicates.a)) {
+        for(let type of dnaComponent.getUriProperties(Predicates.a)) {
             if(type.indexOf(Prefixes.sbol1) === 0) {
                 continue
             }
-            if(type.indexOf('so:') === 0) {
-                component2.addRole(Prefixes.sequenceOntologyIdentifiersOrg + 'SO:' + type.slice(3))
-            } else {
+            // if(type.indexOf('so:') === 0) {
+            //     component2.addRole(Prefixes.sequenceOntologyIdentifiersOrg + 'SO:' + type.slice(3))
+            // } else {
                 component2.addRole(type)
-            }
+            // }
         }
 
         let precedesN = 0
 
-        for(let anno of component.annotations) {
+        for(let anno of dnaComponent.annotations) {
 
             let anno2 = new S2SequenceAnnotation(graph2, anno.uri)
             anno2.setUriProperty(Predicates.a, Types.SBOL2.SequenceAnnotation)
+            /// HAS to have locations
 
             component2.insertUriProperty(Predicates.SBOL2.sequenceAnnotation, anno2.uri)
+
 
             let subComponent = anno.subComponent
 
             if(subComponent
-                // any participation in precedes relations requires a subcomponent in SBOL2
+                // any precedes relation requires a subcomponent in SBOL2
                 //
                 || graph.hasMatch(null, Predicates.SBOL1.precedes, anno.uri)
                 || graph.hasMatch(anno.uri, Predicates.SBOL1.precedes, null)
@@ -98,7 +101,7 @@ export default function convert1to2(graph:Graph) {
             }
         }
 
-        for(let anno of component.annotations) {
+        for(let anno of dnaComponent.annotations) {
 
             let anno2 = new S2SequenceAnnotation(graph2, anno.uri)
 
@@ -124,25 +127,33 @@ export default function convert1to2(graph:Graph) {
 
                 anno2.insertUriProperty(Predicates.SBOL2.location, range.uri)
 
-            } else if(strand !== undefined) {
+            } else {
                 let genericLocation = new S2GenericLocation(graph2, URIUtils.addSuffix(anno.uri, '/location'))
                 genericLocation.setUriProperty(Predicates.a, Types.SBOL2.GenericLocation)
-                genericLocation.orientation = strand
+
+                if(strand !== undefined)
+                    genericLocation.orientation = strand
 
                 anno2.insertUriProperty(Predicates.SBOL2.location, genericLocation.uri)
             }
 
             for(let precedes of anno.precedes) {
                 
-                let constraint = new S2SequenceConstraint(graph2, URIUtils.addSuffix(component.uri, '/precedes' + (++ precedesN)))
+                let constraint = new S2SequenceConstraint(graph2, URIUtils.addSuffix(dnaComponent.uri, '/precedes' + (++ precedesN)))
                 constraint.setUriProperty(Predicates.a, Types.SBOL2.SequenceConstraint)
 
                 component2.insertUriProperty(Predicates.SBOL2.sequenceConstraint, constraint.uri)
 
+
+                let obj = new S2SequenceAnnotation(graph2, anno.uri)
+                let c2 = obj.component
+                assert(c2)
+
+                
                 let precedes2 = new S2SequenceAnnotation(graph2, precedes.uri)
                 assert(precedes2.component)
 
-                constraint.setProperty(Predicates.SBOL2.subject, node.createUriNode(component.uri))
+                constraint.setProperty(Predicates.SBOL2.subject, node.createUriNode(c2.uri))
                 constraint.setProperty(Predicates.SBOL2.restriction, node.createUriNode(Specifiers.SBOL2.SequenceConstraint.Precedes))
                 constraint.setProperty(Predicates.SBOL2.object, node.createUriNode(precedes2.component?.uri as string))
             }
@@ -156,7 +167,7 @@ export default function convert1to2(graph:Graph) {
 
         collection2.name = collection.name
         collection2.description = collection.description
-        collection2.displayId = collection.displayId
+        copyDisplayId(collection, collection2)
 
         for(let component of collection.components) {
             collection2.addMember(new S2ComponentDefinition(graph2, component.uri))
@@ -174,4 +185,24 @@ export default function convert1to2(graph:Graph) {
 
 
     graph.addAll(newGraph)
+
+    function copyDisplayId(a:Facade, b:Facade) {
+
+        let oldDisplayId = a.getStringProperty(Predicates.SBOL1.displayId)
+
+        if(oldDisplayId === undefined) {
+            return
+        }
+
+        let newDisplayId =
+            oldDisplayId?.replace(/[^A-z_]/g, '_')
+
+        b.setStringProperty(Predicates.SBOL2.displayId, newDisplayId)
+
+        if(oldDisplayId === newDisplayId) {
+            return
+        }
+
+        b.setStringProperty('http://sboltools.org/backport#sbol1displayId', oldDisplayId)
+    }
 }

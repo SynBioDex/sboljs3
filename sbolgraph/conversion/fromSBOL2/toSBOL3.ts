@@ -225,7 +225,7 @@ export default function convert2to3(graph:Graph) {
         module.setUriProperty(Predicates.a, Types.SBOL3.Component)
         copyIdentifiedProperties(cd, module)
 
-        module.setUriProperty('http://biocad.io/terms/backport#prevType', Types.SBOL2.ComponentDefinition)
+        module.setUriProperty('http://sboltools.org/backport#prevType', Types.SBOL2.ComponentDefinition)
 
         map.set(cd.uri, module)
 
@@ -295,7 +295,7 @@ export default function convert2to3(graph:Graph) {
                 copyLocations(sa, sc)
 
                 // TODO what if more than one? is that even possible
-                sc.setStringProperty('http://biocad.io/terms/backport#sequenceAnnotationDisplayId', sa.displayId)
+                sc.setStringProperty('http://sboltools.org/backport#sequenceAnnotationDisplayId', sa.displayId)
             }
 
         }
@@ -490,7 +490,7 @@ export default function convert2to3(graph:Graph) {
             if(p == Predicates.SBOL2.displayId) {
                 newGraph.insert(b.uri, Predicates.SBOL3.displayId, triple.object)
             } else if(p == Predicates.SBOL2.version) {
-                newGraph.insert(b.uri, 'http://sboltools.org/backport#version', triple.object)
+                newGraph.insert(b.uri, 'http://sboltools.org/#version', triple.object)
             } if(p == Predicates.SBOL2.persistentIdentity) {
                 newGraph.insert(b.uri, Predicates.SBOL3.persistentIdentity, triple.object)
             }
