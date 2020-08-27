@@ -85,6 +85,8 @@ export default function convert1to2(graph:Graph) {
                 || graph.hasMatch(anno.uri, Predicates.SBOL1.precedes, null)
             ) {
 
+                console.log('FOOBAR MAKING SC FOR ' + anno.uri + ' IN COMPONENT ' + dnaComponent.uri)
+
                 let subComponent2 = new S2ComponentInstance(graph2, URIUtils.addSuffix(anno.uri, '/component'))
                 subComponent2.setUriProperty(Predicates.a, Types.SBOL2.Component)
 
@@ -150,8 +152,12 @@ export default function convert1to2(graph:Graph) {
                 assert(c2)
 
                 
+
+                console.log('FOOBAR LOOKING FOR SC FOR ' + precedes.uri + ' IN COMPONENT ' + dnaComponent.uri)
+
+
                 let precedes2 = new S2SequenceAnnotation(graph2, precedes.uri)
-                assert(precedes2.component)
+                assert(precedes2.component) // no
 
                 constraint.setProperty(Predicates.SBOL2.subject, node.createUriNode(c2.uri))
                 constraint.setProperty(Predicates.SBOL2.restriction, node.createUriNode(Specifiers.SBOL2.SequenceConstraint.Precedes))
