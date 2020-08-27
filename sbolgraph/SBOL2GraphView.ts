@@ -254,6 +254,13 @@ export default class SBOL2GraphView extends GraphViewHybrid {
 
     }
 
+    get attachments():Array<S2Attachment> {
+
+        return this.instancesOfType(Types.SBOL2.Attachment)
+                    .map((uri) => new S2Attachment(this, uri))
+
+    }
+
     getExperimentalData(uri):S2ExperimentalData|null {
 
         if(this.getType(uri) !== Types.SBOL2.ExperimentalData)
@@ -614,6 +621,9 @@ class SBOL2 extends GraphViewBasic {
 
             if(type === Types.SBOL2.ExperimentalData)
                 return new S2ExperimentalData(this.view, uri)
+
+            if(type === Types.SBOL2.Attachment)
+                return new S2Attachment(this.view, uri)
 
             if(type === Types.SBOL2.Interaction)
                 return new S2Interaction(this.view, uri)

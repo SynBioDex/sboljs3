@@ -25,6 +25,7 @@ import { Types, Predicates, Prefixes, Specifiers } from 'bioterms'
 import S2IdentifiedFactory from '../../sbol2/S2IdentifiedFactory'
 import URIUtils from '../../URIUtils';
 import S2Sequence from '../../sbol2/S2Sequence';
+import { S2Attachment } from '../..'
 
 
 export default function convert3to2(graph:Graph) {
@@ -55,6 +56,16 @@ export default function convert3to2(graph:Graph) {
         copyIdentifiedProperties(seq, seq2)
         seq2.elements = seq.elements
         seq2.encoding = seq.encoding
+    }
+
+    for(let att of sbol3View.attachments) {
+        let att2 = new S2Attachment(sbol2View, att.uri)
+        att2.setUriProperty(Predicates.a, Types.SBOL2.Attachment)
+        copyIdentifiedProperties(att, att2)
+        att2.source = att.source
+        att2.format = att.format
+        att2.hash = att.hash
+        att2.size = att.size
     }
 
 
@@ -290,7 +301,7 @@ export default function convert3to2(graph:Graph) {
 
     graph.replaceURI(Predicates.SBOL3.persistentIdentity, Predicates.SBOL2.persistentIdentity)
     graph.replaceURI(Predicates.SBOL3.displayId, Predicates.SBOL2.displayId)
-    graph.replaceURI('http://sboltools.org/backport#version', Predicates.SBOL2.version)
+    graph.replaceURI('http://sboltools.org/backport#sbol2version', Predicates.SBOL2.version)
 
 
     graph.addAll(newGraph)
@@ -317,7 +328,7 @@ export default function convert3to2(graph:Graph) {
                 continue
             }
 
-            if(p === 'http://sboltools.org/backport#version') {
+            if(p === 'http://sboltools.org/backport#sbol2version') {
                 b.graph.insert(b.uri, Predicates.SBOL2.version, triple.object)
                 continue
             }

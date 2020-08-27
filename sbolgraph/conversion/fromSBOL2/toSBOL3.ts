@@ -38,6 +38,8 @@ import { Graph, node } from 'rdfoo'
 import S3Measure from '../../sbol3/S3Measure';
 import SBOL3GraphView from '../../SBOL3GraphView'
 import SBOL2GraphView from '../../SBOL2GraphView'
+import { S2Attachment } from '../..'
+import S3Attachment from '../../sbol3/S3Attachment'
 
 export default function convert2to3(graph:Graph) {
 
@@ -49,11 +51,11 @@ export default function convert2to3(graph:Graph) {
     let sbol3View:SBOL3GraphView = new SBOL3GraphView(newGraph)
 
     for(let cd of sbol2View.componentDefinitions) {
-        cdToModule(cd)
+        cdTo3Component(cd)
     }
 
     for(let md of sbol2View.moduleDefinitions) {
-        mdToModule(md)
+        mdTo3Component(md)
     }
 
     for(let model of sbol2View.models) {
@@ -70,6 +72,10 @@ export default function convert2to3(graph:Graph) {
 
     for(let ex of sbol2View.experiments) {
         convertExp(ex)
+    }
+
+    for(let att of sbol2View.attachments) {
+        convertAttachment(att)
     }
 
     for(let sm of sbol2View.instancesOfType(Types.SBOL2.Module).map((uri) => sbol2View.uriToFacade(uri))) {
@@ -214,47 +220,69 @@ export default function convert2to3(graph:Graph) {
         return objx
     }
 
-    function cdToModule(cd:S2ComponentDefinition):S3Component {
+    function convertAttachment(obj:S2Attachment):S3Attachment {
+
+        const existing = map.get(obj.uri)
+
+        if(existing)
+            return existing as S3Attachment
+    
+        const objx:S3Attachment = new S3Attachment(sbol3View, obj.uri)
+        objx.setUriProperty(Predicates.a, Types.SBOL3.Attachment)
+        copyIdentifiedProperties(obj, objx)
+
+        objx.source = obj.source
+        objx.format = obj.format
+        objx.hash = obj.hash
+        objx.size = obj.size
+
+
+        map.set(obj.uri, objx)
+
+        return objx
+    }
+
+    function cdTo3Component(cd:S2ComponentDefinition):S3Component {
 
         const existing = map.get(cd.uri)
 
         if(existing)
             return existing as S3Component
 
-        const module:S3Component = new S3Component(sbol3View, cd.uri)
-        module.setUriProperty(Predicates.a, Types.SBOL3.Component)
-        copyIdentifiedProperties(cd, module)
+        const component3:S3Component = new S3Component(sbol3View, cd.uri)
+        component3.setUriProperty(Predicates.a, Types.SBOL3.Component)
+        copyIdentifiedProperties(cd, component3)
 
-        module.setUriProperty('http://sboltools.org/backport#prevType', Types.SBOL2.ComponentDefinition)
+        component3.setUriProperty('http://sboltools.org/backport#prevType', Types.SBOL2.ComponentDefinition)
 
-        map.set(cd.uri, module)
+        map.set(cd.uri, component3)
 
         for(let role of cd.roles) {
-            module.addRole(role)
+            component3.addRole(role)
         }
 
         for(let type of cd.types) {
-            module.addType(type)
+            component3.addType(type)
         }
 
         for(let sc of cd.components) {
 
-            const def:S3Component = cdToModule(sc.definition)
+            const def:S3Component = cdTo3Component(sc.definition)
 
-            const subModule:S3SubComponent = new S3SubComponent(sbol3View, sc.uri)
-            subModule.setUriProperty(Predicates.a, Types.SBOL3.SubComponent)
-            copyIdentifiedProperties(sc, subModule)
+            const subComponent3:S3SubComponent = new S3SubComponent(sbol3View, sc.uri)
+            subComponent3.setUriProperty(Predicates.a, Types.SBOL3.SubComponent)
+            copyIdentifiedProperties(sc, subComponent3)
 
-            subModule.name = sc.name
-            subModule.instanceOf = def
+            subComponent3.name = sc.name
+            subComponent3.instanceOf = def
 
             if(sc.sourceLocation) {
-                subModule.setUriProperty(Predicates.SBOL3.sourceLocation, sc.sourceLocation.uri)
+                subComponent3.setUriProperty(Predicates.SBOL3.sourceLocation, sc.sourceLocation.uri)
             }
 
-            module.insertUriProperty(Predicates.SBOL3.subComponent, subModule.uri)
+            component3.insertUriProperty(Predicates.SBOL3.subComponent, subComponent3.uri)
 
-            map.set(sc.uri, subModule)
+            map.set(sc.uri, subComponent3)
 
             // TODO check sc roles match the def roles
 
@@ -270,7 +298,7 @@ export default function convert2to3(graph:Graph) {
                 feature.setUriProperty(Predicates.a, Types.SBOL3.SequenceAnnotation)
                 copyIdentifiedProperties(sa, feature)
 
-                module.insertUriProperty(Predicates.SBOL3.sequenceAnnotation, feature.uri)
+                component3.insertUriProperty(Predicates.SBOL3.sequenceAnnotation, feature.uri)
 
                 feature.name = sa.name
 
@@ -302,78 +330,78 @@ export default function convert2to3(graph:Graph) {
 
         for(let seq of cd.sequences) {
 
-            module.addSequence(convertSeq(seq))
+            component3.addSequence(convertSeq(seq))
 
         }
 
-        return module
+        return component3
 
     }
 
-    function mdToModule(md:S2ModuleDefinition):S3Component {
+    function mdTo3Component(md:S2ModuleDefinition):S3Component {
 
         const existing = map.get(md.uri)
 
         if(existing)
             return existing as S3Component
 
-        const module:S3Component = new S3Component(sbol3View, md.uri)
-        module.setUriProperty(Predicates.a, Types.SBOL3.Component)
-        copyIdentifiedProperties(md, module)
+        const component3:S3Component = new S3Component(sbol3View, md.uri)
+        component3.setUriProperty(Predicates.a, Types.SBOL3.Component)
+        copyIdentifiedProperties(md, component3)
 
-        module.setUriProperty('http://sboltools.org/backport#prevType', Types.SBOL2.ModuleDefinition)
+        component3.setUriProperty('http://sboltools.org/backport#prevType', Types.SBOL2.ModuleDefinition)
 
-        map.set(md.uri, module)
+        map.set(md.uri, component3)
 
         for(let sm of md.modules) {
 
-            let subModule = new S3SubComponent(sbol3View, sm.uri)
-            subModule.setUriProperty(Predicates.a, Types.SBOL3.SubComponent)
-            copyIdentifiedProperties(sm, subModule)
+            let subComponent3 = new S3SubComponent(sbol3View, sm.uri)
+            subComponent3.setUriProperty(Predicates.a, Types.SBOL3.SubComponent)
+            copyIdentifiedProperties(sm, subComponent3)
 
             let def = map.get(sm.definition.uri)
 
             if(def && def instanceof S3Component) {
-                subModule.instanceOf = def
+                subComponent3.instanceOf = def
             } else {
                 // missing definition, can't convert it
-                subModule.setUriProperty(Predicates.SBOL3.instanceOf, sm.definition.uri)
+                subComponent3.setUriProperty(Predicates.SBOL3.instanceOf, sm.definition.uri)
             }
 
-            module.insertUriProperty(Predicates.SBOL3.subComponent, subModule.uri)
+            subComponent3.insertUriProperty(Predicates.SBOL3.subComponent, subComponent3.uri)
 
             if(sm.measure) {
-                subModule.setUriProperty(Predicates.SBOL3.measure, sm.measure.uri)
+                subComponent3.setUriProperty(Predicates.SBOL3.measure, sm.measure.uri)
             }
 
 
-            map.set(sm.uri, subModule)
+            map.set(sm.uri, subComponent3)
 
             // TODO check sc roles match the def roles
         }
 
         for(let sc of md.functionalComponents) {
 
-            let subModule = new S3SubComponent(sbol3View, sc.uri)
-            subModule.setUriProperty(Predicates.a, Types.SBOL3.SubComponent)
-            copyIdentifiedProperties(sc, subModule)
+            let subComponent3 = new S3SubComponent(sbol3View, sc.uri)
+            subComponent3.setUriProperty(Predicates.a, Types.SBOL3.SubComponent)
+            copyIdentifiedProperties(sc, subComponent3)
 
             let def = map.get(sc.definition.uri)
 
             if(def && def instanceof S3Component) {
-                subModule.instanceOf = def
+                subComponent3.instanceOf = def
             } else {
                 // missing definition, can't convert it
-                subModule.setUriProperty(Predicates.SBOL3.instanceOf, sc.definition.uri)
+                subComponent3.setUriProperty(Predicates.SBOL3.instanceOf, sc.definition.uri)
             }
 
-            module.insertUriProperty(Predicates.SBOL3.subComponent, subModule.uri)
+            component3.insertUriProperty(Predicates.SBOL3.subComponent, subComponent3.uri)
 
             if(sc.measure) {
-                subModule.setUriProperty(Predicates.SBOL3.measure, sc.measure.uri)
+                subComponent3.setUriProperty(Predicates.SBOL3.measure, sc.measure.uri)
             }
 
-            map.set(sc.uri, subModule)
+            map.set(sc.uri, subComponent3)
 
             // TODO check sc roles match the def roles
 
@@ -385,7 +413,7 @@ export default function convert2to3(graph:Graph) {
             newInt.setUriProperty(Predicates.a, Types.SBOL3.Interaction)
             copyIdentifiedProperties(int, newInt)
 
-            module.insertUriProperty(Predicates.SBOL3.interaction, newInt.uri)
+            component3.insertUriProperty(Predicates.SBOL3.interaction, newInt.uri)
 
             if(int.measure) {
                 newInt.setUriProperty(Predicates.SBOL3.measure, int.measure.uri)
@@ -430,10 +458,10 @@ export default function convert2to3(graph:Graph) {
         }
 
         for(let model of md.models) {
-            module.addModel(modelToModel(model))
+            component3.addModel(modelToModel(model))
         }
 
-        return module
+        return component3
 
     }
 
@@ -450,7 +478,7 @@ export default function convert2to3(graph:Graph) {
 
     graph.replaceURI(Predicates.SBOL2.persistentIdentity, Predicates.SBOL3.persistentIdentity)
     graph.replaceURI(Predicates.SBOL2.displayId, Predicates.SBOL3.displayId)
-    graph.replaceURI(Predicates.SBOL2.version, 'http://sboltools.org/backport#version')
+    graph.replaceURI(Predicates.SBOL2.version, 'http://sboltools.org/backport#sbol2version')
 
 
 
@@ -490,7 +518,7 @@ export default function convert2to3(graph:Graph) {
             if(p == Predicates.SBOL2.displayId) {
                 newGraph.insert(b.uri, Predicates.SBOL3.displayId, triple.object)
             } else if(p == Predicates.SBOL2.version) {
-                newGraph.insert(b.uri, 'http://sboltools.org/#version', triple.object)
+                newGraph.insert(b.uri, 'http://sboltools.org/backport#sbol2version', triple.object)
             } if(p == Predicates.SBOL2.persistentIdentity) {
                 newGraph.insert(b.uri, Predicates.SBOL3.persistentIdentity, triple.object)
             }

@@ -32,6 +32,7 @@ import enforceURICompliance from './conversion/enforceURICompliance';
 import SBOL2GraphView from './SBOL2GraphView';
 import { ProvView } from 'rdfoo-prov';
 import isOwnershipRelation from './isOwnershipRelation'
+import S3Attachment from './sbol3/S3Attachment'
 
 export default class SBOL3GraphView extends GraphViewHybrid {
 
@@ -168,6 +169,13 @@ export default class SBOL3GraphView extends GraphViewHybrid {
 
         return this.instancesOfType(Types.SBOL3.ExperimentalData)
                     .map((uri) => new S3ExperimentalData(this, uri))
+
+    }
+
+    get attachments():Array<S3Attachment> {
+
+        return this.instancesOfType(Types.SBOL3.Attachment)
+                    .map((uri) => new S3Attachment(this, uri))
 
     }
 
@@ -471,6 +479,9 @@ class SBOL3 extends GraphViewBasic {
 
             if(type === Types.SBOL3.ExperimentalData)
                 return new S3ExperimentalData(this.view, uri)
+
+            if(type === Types.SBOL3.Attachment)
+                return new S3Attachment(this.view, uri)
 
             throw new Error('unknown type: ' + uri + ' a ' + type)
         }
