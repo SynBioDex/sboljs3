@@ -29,11 +29,10 @@ import S2Sequence from '../../sbol2/S2Sequence';
 
 export default function convert3to2(graph:Graph) {
 
-    let sbol2View:SBOL2GraphView = new SBOL2GraphView(graph)
-
     let newGraph = new Graph()
-    let sbol3View:SBOL3GraphView = new SBOL3GraphView(newGraph)
+    let sbol3View:SBOL3GraphView = new SBOL3GraphView(graph)
 
+    let sbol2View:SBOL2GraphView = new SBOL2GraphView(newGraph)
 
     for(let ed of sbol3View.experimentalData) {
         let ed2 = new S2ExperimentalData(sbol2View, ed.uri)
