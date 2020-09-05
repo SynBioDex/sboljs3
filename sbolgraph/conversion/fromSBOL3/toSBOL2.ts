@@ -25,7 +25,7 @@ import { Types, Predicates, Prefixes, Specifiers } from 'bioterms'
 import S2IdentifiedFactory from '../../sbol2/S2IdentifiedFactory'
 import URIUtils from '../../URIUtils';
 import S2Sequence from '../../sbol2/S2Sequence';
-import { S2Attachment } from '../..'
+import { S2Attachment, S2Implementation } from '../..'
 
 
 export default function convert3to2(graph:Graph) {
@@ -266,6 +266,17 @@ export default function convert3to2(graph:Graph) {
             }
         }
     }
+
+
+    for(let impl of sbol3View.implementations) {
+        const impl2:S2Implementation = new S2Implementation(sbol2View, impl.uri)
+        impl2.setUriProperty(Predicates.a, Types.SBOL2.Implementation)
+        copyIdentifiedProperties(impl, impl2)
+
+        impl2.setUriProperty(Predicates.SBOL2.built, impl.getUriProperty(Predicates.SBOL3.built))
+    }
+
+
 
     // We can do some pruning now.
     //

@@ -276,6 +276,13 @@ export default class SBOL2GraphView extends GraphViewHybrid {
                     .map((uri) => new S2ExperimentalData(this, uri))
 
     }
+    
+    get implementations():Array<S2Implementation> {
+
+        return this.instancesOfType(Types.SBOL2.Implementation)
+                    .map((uri) => new S2Implementation(this, uri))
+
+    }
 
     get rootComponentDefinitions():Array<S2ComponentDefinition> {
 

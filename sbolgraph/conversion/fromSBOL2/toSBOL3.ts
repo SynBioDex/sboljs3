@@ -40,6 +40,7 @@ import SBOL3GraphView from '../../SBOL3GraphView'
 import SBOL2GraphView from '../../SBOL2GraphView'
 import { S2Attachment } from '../..'
 import S3Attachment from '../../sbol3/S3Attachment'
+import S3Implementation from '../../sbol3/S3Implementation'
 
 export default function convert2to3(graph:Graph) {
 
@@ -142,6 +143,18 @@ export default function convert2to3(graph:Graph) {
                 xcollection.addMember(converted)
             }
         }
+
+    }
+
+
+    for(let impl of sbol2View.implementations) {
+
+        const impl3:S3Implementation = new S3Implementation(sbol3View, impl.uri)
+        impl3.setUriProperty(Predicates.a, Types.SBOL3.Implementation)
+        copyIdentifiedProperties(impl, impl3)
+
+        impl3.setUriProperty(Predicates.SBOL3.built, impl.getUriProperty(Predicates.SBOL2.built))
+
 
     }
 

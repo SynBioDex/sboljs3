@@ -172,6 +172,13 @@ export default class SBOL3GraphView extends GraphViewHybrid {
 
     }
 
+    get implementations():Array<S3Implementation> {
+
+        return this.instancesOfType(Types.SBOL3.Implementation)
+                    .map((uri) => new S3Implementation(this, uri))
+
+    }
+
     get attachments():Array<S3Attachment> {
 
         return this.instancesOfType(Types.SBOL3.Attachment)
