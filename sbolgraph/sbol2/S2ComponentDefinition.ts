@@ -199,6 +199,19 @@ export default class S2ComponentDefinition extends S2Identified {
 
         return sequenceAnnotation
     }
+
+    destroy() {
+
+        let instantiations = this.graph.match(null, Predicates.SBOL2.definition, this.uri)
+                .map(triple.subjectUri)
+                .map(uri => new S2ComponentInstance(this.view, uri as string))
+
+        super.destroy()
+
+        for(let instantiation of instantiations) {
+            instantiation.destroy()
+        }
+    }
 }
 
 

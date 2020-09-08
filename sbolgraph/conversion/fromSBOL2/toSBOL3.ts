@@ -38,9 +38,11 @@ import { Graph, node } from 'rdfoo'
 import S3Measure from '../../sbol3/S3Measure';
 import SBOL3GraphView from '../../SBOL3GraphView'
 import SBOL2GraphView from '../../SBOL2GraphView'
-import { S2Attachment } from '../..'
+import { S2Attachment, S3OrientedLocation, S2Cut } from '../..'
 import S3Attachment from '../../sbol3/S3Attachment'
 import S3Implementation from '../../sbol3/S3Implementation'
+import S2Facade from '../../sbol2/S2Facade'
+import S3Facade from '../../sbol3/S3Facade'
 
 export default function convert2to3(graph:Graph) {
 
@@ -132,15 +134,16 @@ export default function convert2to3(graph:Graph) {
 
     for(let collection of sbol2View.collections) {
 
-        const xcollection:S3Collection = sbol3View.createCollection(collection.uriPrefix, collection.displayId || 'collection')
-        copyIdentifiedProperties(collection, xcollection)
+        const col3:S3Collection = new S3Collection(sbol3View, collection.uri)
+        col3.setUriProperty(Predicates.a, Types.SBOL3.Collection)
+        copyIdentifiedProperties(collection, col3)
 
         for(let member of collection.members) {
 
             const converted:S3Identified|undefined = map.get(member.uri)
 
             if(converted !== undefined) {
-                xcollection.addMember(converted)
+                col3.addMember(converted)
             }
         }
 
@@ -324,7 +327,6 @@ export default function convert2to3(graph:Graph) {
             } else {
 
                 // has component, add locations to existing submodule
-                // TODO idk what to do with any other properties right now
 
                 const found = map.get(sa.component.uri)
 
@@ -334,6 +336,17 @@ export default function convert2to3(graph:Graph) {
                 const sc:S3SubComponent = found as S3SubComponent
 
                 copyLocations(sa, sc)
+
+
+
+                // don't because the object already exists; would end up with
+                // 2 displayIds etc.
+
+                // copyIdentifiedProperties(sa, sc)
+
+                copyNonSBOLProperties(sa, sc)
+
+
 
                 // TODO what if more than one? is that even possible
                 sc.setStringProperty('http://sboltools.org/backport#sequenceAnnotationDisplayId', sa.displayId)
@@ -427,6 +440,10 @@ export default function convert2to3(graph:Graph) {
             copyIdentifiedProperties(int, newInt)
 
             component3.insertUriProperty(Predicates.SBOL3.interaction, newInt.uri)
+
+            for(let type of int.types) {
+                newInt.insertUriProperty(Predicates.SBOL2.type, type)
+            }
 
             if(int.measure) {
                 newInt.setUriProperty(Predicates.SBOL3.measure, int.measure.uri)
@@ -538,6 +555,25 @@ export default function convert2to3(graph:Graph) {
         }
     }
 
+    function copyNonSBOLProperties(a:S2Identified, b:S3Identified) {
+
+        let aTriples = graph.match(a.uri, null, null)
+
+        for(let triple of aTriples) {
+            
+            let p = triple.predicate.nominalValue
+
+            if(p === Predicates.a) {
+                continue
+            }
+
+
+            if(p.indexOf(Prefixes.sbol2) !== 0) {
+                newGraph.insert(b.uri, triple.predicate.nominalValue, triple.object)
+            }
+        }
+    }
+
     function copyLocations(a:S2SequenceAnnotation, b:S3ThingWithLocation) {
 
         for(let location of a.locations) {
@@ -546,9 +582,11 @@ export default function convert2to3(graph:Graph) {
 
                 const range:S2Range = location as S2Range
 
-
-                let loc = b.addOrientedLocation()
+                let loc = new S3OrientedLocation(sbol3View, range.uri)
                 loc.setUriProperty(Predicates.a, Types.SBOL3.Range)
+                copyIdentifiedProperties(location, loc)
+
+                b.insertUriProperty(Predicates.SBOL3.location, loc.uri)
 
                 if(location.sequence) {
                     loc.setUriProperty(Predicates.SBOL3.sequence, location.sequence.uri)
@@ -565,19 +603,43 @@ export default function convert2to3(graph:Graph) {
                     loc.setIntProperty(Predicates.SBOL3.end, end)
                 }
 
-                loc.orientation = range.orientation === Specifiers.SBOL2.Orientation.ReverseComplement
-                    ? Specifiers.SBOL3.Orientation.ReverseComplement : Specifiers.SBOL3.Orientation.Inline
+                copyOrientation(range, loc)
 
-            } else if(location instanceof S2GenericLocation) {
+            } else if(location instanceof S2Cut) {
 
-                let loc = b.addOrientedLocation()
+                const cut:S2Cut = location as S2Cut
+
+                let loc = new S3OrientedLocation(sbol3View, cut.uri)
+                loc.setUriProperty(Predicates.a, Types.SBOL3.Cut)
+                copyIdentifiedProperties(location, loc)
+
+                b.insertUriProperty(Predicates.SBOL3.location, loc.uri)
 
                 if(location.sequence) {
                     loc.setUriProperty(Predicates.SBOL3.sequence, location.sequence.uri)
                 }
 
-                loc.orientation = location.orientation === Specifiers.SBOL2.Orientation.ReverseComplement
-                    ? Specifiers.SBOL3.Orientation.ReverseComplement : Specifiers.SBOL3.Orientation.Inline
+                const at:number|undefined = cut.at
+
+                if(at !== undefined) {
+                    loc.setIntProperty(Predicates.SBOL3.at, at)
+                }
+
+                copyOrientation(cut, loc)
+
+            } else if(location instanceof S2GenericLocation) {
+
+                let loc = new S3OrientedLocation(sbol3View, location.uri)
+                loc.setUriProperty(Predicates.a, Types.SBOL3.OrientedLocation)
+                copyIdentifiedProperties(location, loc)
+
+                b.insertUriProperty(Predicates.SBOL3.location, loc.uri)
+
+                if(location.sequence) {
+                    loc.setUriProperty(Predicates.SBOL3.sequence, location.sequence.uri)
+                }
+
+                copyOrientation(location, loc)
 
             } else {
 
@@ -585,6 +647,23 @@ export default function convert2to3(graph:Graph) {
 
             }
 
+        }
+
+        function copyOrientation(a:S2Facade, b:S3Facade) {
+
+            let o = a.getUriProperty(Predicates.SBOL2.orientation)
+
+            if(o !== undefined) {
+
+                let o2 = o
+
+                if(o2 === Specifiers.SBOL2.Orientation.Inline)
+                    o2 = Specifiers.SBOL3.Orientation.Inline
+                else if(o2 === Specifiers.SBOL2.Orientation.ReverseComplement)
+                    o2 = Specifiers.SBOL3.Orientation.ReverseComplement
+
+                b.setUriProperty(Predicates.SBOL3.orientation, o2)
+            }
         }
 
     }

@@ -36,6 +36,8 @@ export default function convert1to2(graph:Graph) {
         let sequence2 = new S2Sequence(graph2, sequence.uri)
         sequence2.setUriProperty(Predicates.a, Types.SBOL2.Sequence)
 
+        copyNonSBOLProperties(sequence, sequence2)
+
         sequence2.encoding = Specifiers.SBOL2.SequenceEncoding.NucleicAcid
         sequence2.elements = sequence.nucleotides
     }
@@ -44,6 +46,8 @@ export default function convert1to2(graph:Graph) {
 
         let component2 = new S2ComponentDefinition(graph2, dnaComponent.uri)
         component2.setUriProperty(Predicates.a, Types.SBOL2.ComponentDefinition)
+
+        copyNonSBOLProperties(dnaComponent, component2)
 
         component2.addType(Specifiers.SBOL2.Type.DNA)
         component2.name = dnaComponent.name
@@ -75,6 +79,7 @@ export default function convert1to2(graph:Graph) {
 
             component2.insertUriProperty(Predicates.SBOL2.sequenceAnnotation, anno2.uri)
 
+            copyNonSBOLProperties(anno, anno2)
 
             let subComponent = anno.subComponent
 
@@ -84,9 +89,6 @@ export default function convert1to2(graph:Graph) {
                 || graph.hasMatch(null, Predicates.SBOL1.precedes, anno.uri)
                 || graph.hasMatch(anno.uri, Predicates.SBOL1.precedes, null)
             ) {
-
-                console.log('FOOBAR MAKING SC FOR ' + anno.uri + ' IN COMPONENT ' + dnaComponent.uri)
-
                 let subComponent2 = new S2ComponentInstance(graph2, URIUtils.addSuffix(anno.uri, '/component'))
                 subComponent2.setUriProperty(Predicates.a, Types.SBOL2.Component)
 
@@ -106,6 +108,9 @@ export default function convert1to2(graph:Graph) {
         for(let anno of dnaComponent.annotations) {
 
             let anno2 = new S2SequenceAnnotation(graph2, anno.uri)
+            anno2.setUriProperty(Predicates.a, Types.SBOL2.SequenceAnnotation)
+
+            copyNonSBOLProperties(anno, anno2)
 
             let start = anno.bioStart
             let end = anno.bioEnd
@@ -152,9 +157,6 @@ export default function convert1to2(graph:Graph) {
                 assert(c2)
 
                 
-
-                console.log('FOOBAR LOOKING FOR SC FOR ' + precedes.uri + ' IN COMPONENT ' + dnaComponent.uri)
-
 
                 let precedes2 = new S2SequenceAnnotation(graph2, precedes.uri)
                 assert(precedes2.component) // no
@@ -210,5 +212,20 @@ export default function convert1to2(graph:Graph) {
         }
 
         b.setStringProperty('http://sboltools.org/backport#sbol1displayId', oldDisplayId)
+    }
+
+    function copyNonSBOLProperties(a:Facade, b:Facade) {
+
+        for(let t of graph.match(a.uri, null, null)) {
+
+            if(t.subject.indexOf(Prefixes.sbol1) == 0) {
+                continue
+            }
+
+            b.insertProperty(t.predicate, t.object)
+
+        }
+
+
     }
 }

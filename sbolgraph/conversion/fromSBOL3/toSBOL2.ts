@@ -25,7 +25,10 @@ import { Types, Predicates, Prefixes, Specifiers } from 'bioterms'
 import S2IdentifiedFactory from '../../sbol2/S2IdentifiedFactory'
 import URIUtils from '../../URIUtils';
 import S2Sequence from '../../sbol2/S2Sequence';
-import { S2Attachment, S2Implementation } from '../..'
+import { S2Attachment, S2Implementation, S2Cut, S2Collection } from '../..'
+import S3Cut from '../../sbol3/S3Cut'
+import S3Facade from '../../sbol3/S3Facade'
+import S2Facade from '../../sbol2/S2Facade'
 
 
 export default function convert3to2(graph:Graph) {
@@ -34,6 +37,10 @@ export default function convert3to2(graph:Graph) {
     let sbol3View:SBOL3GraphView = new SBOL3GraphView(graph)
 
     let sbol2View:SBOL2GraphView = new SBOL2GraphView(newGraph)
+
+
+    let dontPrune = new Set<string>()
+
 
     for(let ed of sbol3View.experimentalData) {
         let ed2 = new S2ExperimentalData(sbol2View, ed.uri)
@@ -117,6 +124,15 @@ export default function convert3to2(graph:Graph) {
         if(mdSuffix !== '')
             mdUri = URIUtils.addSuffix(mdUri, mdSuffix)
 
+        switch(component.getUriProperty('http://sboltools.org/backport#prevType')) {
+            case Types.SBOL2.ModuleDefinition:
+                dontPrune.add(mdUri)
+                break
+            case Types.SBOL2.ComponentDefinition:
+                dontPrune.add(cdUri)
+                break
+        }
+
         let cd = new S2ComponentDefinition(sbol2View, cdUri)
         cd.setUriProperty(Predicates.a, Types.SBOL2.ComponentDefinition)
         copyIdentifiedProperties(component, cd)
@@ -125,7 +141,7 @@ export default function convert3to2(graph:Graph) {
         let md = new S2ModuleDefinition(sbol2View, mdUri)
         md.setUriProperty(Predicates.a, Types.SBOL2.ModuleDefinition)
         copyIdentifiedProperties(component, md)
-        md.displayId = module.id + mdSuffix
+        md.displayId = component.displayId + mdSuffix
 
         if(md.persistentIdentity && mdSuffix)
             md.persistentIdentity = URIUtils.addSuffix(md.persistentIdentity, mdSuffix)
@@ -186,8 +202,11 @@ export default function convert3to2(graph:Graph) {
                 throw new Error('???')
             }
 
-            let cdSubcomponent = cd.addComponentByDefinition(newDefOfSubcomponent.cd, subcomponent.displayId, subcomponent.name, subcomponent.getStringProperty(Predicates.SBOL2.version))
-            let mdSubcomponent = md.createFunctionalComponent(newDefOfSubcomponent.cd, subcomponent.displayId,  subcomponent.name, subcomponent.getStringProperty(Predicates.SBOL2.version))
+            let cdSubcomponent = cd.addComponentByDefinition(
+                newDefOfSubcomponent.cd, subcomponent.displayId, subcomponent.name, subcomponent.getStringProperty(Predicates.SBOL2.version))
+
+            let mdSubcomponent = md.createFunctionalComponent(
+                newDefOfSubcomponent.cd, subcomponent.displayId,  subcomponent.name, subcomponent.getStringProperty(Predicates.SBOL2.version))
 
             subcomponentToFC.set(subcomponent.uri, mdSubcomponent)
 
@@ -213,6 +232,7 @@ export default function convert3to2(graph:Graph) {
 
                 let saIdent = S2IdentifiedFactory.createChild(sbol2View, Types.SBOL2.SequenceAnnotation, cd, Predicates.SBOL2.sequenceAnnotation, saDisplayId, subcomponent.getStringProperty(Predicates.SBOL2.version))
                 let sa = new S2SequenceAnnotation(sbol2View, saIdent.uri)
+                sa.setUriProperty(Predicates.SBOL2.component, subcomponent.uri)
 
                 copyLocations(sbol2View, subcomponent, sa)
 
@@ -239,6 +259,10 @@ export default function convert3to2(graph:Graph) {
 
             if (interaction.measure) {
                 newInteraction.setUriProperty(Predicates.SBOL2.measure, interaction.measure.uri)
+            }
+
+            for(let type of interaction.types) {
+                newInteraction.insertUriProperty(Predicates.SBOL2.type, type)
             }
 
             for(let participation of interaction.participations) {
@@ -277,14 +301,40 @@ export default function convert3to2(graph:Graph) {
     }
 
 
+    for(let coll of sbol3View.collections) {
+        let coll2:S2Collection = new S2Collection(sbol2View, coll.uri)
+        coll2.setUriProperty(Predicates.a, Types.SBOL2.Collection)
+        copyIdentifiedProperties(coll, coll2)
+
+        for(let member of coll.members) {
+            coll2.insertUriProperty(Predicates.SBOL2.member, member.uri)
+
+
+            // if it's a component that has been mapped to an SBOL2 CD and MD,
+            // add both to the SBOL2 collection.
+            //
+            let cdAndMdMapping = componentToCDandMD.get(member.uri)
+
+            if(cdAndMdMapping) {
+                coll2.insertUriProperty(Predicates.SBOL2.member, cdAndMdMapping.cd.uri)
+                coll2.insertUriProperty(Predicates.SBOL2.member, cdAndMdMapping.md.uri)
+            }
+        }
+
+    }
+
 
     // We can do some pruning now.
     //
     //  1) ModuleDefinitions with no interactions and no models are "pointless modules".
     //     They can be deleted along with their submodules and FCs.
+    // 
+    //  2) Similarly, ComponentDefinitions with no sequences, sequence annotations, or subcomponents
+    //     are "pointless components"
     //
-    //  TODO: similar rule for pointless CDs as well (no seq, seq annotations?)
-    //   & if there is ONLY a module left, remove its _module suffix
+    //  TODO: properties outside of the SBOL namespace should be an indication that a CD/MD is NOT pointless
+    //
+    //  TODO: if there is ONLY a module left, remove its _module suffix
     //
     // It's easier to do this on the generated SBOL2 because it means we don't
     // have to make assumptions about how the SBOL3 will map to SBOL2.
@@ -292,8 +342,18 @@ export default function convert3to2(graph:Graph) {
 
 
     for(let md of sbol2View.moduleDefinitions) {
+        if(dontPrune.has(md.uri))
+            continue
         if(md.interactions.length === 0 && md.models.length === 0) {
             md.destroy()
+        }
+    }
+
+    for(let cd of sbol2View.componentDefinitions) {
+        if(dontPrune.has(cd.uri))
+            continue
+        if(cd.containedObjects.length === 0) {
+            cd.destroy()
         }
     }
 
@@ -361,8 +421,11 @@ export default function convert3to2(graph:Graph) {
         for(let location of oldThing.locations) {
             if(location instanceof S3Range) {
 
-                let newLocIdent = S2IdentifiedFactory.createChild(sbol2View, Types.SBOL2.Range, newThing, Predicates.SBOL2.location, location.displayId, location.getStringProperty(Predicates.SBOL2.version))
-                let newLoc = new S2Range(sbol2View, newLocIdent.uri)
+                let newLoc = new S2Range(sbol2View, location.uri)
+                newLoc.insertUriProperty(Predicates.a, Types.SBOL2.Range)
+                copyIdentifiedProperties(location, newLoc)
+
+                newThing.insertUriProperty(Predicates.SBOL2.location, newLoc.uri)
 
                 if(location.sequence) {
                     newLoc.setUriProperty(Predicates.SBOL2.sequence, location.sequence.uri)
@@ -371,23 +434,60 @@ export default function convert3to2(graph:Graph) {
                 newLoc.start = location.start
                 newLoc.end = location.end
 
-                newLoc.orientation = location.orientation === Specifiers.SBOL3.Orientation.ReverseComplement ?
-                        Specifiers.SBOL2.Orientation.ReverseComplement : Specifiers.SBOL2.Orientation.Inline
+                copyOrientation(location, newLoc)
 
-            } else if(location instanceof S3OrientedLocation) {
+            } else if(location instanceof S3Cut) {
 
-                let newLocIdent = S2IdentifiedFactory.createChild(sbol2View, Types.SBOL2.GenericLocation, newThing, Predicates.SBOL2.location, location.displayId, location.getStringProperty(Predicates.SBOL2.version))
-                let newLoc = new S2GenericLocation(sbol2View, newLocIdent.uri)
+                let newLoc = new S2Cut(sbol2View, location.uri)
+                newLoc.insertUriProperty(Predicates.a, Types.SBOL2.Cut)
+                copyIdentifiedProperties(location, newLoc)
+
+                newThing.insertUriProperty(Predicates.SBOL2.location, newLoc.uri)
 
                 if(location.sequence) {
                     newLoc.setUriProperty(Predicates.SBOL2.sequence, location.sequence.uri)
                 }
 
+                newLoc.at = location.at
+
                 newLoc.orientation = location.orientation === Specifiers.SBOL3.Orientation.ReverseComplement ?
                         Specifiers.SBOL2.Orientation.ReverseComplement : Specifiers.SBOL2.Orientation.Inline
 
+                copyOrientation(location, newLoc)
+
+            } else if(location instanceof S3OrientedLocation) {
+
+                let newLoc = new S2GenericLocation(sbol2View, location.uri)
+                newLoc.insertUriProperty(Predicates.a, Types.SBOL2.GenericLocation)
+                copyIdentifiedProperties(location, newLoc)
+
+                newThing.insertUriProperty(Predicates.SBOL2.location, newLoc.uri)
+
+                if(location.sequence) {
+                    newLoc.setUriProperty(Predicates.SBOL2.sequence, location.sequence.uri)
+                }
+
+                copyOrientation(location, newLoc)
+
             } else {
                 throw new Error('not implemented location type')
+            }
+
+            function copyOrientation(a: S3Facade, b: S2Facade) {
+
+                let o = a.getUriProperty(Predicates.SBOL3.orientation)
+
+                if (o !== undefined) {
+
+                    let o2 = o
+
+                    if (o2 === Specifiers.SBOL3.Orientation.Inline)
+                        o2 = Specifiers.SBOL2.Orientation.Inline
+                    else if (o2 === Specifiers.SBOL3.Orientation.ReverseComplement)
+                        o2 = Specifiers.SBOL2.Orientation.ReverseComplement
+
+                    b.setUriProperty(Predicates.SBOL2.orientation, o2)
+                }
             }
         }
     }

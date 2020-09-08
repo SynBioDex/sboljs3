@@ -33,6 +33,8 @@ import SBOL2GraphView from './SBOL2GraphView';
 import { ProvView } from 'rdfoo-prov';
 import isOwnershipRelation from './isOwnershipRelation'
 import S3Attachment from './sbol3/S3Attachment'
+import S3EntireSequence from './sbol3/S3EntireSequence'
+import S3Cut from './sbol3/S3Cut'
 
 export default class SBOL3GraphView extends GraphViewHybrid {
 
@@ -459,6 +461,12 @@ class SBOL3 extends GraphViewBasic {
 
             if(type === Types.SBOL3.Range)
                 return new S3Range(this.view, uri)
+
+            if(type === Types.SBOL3.Cut)
+                return new S3Cut(this.view, uri)
+
+            if(type === Types.SBOL3.EntireSequence)
+                return new S3EntireSequence(this.view, uri)
 
             if(type === Types.SBOL3.OrientedLocation)
                 return new S3OrientedLocation(this.view, uri)

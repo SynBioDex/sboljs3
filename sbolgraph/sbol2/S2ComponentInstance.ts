@@ -8,6 +8,7 @@ import S2SequenceConstraint from './S2SequenceConstraint'
 import { triple } from 'rdfoo'
 import { Types, Predicates, Specifiers } from 'bioterms'
 import S2Location from './S2Location';
+import { Level } from 'chalk';
 
 export default class S2ComponentInstance extends S2Identified {
 
@@ -159,6 +160,7 @@ export default class S2ComponentInstance extends S2Identified {
             this.deleteProperty(Predicates.SBOL2.sourceLocation)
 
     }
+
 
 }
 
