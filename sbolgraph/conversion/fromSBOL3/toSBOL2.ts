@@ -25,7 +25,7 @@ import { Types, Predicates, Prefixes, Specifiers } from 'bioterms'
 import S2IdentifiedFactory from '../../sbol2/S2IdentifiedFactory'
 import URIUtils from '../../URIUtils';
 import S2Sequence from '../../sbol2/S2Sequence';
-import { S2Attachment, S2Implementation, S2Cut, S2Collection } from '../..'
+import { S2Attachment, S2Implementation, S2Cut, S2Collection, S2ModuleInstance, S2ComponentInstance } from '../..'
 import S3Cut from '../../sbol3/S3Cut'
 import S3Facade from '../../sbol3/S3Facade'
 import S2Facade from '../../sbol2/S2Facade'
@@ -181,7 +181,11 @@ export default function convert3to2(graph:Graph) {
         componentToCDandMD.set(component.uri, { cd, md, fc, mdSuffix, cdSuffix })
     }
 
-    // Make subcomponents into both SBOL2 subcomponents and SBOL2 functionalcomponents
+    // Make subcomponents into ALL of:
+        // - SBOL2 subcomponents
+        // - SBOL2 functionalcomponents
+        // - SBOL2 submodules
+
     for(let component of sbol3View.components) {
 
         let mapping = getCDandMD(component.uri)
@@ -202,19 +206,82 @@ export default function convert3to2(graph:Graph) {
                 throw new Error('???')
             }
 
-            let cdSubcomponent = cd.addComponentByDefinition(
-                newDefOfSubcomponent.cd, subcomponent.displayId, subcomponent.name, subcomponent.getStringProperty(Predicates.SBOL2.version))
 
-            let mdSubcomponent = md.createFunctionalComponent(
-                newDefOfSubcomponent.cd, subcomponent.displayId,  subcomponent.name, subcomponent.getStringProperty(Predicates.SBOL2.version))
+            var cdSubcomponentURI, mdSubcomponentURI, mdSubmoduleURI
+
+            switch (subcomponent.getUriProperty('http://sboltools.org/backport#prevType')) {
+                case Types.SBOL2.Module:
+                    mdSubmoduleURI = subcomponent.uri
+                    cdSubcomponentURI = URIUtils.addSuffix(subcomponent.uri, '_c')
+                    mdSubcomponentURI = URIUtils.addSuffix(subcomponent.uri, '_fc')
+                    break
+                case Types.SBOL2.FunctionalComponent:
+                    mdSubcomponentURI = subcomponent.uri
+                    cdSubcomponentURI = URIUtils.addSuffix(subcomponent.uri, '_c')
+                    mdSubmoduleURI = URIUtils.addSuffix(subcomponent.uri, '_m')
+                    break
+                case Types.SBOL2.Component:
+                default:
+                    cdSubcomponentURI = subcomponent.uri
+                    mdSubcomponentURI = URIUtils.addSuffix(subcomponent.uri, '_fc')
+                    mdSubmoduleURI = URIUtils.addSuffix(subcomponent.uri, '_m')
+                    break
+            }
+
+
+
+            let cdSubcomponent = new S2ComponentInstance(sbol2View, cdSubcomponentURI)
+            cdSubcomponent.setUriProperty(Predicates.a, Types.SBOL2.Component)
+            cdSubcomponent.definition = newDefOfSubcomponent.cd
+
+            cd.insertUriProperty(Predicates.SBOL2.component, cdSubcomponent.uri)
+
+
+            let mdSubcomponent = new S2FunctionalComponent(sbol2View, mdSubcomponentURI)
+            mdSubcomponent.setUriProperty(Predicates.a, Types.SBOL2.FunctionalComponent)
+            mdSubcomponent.definition = newDefOfSubcomponent.cd
+
+            md.insertUriProperty(Predicates.SBOL2.functionalComponent, mdSubcomponent.uri)
+
+
+
+            let mdSubmodule = new S2ModuleInstance(sbol2View, mdSubmoduleURI)
+            mdSubmodule.setUriProperty(Predicates.a, Types.SBOL2.Module)
+            mdSubmodule.definition = newDefOfSubcomponent.md
+
+            md.insertUriProperty(Predicates.SBOL2.module, mdSubmodule.uri)
+            
+
+
+            switch (subcomponent.getUriProperty('http://sboltools.org/backport#prevType')) {
+                case Types.SBOL2.Module:
+                    copyIdentifiedProperties(subcomponent, mdSubmodule)
+                    break
+                case Types.SBOL2.FunctionalComponent:
+                    copyIdentifiedProperties(subcomponent, mdSubcomponent)
+                    break
+                case Types.SBOL2.Component:
+                    copyIdentifiedProperties(subcomponent, cdSubcomponent)
+                    break
+                default:
+
+                    // TODO: should really first determine which of the objects isn't going to be
+                    // pruned & then copy the identified properties (which includes things like measures)
+                    // to that
+                    // at the moment this can result in components being created and not pruned for no
+                    // reason when converting SBOL3 -> SBOL2 that has no backport information
+                    
+                    copyIdentifiedProperties(subcomponent, cdSubcomponent)
+
+                    break
+
+            }
 
             subcomponentToFC.set(subcomponent.uri, mdSubcomponent)
 
             if(subcomponent.measure)
                 mdSubcomponent.setUriProperty(Predicates.SBOL2.measure, subcomponent.measure.uri)
 
-            copyIdentifiedProperties(subcomponent, cdSubcomponent)
-            copyIdentifiedProperties(subcomponent, mdSubcomponent)
 
             if(subcomponent.sourceLocation) {
                 cdSubcomponent.setUriProperty(Predicates.SBOL3.sourceLocation, subcomponent.sourceLocation.uri)

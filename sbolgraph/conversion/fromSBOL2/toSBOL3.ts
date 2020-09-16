@@ -289,6 +289,8 @@ export default function convert2to3(graph:Graph) {
             subComponent3.setUriProperty(Predicates.a, Types.SBOL3.SubComponent)
             copyIdentifiedProperties(sc, subComponent3)
 
+            subComponent3.setUriProperty('http://sboltools.org/backport#prevType', Types.SBOL2.Component)
+
             subComponent3.name = sc.name
             subComponent3.instanceOf = def
 
@@ -385,6 +387,8 @@ export default function convert2to3(graph:Graph) {
             subComponent3.setUriProperty(Predicates.a, Types.SBOL3.SubComponent)
             copyIdentifiedProperties(sm, subComponent3)
 
+            subComponent3.setUriProperty('http://sboltools.org/backport#prevType', Types.SBOL2.Module)
+
             let def = map.get(sm.definition.uri)
 
             if(def && def instanceof S3Component) {
@@ -394,12 +398,11 @@ export default function convert2to3(graph:Graph) {
                 subComponent3.setUriProperty(Predicates.SBOL3.instanceOf, sm.definition.uri)
             }
 
-            subComponent3.insertUriProperty(Predicates.SBOL3.subComponent, subComponent3.uri)
+            component3.insertUriProperty(Predicates.SBOL3.subComponent, subComponent3.uri)
 
             if(sm.measure) {
                 subComponent3.setUriProperty(Predicates.SBOL3.hasMeasure, sm.measure.uri)
             }
-
 
             map.set(sm.uri, subComponent3)
 
@@ -411,6 +414,8 @@ export default function convert2to3(graph:Graph) {
             let subComponent3 = new S3SubComponent(sbol3View, sc.uri)
             subComponent3.setUriProperty(Predicates.a, Types.SBOL3.SubComponent)
             copyIdentifiedProperties(sc, subComponent3)
+
+            subComponent3.setUriProperty('http://sboltools.org/backport#prevType', Types.SBOL2.FunctionalComponent)
 
             let def = map.get(sc.definition.uri)
 
@@ -424,7 +429,7 @@ export default function convert2to3(graph:Graph) {
             component3.insertUriProperty(Predicates.SBOL3.subComponent, subComponent3.uri)
 
             if(sc.measure) {
-                subComponent3.setUriProperty(Predicates.SBOL3.hasFeature, sc.measure.uri)
+                subComponent3.setUriProperty(Predicates.SBOL3.hasMeasure, sc.measure.uri)
             }
 
             map.set(sc.uri, subComponent3)
@@ -446,7 +451,7 @@ export default function convert2to3(graph:Graph) {
             }
 
             if(int.measure) {
-                newInt.setUriProperty(Predicates.SBOL3.hasFeature, int.measure.uri)
+                newInt.setUriProperty(Predicates.SBOL3.hasMeasure, int.measure.uri)
             }
 
             for(let type of int.types)

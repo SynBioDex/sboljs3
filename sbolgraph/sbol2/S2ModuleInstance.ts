@@ -32,6 +32,12 @@ export default class S2ModuleInstance extends S2Identified {
         return new S2ModuleDefinition(this.view, uri)
     }
 
+    set definition(def:S2ModuleDefinition) {
+
+        this.setUriProperty(Predicates.SBOL2.definition, def.uri)
+
+    }
+
     get containingObject():S2Identified|undefined {
 
         const uri = triple.subjectUri(

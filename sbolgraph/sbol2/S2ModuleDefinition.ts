@@ -6,7 +6,7 @@ import S2Interaction from './S2Interaction'
 
 import SBOL2GraphView from '../SBOL2GraphView'
 
-import { node } from 'rdfoo'
+import { node, triple } from 'rdfoo'
 import { Predicates, Types, uriToName } from 'bioterms'
 import S2IdentifiedFactory from '../sbol2/S2IdentifiedFactory';
 import { S2ComponentDefinition } from '..';
@@ -116,6 +116,20 @@ export default class S2ModuleDefinition extends S2Identified {
         return fc
     }
 
+    createSubModule(definition:S2ModuleDefinition, id?:string, name?:string, version?:string):S2ModuleInstance {
+
+        let actualId = id || definition.displayId || undefined
+
+        const identified:S2Identified =
+            S2IdentifiedFactory.createChild(this.view, Types.SBOL2.Module, this, Predicates.SBOL2.module, actualId, name, version || this.version)
+
+        const m:S2ModuleInstance = new S2ModuleInstance(this.view, identified.uri)
+
+        m.definition = definition
+
+        return m
+    }
+
     get displayType():string {
         for(let role of this.roles) {
             
@@ -127,6 +141,19 @@ export default class S2ModuleDefinition extends S2Identified {
         }
 
         return "Design"
+    }
+
+    destroy() {
+
+        let instantiations = this.graph.match(null, Predicates.SBOL2.definition, this.uri)
+                .map(triple.subjectUri)
+                .map(uri => new S2ModuleInstance(this.view, uri as string))
+
+        super.destroy()
+
+        for(let instantiation of instantiations) {
+            instantiation.destroy()
+        }
     }
 
 }
