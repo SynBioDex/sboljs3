@@ -13,7 +13,7 @@ export default class S3ThingWithLocation extends S3Identified {
 
     get locations():Array<S3Location> {
 
-        return this.getUriProperties(Predicates.SBOL3.location)
+        return this.getUriProperties(Predicates.SBOL3.hasLocation)
                    .map((uri:string) => this.view.uriToFacade(uri) as S3Location)
     }
 
@@ -84,7 +84,7 @@ export default class S3ThingWithLocation extends S3Identified {
         const id:string = 'range'
 
         const identified:S3Identified =
-            S3IdentifiedFactory.createChild(this.view, Types.SBOL3.Range, this, Predicates.SBOL3.location, id, undefined)
+            S3IdentifiedFactory.createChild(this.view, Types.SBOL3.Range, this, Predicates.SBOL3.hasLocation, id, undefined)
 
         const range:S3Range = new S3Range(this.view, identified.uri)
 
@@ -96,7 +96,7 @@ export default class S3ThingWithLocation extends S3Identified {
 
     addOrientedLocation():S3OrientedLocation {
 
-        const loc:S3Identified = S3IdentifiedFactory.createChild(this.view, Types.SBOL3.OrientedLocation, this, Predicates.SBOL3.location, 'location', undefined)
+        const loc:S3Identified = S3IdentifiedFactory.createChild(this.view, Types.SBOL3.OrientedLocation, this, Predicates.SBOL3.hasLocation, 'location', undefined)
 
         return new S3OrientedLocation(loc.view, loc.uri)
     }

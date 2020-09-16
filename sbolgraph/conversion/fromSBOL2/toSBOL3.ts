@@ -314,7 +314,7 @@ export default function convert2to3(graph:Graph) {
                 feature.setUriProperty(Predicates.a, Types.SBOL3.SequenceAnnotation)
                 copyIdentifiedProperties(sa, feature)
 
-                component3.insertUriProperty(Predicates.SBOL3.sequenceAnnotation, feature.uri)
+                component3.insertUriProperty(Predicates.SBOL3.hasFeature, feature.uri)
 
                 feature.name = sa.name
 
@@ -397,7 +397,7 @@ export default function convert2to3(graph:Graph) {
             subComponent3.insertUriProperty(Predicates.SBOL3.subComponent, subComponent3.uri)
 
             if(sm.measure) {
-                subComponent3.setUriProperty(Predicates.SBOL3.measure, sm.measure.uri)
+                subComponent3.setUriProperty(Predicates.SBOL3.hasMeasure, sm.measure.uri)
             }
 
 
@@ -424,7 +424,7 @@ export default function convert2to3(graph:Graph) {
             component3.insertUriProperty(Predicates.SBOL3.subComponent, subComponent3.uri)
 
             if(sc.measure) {
-                subComponent3.setUriProperty(Predicates.SBOL3.measure, sc.measure.uri)
+                subComponent3.setUriProperty(Predicates.SBOL3.hasFeature, sc.measure.uri)
             }
 
             map.set(sc.uri, subComponent3)
@@ -446,7 +446,7 @@ export default function convert2to3(graph:Graph) {
             }
 
             if(int.measure) {
-                newInt.setUriProperty(Predicates.SBOL3.measure, int.measure.uri)
+                newInt.setUriProperty(Predicates.SBOL3.hasFeature, int.measure.uri)
             }
 
             for(let type of int.types)
@@ -459,7 +459,7 @@ export default function convert2to3(graph:Graph) {
                 copyIdentifiedProperties(participation, newParticipation)
 
                 if (participation.measure) {
-                    newParticipation.setUriProperty(Predicates.SBOL3.measure, participation.measure.uri)
+                    newParticipation.setUriProperty(Predicates.SBOL3.hasFeature, participation.measure.uri)
                 }
 
                 newInt.insertUriProperty(Predicates.SBOL3.participation, newParticipation.uri)
@@ -530,6 +530,13 @@ export default function convert2to3(graph:Graph) {
         })
 
 
+        let measure = a.getUriProperty(Predicates.SBOL2.measure)
+
+        if(measure !== undefined) {
+            b.setUriProperty(Predicates.SBOL2.measure, measure)
+        }
+
+
 
         let aTriples = graph.match(a.uri, null, null)
 
@@ -586,10 +593,10 @@ export default function convert2to3(graph:Graph) {
                 loc.setUriProperty(Predicates.a, Types.SBOL3.Range)
                 copyIdentifiedProperties(location, loc)
 
-                b.insertUriProperty(Predicates.SBOL3.location, loc.uri)
+                b.insertUriProperty(Predicates.SBOL3.hasLocation, loc.uri)
 
                 if(location.sequence) {
-                    loc.setUriProperty(Predicates.SBOL3.sequence, location.sequence.uri)
+                    loc.setUriProperty(Predicates.SBOL3.hasSequence, location.sequence.uri)
                 }
 
                 const start:number|undefined = range.start
@@ -613,10 +620,10 @@ export default function convert2to3(graph:Graph) {
                 loc.setUriProperty(Predicates.a, Types.SBOL3.Cut)
                 copyIdentifiedProperties(location, loc)
 
-                b.insertUriProperty(Predicates.SBOL3.location, loc.uri)
+                b.insertUriProperty(Predicates.SBOL3.hasLocation, loc.uri)
 
                 if(location.sequence) {
-                    loc.setUriProperty(Predicates.SBOL3.sequence, location.sequence.uri)
+                    loc.setUriProperty(Predicates.SBOL3.hasSequence, location.sequence.uri)
                 }
 
                 const at:number|undefined = cut.at
@@ -633,10 +640,10 @@ export default function convert2to3(graph:Graph) {
                 loc.setUriProperty(Predicates.a, Types.SBOL3.OrientedLocation)
                 copyIdentifiedProperties(location, loc)
 
-                b.insertUriProperty(Predicates.SBOL3.location, loc.uri)
+                b.insertUriProperty(Predicates.SBOL3.hasLocation, loc.uri)
 
                 if(location.sequence) {
-                    loc.setUriProperty(Predicates.SBOL3.sequence, location.sequence.uri)
+                    loc.setUriProperty(Predicates.SBOL3.hasSequence, location.sequence.uri)
                 }
 
                 copyOrientation(location, loc)

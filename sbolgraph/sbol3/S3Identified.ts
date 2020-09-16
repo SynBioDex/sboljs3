@@ -68,6 +68,15 @@ export default class S3Identified extends S3Facade {
         return n as S3Namespace
     }
 
+    get measures():Array<S3Measure> {
+
+        return this.getUriProperties(Predicates.SBOL2.measure)
+            .map((measure) => new S3Measure(this.view, measure))
+
+    }
+
 }
 
 
+
+import S3Measure from './S3Measure';

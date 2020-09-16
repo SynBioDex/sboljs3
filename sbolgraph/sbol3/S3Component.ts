@@ -78,7 +78,7 @@ export default class S3Component extends S3Identified {
 
     get sequences():Array<S3Sequence> {
 
-        return this.getUriProperties(Predicates.SBOL3.sequence)
+        return this.getUriProperties(Predicates.SBOL3.hasSequence)
                    .map((uri:string) => new S3Sequence(this.view, uri))
 
     }
@@ -110,7 +110,7 @@ export default class S3Component extends S3Identified {
 
     get sequenceFeatures():Array<S3SequenceFeature> {
 
-        return this.getUriProperties(Predicates.SBOL3.sequenceAnnotation)
+        return this.getUriProperties(Predicates.SBOL3.hasFeature)
                    .map((uri:string) => new S3SequenceFeature(this.view, uri))
 
     }
@@ -169,7 +169,7 @@ export default class S3Component extends S3Identified {
         const id:string = 'feature_' + name
 
         const identified:S3Identified =
-            S3IdentifiedFactory.createChild(this.view, Types.SBOL3.SequenceAnnotation, this, Predicates.SBOL3.sequenceAnnotation, id, undefined)
+            S3IdentifiedFactory.createChild(this.view, Types.SBOL3.SequenceAnnotation, this, Predicates.SBOL3.hasFeature, id, undefined)
 
         return new S3SequenceFeature(this.view, identified.uri)
 
@@ -223,7 +223,7 @@ export default class S3Component extends S3Identified {
     addSequence(seq:S3Sequence):void {
 
         this.view.graph.insertProperties(this.uri, {
-            [Predicates.SBOL3.sequence]: node.createUriNode(seq.uri)
+            [Predicates.SBOL3.hasSequence]: node.createUriNode(seq.uri)
         })
 
     }

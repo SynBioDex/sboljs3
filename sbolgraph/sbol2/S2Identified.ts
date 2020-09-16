@@ -83,6 +83,13 @@ export default class S2Identified extends S2Facade {
 
     }
 
+    get measures():Array<S2Measure> {
+
+        return this.getUriProperties(Predicates.SBOL2.measure)
+            .map((measure) => new S2Measure(this.view, measure))
+
+    }
+
 
     get containingObject():S2Identified|undefined {
 
@@ -155,7 +162,11 @@ export default class S2Identified extends S2Facade {
 
         return containedObjects
     }
+
+    
 }
 
 import S2Attachment from './S2Attachment'
 import S2Collection from './S2Collection'
+import S2Measure from './S2Measure'
+

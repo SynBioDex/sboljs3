@@ -52,7 +52,7 @@ export default class S3SequenceFeature extends S3ThingWithLocation {
     get containingObject():S3Identified|undefined {
 
         const uri = triple.subjectUri(
-            this.view.graph.matchOne(null, Predicates.SBOL3.sequenceAnnotation, this.uri)
+            this.view.graph.matchOne(null, Predicates.SBOL3.hasFeature, this.uri)
         )
 
         if(!uri) {

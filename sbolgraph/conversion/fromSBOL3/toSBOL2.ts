@@ -344,7 +344,7 @@ export default function convert3to2(graph:Graph) {
     for(let md of sbol2View.moduleDefinitions) {
         if(dontPrune.has(md.uri))
             continue
-        if(md.interactions.length === 0 && md.models.length === 0) {
+        if(md.interactions.length === 0 && md.models.length === 0 && md.measures.length === 0) {
             md.destroy()
         }
     }
@@ -381,6 +381,7 @@ export default function convert3to2(graph:Graph) {
 
         let aTriples = graph.match(a.uri, null, null)
 
+
         for(let triple of aTriples) {
             
             let p = triple.predicate.nominalValue
@@ -388,7 +389,6 @@ export default function convert3to2(graph:Graph) {
             if(p === Predicates.a) {
                 continue
             }
-
             if(p === Predicates.SBOL3.displayId) {
                 b.graph.insert(b.uri, Predicates.SBOL2.displayId, triple.object)
                 continue
@@ -396,6 +396,11 @@ export default function convert3to2(graph:Graph) {
 
             if(p === Predicates.SBOL3.persistentIdentity) {
                 b.graph.insert(b.uri, Predicates.SBOL2.persistentIdentity, triple.object)
+                continue
+            }
+
+            if(p === Predicates.SBOL3.hasMeasure) {
+                b.graph.insert(b.uri, Predicates.SBOL2.measure, triple.object)
                 continue
             }
 

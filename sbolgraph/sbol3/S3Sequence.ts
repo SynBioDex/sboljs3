@@ -66,7 +66,7 @@ export default class S3Sequence extends S3Identified {
             return
 
         const containingModules:Array<S3Component> =
-            this.view.graph.match(null, Predicates.SBOL3.sequence, this.uri)
+            this.view.graph.match(null, Predicates.SBOL3.hasSequence, this.uri)
                 .map(triple.subjectUri)
                 .map((uri:string) => new S3Component(this.view, uri))
 
@@ -134,7 +134,7 @@ export default class S3Sequence extends S3Identified {
             return
 
         const containingCDs:Array<S3Component> =
-            this.view.graph.match(null, Predicates.SBOL3.sequence, this.uri)
+            this.view.graph.match(null, Predicates.SBOL3.hasSequence, this.uri)
                 .map(triple.subjectUri)
                 .map((uri:string) => new S3Component(this.view, uri))
 
@@ -207,7 +207,7 @@ export default class S3Sequence extends S3Identified {
     get referencingComponents():S3Component[] {
 
         return this.graph.match(
-            null, Predicates.SBOL3.sequence, this.uri
+            null, Predicates.SBOL3.hasSequence, this.uri
         ).map(triple.subjectUri)
          .map((uri:string) => new S3Component(this.view, uri))
     }

@@ -326,7 +326,7 @@ export default class S3SubComponent extends S3ThingWithLocation {
     }
 
     get measure():S3Measure|undefined {
-        let measure = this.getUriProperty(Predicates.SBOL3.measure)
+        let measure = this.getUriProperty(Predicates.SBOL3.hasMeasure)
 
         if(measure === undefined)
             return
@@ -337,9 +337,9 @@ export default class S3SubComponent extends S3ThingWithLocation {
     set measure(measure:S3Measure|undefined) {
 
         if(measure === undefined)
-            this.deleteProperty(Predicates.SBOL3.measure)
+            this.deleteProperty(Predicates.SBOL3.hasMeasure)
         else
-            this.setUriProperty(Predicates.SBOL3.measure, measure.uri)
+            this.setUriProperty(Predicates.SBOL3.hasMeasure, measure.uri)
 
     }
 

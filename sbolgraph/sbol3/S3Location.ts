@@ -17,7 +17,7 @@ export default abstract class S3Location extends S3Identified {
     get containingObject():S3Identified|undefined {
 
         const uri = triple.subjectUri(
-            this.view.graph.matchOne(null, Predicates.SBOL3.location, this.uri)
+            this.view.graph.matchOne(null, Predicates.SBOL3.hasLocation, this.uri)
         )
 
         if(!uri) {
@@ -54,7 +54,7 @@ export default abstract class S3Location extends S3Identified {
 
     get sequence():S3Sequence|undefined {
 
-        let uri = this.getUriProperty(Predicates.SBOL3.sequence)
+        let uri = this.getUriProperty(Predicates.SBOL3.hasSequence)
 
         if(uri === undefined)
             return undefined

@@ -19,13 +19,13 @@ let ownershipPredicates = [
     Predicates.SBOL2.measure,
 
     Predicates.SBOL3.sequenceConstraint,
-    Predicates.SBOL3.sequenceAnnotation,
+    Predicates.SBOL3.hasFeature,
     Predicates.SBOL3.subComponent,
     Predicates.SBOL3.participation,
-    Predicates.SBOL3.location,
+    Predicates.SBOL3.hasLocation,
     Predicates.SBOL3.sourceLocation,
     Predicates.SBOL3.interaction,
-    Predicates.SBOL3.measure
+    Predicates.SBOL3.hasMeasure
 ]
 
 export default function isOwnershipRelation(g:Graph, triple:any):boolean {
