@@ -5,7 +5,6 @@ import convert1to2 from "./conversion/fromSBOL1/toSBOL2";
 import convert2to3 from "./conversion/fromSBOL2/toSBOL3";
 import convert3to2 from "./conversion/fromSBOL3/toSBOL2";
 import request = require("request");
-import fs = require('fs')
 import fastaToSBOL2 from "./conversion/fastaToSBOL2";
 import genbankToSBOL2 from "./conversion/genbankToSBOL2";
 import convert2to1 from "./conversion/fromSBOL2/toSBOL1";
@@ -180,14 +179,21 @@ async function get(url:string):Promise<string> {
 }
 
 async function load(filename:string):Promise<string> {
-    return await new Promise((resolve, reject) => {
-        fs.readFile(filename, (err, file) => {
-            if(err)
-                reject(err)
-            else
-                resolve(file.toString())
+    if((typeof process !== 'undefined') && (process.release.name === 'node')) {
+        let r = global['require']
+        let fs = r('fs')
+        return await new Promise((resolve, reject) => {
+            fs.readFile(filename, (err, file) => {
+                if (err)
+                    reject(err)
+                else
+                    resolve(file.toString())
+            })
         })
-    })
+    } else {
+        throw new Error('loading files only supported in node')
+    }
+
 }
 
 function isURL(str:string):boolean {
