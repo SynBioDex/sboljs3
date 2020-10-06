@@ -8,10 +8,9 @@ sbolgraph is built on [rdfoo](https://github.com/udp/rdfoo), a library for creat
 
 # Implemented so far
 
-* Reading and writing fully compliant SBOL2
-* Reading SBOL1
+* Reading and writing SBOL1, SBOL2, and SBOL3
+* Converting between SBOL1, SBOL2, and SBOL3
 * Reading (converting) FASTA and GenBank
-* Reading and writing SBOL3 (WIP)
 
 
 # Not implemented so far
