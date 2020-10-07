@@ -1,6 +1,4 @@
 
-import request = require('request')
-
 export class SearchQuery {
 
     criteria:any[]
@@ -51,6 +49,7 @@ export default class Repository {
 
     }
 
+    /*
     searchMetadata(query:SearchQuery):Promise<Array<SearchResult>> {
 
         var params = ''
@@ -70,33 +69,6 @@ export default class Repository {
         
         })
 
-        return new Promise((resolve, reject) => {
-
-            request.get({
-                url: this.url + '/remoteSearch/' + encodeURIComponent(params)
-            }, (err, res, body) => {
-
-                if(err) {
-                    reject(err)
-                    return
-                }
-
-                if(res.statusCode && res.statusCode >= 300) {
-                    reject(new Error('HTTP ' + res.statusCode))
-                    return
-                }
-
-                try {
-                    var results:SearchResult[] = JSON.parse(body)
-                } catch(e) {
-                    reject(e)
-                    return
-                }
-
-                resolve(results)
-            })
-
-        })
-    }
+    }*/
 
 }

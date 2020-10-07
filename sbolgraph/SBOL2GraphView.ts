@@ -16,8 +16,6 @@ import S2Collection from './sbol2/S2Collection'
 import S2Model from './sbol2/S2Model'
 import S2Measure from './sbol2/S2Measure'
 
-import request = require('request')
-
 import S2Interaction from "./sbol2/S2Interaction";
 import S2SequenceAnnotation from "./sbol2/S2SequenceAnnotation";
 import S2Participation from "./sbol2/S2Participation";
@@ -345,48 +343,6 @@ export default class SBOL2GraphView extends GraphViewHybrid {
 
     }
 
-    static async loadURL(url, defaultURIPrefix?:string):Promise<SBOL2GraphView> {
-
-        let graph = new SBOL2GraphView(new Graph())
-        await graph.loadURL(url, defaultURIPrefix)
-        return graph
-    }
-
-    async loadURL(url:string, defaultURIPrefix?:string):Promise<void> {
-
-        let res:any = await new Promise((resolve, reject) => {
-
-            console.log('requesting ' + url)
-
-            request.get(url, (err, res, body) => {
-
-                if(err) {
-                    reject(err)
-                    return
-                }
-
-                console.log('headerz')
-                console.log(JSON.stringify(res.headers))
-
-                var mimeType = res.headers['content-type']
-
-                if(mimeType === undefined)
-                    mimeType = null
-
-                resolve({
-                    mimeType: mimeType,
-                    data: body
-                })
-
-
-            })
-
-        })
-
-        var { data, mimeType } = res
-
-        await this.loadString(data, defaultURIPrefix, mimeType)
-    }
 
     static async loadString(data:string, defaultURIPrefix?:string, mimeType?:string):Promise<SBOL2GraphView> {
 

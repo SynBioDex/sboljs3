@@ -3,8 +3,6 @@
 import { Graph, GraphViewBasic, triple, node, changeURIPrefix, serialize, Facade, GraphViewHybrid, parseRDF } from 'rdfoo'
 import { Types, Predicates, Specifiers, Prefixes } from 'bioterms'
 
-import request = require('request')
-
 import S3Identified from './sbol3/S3Identified'
 import S3Sequence from './sbol3/S3Sequence'
 import S3Component from './sbol3/S3Component'
@@ -193,49 +191,6 @@ export default class SBOL3GraphView extends GraphViewHybrid {
         return this.instancesOfType(Types.Measure.Measure)
                     .map((uri) => new S3Measure(this, uri))
 
-    }
-
-    static async loadURL(url, defaultURIPrefix?:string):Promise<SBOL3GraphView> {
-
-        let graph = new SBOL3GraphView(new Graph())
-        await graph.loadURL(url, defaultURIPrefix)
-        return graph
-    }
-
-    async loadURL(url:string, defaultURIPrefix?:string):Promise<void> {
-
-        let res:any = await new Promise((resolve, reject) => {
-
-            console.log('requesting ' + url)
-
-            request.get(url, (err, res, body) => {
-
-                if(err) {
-                    reject(err)
-                    return
-                }
-
-                console.log('headerz')
-                console.log(JSON.stringify(res.headers))
-
-                var mimeType = res.headers['content-type']
-
-                if(mimeType === undefined)
-                    mimeType = null
-
-                resolve({
-                    mimeType: mimeType,
-                    data: body
-                })
-
-
-            })
-
-        })
-
-        var { data, mimeType } = res
-
-        await this.loadString(data, defaultURIPrefix, mimeType)
     }
 
     static async loadString(data:string, defaultURIPrefix?:string, mimeType?:string):Promise<SBOL3GraphView> {
