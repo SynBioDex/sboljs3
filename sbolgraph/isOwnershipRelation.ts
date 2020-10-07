@@ -18,7 +18,7 @@ let ownershipPredicates = [
     Predicates.Prov.qualifiedUsage,
     Predicates.SBOL2.measure,
 
-    Predicates.SBOL3.sequenceConstraint,
+    Predicates.SBOL3.hasConstraint,
     Predicates.SBOL3.hasFeature,
     Predicates.SBOL3.subComponent,
     Predicates.SBOL3.participation,

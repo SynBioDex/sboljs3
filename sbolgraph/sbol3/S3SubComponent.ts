@@ -2,7 +2,7 @@
 import S3Identified from './S3Identified'
 import S3ThingWithLocation from './S3ThingWithLocation'
 import S3Component from './S3Component'
-import S3SequenceConstraint from './S3SequenceConstraint'
+import S3Constraint from './S3Constraint'
 import S3OrientedLocation from './S3OrientedLocation'
 import S3IdentifiedFactory from './S3IdentifiedFactory'
 
@@ -91,12 +91,12 @@ export default class S3SubComponent extends S3ThingWithLocation {
 
     }
 
-    get sequenceConstraints():Array<S3SequenceConstraint> {
+    get sequenceConstraints():Array<S3Constraint> {
 
         return this.view.graph.match(null, Predicates.SBOL3.subject, this.uri)
                    .map(triple.subjectUri)
                    //.filter((uri:string) => this.view.getType(uri) === Types.SBOL3.SequenceConstraint)
-                   .map((uri:string) => new S3SequenceConstraint(this.view, uri))
+                   .map((uri:string) => new S3Constraint(this.view, uri))
 
     }
 
@@ -106,12 +106,12 @@ export default class S3SubComponent extends S3ThingWithLocation {
 
         const sc:S3SubComponent = container.createSubComponent(component)
 
-        let existingConstraints:Array<S3SequenceConstraint> = this.getConstraintsWithThisSubject()
+        let existingConstraints:Array<S3Constraint> = this.getConstraintsWithThisSubject()
 
-        container.createConstraint(this, Specifiers.SBOL3.SequenceConstraint.Precedes, sc)
+        container.createConstraint(this, Specifiers.SBOL3.Constraint.Precedes, sc)
 
         for(let c of existingConstraints) {
-            if(c.restriction === Specifiers.SBOL3.SequenceConstraint.Precedes) {
+            if(c.restriction === Specifiers.SBOL3.Constraint.Precedes) {
                 c.subject = sc
             }
         }
@@ -126,12 +126,12 @@ export default class S3SubComponent extends S3ThingWithLocation {
         const sc:S3SubComponent = container.createSubComponent(component)
 
 
-        let existingConstraints:Array<S3SequenceConstraint> = this.getConstraintsWithThisObject()
+        let existingConstraints:Array<S3Constraint> = this.getConstraintsWithThisObject()
 
-        container.createConstraint(sc, Specifiers.SBOL3.SequenceConstraint.Precedes, this)
+        container.createConstraint(sc, Specifiers.SBOL3.Constraint.Precedes, this)
 
         for(let c of existingConstraints) {
-            if(c.restriction === Specifiers.SBOL3.SequenceConstraint.Precedes) {
+            if(c.restriction === Specifiers.SBOL3.Constraint.Precedes) {
                 c.object = sc
             }
         }
@@ -139,21 +139,21 @@ export default class S3SubComponent extends S3ThingWithLocation {
         return sc
     }
 
-    getConstraintsWithThisSubject():Array<S3SequenceConstraint> {
+    getConstraintsWithThisSubject():Array<S3Constraint> {
 
         return this.view.graph.match(null, Predicates.SBOL3.subject, this.uri)
                     .map(triple.subjectUri)
-                    .map((uri:string) => new S3SequenceConstraint(this.view, uri))
+                    .map((uri:string) => new S3Constraint(this.view, uri))
     }
 
-    getConstraintsWithThisObject():Array<S3SequenceConstraint> {
+    getConstraintsWithThisObject():Array<S3Constraint> {
 
         return this.view.graph.match(null, Predicates.SBOL3.object, this.uri)
                     .map(triple.subjectUri)
-                    .map((uri:string) => new S3SequenceConstraint(this.view, uri))
+                    .map((uri:string) => new S3Constraint(this.view, uri))
     }
 
-    getConstraints():Array<S3SequenceConstraint> {
+    getConstraints():Array<S3Constraint> {
 
         return this.getConstraintsWithThisSubject().concat(this.getConstraintsWithThisObject())
 

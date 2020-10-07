@@ -38,7 +38,7 @@ import S3Identified from './sbol3/S3Identified'
 import S3SubComponent from './sbol3/S3SubComponent'
 import S3Component from './sbol3/S3Component'
 import S3Sequence from './sbol3/S3Sequence'
-import S3SequenceConstraint from './sbol3/S3SequenceConstraint'
+import S3Constraint from './sbol3/S3Constraint'
 import S3Location from './sbol3/S3Location'
 import S3OrientedLocation from './sbol3/S3OrientedLocation'
 import S3Range from './sbol3/S3Range'
@@ -105,7 +105,7 @@ export {
     S3ThingWithLocation,
     S3OrientedLocation,
     S3Range,
-    S3SequenceConstraint,
+    S3Constraint,
     S3SequenceFeature,
     S3Interaction,
     S3Participation,

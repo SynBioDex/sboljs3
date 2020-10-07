@@ -8,7 +8,7 @@ import { Types, Predicates, Specifiers } from 'bioterms'
 import SBOL3GraphView from '../SBOL3GraphView'
 import S3Component from './S3Component'
 
-export default class S3SequenceConstraint extends S3Identified {
+export default class S3Constraint extends S3Identified {
 
     constructor(view:SBOL3GraphView, uri:string) {
 
@@ -17,13 +17,13 @@ export default class S3SequenceConstraint extends S3Identified {
     }
 
     get facadeType():string {
-        return Types.SBOL3.SequenceConstraint
+        return Types.SBOL3.Constraint
     }
 
     get containingObject():S3Identified|undefined {
 
         const uri = triple.subjectUri(
-            this.view.graph.matchOne(null, Predicates.SBOL3.sequenceConstraint, this.uri)
+            this.view.graph.matchOne(null, Predicates.SBOL3.hasConstraint, this.uri)
         )
 
         if(!uri) {

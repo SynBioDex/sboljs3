@@ -8,7 +8,7 @@ import SBOL3GraphView from '../SBOL3GraphView'
 import { triple, node } from 'rdfoo'
 import { Predicates, Types, Specifiers, Prefixes } from 'bioterms'
 import S3Sequence from './S3Sequence';
-import S3SequenceConstraint from './S3SequenceConstraint';
+import S3Constraint from './S3Constraint';
 import S3SequenceFeature from './S3SequenceFeature'
 import S3IdentifiedFactory from './S3IdentifiedFactory';
 import S3ThingWithLocation from './S3ThingWithLocation';
@@ -101,10 +101,10 @@ export default class S3Component extends S3Identified {
         return undefined
     }
 
-    get sequenceConstraints():Array<S3SequenceConstraint> {
+    get sequenceConstraints():Array<S3Constraint> {
 
-        return this.getUriProperties(Predicates.SBOL3.sequenceConstraint)
-                   .map((uri:string) => new S3SequenceConstraint(this.view, uri))
+        return this.getUriProperties(Predicates.SBOL3.hasConstraint)
+                   .map((uri:string) => new S3Constraint(this.view, uri))
 
     }
 
@@ -197,12 +197,13 @@ export default class S3Component extends S3Identified {
         return wrapper
     }
 
-    createConstraint(subject:S3SubComponent, restriction:string, object:S3SubComponent):S3SequenceConstraint {
+    createConstraint(subject:S3SubComponent, restriction:string, object:S3SubComponent):S3Constraint {
 
         const identified:S3Identified =
-            S3IdentifiedFactory.createChild(this.view, Types.SBOL3.SequenceConstraint, this, Predicates.SBOL3.sequenceConstraint, 'constraint_' + subject.displayId + '_' + object.displayId, undefined)
+            S3IdentifiedFactory.createChild(
+                this.view, Types.SBOL3.Constraint, this, Predicates.SBOL3.hasConstraint, 'constraint_' + subject.displayId + '_' + object.displayId, undefined)
 
-        const constraint:S3SequenceConstraint = new S3SequenceConstraint(this.view, identified.uri)
+        const constraint:S3Constraint = new S3Constraint(this.view, identified.uri)
 
         constraint.subject = subject
         constraint.restriction = restriction
