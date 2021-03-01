@@ -7,7 +7,7 @@ import S1Facade from './S1Facade'
 import SBOL1GraphView from '../SBOL1GraphView'
 import URIUtils from '../URIUtils'
 import S1SequenceAnnotation from './S1SequenceAnnotation'
-import { S1DnaSequence } from 'sbolgraph'
+import S1DnaSequence from './S1DnaSequence'
 
 export default class S1DnaComponent extends S1Facade {
 

@@ -138,6 +138,15 @@ export default class S2ComponentDefinition extends S2Identified {
         return undefined
     }
 
+    get containedObjects():S2Identified[] {
+        return [
+            ...this.components,
+            ...this.sequenceAnnotations,
+            ...this.sequenceConstraints,
+            ...this.sequences
+        ]
+    }
+
     addComponent(component:S2ComponentInstance):void {
 
         this.insertProperty(Predicates.SBOL2.component, node.createUriNode(component.uri))
