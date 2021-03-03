@@ -92,7 +92,7 @@ export default class S3Component extends S3Identified {
 
     get interactions():Array<S3Interaction> {
 
-        return this.getUriProperties(Predicates.SBOL3.interaction)
+        return this.getUriProperties(Predicates.SBOL3.hasInteraction)
                     .map((uri:string) => new S3Interaction(this.view, uri))
 
     }
@@ -232,7 +232,7 @@ export default class S3Component extends S3Identified {
     createInteraction(id:string, version?:string):S3Interaction {
 
         const identified:S3Identified =
-            S3IdentifiedFactory.createChild(this.view, Types.SBOL3.Interaction, this,  Predicates.SBOL3.interaction, id, undefined)
+            S3IdentifiedFactory.createChild(this.view, Types.SBOL3.Interaction, this,  Predicates.SBOL3.hasInteraction, id, undefined)
 
         const interaction:S3Interaction = new S3Interaction(this.view, identified.uri)
 
@@ -240,7 +240,7 @@ export default class S3Component extends S3Identified {
     }
 
     addModel(model:S3Model) {
-        this.insertProperty(Predicates.SBOL3.model, node.createUriNode(model.uri))
+        this.insertProperty(Predicates.SBOL3.hasModel, node.createUriNode(model.uri))
     }
 
 

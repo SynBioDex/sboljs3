@@ -24,7 +24,7 @@ let ownershipPredicates = [
     Predicates.SBOL3.participation,
     Predicates.SBOL3.hasLocation,
     Predicates.SBOL3.sourceLocation,
-    Predicates.SBOL3.interaction,
+    Predicates.SBOL3.hasInteraction,
     Predicates.SBOL3.hasMeasure
 ]
 

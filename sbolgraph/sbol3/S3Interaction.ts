@@ -78,7 +78,7 @@ export default class S3Interaction extends S3Identified {
     get containingModule():S3Component {
 
         const uri = triple.subjectUri(
-            this.view.graph.matchOne(null, Predicates.SBOL3.interaction, this.uri)
+            this.view.graph.matchOne(null, Predicates.SBOL3.hasInteraction, this.uri)
         )
 
         if(!uri) {

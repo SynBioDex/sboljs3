@@ -269,7 +269,7 @@ export default function convert2to3(graph:Graph) {
         component3.setUriProperty(Predicates.a, Types.SBOL3.Component)
         copyIdentifiedProperties(cd, component3)
 
-        component3.setUriProperty('http://sboltools.org/backport#prevType', Types.SBOL2.ComponentDefinition)
+        component3.setUriProperty('http://sboltools.org/backport#sbol2type', Types.SBOL2.ComponentDefinition)
 
         map.set(cd.uri, component3)
 
@@ -289,7 +289,7 @@ export default function convert2to3(graph:Graph) {
             subComponent3.setUriProperty(Predicates.a, Types.SBOL3.SubComponent)
             copyIdentifiedProperties(sc, subComponent3)
 
-            subComponent3.setUriProperty('http://sboltools.org/backport#prevType', Types.SBOL2.Component)
+            subComponent3.setUriProperty('http://sboltools.org/backport#sbol2type', Types.SBOL2.Component)
 
             subComponent3.name = sc.name
             subComponent3.instanceOf = def
@@ -377,7 +377,7 @@ export default function convert2to3(graph:Graph) {
         component3.setUriProperty(Predicates.a, Types.SBOL3.Component)
         copyIdentifiedProperties(md, component3)
 
-        component3.setUriProperty('http://sboltools.org/backport#prevType', Types.SBOL2.ModuleDefinition)
+        component3.setUriProperty('http://sboltools.org/backport#sbol2type', Types.SBOL2.ModuleDefinition)
 
         map.set(md.uri, component3)
 
@@ -387,7 +387,7 @@ export default function convert2to3(graph:Graph) {
             subComponent3.setUriProperty(Predicates.a, Types.SBOL3.SubComponent)
             copyIdentifiedProperties(sm, subComponent3)
 
-            subComponent3.setUriProperty('http://sboltools.org/backport#prevType', Types.SBOL2.Module)
+            subComponent3.setUriProperty('http://sboltools.org/backport#sbol2type', Types.SBOL2.Module)
 
             let def = map.get(sm.definition.uri)
 
@@ -415,7 +415,7 @@ export default function convert2to3(graph:Graph) {
             subComponent3.setUriProperty(Predicates.a, Types.SBOL3.SubComponent)
             copyIdentifiedProperties(sc, subComponent3)
 
-            subComponent3.setUriProperty('http://sboltools.org/backport#prevType', Types.SBOL2.FunctionalComponent)
+            subComponent3.setUriProperty('http://sboltools.org/backport#sbol2type', Types.SBOL2.FunctionalComponent)
 
             let def = map.get(sc.definition.uri)
 
@@ -444,7 +444,7 @@ export default function convert2to3(graph:Graph) {
             newInt.setUriProperty(Predicates.a, Types.SBOL3.Interaction)
             copyIdentifiedProperties(int, newInt)
 
-            component3.insertUriProperty(Predicates.SBOL3.interaction, newInt.uri)
+            component3.insertUriProperty(Predicates.SBOL3.hasInteraction, newInt.uri)
 
             for(let type of int.types) {
                 newInt.insertUriProperty(Predicates.SBOL2.type, type)
@@ -545,6 +545,16 @@ export default function convert2to3(graph:Graph) {
                 continue
             }
 
+            if(p === Predicates.Dcterms.title) {
+                newGraph.insert(b.uri, Predicates.SBOL3.name, triple.object)
+                continue
+            }
+
+            if(p === Predicates.Dcterms.description) {
+                newGraph.insert(b.uri, Predicates.SBOL3.description, triple.object)
+                continue
+            }
+
             if(p.indexOf(Prefixes.sbol2) !== 0) {
                 newGraph.insert(b.uri, triple.predicate.nominalValue, triple.object)
             }
@@ -553,7 +563,7 @@ export default function convert2to3(graph:Graph) {
                 newGraph.insert(b.uri, Predicates.SBOL3.displayId, triple.object)
             } else if(p == Predicates.SBOL2.version) {
                 newGraph.insert(b.uri, 'http://sboltools.org/backport#sbol2version', triple.object)
-            } if(p == Predicates.SBOL2.persistentIdentity) {
+            } else if(p == Predicates.SBOL2.persistentIdentity) {
                 newGraph.insert(b.uri, Predicates.SBOL3.persistentIdentity, triple.object)
             }
         }
@@ -571,6 +581,10 @@ export default function convert2to3(graph:Graph) {
                 continue
             }
 
+            if(p === Predicates.Dcterms.title || 
+                p === Predicates.Dcterms.description) {
+                continue
+            }
 
             if(p.indexOf(Prefixes.sbol2) !== 0) {
                 newGraph.insert(b.uri, triple.predicate.nominalValue, triple.object)
@@ -589,6 +603,7 @@ export default function convert2to3(graph:Graph) {
                 let loc = new S3OrientedLocation(sbol3View, range.uri)
                 loc.setUriProperty(Predicates.a, Types.SBOL3.Range)
                 copyIdentifiedProperties(location, loc)
+                copyNonSBOLProperties(location, loc)
 
                 b.insertUriProperty(Predicates.SBOL3.hasLocation, loc.uri)
 

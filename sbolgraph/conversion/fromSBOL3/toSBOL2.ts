@@ -29,7 +29,7 @@ import { S2Attachment, S2Implementation, S2Cut, S2Collection, S2ModuleInstance, 
 import S3Cut from '../../sbol3/S3Cut'
 import S3Facade from '../../sbol3/S3Facade'
 import S2Facade from '../../sbol2/S2Facade'
-
+import { assert } from 'console'
 
 export default function convert3to2(graph:Graph) {
 
@@ -108,7 +108,7 @@ export default function convert3to2(graph:Graph) {
 
         // both URIs need to be different, but want to try to keep the old SBOL2 URI for the correct object if we can
         //
-        switch(component.getUriProperty('http://sboltools.org/backport#prevType')) {
+        switch(component.getUriProperty('http://sboltools.org/backport#sbol2type')) {
             case Types.SBOL2.ModuleDefinition:
                 mdSuffix = ''
                 break
@@ -124,7 +124,7 @@ export default function convert3to2(graph:Graph) {
         if(mdSuffix !== '')
             mdUri = URIUtils.addSuffix(mdUri, mdSuffix)
 
-        switch(component.getUriProperty('http://sboltools.org/backport#prevType')) {
+        switch(component.getUriProperty('http://sboltools.org/backport#sbol2type')) {
             case Types.SBOL2.ModuleDefinition:
                 dontPrune.add(mdUri)
                 break
@@ -136,12 +136,17 @@ export default function convert3to2(graph:Graph) {
         let cd = new S2ComponentDefinition(sbol2View, cdUri)
         cd.setUriProperty(Predicates.a, Types.SBOL2.ComponentDefinition)
         copyIdentifiedProperties(component, cd)
-        cd.displayId = component.displayId + cdSuffix
+        cd.displayId = displayId(component) + cdSuffix
+
 
         let md = new S2ModuleDefinition(sbol2View, mdUri)
         md.setUriProperty(Predicates.a, Types.SBOL2.ModuleDefinition)
         copyIdentifiedProperties(component, md)
-        md.displayId = component.displayId + mdSuffix
+        md.displayId = displayId(component) + mdSuffix
+
+        // md.setUriProperty('http://sboltools.org/backport#sbol3component', component.uri)
+        // cd.setUriProperty('http://sboltools.org/backport#sbol3component', component.uri)
+
 
         if(md.persistentIdentity && mdSuffix)
             md.persistentIdentity = URIUtils.addSuffix(md.persistentIdentity, mdSuffix)
@@ -149,7 +154,12 @@ export default function convert3to2(graph:Graph) {
         if(cd.persistentIdentity && cdSuffix)
             cd.persistentIdentity = URIUtils.addSuffix(cd.persistentIdentity, cdSuffix)
 
-        let fc = md.createFunctionalComponent(cd)
+        let fcUri = md.persistentIdentity + '/' + displayId(component)
+
+        let fc = new S2FunctionalComponent(sbol2View, fcUri)
+        fc.insertUriProperty(Predicates.a, Types.SBOL2.FunctionalComponent)
+        fc.setStringProperty(Predicates.SBOL2.displayId, displayId(component))
+        md.addFunctionalComponent(fc)
 
         for(let role of component.roles) {
             cd.addRole(role)
@@ -209,7 +219,7 @@ export default function convert3to2(graph:Graph) {
 
             var cdSubcomponentURI, mdSubcomponentURI, mdSubmoduleURI
 
-            switch (subcomponent.getUriProperty('http://sboltools.org/backport#prevType')) {
+            switch (subcomponent.getUriProperty('http://sboltools.org/backport#sbol2type')) {
                 case Types.SBOL2.Module:
                     mdSubmoduleURI = subcomponent.uri
                     cdSubcomponentURI = URIUtils.addSuffix(subcomponent.uri, '_c')
@@ -253,7 +263,7 @@ export default function convert3to2(graph:Graph) {
             
 
 
-            switch (subcomponent.getUriProperty('http://sboltools.org/backport#prevType')) {
+            switch (subcomponent.getUriProperty('http://sboltools.org/backport#sbol2type')) {
                 case Types.SBOL2.Module:
                     copyIdentifiedProperties(subcomponent, mdSubmodule)
                     break
@@ -264,15 +274,8 @@ export default function convert3to2(graph:Graph) {
                     copyIdentifiedProperties(subcomponent, cdSubcomponent)
                     break
                 default:
-
-                    // TODO: should really first determine which of the objects isn't going to be
-                    // pruned & then copy the identified properties (which includes things like measures)
-                    // to that
-                    // at the moment this can result in components being created and not pruned for no
-                    // reason when converting SBOL3 -> SBOL2 that has no backport information
-                    
+                    copyIdentifiedProperties(subcomponent, mdSubcomponent)
                     copyIdentifiedProperties(subcomponent, cdSubcomponent)
-
                     break
 
             }
@@ -294,7 +297,7 @@ export default function convert3to2(graph:Graph) {
                 let saDisplayId = subcomponent.getStringProperty('http://sboltools.org/backport#sequenceAnnotationDisplayId')
 
                 if(!saDisplayId) {
-                    saDisplayId = subcomponent.displayId + '_anno'
+                    saDisplayId = displayId(subcomponent) + '_anno'
                 }
 
                 let saIdent = S2IdentifiedFactory.createChild(sbol2View, Types.SBOL2.SequenceAnnotation, cd, Predicates.SBOL2.sequenceAnnotation, saDisplayId, subcomponent.getStringProperty(Predicates.SBOL2.version))
@@ -321,7 +324,7 @@ export default function convert3to2(graph:Graph) {
 
         for(let interaction of component.interactions) {
 
-            let newInteraction = md.createInteraction(interaction.displayId, interaction.getStringProperty(Predicates.SBOL2.version))
+            let newInteraction = md.createInteraction(displayId(interaction), interaction.getStringProperty(Predicates.SBOL2.version))
             copyIdentifiedProperties(interaction, newInteraction)
 
             if (interaction.measure) {
@@ -334,7 +337,7 @@ export default function convert3to2(graph:Graph) {
 
             for(let participation of interaction.participations) {
 
-                let newParticipation = newInteraction.createParticipation(participation.displayId, participation.getStringProperty(Predicates.SBOL2.version))
+                let newParticipation = newInteraction.createParticipation(displayId(participation), participation.getStringProperty(Predicates.SBOL2.version))
                 copyIdentifiedProperties(participation, newParticipation)
 
                 if (participation.measure) {
@@ -399,29 +402,70 @@ export default function convert3to2(graph:Graph) {
     //  2) Similarly, ComponentDefinitions with no sequences, sequence annotations, or subcomponents
     //     are "pointless components"
     //
-    //  TODO: properties outside of the SBOL namespace should be an indication that a CD/MD is NOT pointless
-    //
-    //  TODO: if there is ONLY a module left, remove its _module suffix
+    // Important not to delete both though! Or we would completely lose the object when in SBOL2
+    // land, including its non SBOL properties if any.
     //
     // It's easier to do this on the generated SBOL2 because it means we don't
     // have to make assumptions about how the SBOL3 will map to SBOL2.
     //
 
+    for(let mapping of componentToCDandMD) {
 
-    for(let md of sbol2View.moduleDefinitions) {
-        if(dontPrune.has(md.uri))
-            continue
-        if(md.interactions.length === 0 && md.models.length === 0 && md.measures.length === 0) {
-            md.destroy()
-        }
-    }
+        let componentUri = mapping[0]
+        let { md, cd, fc, cdSuffix, mdSuffix } = mapping[1]
 
-    for(let cd of sbol2View.componentDefinitions) {
-        if(dontPrune.has(cd.uri))
-            continue
-        if(cd.containedObjects.length === 0) {
-            cd.destroy()
+        let mdPruned = false, cdPruned = false
+
+        if(!dontPrune.has(md.uri)) {
+            if (md.interactions.length === 0 && md.models.length === 0 && md.measures.length === 0) {
+                md.destroy()
+                mdPruned = true
+            }
         }
+
+        if(!mdPruned && !dontPrune.has(cd.uri)) {
+            if(cd.containedObjects.length === 0) {
+                cd.destroy()
+                cdPruned = true
+            }
+        }
+
+        if(mdPruned && !cdPruned) {
+
+            // remove suffix from component
+
+            if(cdSuffix.length > 0) {
+
+                assert(cd.uri.endsWith(cdSuffix))
+                assert(cd.displayId!.endsWith(cdSuffix))
+
+                let newDisplayid = cd.displayId!.substr(0, cd.displayId!.length - cdSuffix.length)
+                cd.displayId = newDisplayid
+
+                let newUri = cd.uri.substr(0, cd.uri.length - cdSuffix.length)
+
+                newGraph.replaceURI(cd.uri, newUri)
+            }
+
+        } else if(cdPruned && !mdPruned) {
+
+            // remove suffix from module
+
+            if(mdSuffix.length > 0) {
+
+                assert(md.uri.endsWith(mdSuffix))
+                assert(md.displayId!.endsWith(mdSuffix))
+
+                let newDisplayid = md.displayId!.substr(0, md.displayId!.length - mdSuffix.length)
+                md.displayId = newDisplayid
+
+                let newUri = md.uri.substr(0, md.uri.length - mdSuffix.length)
+
+                newGraph.replaceURI(md.uri, newUri)
+            }
+        }
+       
+
     }
 
 
@@ -456,6 +500,7 @@ export default function convert3to2(graph:Graph) {
             if(p === Predicates.a) {
                 continue
             }
+
             if(p === Predicates.SBOL3.displayId) {
                 b.graph.insert(b.uri, Predicates.SBOL2.displayId, triple.object)
                 continue
@@ -463,6 +508,16 @@ export default function convert3to2(graph:Graph) {
 
             if(p === Predicates.SBOL3.persistentIdentity) {
                 b.graph.insert(b.uri, Predicates.SBOL2.persistentIdentity, triple.object)
+                continue
+            }
+
+            if(p === Predicates.SBOL3.name) {
+                b.graph.insert(b.uri, Predicates.Dcterms.title, triple.object)
+                continue
+            }
+
+            if(p === Predicates.SBOL3.description) {
+                b.graph.insert(b.uri, Predicates.Dcterms.description, triple.object)
                 continue
             }
 
@@ -567,4 +622,18 @@ export default function convert3to2(graph:Graph) {
 
 }
 
+
+
+function displayId(obj:S3Identified) {
+
+    let displayId = obj.displayId
+
+    if(displayId)
+        return displayId
+
+    let slash = obj.uri.split('/').pop() || ''
+    let hash = obj.uri.split('#').pop() || ''
+
+    return slash.length > hash.length ? slash : hash
+}
 
