@@ -17,11 +17,6 @@ export default class S3IdentifiedFactory {
 
         const uri:string = view.graph.generateURI(uriPrefix + displayId + '$n?$')
 
-        view.graph.insertProperties(uriPrefix, {
-            [Predicates.a]: node.createUriNode(Types.SBOL3.Namespace),
-            [Predicates.SBOL3.member]: node.createUriNode(uri)
-        })
-
         view.graph.insertProperties(uri, {
             [Predicates.a]: node.createUriNode(type),
             [Predicates.SBOL3.displayId]: node.createStringNode(displayId)
@@ -48,14 +43,6 @@ export default class S3IdentifiedFactory {
 
         const uri:string = view.graph.generateURI(
             URIUtils.getPrefix(parent.uri) + displayId + '$n?$')
-
-        let ns = parent.namespace
-
-        if(ns !== undefined) {
-            view.graph.insertProperties(ns.uri, {
-                [Predicates.SBOL3.member]: node.createUriNode(uri)
-            })
-        }
 
         view.graph.insertProperties(uri, {
             [Predicates.a]: node.createUriNode(type),

@@ -527,14 +527,6 @@ export default function convert2to3(graph:Graph) {
     function copyIdentifiedProperties(a:S2Identified, b:S3Identified) {
 
 
-        let uriPrefix = a.uriPrefix
-
-        newGraph.insertProperties(uriPrefix, {
-            [Predicates.a]: node.createUriNode(Types.SBOL3.Namespace),
-            [Predicates.SBOL3.member]: node.createUriNode(b.uri)
-        })
-
-
         let measure = a.getUriProperty(Predicates.SBOL2.measure)
 
         if(measure !== undefined) {

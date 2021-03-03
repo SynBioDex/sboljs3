@@ -14,7 +14,6 @@ import S3Range from './sbol3/S3Range'
 import S3Participation from './sbol3/S3Participation'
 import S3Interaction from './sbol3/S3Interaction'
 import S3Collection from './sbol3/S3Collection'
-import S3Namespace from './sbol3/S3Namespace'
 import S3Model from './sbol3/S3Model'
 import S3Implementation from './sbol3/S3Implementation';
 import S3Experiment from './sbol3/S3Experiment';
@@ -85,17 +84,6 @@ export default class SBOL3GraphView extends GraphViewHybrid {
         return model
     }
 
-    createNamespace(uri:string):S3Namespace {
-
-        const namespace:S3Namespace = new S3Namespace(this, uri)
-
-        this.graph.insertProperties(uri, {
-            [Predicates.a]: node.createUriNode(Types.SBOL3.Namespace)
-        })
-
-        return namespace
-    }
-
     get sequences():Array<S3Sequence> {
 
         return this.instancesOfType(Types.SBOL3.Sequence)
@@ -114,13 +102,6 @@ export default class SBOL3GraphView extends GraphViewHybrid {
 
         return this.instancesOfType(Types.SBOL3.Collection)
                     .map((uri) => new S3Collection(this, uri))
-
-    }
-
-    get namespaces():Array<S3Namespace> {
-
-        return this.instancesOfType(Types.SBOL3.Namespace)
-                    .map((uri) => new S3Namespace(this, uri))
 
     }
 
@@ -252,7 +233,6 @@ export default class SBOL3GraphView extends GraphViewHybrid {
         Array.prototype.push.apply(topLevels, this.instancesOfType(Types.SBOL3.Component))
         Array.prototype.push.apply(topLevels, this.instancesOfType(Types.SBOL3.Sequence))
         Array.prototype.push.apply(topLevels, this.instancesOfType(Types.SBOL3.Collection))
-        Array.prototype.push.apply(topLevels, this.instancesOfType(Types.SBOL3.Namespace))
 
         return topLevels.map((topLevel) => this.uriToFacade(topLevel) as S3Identified)
     }
@@ -434,9 +414,6 @@ class SBOL3 extends GraphViewBasic {
 
             if(type === Types.SBOL3.Collection)
                 return new S3Collection(this.view, uri)
-
-            if(type === Types.SBOL3.Namespace)
-                return new S3Namespace(this.view, uri)
 
             if(type === Types.SBOL3.Model)
                 return new S3Model(this.view, uri)
