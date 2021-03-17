@@ -56,7 +56,7 @@ export default class S3Interaction extends S3Identified {
 
     get participations():Array<S3Participation> {
 
-        return this.getUriProperties(Predicates.SBOL3.participation)
+        return this.getUriProperties(Predicates.SBOL3.hasParticipation)
                    .map((uri:string) => new S3Participation(this.view, uri))
 
     }
@@ -97,7 +97,7 @@ export default class S3Interaction extends S3Identified {
     createParticipation(id:string, version?:string):S3Participation {
 
         const identified:S3Identified =
-            S3IdentifiedFactory.createChild(this.view, Types.SBOL3.Participation, this, Predicates.SBOL3.participation, id, undefined)
+            S3IdentifiedFactory.createChild(this.view, Types.SBOL3.Participation, this, Predicates.SBOL3.hasParticipation, id, undefined)
 
         const participation:S3Participation = new S3Participation(this.view, identified.uri)
 

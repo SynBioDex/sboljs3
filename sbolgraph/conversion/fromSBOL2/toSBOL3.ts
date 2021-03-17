@@ -467,7 +467,7 @@ export default function convert2to3(graph:Graph) {
                     newParticipation.setUriProperty(Predicates.SBOL3.hasFeature, participation.measure.uri)
                 }
 
-                newInt.insertUriProperty(Predicates.SBOL3.participation, newParticipation.uri)
+                newInt.insertUriProperty(Predicates.SBOL3.hasParticipation, newParticipation.uri)
 
                 if(participation.participant) {
 

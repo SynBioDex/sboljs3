@@ -42,7 +42,7 @@ export default class S3Participation extends S3Identified {
     get interaction():S3Interaction|undefined {
 
         const uri:string|undefined = triple.subjectUri(
-            this.view.graph.matchOne(null, Predicates.SBOL3.participation, this.uri)
+            this.view.graph.matchOne(null, Predicates.SBOL3.hasParticipation, this.uri)
         )
 
         if(uri) {
@@ -54,7 +54,7 @@ export default class S3Participation extends S3Identified {
     get containingObject():S3Identified|undefined {
 
         const uri = triple.subjectUri(
-            this.view.graph.matchOne(null, Predicates.SBOL3.participation, this.uri)
+            this.view.graph.matchOne(null, Predicates.SBOL3.hasParticipation, this.uri)
         )
 
         if(!uri) {

@@ -154,11 +154,12 @@ export default function convert3to2(graph:Graph) {
         if(cd.persistentIdentity && cdSuffix)
             cd.persistentIdentity = URIUtils.addSuffix(cd.persistentIdentity, cdSuffix)
 
-        let fcUri = md.persistentIdentity + '/' + displayId(component)
+        let fcUri = (md.persistentIdentity || md.uri) + '/' + displayId(component)
 
         let fc = new S2FunctionalComponent(sbol2View, fcUri)
         fc.insertUriProperty(Predicates.a, Types.SBOL2.FunctionalComponent)
         fc.setStringProperty(Predicates.SBOL2.displayId, displayId(component))
+        fc.setUriProperty(Predicates.SBOL2.definition, cd.uri)
         md.addFunctionalComponent(fc)
 
         for(let role of component.roles) {
@@ -490,6 +491,12 @@ export default function convert3to2(graph:Graph) {
 
     function copyIdentifiedProperties(a:S3Identified, b:S2Identified) {
 
+
+
+        a.setUriProperty(Predicates.SBOL2.persistentIdentity, a.uri)
+
+
+
         let aTriples = graph.match(a.uri, null, null)
 
 
@@ -503,11 +510,6 @@ export default function convert3to2(graph:Graph) {
 
             if(p === Predicates.SBOL3.displayId) {
                 b.graph.insert(b.uri, Predicates.SBOL2.displayId, triple.object)
-                continue
-            }
-
-            if(p === Predicates.SBOL3.persistentIdentity) {
-                b.graph.insert(b.uri, Predicates.SBOL2.persistentIdentity, triple.object)
                 continue
             }
 
