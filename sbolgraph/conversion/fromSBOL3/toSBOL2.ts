@@ -18,7 +18,7 @@ import S3ExperimentalData from '../../sbol3/S3ExperimentalData'
 import S2Range from '../../sbol2/S2Range'
 import S3Identified from '../../sbol3/S3Identified'
 import S2Identified from '../../sbol2/S2Identified'
-import { Graph } from 'rdfoo'
+import { Graph, node } from 'rdfoo'
 
 import { Types, Predicates, Prefixes, Specifiers } from 'bioterms'
 
@@ -29,7 +29,6 @@ import { S2Attachment, S2Implementation, S2Cut, S2Collection, S2ModuleInstance, 
 import S3Cut from '../../sbol3/S3Cut'
 import S3Facade from '../../sbol3/S3Facade'
 import S2Facade from '../../sbol2/S2Facade'
-import { assert } from 'console'
 
 export default function convert3to2(graph:Graph) {
 
@@ -103,6 +102,12 @@ export default function convert3to2(graph:Graph) {
         let cdUri = component.uri
         let mdUri = component.uri
 
+	// whichever SBOL2 object (CD or MD) gets the URI of the SBOL3 component, it will have a predicate telling us it was the original
+	// so that if we roundtrip back to SBOL3 the URIs will match up
+	// newGraph.insertProperties(component.uri, {
+	// 	['http://sboltools.org/backport#sbol3type']: node.createUriNode(Types.SBOL3.Component)
+	// })
+
         let cdSuffix = '_component'
         let mdSuffix = '_module'
 
@@ -117,6 +122,19 @@ export default function convert3to2(graph:Graph) {
                 cdSuffix = ''
                 break
         }
+
+	if(mdSuffix && cdSuffix) {
+
+		// there was no backport property to give us a clue
+		// so we'll assume anything with interactions is module-like and
+		// should have the identity URI, otherwise the CD gets it
+
+		if(component.interactions.length > 0) {
+			mdSuffix = ''
+		} else {
+			cdSuffix = ''
+		}
+	}
 
         if(cdSuffix !== '')
             cdUri = URIUtils.addSuffix(cdUri, cdSuffix)
@@ -437,8 +455,8 @@ export default function convert3to2(graph:Graph) {
 
             if(cdSuffix.length > 0) {
 
-                assert(cd.uri.endsWith(cdSuffix))
-                assert(cd.displayId!.endsWith(cdSuffix))
+                console.assert(cd.uri.endsWith(cdSuffix))
+                console.assert(cd.displayId!.endsWith(cdSuffix))
 
                 let newDisplayid = cd.displayId!.substr(0, cd.displayId!.length - cdSuffix.length)
                 cd.displayId = newDisplayid
@@ -454,8 +472,8 @@ export default function convert3to2(graph:Graph) {
 
             if(mdSuffix.length > 0) {
 
-                assert(md.uri.endsWith(mdSuffix))
-                assert(md.displayId!.endsWith(mdSuffix))
+                console.assert(md.uri.endsWith(mdSuffix))
+                console.assert(md.displayId!.endsWith(mdSuffix))
 
                 let newDisplayid = md.displayId!.substr(0, md.displayId!.length - mdSuffix.length)
                 md.displayId = newDisplayid

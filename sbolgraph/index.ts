@@ -58,6 +58,9 @@ import { SearchQuery, SearchResult } from './SBOL2Repository'
 import { Graph, Watcher, node, triple, serialize, Facade } from 'rdfoo'
 import SBOLConverter from './SBOLConverter'
 
+import fastaToSBOL2 from "./conversion/fastaToSBOL2";
+import genbankToSBOL2 from "./conversion/genbankToSBOL2";
+
 export {
 
     // SBOL1
@@ -124,7 +127,9 @@ export {
     SearchResult,
     serialize,
     Facade,
-    SBOLConverter
+    SBOLConverter,
+    fastaToSBOL2,
+    genbankToSBOL2
 }
 
 
