@@ -1,0 +1,30 @@
+
+name: sbolgraph test workflow
+on: push
+jobs:
+  build:
+    name: sbolgraph test job
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [12.x]
+    steps:
+        - uses: actions/checkout@v2
+          with:
+            ref: ${{ github.ref }}
+            path: sbolgraph
+        - uses: actions/checkout@v2
+          with:
+            repository: 'sboltools/sboltools'
+            path: sboltools
+        - name: Use Node.js ${{ matrix.node-version }}
+          uses: actions/setup-node@v1
+          with:
+              node-version: ${{ matrix.node-version }}
+        - name: Install sbolgraph dependencies
+          run: cd sbolgraph && npm install && npm run prepack && npm link
+        - name: Install sboltools dependencies
+          run: cd sboltools && npm install && npm link sbolgraph
+        - name: Test
+          run: cd sboltools && npm run test
+        
