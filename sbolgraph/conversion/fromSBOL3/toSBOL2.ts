@@ -166,9 +166,8 @@ export default function convert3to2(graph:Graph) {
         copyIdentifiedProperties(component, md)
         md.displayId = displayId(component) + mdSuffix
 
-        // md.setUriProperty('http://sboltools.org/backport#sbol3component', component.uri)
-        // cd.setUriProperty('http://sboltools.org/backport#sbol3component', component.uri)
-
+	md.setUriProperty('http://sboltools.org/backport#sbol3identity', component.uri)
+	cd.setUriProperty('http://sboltools.org/backport#sbol3identity', component.uri)
 
         if(md.persistentIdentity && mdSuffix)
             md.persistentIdentity = URIUtils.addSuffix(md.persistentIdentity, mdSuffix)
@@ -182,6 +181,8 @@ export default function convert3to2(graph:Graph) {
         fc.insertUriProperty(Predicates.a, Types.SBOL2.FunctionalComponent)
         fc.setStringProperty(Predicates.SBOL2.displayId, displayId(component))
         fc.setUriProperty(Predicates.SBOL2.definition, cd.uri)
+	fc.insertUriProperty('http://sboltools.org/backport#type', 'http://sboltools.org/backport#SplitComponentComposition')
+
         md.addFunctionalComponent(fc)
 
         for(let role of component.roles) {
@@ -266,6 +267,7 @@ export default function convert3to2(graph:Graph) {
             let cdSubcomponent = new S2ComponentInstance(sbol2View, cdSubcomponentURI)
             cdSubcomponent.setUriProperty(Predicates.a, Types.SBOL2.Component)
             cdSubcomponent.definition = newDefOfSubcomponent.cd
+	    cdSubcomponent.setUriProperty('http://sboltools.org/backport#sbol3identity', subcomponent.uri)
 
             cd.insertUriProperty(Predicates.SBOL2.component, cdSubcomponent.uri)
 
@@ -273,6 +275,7 @@ export default function convert3to2(graph:Graph) {
             let mdSubcomponent = new S2FunctionalComponent(sbol2View, mdSubcomponentURI)
             mdSubcomponent.setUriProperty(Predicates.a, Types.SBOL2.FunctionalComponent)
             mdSubcomponent.definition = newDefOfSubcomponent.cd
+	    mdSubcomponent.setUriProperty('http://sboltools.org/backport#sbol3identity', subcomponent.uri)
 
             md.insertUriProperty(Predicates.SBOL2.functionalComponent, mdSubcomponent.uri)
 
@@ -281,6 +284,7 @@ export default function convert3to2(graph:Graph) {
             let mdSubmodule = new S2ModuleInstance(sbol2View, mdSubmoduleURI)
             mdSubmodule.setUriProperty(Predicates.a, Types.SBOL2.Module)
             mdSubmodule.definition = newDefOfSubcomponent.md
+	    mdSubmodule.setUriProperty('http://sboltools.org/backport#sbol3identity', subcomponent.uri)
 
             md.insertUriProperty(Predicates.SBOL2.module, mdSubmodule.uri)
             

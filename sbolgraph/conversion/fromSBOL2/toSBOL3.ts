@@ -34,7 +34,7 @@ import S3ThingWithLocation from '../../sbol3/S3ThingWithLocation';
 import S2Model from '../../sbol2/S2Model';
 import S3IdentifiedFactory from '../../sbol3/S3IdentifiedFactory'
 
-import { Graph, node } from 'rdfoo'
+import { Graph, node, triple } from 'rdfoo'
 import S3Measure from '../../sbol3/S3Measure';
 import SBOL3GraphView from '../../SBOL3GraphView'
 import SBOL2GraphView from '../../SBOL2GraphView'
@@ -513,6 +513,37 @@ export default function convert2to3(graph:Graph) {
 
     graph.replaceURI(Predicates.SBOL2.displayId, Predicates.SBOL3.displayId)
     graph.replaceURI(Predicates.SBOL2.version, 'http://sboltools.org/backport#sbol2version')
+
+
+
+
+    // For roundtripping 3-2-3:
+    /// - when converting 3-2, you have to create a CD and a MD for each C
+    /// - when converting back 2-3, therefore, you can end up with double as many Cs as you expect
+    /// this hack using a backport predicate indicates that the CD and MD should be merged into one C
+    /// we do the merging after 2-3 conversion for simplicity
+
+    for(let m of newGraph.match(null, 'http://sboltools.org/backport#sbol3identity', null)) {
+
+	let currentUri = triple.subjectUri(m)!
+	let actualUri = triple.objectUri(m)!
+
+	if(currentUri !== actualUri) {
+		// only keep displayId from the object that mapped directly
+		newGraph.removeMatches(currentUri, Predicates.SBOL3.displayId, null)
+	}
+
+	newGraph.replaceURI(currentUri, actualUri)
+    }
+
+    for(let m of newGraph.match(null, 'http://sboltools.org/backport#type', 'http://sboltools.org/backport#SplitComponentComposition')) {
+
+	newGraph.purgeSubject(triple.subjectUri(m)!)
+
+    }
+
+    newGraph.removeMatches(null, 'http://sboltools.org/backport#sbol3identity', null)
+    newGraph.removeMatches(null, 'http://sboltools.org/backport#type', null)
 
 
 
