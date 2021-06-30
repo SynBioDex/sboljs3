@@ -113,15 +113,19 @@ export default function convert3to2(graph:Graph) {
 
         // both URIs need to be different, but want to try to keep the old SBOL2 URI for the correct object if we can
         //
-        switch(component.getUriProperty('http://sboltools.org/backport#sbol2type')) {
-            case Types.SBOL2.ModuleDefinition:
-                mdSuffix = ''
-                break
-            case Types.SBOL2.ComponentDefinition:
-            default:
-                cdSuffix = ''
-                break
-        }
+	let backportType = component.getUriProperty('http://sboltools.org/backport#sbol2type')
+
+	if(backportType) {
+		switch(backportType) {
+		case Types.SBOL2.ModuleDefinition:
+			mdSuffix = ''
+			break
+		case Types.SBOL2.ComponentDefinition:
+		default:
+			cdSuffix = ''
+			break
+		}
+	}
 
 	if(mdSuffix && cdSuffix) {
 
