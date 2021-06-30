@@ -24,7 +24,7 @@ jobs:
         - name: Install sbolgraph dependencies
           run: cd sbolgraph && npm install && npm run prepack && npm link
         - name: Install sboltools dependencies
-          run: cd sboltools && npm install && npm link sbolgraph
+          run: cd sboltools && npm install && rm -rf node_modules/sbolgraph && npm link sbolgraph
         - name: Test
           run: cd sboltools && npm run test
         
