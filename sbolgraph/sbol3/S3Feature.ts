@@ -4,12 +4,64 @@ import S3Location from './S3Location'
 import S3Range from './S3Range'
 import S3IdentifiedFactory from './S3IdentifiedFactory'
 
-import { node } from 'rdfoo'
+import { node, triple } from 'rdfoo'
 
 import { Predicates, Types } from 'bioterms'
 import S3OrientedLocation from './S3OrientedLocation';
+import S3Component from './S3Component'
+import extractTerm from '../extractTerm'
 
-export default class S3ThingWithLocation extends S3Identified {
+export default class S3Feature extends S3Identified {
+
+    get roles():Array<string> {
+        return this.getUriProperties(Predicates.SBOL3.role)
+    }
+
+    hasRole(role:string):boolean {
+        return this.view.graph.hasMatch(this.uri, Predicates.SBOL3.role, role)
+    }
+
+    addRole(role:string):void {
+        this.insertProperty(Predicates.SBOL3.role, node.createUriNode(role))
+    }
+
+    removeRole(role:string):void {
+        this.view.graph.removeMatches(this.uri, Predicates.SBOL3.role, role)
+    }
+
+    get soTerms():string[] {
+
+        let terms:string[] = []
+
+        for(let role of this.roles) {
+            let term = extractTerm(role)
+
+            if(term)
+                terms.push(term)
+        }
+
+        return terms
+    }
+
+    get containingObject():S3Identified|undefined {
+
+        const uri = triple.subjectUri(
+            this.view.graph.matchOne(null, Predicates.SBOL3.hasFeature, this.uri)
+        )
+
+        if(!uri) {
+            throw new Error('has no containing object?')
+        }
+
+        return this.view.uriToIdentified(uri)
+
+    }
+
+    get containingComponent():S3Component {
+
+        return this.containingObject as S3Component
+
+    }
 
     get locations():Array<S3Location> {
 
@@ -101,35 +153,47 @@ export default class S3ThingWithLocation extends S3Identified {
         return new S3OrientedLocation(loc.view, loc.uri)
     }
 
-    setOrientation(orientation:string) {
+//     setOrientation(orientation:string) {
 
-        let hadOrientedLocation = false
+//         let hadOrientedLocation = false
 
-        if(this.locations.length > 0) {
-            for(let location of this.locations) {
-                if(location instanceof S3OrientedLocation) {
-                    location.orientation = orientation
-                    hadOrientedLocation = true
-                }
-            }
-        }
+//         if(this.locations.length > 0) {
+//             for(let location of this.locations) {
+//                 if(location instanceof S3OrientedLocation) {
+//                     location.orientation = orientation
+//                     hadOrientedLocation = true
+//                 }
+//             }
+//         }
 
-        if(hadOrientedLocation)
-            return
+//         if(hadOrientedLocation)
+//             return
 
-        let loc = this.addOrientedLocation()
-        loc.orientation = orientation
-    }
+//         let loc = this.addOrientedLocation()
+//         loc.orientation = orientation
+//     }
 
-    getOrientation():string|undefined {
+//     getOrientation():string|undefined {
 
-        for (let location of this.locations) {
-            if (location instanceof S3OrientedLocation) {
-                return location.orientation
-            }
-        }
+//         for (let location of this.locations) {
+//             if (location instanceof S3OrientedLocation) {
+//                 return location.orientation
+//             }
+//         }
 
-        return undefined
-    }
+//         return undefined
+//     }
+
+	get orientation(): string | undefined {
+
+		return this.getUriProperty(Predicates.SBOL3.orientation)
+
+	}
+
+	set orientation(orientation: string | undefined) {
+
+		this.setUriProperty(Predicates.SBOL3.orientation, orientation)
+
+	}
 
 }

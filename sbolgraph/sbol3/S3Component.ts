@@ -11,7 +11,7 @@ import S3Sequence from './S3Sequence';
 import S3Constraint from './S3Constraint';
 import S3SequenceFeature from './S3SequenceFeature'
 import S3IdentifiedFactory from './S3IdentifiedFactory';
-import S3ThingWithLocation from './S3ThingWithLocation';
+import S3Feature from './S3Feature';
 import S3Location from './S3Location'
 import S3OrientedLocation from './S3OrientedLocation'
 import S3MapsTo from './S3MapsTo';
@@ -85,7 +85,8 @@ export default class S3Component extends S3Identified {
 
     get subComponents():Array<S3SubComponent> {
 
-        return this.getUriProperties(Predicates.SBOL3.subComponent)
+        return this.getUriProperties(Predicates.SBOL3.hasFeature)
+                   .filter((uri:string) => this.graph.hasMatch(uri, Predicates.a, Types.SBOL3.SubComponent))
                    .map((uri:string) => new S3SubComponent(this.view, uri))
 
     }
@@ -111,6 +112,7 @@ export default class S3Component extends S3Identified {
     get sequenceFeatures():Array<S3SequenceFeature> {
 
         return this.getUriProperties(Predicates.SBOL3.hasFeature)
+                   .filter((uri:string) => this.graph.hasMatch(uri, Predicates.a, Types.SBOL3.SequenceFeature))
                    .map((uri:string) => new S3SequenceFeature(this.view, uri))
 
     }
@@ -138,10 +140,10 @@ export default class S3Component extends S3Identified {
         return all
     }
 
-    get thingsWithLocations():Array<S3ThingWithLocation> {
+    get thingsWithLocations():Array<S3Feature> {
 
-        return (this.subComponents as Array<S3ThingWithLocation>)
-                    .concat(this.sequenceFeatures as Array<S3ThingWithLocation>)
+        return (this.subComponents as Array<S3Feature>)
+                    .concat(this.sequenceFeatures as Array<S3Feature>)
     }
 
     isPlasmidBackbone():boolean {
@@ -155,7 +157,7 @@ export default class S3Component extends S3Identified {
         const id:string|undefined = definition.displayId
 
         const identified:S3Identified =
-            S3IdentifiedFactory.createChild(this.view, Types.SBOL3.SubComponent, this, Predicates.SBOL3.subComponent, id, undefined)
+            S3IdentifiedFactory.createChild(this.view, Types.SBOL3.SubComponent, this, Predicates.SBOL3.hasFeature, id, undefined)
 
         const module:S3SubComponent = new S3SubComponent(this.view, identified.uri)
 
@@ -169,7 +171,7 @@ export default class S3Component extends S3Identified {
         const id:string = 'feature_' + name
 
         const identified:S3Identified =
-            S3IdentifiedFactory.createChild(this.view, Types.SBOL3.SequenceAnnotation, this, Predicates.SBOL3.hasFeature, id, undefined)
+            S3IdentifiedFactory.createChild(this.view, Types.SBOL3.SequenceFeature, this, Predicates.SBOL3.hasFeature, id, undefined)
 
         return new S3SequenceFeature(this.view, identified.uri)
 

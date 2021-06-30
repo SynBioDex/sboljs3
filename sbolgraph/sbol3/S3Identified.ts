@@ -54,6 +54,14 @@ export default class S3Identified extends S3Facade {
         return URIUtils.getPrefix(this.uri)
     }
 
+    get namespace():string|undefined {
+        return this.getUriProperty(Predicates.SBOL3.hasNamespace)
+    }
+
+    set namespace(namespace:string|undefined) {
+        this.setUriProperty(Predicates.SBOL3.hasNamespace, namespace)
+    }
+
     get measures():Array<S3Measure> {
 
         return this.getUriProperties(Predicates.SBOL2.measure)

@@ -30,7 +30,7 @@ import S3Experiment from '../../sbol3/S3Experiment'
 import S3ExperimentalData from '../../sbol3/S3ExperimentalData'
 
 import { Types, Predicates, Prefixes, Specifiers } from 'bioterms'
-import S3ThingWithLocation from '../../sbol3/S3ThingWithLocation';
+import S3Feature from '../../sbol3/S3Feature';
 import S2Model from '../../sbol2/S2Model';
 import S3IdentifiedFactory from '../../sbol3/S3IdentifiedFactory'
 
@@ -38,7 +38,7 @@ import { Graph, node, triple } from 'rdfoo'
 import S3Measure from '../../sbol3/S3Measure';
 import SBOL3GraphView from '../../SBOL3GraphView'
 import SBOL2GraphView from '../../SBOL2GraphView'
-import { S2Attachment, S3OrientedLocation, S2Cut } from '../..'
+import { S2Attachment, S3OrientedLocation, S2Cut, S3Location, S2OrientedLocation } from '../..'
 import S3Attachment from '../../sbol3/S3Attachment'
 import S3Implementation from '../../sbol3/S3Implementation'
 import S2Facade from '../../sbol2/S2Facade'
@@ -298,7 +298,7 @@ export default function convert2to3(graph:Graph) {
                 subComponent3.setUriProperty(Predicates.SBOL3.sourceLocation, sc.sourceLocation.uri)
             }
 
-            component3.insertUriProperty(Predicates.SBOL3.subComponent, subComponent3.uri)
+            component3.insertUriProperty(Predicates.SBOL3.hasFeature, subComponent3.uri)
 
             map.set(sc.uri, subComponent3)
 
@@ -313,7 +313,7 @@ export default function convert2to3(graph:Graph) {
                 // no component, make a feature
 
                 const feature:S3SequenceFeature = new S3SequenceFeature(sbol3View, sa.uri)
-                feature.setUriProperty(Predicates.a, Types.SBOL3.SequenceAnnotation)
+                feature.setUriProperty(Predicates.a, Types.SBOL3.SequenceFeature)
                 copyIdentifiedProperties(sa, feature)
 
                 component3.insertUriProperty(Predicates.SBOL3.hasFeature, feature.uri)
@@ -398,7 +398,7 @@ export default function convert2to3(graph:Graph) {
                 subComponent3.setUriProperty(Predicates.SBOL3.instanceOf, sm.definition.uri)
             }
 
-            component3.insertUriProperty(Predicates.SBOL3.subComponent, subComponent3.uri)
+            component3.insertUriProperty(Predicates.SBOL3.hasFeature, subComponent3.uri)
 
             if(sm.measure) {
                 subComponent3.setUriProperty(Predicates.SBOL3.hasMeasure, sm.measure.uri)
@@ -426,7 +426,7 @@ export default function convert2to3(graph:Graph) {
                 subComponent3.setUriProperty(Predicates.SBOL3.instanceOf, sc.definition.uri)
             }
 
-            component3.insertUriProperty(Predicates.SBOL3.subComponent, subComponent3.uri)
+            component3.insertUriProperty(Predicates.SBOL3.hasFeature, subComponent3.uri)
 
             if(sc.measure) {
                 subComponent3.setUriProperty(Predicates.SBOL3.hasMeasure, sc.measure.uri)
@@ -447,7 +447,7 @@ export default function convert2to3(graph:Graph) {
             component3.insertUriProperty(Predicates.SBOL3.hasInteraction, newInt.uri)
 
             for(let type of int.types) {
-                newInt.insertUriProperty(Predicates.SBOL2.type, type)
+                newInt.insertUriProperty(Predicates.SBOL3.type, type)
             }
 
             if(int.measure) {
@@ -542,6 +542,7 @@ export default function convert2to3(graph:Graph) {
 
     }
 
+
     newGraph.removeMatches(null, 'http://sboltools.org/backport#sbol3identity', null)
     newGraph.removeMatches(null, 'http://sboltools.org/backport#type', null)
 
@@ -562,6 +563,7 @@ export default function convert2to3(graph:Graph) {
         if(measure !== undefined) {
             b.setUriProperty(Predicates.SBOL2.measure, measure)
         }
+
 
 
 
@@ -593,7 +595,9 @@ export default function convert2to3(graph:Graph) {
                 newGraph.insert(b.uri, Predicates.SBOL3.displayId, triple.object)
             } else if(p == Predicates.SBOL2.version) {
                 newGraph.insert(b.uri, 'http://sboltools.org/backport#sbol2version', triple.object)
-            }
+	    } else if (p === 'http://sboltools.org/backport#sbol3namespace') {
+		    b.namespace = triple.object.nominalValue
+	    }
         }
     }
 
@@ -620,9 +624,14 @@ export default function convert2to3(graph:Graph) {
         }
     }
 
-    function copyLocations(a:S2SequenceAnnotation, b:S3ThingWithLocation) {
+    function copyLocations(a:S2SequenceAnnotation, b:S3Feature) {
 
         for(let location of a.locations) {
+
+	    if(location.getUriProperty('http://sboltools.org/backport#type') === 'http://sboltools.org/backport#FeatureOrientation') {
+		    b.orientation = (location as S2OrientedLocation).orientation
+		    continue
+	    }
 
             if(location instanceof S2Range) {
 

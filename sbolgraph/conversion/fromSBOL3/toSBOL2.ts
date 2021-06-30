@@ -6,7 +6,7 @@ import S2ComponentDefinition from '../../sbol2/S2ComponentDefinition'
 import S3Component from '../../sbol3/S3Component'
 import S3Range from '../../sbol3/S3Range'
 import S3OrientedLocation from '../../sbol3/S3OrientedLocation'
-import S3ThingWithLocation from '../../sbol3/S3ThingWithLocation'
+import S3Feature from '../../sbol3/S3Feature'
 import S2ModuleDefinition from '../../sbol2/S2ModuleDefinition'
 import S2FunctionalComponent from '../../sbol2/S2FunctionalComponent'
 import S2SequenceAnnotation from '../../sbol2/S2SequenceAnnotation'
@@ -317,9 +317,9 @@ export default function convert3to2(graph:Graph) {
                 cdSubcomponent.setUriProperty(Predicates.SBOL3.sourceLocation, subcomponent.sourceLocation.uri)
             }
 
-            if(subcomponent.locations.length > 0) {
+            if(subcomponent.locations.length > 0 || subcomponent.orientation) {
 
-                // if it has locations it needs a SA
+                // if it has locations or an orientation it needs a SA
 
                 let saDisplayId = subcomponent.getStringProperty('http://sboltools.org/backport#sequenceAnnotationDisplayId')
 
@@ -331,8 +331,10 @@ export default function convert3to2(graph:Graph) {
                 let sa = new S2SequenceAnnotation(sbol2View, saIdent.uri)
                 sa.setUriProperty(Predicates.SBOL2.component, subcomponent.uri)
 
-                copyLocations(sbol2View, subcomponent, sa)
+		let orientLoc = sa.addLocationGeneric(subcomponent.orientation!)
+		orientLoc.setUriProperty('http://sboltools.org/backport#type', 'http://sboltools.org/backport#FeatureOrientation')
 
+                copyLocations(sbol2View, subcomponent, sa)
 
             }
         }
@@ -521,7 +523,8 @@ export default function convert3to2(graph:Graph) {
 
         a.setUriProperty(Predicates.SBOL2.persistentIdentity, a.uri)
 
-
+	if(a.namespace)
+		b.setUriProperty('http://sboltools.org/backport#sbol3namespace', a.namespace)
 
         let aTriples = graph.match(a.uri, null, null)
 
@@ -571,7 +574,7 @@ export default function convert3to2(graph:Graph) {
     }
 
 
-    function copyLocations(sbol2View:SBOL2GraphView, oldThing:S3ThingWithLocation, newThing:S2SequenceAnnotation) {
+    function copyLocations(sbol2View:SBOL2GraphView, oldThing:S3Feature, newThing:S2SequenceAnnotation) {
 
         for(let location of oldThing.locations) {
             if(location instanceof S3Range) {

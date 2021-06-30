@@ -406,7 +406,7 @@ class SBOL3 extends GraphViewBasic {
             if(type === Types.SBOL3.OrientedLocation)
                 return new S3OrientedLocation(this.view, uri)
 
-            if(type === Types.SBOL3.SequenceAnnotation)
+            if(type === Types.SBOL3.SequenceFeature)
                 return new S3SequenceFeature(this.view, uri)
 
             if(type === Types.SBOL3.Sequence)

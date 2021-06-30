@@ -20,7 +20,6 @@ let ownershipPredicates = [
 
     Predicates.SBOL3.hasConstraint,
     Predicates.SBOL3.hasFeature,
-    Predicates.SBOL3.subComponent,
     Predicates.SBOL3.hasParticipation,
     Predicates.SBOL3.hasLocation,
     Predicates.SBOL3.sourceLocation,

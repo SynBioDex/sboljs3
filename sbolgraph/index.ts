@@ -46,7 +46,7 @@ import S3SequenceFeature from './sbol3/S3SequenceFeature'
 import S3Interaction from './sbol3/S3Interaction'
 import S3Participation from './sbol3/S3Participation'
 import S3Collection from './sbol3/S3Collection'
-import S3ThingWithLocation from './sbol3/S3ThingWithLocation'
+import S3Feature from './sbol3/S3Feature'
 import S3MapsTo from './sbol3/S3MapsTo'
 import S3Model from './sbol3/S3Model'
 import S3Experiment from './sbol3/S3Experiment'
@@ -104,7 +104,7 @@ export {
     S3Component,
     S3Sequence,
     S3Location,
-    S3ThingWithLocation,
+    S3Feature as S3ThingWithLocation,
     S3OrientedLocation,
     S3Range,
     S3Constraint,
