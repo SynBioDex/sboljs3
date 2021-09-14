@@ -5,7 +5,7 @@ import S3Identified from './S3Identified'
 
 import { Types, Predicates, Specifiers } from 'bioterms'
 
-import { triple } from 'rdfoo'
+import { triple, Node } from 'rdfoo'
 import S3Component from "./S3Component";
 import S3SequenceFeature from "./S3SequenceFeature";
 import S3Location from "./S3Location";
@@ -14,9 +14,9 @@ import S3SubComponent from './S3SubComponent';
 
 export default class S3Sequence extends S3Identified {
 
-    constructor(view:SBOL3GraphView, uri:string) {
+    constructor(view:SBOL3GraphView, subject:Node) {
 
-        super(view, uri)
+        super(view, subject)
 
     }
 
@@ -66,9 +66,9 @@ export default class S3Sequence extends S3Identified {
             return
 
         const containingModules:Array<S3Component> =
-            this.view.graph.match(null, Predicates.SBOL3.hasSequence, this.uri)
-                .map(triple.subjectUri)
-                .map((uri:string) => new S3Component(this.view, uri))
+            this.view.graph.match(null, Predicates.SBOL3.hasSequence, this.subject)
+                .map(triple.subjectsubject)
+                .map((subject:Node) => new S3Component(this.view, subject))
 
         containingModules.forEach((module:S3Component) => {
 
@@ -134,9 +134,9 @@ export default class S3Sequence extends S3Identified {
             return
 
         const containingCDs:Array<S3Component> =
-            this.view.graph.match(null, Predicates.SBOL3.hasSequence, this.uri)
-                .map(triple.subjectUri)
-                .map((uri:string) => new S3Component(this.view, uri))
+            this.view.graph.match(null, Predicates.SBOL3.hasSequence, this.subject)
+                .map(triple.subjectsubject)
+                .map((subject:Node) => new S3Component(this.view, subject))
 
         containingCDs.forEach((cd:S3Component) => {
 
@@ -208,8 +208,8 @@ export default class S3Sequence extends S3Identified {
 
         return this.graph.match(
             null, Predicates.SBOL3.hasSequence, this.uri
-        ).map(triple.subjectUri)
-         .map((uri:string) => new S3Component(this.view, uri))
+        ).map(triple.subjectsubject)
+         .map((subject:Node) => new S3Component(this.view, subject))
     }
 }
 

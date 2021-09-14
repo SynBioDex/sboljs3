@@ -4,7 +4,7 @@ import SBOL3GraphView from '../SBOL3GraphView'
 import S3Identified from './S3Identified'
 import S3Participation from './S3Participation'
 
-import { triple, node } from 'rdfoo'
+import { triple, node, Node } from 'rdfoo'
 import { Types, Predicates, Specifiers } from 'bioterms'
 import S3IdentifiedFactory from './S3IdentifiedFactory';
 import S3Measure from './S3Measure';
@@ -13,9 +13,9 @@ import S3Component from './S3Component'
 
 export default class S3Interaction extends S3Identified {
 
-    constructor(view:SBOL3GraphView, uri:string) {
+    constructor(view:SBOL3GraphView, subject:Node) {
 
-        super(view, uri)
+        super(view, subject)
 
     }
 
@@ -25,7 +25,7 @@ export default class S3Interaction extends S3Identified {
 
     get type():string {
 
-        const typeUri:string|undefined = this.getUriProperty(Predicates.SBOL3.type)
+        const typeUri:Node|undefined = this.getUriProperty(Predicates.SBOL3.type)
 
         if(!typeUri)
             throw new Error(this.uri + ' has no type?')
@@ -38,9 +38,9 @@ export default class S3Interaction extends S3Identified {
         return this.getUriProperties(Predicates.SBOL3.type)
     }
 
-    set type(uri:string) {
+    set type(subject:Node) {
 
-        this.setUriProperty(Predicates.SBOL3.type, uri)
+        this.setUriProperty(Predicates.SBOL3.type, subject)
 
     }
 
@@ -51,13 +51,13 @@ export default class S3Interaction extends S3Identified {
     }
 
     hasType(type:string):boolean {
-        return this.view.graph.hasMatch(this.uri, Predicates.SBOL3.type, type)
+        return this.view.graph.hasMatch(this.subject, Predicates.SBOL3.type, type)
     }
 
     get participations():Array<S3Participation> {
 
         return this.getUriProperties(Predicates.SBOL3.hasParticipation)
-                   .map((uri:string) => new S3Participation(this.view, uri))
+                   .map((subject:Node) => new S3Participation(this.view, subject))
 
     }
 
@@ -71,21 +71,21 @@ export default class S3Interaction extends S3Identified {
 
     hasParticipant(participant:S3SubComponent):boolean {
 
-        return this.participants.map((p) => p.uri).indexOf(participant.uri) !== -1
+        return this.participants.map((p) => p.subject).indexOf(participant.subject) !== -1
 
     }
 
     get containingModule():S3Component {
 
         const uri = triple.subjectUri(
-            this.view.graph.matchOne(null, Predicates.SBOL3.hasInteraction, this.uri)
+            this.view.graph.matchOne(null, Predicates.SBOL3.hasInteraction, this.subject)
         )
 
-        if(!uri) {
+        if(!subject) {
             throw new Error('Interaction ' + this.uri + ' not contained by a Module?')
         }
 
-        return new S3Component(this.view, uri)
+        return new S3Component(this.view, subject)
     }
 
     get containingObject():S3Identified|undefined {
@@ -99,7 +99,7 @@ export default class S3Interaction extends S3Identified {
         const identified:S3Identified =
             S3IdentifiedFactory.createChild(this.view, Types.SBOL3.Participation, this, Predicates.SBOL3.hasParticipation, id, undefined)
 
-        const participation:S3Participation = new S3Participation(this.view, identified.uri)
+        const participation:S3Participation = new S3Participation(this.view, identified.subject)
 
         return participation
     }
@@ -128,7 +128,7 @@ export default class S3Interaction extends S3Identified {
         if(measure === undefined)
             this.deleteProperty(Predicates.SBOL3.hasMeasure)
         else
-            this.setUriProperty(Predicates.SBOL3.hasMeasure, measure.uri)
+            this.setUriProperty(Predicates.SBOL3.hasMeasure, measure.subject)
 
     }
 

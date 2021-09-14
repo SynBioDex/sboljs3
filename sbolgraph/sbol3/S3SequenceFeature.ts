@@ -2,7 +2,7 @@
 import S3Identified from './S3Identified'
 import S3Feature from './S3Feature'
 
-import { triple, node } from 'rdfoo'
+import { triple, node, Node } from 'rdfoo'
 import { Types, Predicates, Specifiers, Prefixes } from 'bioterms'
 import SBOL3GraphView from "../SBOL3GraphView";
 import S3Component from "./S3Component";
@@ -13,9 +13,9 @@ import extractTerm from '../extractTerm'
 
 export default class S3SequenceFeature extends S3Feature {
 
-    constructor(view:SBOL3GraphView, uri:string) {
+    constructor(view:SBOL3GraphView, subject:Node) {
 
-        super(view, uri)
+        super(view, subject)
 
     }
 

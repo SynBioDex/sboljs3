@@ -5,12 +5,13 @@ import { Types, Predicates } from "bioterms";
 import S3Component from './S3Component'
 import { Activity, ProvView } from "rdfoo-prov";
 import SBOL3GraphView from "../SBOL3GraphView";
+import { Node } from 'rdfoo'
 
 export default class S3Implementation extends S3Identified {
 
-    constructor(view:SBOL3GraphView, uri:string) {
+    constructor(view:SBOL3GraphView, subject:Node) {
 
-        super(view, uri)
+        super(view, subject)
 
     }
 
@@ -21,13 +22,13 @@ export default class S3Implementation extends S3Identified {
 
     get built():S3Component|undefined {
 
-        let built = this.getUriProperty(Predicates.SBOL2.built)
+        let built = this.getProperty(Predicates.SBOL2.built)
 
         if(!built) {
             return undefined
         }
 
-        let builtObj = this.view.uriToFacade(built)
+        let builtObj = this.view.subjectToFacade(built)
 
         if(builtObj instanceof S3Component)
             return builtObj as S3Component
@@ -40,13 +41,13 @@ export default class S3Implementation extends S3Identified {
         if(built === undefined) {
             this.deleteProperty(Predicates.SBOL2.built)
         } else {
-            this.setUriProperty(Predicates.SBOL2.built, built.uri)
+            this.setProperty(Predicates.SBOL2.built, built.subject)
         }
     }
 
     get activity():Activity|undefined {
 
-        let activity = this.getUriProperty(Predicates.Prov.wasGeneratedBy)
+        let activity = this.getProperty(Predicates.Prov.wasGeneratedBy)
 
         if(!activity) {
             return undefined
@@ -60,7 +61,7 @@ export default class S3Implementation extends S3Identified {
         if(activity === undefined) {
             this.deleteProperty(Predicates.Prov.wasGeneratedBy)
         } else {
-            this.setUriProperty(Predicates.Prov.wasGeneratedBy, activity.uri)
+            this.setProperty(Predicates.Prov.wasGeneratedBy, activity.subject)
         }
     }
 
@@ -68,15 +69,15 @@ export default class S3Implementation extends S3Identified {
 
         let design_uri = this.getUriProperty(Predicates.Prov.wasDerivedFrom)
 
-        if(!design_uri){
+        if(!design_subject){
             return undefined
         }
 
-        return new S3Identified(this.view, design_uri)
+        return new S3Identified(this.view, design_subject)
 
-        // console.log(this.view.getTopLevelsWithPrefix(design_uri))
+        // console.log(this.view.getTopLevelsWithPrefix(design_subject))
 
-        // let design = this.view.uriToFacade(design_uri)
+        // let design = this.view.subjectToFacade(design_subject)
 
         // console.log(design)
 
@@ -94,7 +95,7 @@ export default class S3Implementation extends S3Identified {
         if(design === undefined) {
             this.deleteProperty(Predicates.Prov.wasDerivedFrom)
         } else {
-            this.setUriProperty(Predicates.Prov.wasDerivedFrom, design.uri)
+            this.setUriProperty(Predicates.Prov.wasDerivedFrom, design.subject)
         }
     }
     

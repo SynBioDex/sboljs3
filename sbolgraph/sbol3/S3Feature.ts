@@ -18,7 +18,7 @@ export default class S3Feature extends S3Identified {
     }
 
     hasRole(role:string):boolean {
-        return this.view.graph.hasMatch(this.uri, Predicates.SBOL3.role, role)
+        return this.view.graph.hasMatch(this.subject, Predicates.SBOL3.role, role)
     }
 
     addRole(role:string):void {
@@ -26,7 +26,7 @@ export default class S3Feature extends S3Identified {
     }
 
     removeRole(role:string):void {
-        this.view.graph.removeMatches(this.uri, Predicates.SBOL3.role, role)
+        this.view.graph.removeMatches(this.subject, Predicates.SBOL3.role, role)
     }
 
     get soTerms():string[] {
@@ -46,14 +46,14 @@ export default class S3Feature extends S3Identified {
     get containingObject():S3Identified|undefined {
 
         const uri = triple.subjectUri(
-            this.view.graph.matchOne(null, Predicates.SBOL3.hasFeature, this.uri)
+            this.view.graph.matchOne(null, Predicates.SBOL3.hasFeature, this.subject)
         )
 
-        if(!uri) {
+        if(!subject) {
             throw new Error('has no containing object?')
         }
 
-        return this.view.uriToIdentified(uri)
+        return this.view.uriToIdentified(subject)
 
     }
 
@@ -66,7 +66,7 @@ export default class S3Feature extends S3Identified {
     get locations():Array<S3Location> {
 
         return this.getUriProperties(Predicates.SBOL3.hasLocation)
-                   .map((uri:string) => this.view.uriToFacade(uri) as S3Location)
+                   .map((subject:Node) => this.view.subjectToFacade(subject) as S3Location)
     }
 
     get rangeLocations():Array<S3Range> {
@@ -74,7 +74,7 @@ export default class S3Feature extends S3Identified {
         return this.locations.filter((location:S3Identified) => {
             return location.objectType === Types.SBOL3.Range
         }).map((identified:S3Identified) => {
-            return new S3Range(this.view, identified.uri)
+            return new S3Range(this.view, identified.subject)
         })
 
     }
@@ -138,7 +138,7 @@ export default class S3Feature extends S3Identified {
         const identified:S3Identified =
             S3IdentifiedFactory.createChild(this.view, Types.SBOL3.Range, this, Predicates.SBOL3.hasLocation, id, undefined)
 
-        const range:S3Range = new S3Range(this.view, identified.uri)
+        const range:S3Range = new S3Range(this.view, identified.subject)
 
         range.start = start
         range.end = end
@@ -150,7 +150,7 @@ export default class S3Feature extends S3Identified {
 
         const loc:S3Identified = S3IdentifiedFactory.createChild(this.view, Types.SBOL3.OrientedLocation, this, Predicates.SBOL3.hasLocation, 'location', undefined)
 
-        return new S3OrientedLocation(loc.view, loc.uri)
+        return new S3OrientedLocation(loc.view, loc.subject)
     }
 
 //     setOrientation(orientation:string) {

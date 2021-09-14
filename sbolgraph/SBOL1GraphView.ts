@@ -20,42 +20,42 @@ export default class SBOL1GraphView extends GraphViewBasic {
     get dnaSequences():Array<S1DnaSequence> {
 
         return this.instancesOfType(Types.SBOL1.DnaSequence)
-                    .map((uri) => new S1DnaSequence(this, uri))
+                    .map((subject) => new S1DnaSequence(this, subject))
 
     }
 
     get dnaComponents():Array<S1DnaComponent> {
 
         return this.instancesOfType(Types.SBOL1.DnaComponent)
-                    .map((uri) => new S1DnaComponent(this, uri))
+                    .map((subject) => new S1DnaComponent(this, subject))
 
     }
 
     get collections():Array<S1Collection> {
 
         return this.instancesOfType(Types.SBOL1.Collection)
-                    .map((uri) => new S1Collection(this, uri))
+                    .map((subject) => new S1Collection(this, subject))
 
     }
 
-    uriToFacade(uri:string):Facade|undefined {
+    subjectToFacade(subject:Node):Facade|undefined {
 
-        if(!uri)
+        if(!subject)
             return undefined
 
-        const types = this.getTypes(uri)
+        const types = this.getTypes(subject)
 
         if(types.indexOf(Types.SBOL1.DnaSequence) !== -1)
-            return new S1DnaSequence(this, uri)
+            return new S1DnaSequence(this, subject)
 
         if(types.indexOf(Types.SBOL1.DnaComponent) !== -1)
-            return new S1DnaComponent(this, uri)
+            return new S1DnaComponent(this, subject)
 
         if(types.indexOf(Types.SBOL1.Collection) !== -1)
-            return new S1Collection(this, uri)
+            return new S1Collection(this, subject)
 
         if(types.indexOf(Types.SBOL1.SequenceAnnotation) !== -1)
-            return new S1SequenceAnnotation(this, uri)
+            return new S1SequenceAnnotation(this, subject)
 
         return undefined
     }
@@ -68,7 +68,7 @@ export default class SBOL1GraphView extends GraphViewBasic {
         Array.prototype.push.apply(topLevels, this.instancesOfType(Types.SBOL1.DnaComponent))
         Array.prototype.push.apply(topLevels, this.instancesOfType(Types.SBOL1.Collection))
 
-        return topLevels.map((topLevel) => this.uriToFacade(topLevel) as S1Facade)
+        return topLevels.map((topLevel) => this.subjectToFacade(topLevel) as S1Facade)
     }
 
     serializeXML() {
@@ -88,9 +88,9 @@ export default class SBOL1GraphView extends GraphViewBasic {
 
     get rootDnaComponents():Array<S1DnaComponent> {
 
-        return this.instancesOfType(Types.SBOL1.DnaComponent).filter((uri) => {
-            return !this.graph.hasMatch(null, Predicates.SBOL1.subComponent, uri)
-        }).map((uri) => new S1DnaComponent(this, uri))
+        return this.instancesOfType(Types.SBOL1.DnaComponent).filter((subject) => {
+            return !this.graph.hasMatch(null, Predicates.SBOL1.subComponent, subject)
+        }).map((subject) => new S1DnaComponent(this, subject))
 
     }
 }

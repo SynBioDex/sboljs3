@@ -3,6 +3,7 @@ import S2Identified from "./S2Identified";
 import { Predicates } from 'bioterms'
 import { node } from 'rdfoo'
 import SBOL2GraphView from '../SBOL2GraphView'
+import { Node } from 'rdfoo'
 
 export default class S3IdentifiedFactory {
     
@@ -17,27 +18,27 @@ export default class S3IdentifiedFactory {
 
         let versionSuffix = version !== undefined ? '/' + version : ''
 
-        const uri:string = view.graph.generateURI(uriPrefix + id + '$n?$' + versionSuffix)
+        const subject:string = view.graph.generateURI(uriPrefix + id + '$n?$' + versionSuffix)
 
-        view.graph.insertProperties(uri, {
+        view.graph.insertProperties(node.createUriNode(subject), {
             [Predicates.a]: node.createUriNode(type),
             [Predicates.SBOL2.displayId]: node.createStringNode(id),
-            [Predicates.SBOL2.persistentIdentity]: node.createUriNode(extractPersistentIdentity(uri, version)),
+            [Predicates.SBOL2.persistentIdentity]: node.createUriNode(extractPersistentIdentity(subject, version)),
         })
 
         if(version !== undefined) {
-            view.graph.insertProperties(uri, {
+            view.graph.insertProperties(node.createUriNode(subject), {
                 [Predicates.SBOL2.version]: node.createStringNode(version)
             })
         }
 
         if(name !== undefined) {
-            view.graph.insertProperties(uri, {
+            view.graph.insertProperties(node.createUriNode(subject), {
                 [Predicates.Dcterms.title]: node.createStringNode(name)
             })
         }
 
-        return new S2Identified(view, uri)
+        return new S2Identified(view, node.createUriNode(subject))
 
     }
 
@@ -53,32 +54,32 @@ export default class S3IdentifiedFactory {
 
         let versionSuffix = version !== undefined ? '/' + version : ''
 
-        const uri:string = view.graph.generateURI(
+        const subject:string = view.graph.generateURI(
             parent.persistentIdentity + '/' + id + '$n?$' + versionSuffix)
 
-        view.graph.insertProperties(uri, {
+        view.graph.insertProperties(node.createUriNode(subject), {
             [Predicates.a]: node.createUriNode(type),
             [Predicates.SBOL2.displayId]: node.createStringNode(id),
-            [Predicates.SBOL2.persistentIdentity]: node.createUriNode(extractPersistentIdentity(uri, version))
+            [Predicates.SBOL2.persistentIdentity]: node.createUriNode(extractPersistentIdentity(subject, version))
         })
 
         if(version !== undefined) {
-            view.graph.insertProperties(uri, {
+            view.graph.insertProperties(node.createUriNode(subject), {
                 [Predicates.SBOL2.version]: node.createStringNode(version)
             })
         }
 
         if(name !== undefined) {
-            view.graph.insertProperties(uri, {
+            view.graph.insertProperties(node.createUriNode(subject), {
                 [Predicates.Dcterms.title]: node.createStringNode(name)
             })
         }
 
-        view.graph.insertProperties(parent.uri, {
-            [ownershipPredicate]: node.createUriNode(uri)
+        view.graph.insertProperties(parent.subject, {
+            [ownershipPredicate]: node.createUriNode(subject)
         })
 
-        return new S2Identified(view, uri)
+        return new S2Identified(view, node.createUriNode(subject))
     }
 
 }

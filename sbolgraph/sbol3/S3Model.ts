@@ -4,13 +4,13 @@ import S3Identified from './S3Identified'
 import { Types, Predicates, Specifiers } from 'bioterms'
 import SBOL3GraphView from "../SBOL3GraphView";
 
-import { triple } from 'rdfoo'
+import { triple, Node } from 'rdfoo'
 
 export default class S3Model extends S3Identified {
 
-    constructor(view:SBOL3GraphView, uri:string) {
+    constructor(view:SBOL3GraphView, subject:Node) {
 
-        super(view, uri)
+        super(view, subject)
     }
 
     get facadeType():string {

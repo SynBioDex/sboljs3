@@ -1,6 +1,6 @@
 import S2Identified from './S2Identified'
 import SBOL2GraphView from '../SBOL2GraphView';
-import { node } from 'rdfoo'
+import { node, Node } from 'rdfoo'
 import S2ExperimentalData from './S2ExperimentalData';
 import { Activity, ProvView } from 'rdfoo-prov';
 import { Predicates, Types } from 'bioterms';
@@ -9,9 +9,9 @@ import S2Implementation from './S2Implementation';
 
 export default class S2Experiment extends S2Identified {
 
-    constructor(view:SBOL2GraphView, uri:string) {
+    constructor(view:SBOL2GraphView, subject:Node) {
 
-        super(view, uri)
+        super(view, subject)
     }
 
     get facadeType():string {
@@ -21,7 +21,7 @@ export default class S2Experiment extends S2Identified {
     get experimentalData():Array<S2ExperimentalData> {
 
         let result:S2ExperimentalData[] = []
-        let expDataURIs = this.getUriProperties(Predicates.SBOL2.experimentalData)
+        let expDataURIs = this.getProperties(Predicates.SBOL2.experimentalData)
 
         for (let uri of expDataURIs){
             result.push(new S2ExperimentalData(this.view, uri))
@@ -30,14 +30,14 @@ export default class S2Experiment extends S2Identified {
         return result
 
         // return this.getUriProperties('https://github.com/SynBioDex/SEPs/blob/sep21/sep_021.md#experimentalData')
-        //            .map((uri:string) => this.view.uriToFacade(uri))
+        //            .map((subject:Node) => this.view.subjectToFacade(subject))
         //            .filter((r:SEP21ExperimentalData) => r !== undefined) as Array<SEP21ExperimentalData>
 
     }
 
     addExperimentalData(member:S2ExperimentalData):void {
 
-        this.insertProperty(Predicates.SBOL2.experimentalData, node.createUriNode(member.uri))
+        this.insertProperty(Predicates.SBOL2.experimentalData, member.subject)
 
     }
 
@@ -57,14 +57,14 @@ export default class S2Experiment extends S2Identified {
         if(activity === undefined) {
             this.deleteProperty(Predicates.Prov.wasGeneratedBy)
         } else {
-            this.setUriProperty(Predicates.Prov.wasGeneratedBy, activity.uri)
+            this.setProperty(Predicates.Prov.wasGeneratedBy, activity.subject)
         }
     }
 
 
     get construct():S2Implementation|undefined{
 
-        let construct_uri = this.getUriProperty(Predicates.Prov.wasDerivedFrom)
+        let construct_uri = this.getProperty(Predicates.Prov.wasDerivedFrom)
 
         if(!construct_uri){
             return undefined
@@ -79,14 +79,14 @@ export default class S2Experiment extends S2Identified {
     //     if(construct === undefined) {
     //         this.deleteProperty(Predicates.Prov.wasDerivedFrom)
     //     } else {
-    //         this.setUriProperty(Predicates.Prov.wasDerivedFrom, construct.uri)
+    //         this.setUriProperty(Predicates.Prov.wasDerivedFrom, construct.subject)
     //     }
     // }
 
 
     addConstruct(construct:S2Implementation):void {
 
-        this.insertProperty(Predicates.Prov.wasDerivedFrom, node.createUriNode(construct.uri))
+        this.insertProperty(Predicates.Prov.wasDerivedFrom, construct.subject)
 
     }
 

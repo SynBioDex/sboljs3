@@ -34,7 +34,7 @@ import S3Feature from '../../sbol3/S3Feature';
 import S2Model from '../../sbol2/S2Model';
 import S3IdentifiedFactory from '../../sbol3/S3IdentifiedFactory'
 
-import { Graph, node, triple } from 'rdfoo'
+import { Graph, node, Node, triple } from 'rdfoo'
 import S3Measure from '../../sbol3/S3Measure';
 import SBOL3GraphView from '../../SBOL3GraphView'
 import SBOL2GraphView from '../../SBOL2GraphView'
@@ -81,16 +81,16 @@ export default function convert2to3(graph:Graph) {
         convertAttachment(att)
     }
 
-    for(let sm of sbol2View.instancesOfType(Types.SBOL2.Module).map((uri) => sbol2View.uriToFacade(uri))) {
+    for(let sm of sbol2View.instancesOfType(Types.SBOL2.Module).map((subject) => sbol2View.subjectToFacade(subject))) {
 
         if(! (sm instanceof S2ModuleInstance)) {
             throw new Error('???')
         }
 
-        let _subModule = map.get(sm.uri)
+        let _subModule = map.get(sm.subject.value)
 
         if(! (_subModule instanceof S3SubComponent)) {
-            console.warn(sm.uri + ' did not map to a subcomponent')
+            console.warn(sm.subject.value + ' did not map to a subcomponent')
 
             if(_subModule)
                 console.warn('it mapped to ' + _subModule.constructor.name)
@@ -104,21 +104,21 @@ export default function convert2to3(graph:Graph) {
                 throw new Error('???')
             }
 
-            let a = map.get(mapsTo.local.uri)
+            let a = map.get(mapsTo.local.subject.value)
 
             if(!a) {
-                console.warn('Local side of MapsTo ' + mapsTo.local.uri + ' in submodule ' + sm.uri + ' was not found')
-                a = new S3SubComponent(sbol3View, mapsTo.local.uri)
+                console.warn('Local side of MapsTo ' + mapsTo.local.subject.value + ' in submodule ' + sm.subject.value + ' was not found')
+                a = new S3SubComponent(sbol3View, mapsTo.local.subject)
             }
 
-            let b = map.get(mapsTo.remote.uri)
+            let b = map.get(mapsTo.remote.subject.value)
 
             if(!b) {
-                console.warn('Remote side of MapsTo ' + mapsTo.remote.uri + ' in submodule ' + sm.uri + ' was not found')
-                b = new S3SubComponent(sbol3View, mapsTo.remote.uri)
+                console.warn('Remote side of MapsTo ' + mapsTo.remote.subject.value + ' in submodule ' + sm.subject.value + ' was not found')
+                b = new S3SubComponent(sbol3View, mapsTo.remote.subject)
             }
 
-            let newMapsTo = new S3MapsTo(sbol3View, mapsTo.uri)
+            let newMapsTo = new S3MapsTo(sbol3View, mapsTo.subject)
             newMapsTo.setUriProperty(Predicates.a, Types.SBOL3.MapsTo)
 
             newMapsTo.local = a
@@ -134,13 +134,13 @@ export default function convert2to3(graph:Graph) {
 
     for(let collection of sbol2View.collections) {
 
-        const col3:S3Collection = new S3Collection(sbol3View, collection.uri)
+        const col3:S3Collection = new S3Collection(sbol3View, collection.subject)
         col3.setUriProperty(Predicates.a, Types.SBOL3.Collection)
         copyIdentifiedProperties(collection, col3)
 
         for(let member of collection.members) {
 
-            const converted:S3Identified|undefined = map.get(member.uri)
+            const converted:S3Identified|undefined = map.get(member.subject.value)
 
             if(converted !== undefined) {
                 col3.addMember(converted)
@@ -152,7 +152,7 @@ export default function convert2to3(graph:Graph) {
 
     for(let impl of sbol2View.implementations) {
 
-        const impl3:S3Implementation = new S3Implementation(sbol3View, impl.uri)
+        const impl3:S3Implementation = new S3Implementation(sbol3View, impl.subject)
         impl3.setUriProperty(Predicates.a, Types.SBOL3.Implementation)
         copyIdentifiedProperties(impl, impl3)
 
@@ -163,16 +163,16 @@ export default function convert2to3(graph:Graph) {
 
     function convertSeq(seq:S2Sequence):S3Sequence {
 
-        const existing = map.get(seq.uri)
+        const existing = map.get(seq.subject.value)
 
         if(existing)
             return existing as S3Sequence
 
-        const xseq:S3Sequence = new S3Sequence(sbol3View, seq.uri)
+        const xseq:S3Sequence = new S3Sequence(sbol3View, seq.subject)
         xseq.setUriProperty(Predicates.a, Types.SBOL3.Sequence)
         copyIdentifiedProperties(seq, xseq)
 
-        map.set(seq.uri, xseq)
+        map.set(seq.subject.value, xseq)
 
         xseq.encoding = seq.encoding
         xseq.elements = seq.elements
@@ -182,12 +182,12 @@ export default function convert2to3(graph:Graph) {
 
     function modelToModel(model:S2Model):S3Model {
 
-        const existing = map.get(model.uri)
+        const existing = map.get(model.subject.value)
 
         if(existing)
             return existing as S3Model
     
-        const xmodel:S3Model = new S3Model(sbol3View, model.uri)
+        const xmodel:S3Model = new S3Model(sbol3View, model.subject)
         xmodel.setUriProperty(Predicates.a, Types.SBOL3.Model)
         copyIdentifiedProperties(model, xmodel)
 
@@ -195,55 +195,55 @@ export default function convert2to3(graph:Graph) {
         xmodel.source = model.source
         xmodel.language = model.language
 
-        map.set(model.uri, xmodel)
+        map.set(model.subject.value, xmodel)
 
         return xmodel
     }
 
     function convertED(obj:S2ExperimentalData):S3ExperimentalData {
 
-        const existing = map.get(obj.uri)
+        const existing = map.get(obj.subject.value)
 
         if(existing)
             return existing as S3ExperimentalData
     
-        const objx:S3ExperimentalData = new S3ExperimentalData(sbol3View, obj.uri)
+        const objx:S3ExperimentalData = new S3ExperimentalData(sbol3View, obj.subject)
         objx.setUriProperty(Predicates.a, Types.SBOL3.ExperimentalData)
         copyIdentifiedProperties(obj, objx)
 
-        map.set(obj.uri, objx)
+        map.set(obj.subject.value, objx)
 
         return objx
     }
 
     function convertExp(obj:S2Experiment):S3Experiment {
 
-        const existing = map.get(obj.uri)
+        const existing = map.get(obj.subject.value)
 
         if(existing)
             return existing as S3Experiment
     
-        const objx:S3Experiment = new S3Experiment(sbol3View, obj.uri)
+        const objx:S3Experiment = new S3Experiment(sbol3View, obj.subject)
         objx.setUriProperty(Predicates.a, Types.SBOL3.Experiment)
         copyIdentifiedProperties(obj, objx)
 
         for(let ed of obj.experimentalData) {
-            objx.insertUriProperty(Predicates.SBOL3.experimentalData, ed.uri)
+            objx.insertUriProperty(Predicates.SBOL3.experimentalData, ed.subject.value)
         }
 
-        map.set(obj.uri, objx)
+        map.set(obj.subject.value, objx)
 
         return objx
     }
 
     function convertAttachment(obj:S2Attachment):S3Attachment {
 
-        const existing = map.get(obj.uri)
+        const existing = map.get(obj.subject.value)
 
         if(existing)
             return existing as S3Attachment
     
-        const objx:S3Attachment = new S3Attachment(sbol3View, obj.uri)
+        const objx:S3Attachment = new S3Attachment(sbol3View, obj.subject)
         objx.setUriProperty(Predicates.a, Types.SBOL3.Attachment)
         copyIdentifiedProperties(obj, objx)
 
@@ -253,25 +253,25 @@ export default function convert2to3(graph:Graph) {
         objx.size = obj.size
 
 
-        map.set(obj.uri, objx)
+        map.set(obj.subject.value, objx)
 
         return objx
     }
 
     function cdTo3Component(cd:S2ComponentDefinition):S3Component {
 
-        const existing = map.get(cd.uri)
+        const existing = map.get(cd.subject.value)
 
         if(existing)
             return existing as S3Component
 
-        const component3:S3Component = new S3Component(sbol3View, cd.uri)
+        const component3:S3Component = new S3Component(sbol3View, cd.subject)
         component3.setUriProperty(Predicates.a, Types.SBOL3.Component)
         copyIdentifiedProperties(cd, component3)
 
         component3.setUriProperty('http://sboltools.org/backport#sbol2type', Types.SBOL2.ComponentDefinition)
 
-        map.set(cd.uri, component3)
+        map.set(cd.subject.value, component3)
 
         for(let role of cd.roles) {
             component3.addRole(role)
@@ -285,7 +285,7 @@ export default function convert2to3(graph:Graph) {
 
             const def:S3Component = cdTo3Component(sc.definition)
 
-            const subComponent3:S3SubComponent = new S3SubComponent(sbol3View, sc.uri)
+            const subComponent3:S3SubComponent = new S3SubComponent(sbol3View, sc.subject)
             subComponent3.setUriProperty(Predicates.a, Types.SBOL3.SubComponent)
             copyIdentifiedProperties(sc, subComponent3)
 
@@ -295,12 +295,12 @@ export default function convert2to3(graph:Graph) {
             subComponent3.instanceOf = def
 
             if(sc.sourceLocation) {
-                subComponent3.setUriProperty(Predicates.SBOL3.sourceLocation, sc.sourceLocation.uri)
+                subComponent3.setUriProperty(Predicates.SBOL3.sourceLocation, sc.sourceLocation.subject.value)
             }
 
-            component3.insertUriProperty(Predicates.SBOL3.hasFeature, subComponent3.uri)
+            component3.insertUriProperty(Predicates.SBOL3.hasFeature, subComponent3.subject.value)
 
-            map.set(sc.uri, subComponent3)
+            map.set(sc.subject.value, subComponent3)
 
             // TODO check sc roles match the def roles
 
@@ -312,11 +312,11 @@ export default function convert2to3(graph:Graph) {
 
                 // no component, make a feature
 
-                const feature:S3SequenceFeature = new S3SequenceFeature(sbol3View, sa.uri)
+                const feature:S3SequenceFeature = new S3SequenceFeature(sbol3View, sa.subject)
                 feature.setUriProperty(Predicates.a, Types.SBOL3.SequenceFeature)
                 copyIdentifiedProperties(sa, feature)
 
-                component3.insertUriProperty(Predicates.SBOL3.hasFeature, feature.uri)
+                component3.insertUriProperty(Predicates.SBOL3.hasFeature, feature.subject.value)
 
                 feature.name = sa.name
 
@@ -330,7 +330,7 @@ export default function convert2to3(graph:Graph) {
 
                 // has component, add locations to existing submodule
 
-                const found = map.get(sa.component.uri)
+                const found = map.get(sa.component.subject.value)
 
                 if(!found)
                     throw new Error('???')
@@ -368,71 +368,71 @@ export default function convert2to3(graph:Graph) {
 
     function mdTo3Component(md:S2ModuleDefinition):S3Component {
 
-        const existing = map.get(md.uri)
+        const existing = map.get(md.subject.value)
 
         if(existing)
             return existing as S3Component
 
-        const component3:S3Component = new S3Component(sbol3View, md.uri)
+        const component3:S3Component = new S3Component(sbol3View, md.subject)
         component3.setUriProperty(Predicates.a, Types.SBOL3.Component)
         copyIdentifiedProperties(md, component3)
 
         component3.setUriProperty('http://sboltools.org/backport#sbol2type', Types.SBOL2.ModuleDefinition)
 
-        map.set(md.uri, component3)
+        map.set(md.subject.value, component3)
 
         for(let sm of md.modules) {
 
-            let subComponent3 = new S3SubComponent(sbol3View, sm.uri)
+            let subComponent3 = new S3SubComponent(sbol3View, sm.subject)
             subComponent3.setUriProperty(Predicates.a, Types.SBOL3.SubComponent)
             copyIdentifiedProperties(sm, subComponent3)
 
             subComponent3.setUriProperty('http://sboltools.org/backport#sbol2type', Types.SBOL2.Module)
 
-            let def = map.get(sm.definition.uri)
+            let def = map.get(sm.definition.subject.value)
 
             if(def && def instanceof S3Component) {
                 subComponent3.instanceOf = def
             } else {
                 // missing definition, can't convert it
-                subComponent3.setUriProperty(Predicates.SBOL3.instanceOf, sm.definition.uri)
+                subComponent3.setUriProperty(Predicates.SBOL3.instanceOf, sm.definition.subject.value)
             }
 
-            component3.insertUriProperty(Predicates.SBOL3.hasFeature, subComponent3.uri)
+            component3.insertUriProperty(Predicates.SBOL3.hasFeature, subComponent3.subject.value)
 
             if(sm.measure) {
-                subComponent3.setUriProperty(Predicates.SBOL3.hasMeasure, sm.measure.uri)
+                subComponent3.setUriProperty(Predicates.SBOL3.hasMeasure, sm.measure.subject.value)
             }
 
-            map.set(sm.uri, subComponent3)
+            map.set(sm.subject.value, subComponent3)
 
             // TODO check sc roles match the def roles
         }
 
         for(let sc of md.functionalComponents) {
 
-            let subComponent3 = new S3SubComponent(sbol3View, sc.uri)
+            let subComponent3 = new S3SubComponent(sbol3View, sc.subject)
             subComponent3.setUriProperty(Predicates.a, Types.SBOL3.SubComponent)
             copyIdentifiedProperties(sc, subComponent3)
 
             subComponent3.setUriProperty('http://sboltools.org/backport#sbol2type', Types.SBOL2.FunctionalComponent)
 
-            let def = map.get(sc.definition.uri)
+            let def = map.get(sc.definition.subject.value)
 
             if(def && def instanceof S3Component) {
                 subComponent3.instanceOf = def
             } else {
                 // missing definition, can't convert it
-                subComponent3.setUriProperty(Predicates.SBOL3.instanceOf, sc.definition.uri)
+                subComponent3.setProperty(Predicates.SBOL3.instanceOf, sc.definition.subject)
             }
 
-            component3.insertUriProperty(Predicates.SBOL3.hasFeature, subComponent3.uri)
+            component3.insertProperty(Predicates.SBOL3.hasFeature, subComponent3.subject)
 
             if(sc.measure) {
-                subComponent3.setUriProperty(Predicates.SBOL3.hasMeasure, sc.measure.uri)
+                subComponent3.setProperty(Predicates.SBOL3.hasMeasure, sc.measure.subject)
             }
 
-            map.set(sc.uri, subComponent3)
+            map.set(sc.subject.value, subComponent3)
 
             // TODO check sc roles match the def roles
 
@@ -440,18 +440,18 @@ export default function convert2to3(graph:Graph) {
 
         for(let int of md.interactions) {
 
-            let newInt = new S3Interaction(sbol3View, int.uri)
+            let newInt = new S3Interaction(sbol3View, int.subject)
             newInt.setUriProperty(Predicates.a, Types.SBOL3.Interaction)
             copyIdentifiedProperties(int, newInt)
 
-            component3.insertUriProperty(Predicates.SBOL3.hasInteraction, newInt.uri)
+            component3.insertProperty(Predicates.SBOL3.hasInteraction, newInt.subject)
 
             for(let type of int.types) {
                 newInt.insertUriProperty(Predicates.SBOL3.type, type)
             }
 
             if(int.measure) {
-                newInt.setUriProperty(Predicates.SBOL3.hasMeasure, int.measure.uri)
+                newInt.setProperty(Predicates.SBOL3.hasMeasure, int.measure.subject)
             }
 
             for(let type of int.types)
@@ -459,19 +459,19 @@ export default function convert2to3(graph:Graph) {
 
             for(let participation of int.participations) {
 
-                let newParticipation = new S3Participation(sbol3View, participation.uri)
+                let newParticipation = new S3Participation(sbol3View, participation.subject)
                 newParticipation.setUriProperty(Predicates.a, Types.SBOL3.Participation)
                 copyIdentifiedProperties(participation, newParticipation)
 
                 if (participation.measure) {
-                    newParticipation.setUriProperty(Predicates.SBOL3.hasFeature, participation.measure.uri)
+                    newParticipation.setProperty(Predicates.SBOL3.hasFeature, participation.measure.subject)
                 }
 
-                newInt.insertUriProperty(Predicates.SBOL3.hasParticipation, newParticipation.uri)
+                newInt.insertProperty(Predicates.SBOL3.hasParticipation, newParticipation.subject)
 
                 if(participation.participant) {
 
-                    let participant = map.get(participation.participant.uri)
+                    let participant = map.get(participation.participant.subject.value)
 
                     if(!participant || !(participant instanceof S3SubComponent)) {
                         console.warn('participant not instanceof S3SubComponent')
@@ -511,8 +511,8 @@ export default function convert2to3(graph:Graph) {
 
     // For "generic top levels"
 
-    graph.replaceURI(Predicates.SBOL2.displayId, Predicates.SBOL3.displayId)
-    graph.replaceURI(Predicates.SBOL2.version, 'http://sboltools.org/backport#sbol2version')
+    graph.replaceSubject(node.createUriNode(Predicates.SBOL2.displayId), node.createUriNode(Predicates.SBOL3.displayId))
+    graph.replaceSubject(node.createUriNode(Predicates.SBOL2.version), node.createUriNode('http://sboltools.org/backport#sbol2version'))
 
 
 
@@ -530,15 +530,15 @@ export default function convert2to3(graph:Graph) {
 
 	if(currentUri !== actualUri) {
 		// only keep displayId from the object that mapped directly
-		newGraph.removeMatches(currentUri, Predicates.SBOL3.displayId, null)
+		newGraph.removeMatches(node.createUriNode(currentUri), Predicates.SBOL3.displayId, null)
 	}
 
-	newGraph.replaceURI(currentUri, actualUri)
+	newGraph.replaceSubject(node.createUriNode(currentUri), node.createUriNode(actualUri))
     }
 
-    for(let m of newGraph.match(null, 'http://sboltools.org/backport#type', 'http://sboltools.org/backport#SplitComponentComposition')) {
+    for(let m of newGraph.match(null, 'http://sboltools.org/backport#type', node.createUriNode('http://sboltools.org/backport#SplitComponentComposition'))) {
 
-	newGraph.purgeSubject(triple.subjectUri(m)!)
+	newGraph.purgeSubject(node.createUriNode(triple.subjectUri(m)!))
 
     }
 
@@ -567,47 +567,47 @@ export default function convert2to3(graph:Graph) {
 
 
 
-        let aTriples = graph.match(a.uri, null, null)
+        let aTriples = graph.match(a.subject, null, null)
 
         for(let triple of aTriples) {
             
-            let p = triple.predicate.nominalValue
+            let p = triple.predicate.value
 
             if(p === Predicates.a) {
                 continue
             }
 
             if(p === Predicates.Dcterms.title) {
-                newGraph.insert(b.uri, Predicates.SBOL3.name, triple.object)
+                newGraph.insertTriple(b.subject, Predicates.SBOL3.name, triple.object)
                 continue
             }
 
             if(p === Predicates.Dcterms.description) {
-                newGraph.insert(b.uri, Predicates.SBOL3.description, triple.object)
+                newGraph.insertTriple(b.subject, Predicates.SBOL3.description, triple.object)
                 continue
             }
 
             if(p.indexOf(Prefixes.sbol2) !== 0) {
-                newGraph.insert(b.uri, triple.predicate.nominalValue, triple.object)
+                newGraph.insertTriple(b.subject, triple.predicate, triple.object)
             }
 
             if(p == Predicates.SBOL2.displayId) {
-                newGraph.insert(b.uri, Predicates.SBOL3.displayId, triple.object)
+                newGraph.insertTriple(b.subject, Predicates.SBOL3.displayId, triple.object)
             } else if(p == Predicates.SBOL2.version) {
-                newGraph.insert(b.uri, 'http://sboltools.org/backport#sbol2version', triple.object)
+                newGraph.insertTriple(b.subject, 'http://sboltools.org/backport#sbol2version', triple.object)
 	    } else if (p === 'http://sboltools.org/backport#sbol3namespace') {
-		    b.namespace = triple.object.nominalValue
+		    b.namespace = triple.object.value
 	    }
         }
     }
 
     function copyNonSBOLProperties(a:S2Identified, b:S3Identified) {
 
-        let aTriples = graph.match(a.uri, null, null)
+        let aTriples = graph.match(a.subject, null, null)
 
         for(let triple of aTriples) {
             
-            let p = triple.predicate.nominalValue
+            let p = triple.predicate.value
 
             if(p === Predicates.a) {
                 continue
@@ -619,7 +619,7 @@ export default function convert2to3(graph:Graph) {
             }
 
             if(p.indexOf(Prefixes.sbol2) !== 0) {
-                newGraph.insert(b.uri, triple.predicate.nominalValue, triple.object)
+                newGraph.insertTriple(b.subject, triple.predicate, triple.object)
             }
         }
     }
@@ -637,15 +637,15 @@ export default function convert2to3(graph:Graph) {
 
                 const range:S2Range = location as S2Range
 
-                let loc = new S3OrientedLocation(sbol3View, range.uri)
+                let loc = new S3OrientedLocation(sbol3View, range.subject)
                 loc.setUriProperty(Predicates.a, Types.SBOL3.Range)
                 copyIdentifiedProperties(location, loc)
                 copyNonSBOLProperties(location, loc)
 
-                b.insertUriProperty(Predicates.SBOL3.hasLocation, loc.uri)
+                b.insertProperty(Predicates.SBOL3.hasLocation, loc.subject)
 
                 if(location.sequence) {
-                    loc.setUriProperty(Predicates.SBOL3.hasSequence, location.sequence.uri)
+                    loc.setProperty(Predicates.SBOL3.hasSequence, location.sequence.subject)
                 }
 
                 const start:number|undefined = range.start
@@ -665,14 +665,14 @@ export default function convert2to3(graph:Graph) {
 
                 const cut:S2Cut = location as S2Cut
 
-                let loc = new S3OrientedLocation(sbol3View, cut.uri)
+                let loc = new S3OrientedLocation(sbol3View, cut.subject)
                 loc.setUriProperty(Predicates.a, Types.SBOL3.Cut)
                 copyIdentifiedProperties(location, loc)
 
-                b.insertUriProperty(Predicates.SBOL3.hasLocation, loc.uri)
+                b.insertProperty(Predicates.SBOL3.hasLocation, loc.subject)
 
                 if(location.sequence) {
-                    loc.setUriProperty(Predicates.SBOL3.hasSequence, location.sequence.uri)
+                    loc.setProperty(Predicates.SBOL3.hasSequence, location.sequence.subject)
                 }
 
                 const at:number|undefined = cut.at
@@ -685,21 +685,21 @@ export default function convert2to3(graph:Graph) {
 
             } else if(location instanceof S2GenericLocation) {
 
-                let loc = new S3OrientedLocation(sbol3View, location.uri)
+                let loc = new S3OrientedLocation(sbol3View, location.subject)
                 loc.setUriProperty(Predicates.a, Types.SBOL3.OrientedLocation)
                 copyIdentifiedProperties(location, loc)
 
-                b.insertUriProperty(Predicates.SBOL3.hasLocation, loc.uri)
+                b.insertProperty(Predicates.SBOL3.hasLocation, loc.subject)
 
                 if(location.sequence) {
-                    loc.setUriProperty(Predicates.SBOL3.hasSequence, location.sequence.uri)
+                    loc.setProperty(Predicates.SBOL3.hasSequence, location.sequence.subject)
                 }
 
                 copyOrientation(location, loc)
 
             } else {
 
-                console.warn('not implemented location type: ' + location.uri)
+                console.warn('not implemented location type: ' + location.subject)
 
             }
 

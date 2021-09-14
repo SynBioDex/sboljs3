@@ -7,16 +7,16 @@ import S2SequenceAnnotation from './S2SequenceAnnotation'
 import S2SequenceConstraint from './S2SequenceConstraint'
 import S2Range from './S2Range'
 
-import { triple, node } from 'rdfoo'
+import { node, Node } from 'rdfoo'
 import { Types, Predicates, Specifiers, uriToName } from 'bioterms'
 
 import S2IdentifiedFactory from './S2IdentifiedFactory'
 
 export default class S2ComponentDefinition extends S2Identified {
 
-    constructor(view:SBOL2GraphView, uri:string) {
+    constructor(view:SBOL2GraphView, subject:Node) {
 
-        super(view, uri)
+        super(view, subject)
     }
 
     get facadeType():string {
@@ -28,7 +28,7 @@ export default class S2ComponentDefinition extends S2Identified {
         const typeUri:string|undefined = this.getUriProperty(Predicates.SBOL2.type)
 
         if(!typeUri)
-            throw new Error(this.uri + ' has no type?')
+            throw new Error(this.subject.value + ' has no type?')
 
         return typeUri
     }
@@ -65,8 +65,8 @@ export default class S2ComponentDefinition extends S2Identified {
 
     get components():Array<S2ComponentInstance> {
 
-        return this.getUriProperties(Predicates.SBOL2.component)
-                   .map((uri:string) => new S2ComponentInstance(this.view, uri))
+        return this.getProperties(Predicates.SBOL2.component)
+                   .map((subject:Node) => new S2ComponentInstance(this.view, subject))
 
     }
 
@@ -75,35 +75,35 @@ export default class S2ComponentDefinition extends S2Identified {
     }
 
     hasRole(role:string):boolean {
-        return this.graph.hasMatch(this.uri, Predicates.SBOL2.role, role)
+        return this.graph.hasMatch(this.subject, Predicates.SBOL2.role, node.createUriNode(role))
     }
 
     addRole(role:string):void {
-        this.graph.insert(this.uri, Predicates.SBOL2.role, node.createUriNode(role))
+        this.graph.insertTriple(this.subject, Predicates.SBOL2.role, node.createUriNode(role))
     }
 
     removeRole(role:string):void {
-        this.graph.removeMatches(this.uri, Predicates.SBOL2.role, role)
+        this.graph.removeMatches(this.subject, Predicates.SBOL2.role, node.createUriNode(role))
     }
 
     get sequences():Array<S2Sequence> {
 
-        return this.getUriProperties(Predicates.SBOL2.sequence)
-                   .map((uri:string) => new S2Sequence(this.view, uri))
+        return this.getProperties(Predicates.SBOL2.sequence)
+                   .map((subject:Node) => new S2Sequence(this.view, subject))
 
     }
 
     get sequenceAnnotations():Array<S2SequenceAnnotation> {
 
-        return this.getUriProperties(Predicates.SBOL2.sequenceAnnotation)
-                   .map((uri:string) => new S2SequenceAnnotation(this.view, uri))
+        return this.getProperties(Predicates.SBOL2.sequenceAnnotation)
+                   .map((subject:Node) => new S2SequenceAnnotation(this.view, subject))
 
     }
 
     get sequenceConstraints():Array<S2SequenceConstraint> {
 
-        return this.getUriProperties(Predicates.SBOL2.sequenceConstraint)
-                   .map((uri:string) => new S2SequenceConstraint(this.view, uri))
+        return this.getProperties(Predicates.SBOL2.sequenceConstraint)
+                   .map((subject:Node) => new S2SequenceConstraint(this.view, subject))
 
     }
 
@@ -118,12 +118,12 @@ export default class S2ComponentDefinition extends S2Identified {
         const type:string|undefined = identified.objectType
 
         if(type === Types.SBOL2.ComponentDefinition) {
-            return new S2ComponentDefinition(identified.view, identified.uri)
+            return new S2ComponentDefinition(identified.view, identified.subject)
         }
 
         if(type === Types.SBOL2.Component) {
 
-            const def:string|undefined = identified.getUriProperty(Predicates.SBOL2.definition)
+            const def = identified.getProperty(Predicates.SBOL2.definition)
 
             if(def === undefined)
                 throw new Error('component instance with no def?')
@@ -131,7 +131,7 @@ export default class S2ComponentDefinition extends S2Identified {
             return new S2ComponentDefinition(identified.view, def)
         }
 
-        throw new Error('cannot get component definition from ' + identified.uri)
+        throw new Error('cannot get component definition from ' + identified.subject)
     }
 
     get containingObject():S2Identified|undefined {
@@ -149,7 +149,7 @@ export default class S2ComponentDefinition extends S2Identified {
 
     addComponent(component:S2ComponentInstance):void {
 
-        this.insertProperty(Predicates.SBOL2.component, node.createUriNode(component.uri))
+        this.insertProperty(Predicates.SBOL2.component, component.subject)
 
     }
 
@@ -157,7 +157,7 @@ export default class S2ComponentDefinition extends S2Identified {
 
         let identified = S2IdentifiedFactory.createChild(this.view, Types.SBOL2.Component, this, Predicates.SBOL2.component, id || componentDefinition.displayId || 'subcomponent', name, version || this.version)
 
-        let component = new S2ComponentInstance(this.view, identified.uri)
+        let component = new S2ComponentInstance(this.view, identified.subject)
 
         component.definition = componentDefinition
 
@@ -167,7 +167,7 @@ export default class S2ComponentDefinition extends S2Identified {
     addSequenceAnnotationForComponent(componentInstance:S2ComponentInstance):S2SequenceAnnotation {
 
         let identified = S2IdentifiedFactory.createChild(this.view, Types.SBOL2.SequenceAnnotation, this, Predicates.SBOL2.sequenceAnnotation, componentInstance.displayId + '_sequenceAnnotation', undefined, this.version)
-        let sequenceAnnotation = new S2SequenceAnnotation(this.view, identified.uri)
+        let sequenceAnnotation = new S2SequenceAnnotation(this.view, identified.subject)
 
         sequenceAnnotation.component = componentInstance
 
@@ -187,7 +187,7 @@ export default class S2ComponentDefinition extends S2Identified {
 
     addSequence(sequence:S2Sequence):void {
 
-        this.insertProperty(Predicates.SBOL2.sequence, node.createUriNode(sequence.uri))
+        this.insertProperty(Predicates.SBOL2.sequence, sequence.subject)
     }
 
 
@@ -196,10 +196,10 @@ export default class S2ComponentDefinition extends S2Identified {
         this.view.graph.startIgnoringWatchers()
 
         let identified = S2IdentifiedFactory.createChild(this.view, Types.SBOL2.SequenceAnnotation, this, Predicates.SBOL2.sequenceAnnotation, 'anno_' + name, this.version)
-        let sequenceAnnotation = new S2SequenceAnnotation(this.view, identified.uri)
+        let sequenceAnnotation = new S2SequenceAnnotation(this.view, identified.subject)
 
         let rangeIdentified = S2IdentifiedFactory.createChild(this.view, Types.SBOL2.Range, sequenceAnnotation, Predicates.SBOL2.location, 'range', this.version)
-        let range = new S2Range(this.view, rangeIdentified.uri)
+        let range = new S2Range(this.view, rangeIdentified.subject)
 
         range.start = start
         range.end = end
@@ -211,9 +211,8 @@ export default class S2ComponentDefinition extends S2Identified {
 
     destroy() {
 
-        let instantiations = this.graph.match(null, Predicates.SBOL2.definition, this.uri)
-                .map(triple.subjectUri)
-                .map(uri => new S2ComponentInstance(this.view, uri as string))
+        let instantiations = this.graph.match(null, Predicates.SBOL2.definition, this.subject)
+                .map(t => new S2ComponentInstance(this.view, t.subject))
 
         super.destroy()
 

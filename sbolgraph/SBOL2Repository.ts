@@ -20,7 +20,7 @@ export class SearchQuery {
 
     }
 
-    addRole(uri:string) {
+    addRole(subject:Node) {
 
         this.add('role', '<' + uri + '>')
 
@@ -34,7 +34,7 @@ export class SearchResult {
     description:string
     displayId:string
     name:string
-    uri:string
+    subject:Node
     version:string
 
 }

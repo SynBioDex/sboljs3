@@ -3,14 +3,14 @@ import SBOL3GraphView from '../SBOL3GraphView';
 
 import S3Identified from './S3Identified'
 
-import { triple, node } from 'rdfoo'
+import { triple, node, Node } from 'rdfoo'
 import { Types, Predicates, Specifiers } from 'bioterms'
 
 export default class S3Collection extends S3Identified {
 
-    constructor(view:SBOL3GraphView, uri:string) {
+    constructor(view:SBOL3GraphView, subject:Node) {
 
-        super(view, uri)
+        super(view, subject)
     }
 
     get facadeType():string {
@@ -20,7 +20,7 @@ export default class S3Collection extends S3Identified {
     get members():Array<S3Identified> {
 
         return this.getUriProperties(Predicates.SBOL3.member)
-                   .map((uri:string) => this.view.uriToFacade(uri))
+                   .map((subject:Node) => this.view.subjectToFacade(subject))
                    .filter((r:S3Identified) => r !== undefined) as Array<S3Identified>
 
     }
@@ -28,7 +28,7 @@ export default class S3Collection extends S3Identified {
     addMember(member:S3Identified):void {
 
         this.insertProperties({
-            [Predicates.SBOL3.member]: node.createUriNode(member.uri)
+            [Predicates.SBOL3.member]: node.createUriNode(member.subject)
         })
 
     }

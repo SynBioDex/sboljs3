@@ -1,36 +1,37 @@
 import { Facade, triple, GraphView, Graph } from "rdfoo"
 import isOwnershipRelation from "./isOwnershipRelation"
+import { Node } from 'rdfoo'
 
 export default abstract class SBOLFacade extends Facade {
 
     view:GraphView
 
-    constructor(graph:Graph, view:GraphView, uri:string) {
-        super(graph, uri)
+    constructor(graph:Graph, view:GraphView, subject:Node) {
+        super(graph, subject)
         this.view = view
     }
 
     hasProperty(predicate:string) {
-        return this.graph.hasMatch(this.uri, predicate, null)
+        return this.graph.hasMatch(this.subject, predicate, null)
     }
 
     get owningObject():SBOLFacade|undefined {
 
-        let ownageTriples = this.graph.match(null, null, this.uri)
+        let ownageTriples = this.graph.match(null, null, this.subject)
                     .filter(t => isOwnershipRelation(this.graph, t))
 
         if(ownageTriples.length === 1) {
-            return this.view.uriToFacade(triple.subjectUri(ownageTriples[0]) as string) as SBOLFacade|undefined
+            return this.view.subjectToFacade(ownageTriples[0].subject)
         }
     }
 
     get ownedObjects():Array<SBOLFacade> {
 
-        let ownageTriples = this.graph.match(this.uri, null, null)
+        let ownageTriples = this.graph.match(this.subject, null, null)
                     .filter(t => isOwnershipRelation(this.graph, t))
 
-        return ownageTriples.map(triple.objectUri)
-            .map(uri => this.view.uriToFacade(uri as string))
+        return ownageTriples.map(t => t.object)
+            .map(uri => this.view.subjectToFacade(uri as string))
             .filter(o => o !== undefined) as SBOLFacade[]
     }
 
@@ -46,7 +47,7 @@ export default abstract class SBOLFacade extends Facade {
                 return false
             }
         } else {
-            if(theirContainer && theirContainer.uri === ourContainer.uri) {
+            if(theirContainer && theirContainer.subject.value === ourContainer.subject.value) {
                 return true
             } else {
                 return false
@@ -67,7 +68,7 @@ export default abstract class SBOLFacade extends Facade {
         // remove us from the list
         //
         for(let i = 0; i < containedObjects.length; ++ i) {
-            if(containedObjects[i].uri === this.uri) {
+            if(containedObjects[i].subject.value === this.subject.value) {
                 containedObjects.splice(i, 1)
                 break
             }
@@ -83,7 +84,7 @@ export default abstract class SBOLFacade extends Facade {
         add(this)
 
         for(let obj of toPurge) {
-            this.graph.purgeSubject(obj.uri)
+            this.graph.purgeSubject(obj.subject)
         }
 
         function add(o) {

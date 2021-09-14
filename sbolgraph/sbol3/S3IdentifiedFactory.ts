@@ -15,7 +15,7 @@ export default class S3IdentifiedFactory {
 
         displayId = displayId ? nameToID(displayId) : 'anon'
 
-        const uri:string = view.graph.generateURI(uriPrefix + displayId + '$n?$')
+        const subject:Node = view.graph.generateURI(uriPrefix + displayId + '$n?$')
 
         view.graph.insertProperties(uri, {
             [Predicates.a]: node.createUriNode(type),
@@ -28,7 +28,7 @@ export default class S3IdentifiedFactory {
             })
         }
 
-        return new S3Identified(view, uri)
+        return new S3Identified(view, subject)
 
     }
     
@@ -41,8 +41,8 @@ export default class S3IdentifiedFactory {
 
         displayId = displayId ? nameToID(displayId) : 'anon'
 
-        const uri:string = view.graph.generateURI(
-            URIUtils.getPrefix(parent.uri) + displayId + '$n?$')
+        const subject:Node = view.graph.generateURI(
+            URIUtils.getPrefix(parent.subject) + displayId + '$n?$')
 
         view.graph.insertProperties(uri, {
             [Predicates.a]: node.createUriNode(type),
@@ -55,11 +55,11 @@ export default class S3IdentifiedFactory {
             })
         }
 
-        view.graph.insertProperties(parent.uri, {
-            [ownershipPredicate]: node.createUriNode(uri)
+        view.graph.insertProperties(parent.subject, {
+            [ownershipPredicate]: subject
         })
 
-        return new S3Identified(view, uri)
+        return new S3Identified(view, subject)
     }
 
 }
@@ -71,7 +71,7 @@ function nameToID(name:string):string {
 
 }
 
-function extractPersistentIdentity(uri:string, version:string|undefined) {
+function extractPersistentIdentity(subject:Node, version:string|undefined) {
     if(version !== undefined) {
         return uri.substr(0, uri.length - version.length - 1)
     } else {
@@ -79,7 +79,7 @@ function extractPersistentIdentity(uri:string, version:string|undefined) {
     }
 }
 
-function extractID(uri:string, version:string|undefined) {
+function extractID(subject:Node, version:string|undefined) {
     let tokens = uri.split('/')
     if(version !== undefined) {
         return tokens[tokens.length - 2]

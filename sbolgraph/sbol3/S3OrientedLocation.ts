@@ -1,16 +1,16 @@
 
 import S3Identified from './S3Identified'
 
-import { triple } from 'rdfoo'
+import { Node } from 'rdfoo'
 import { Types, Predicates, Specifiers } from 'bioterms'
 import SBOL3GraphView from "../SBOL3GraphView";
 import S3Location from "./S3Location";
 
 export default class S3OrientedLocation extends S3Location {
 
-    constructor(view:SBOL3GraphView, uri:string) {
+    constructor(view:SBOL3GraphView, subject:Node) {
 
-        super(view, uri)
+        super(view, subject)
 
     }
 

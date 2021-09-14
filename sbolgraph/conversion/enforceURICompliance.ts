@@ -5,6 +5,7 @@ import S2Identified from '../sbol2/S2Identified'
 import URIUtils from '../URIUtils';
 import SBOL3GraphView from '../SBOL3GraphView';
 import SBOL2GraphView from '../SBOL2GraphView';
+import { node } from 'rdfoo';
 
 export default function enforceURICompliance(g:SBOL2GraphView, uriPrefix:string) {
 
@@ -50,7 +51,7 @@ export default function enforceURICompliance(g:SBOL2GraphView, uriPrefix:string)
 
         let contained = object.containedObjects
 
-        g.graph.replaceURI(object.uri, newURI)
+        g.graph.replaceSubject(object.subject, node.createUriNode(newURI))
 
         for(let child of contained) {
             replaceURIs(child, persistentIdentity + '/')
@@ -86,7 +87,7 @@ export default function enforceURICompliance(g:SBOL2GraphView, uriPrefix:string)
             }
         }
 
-        name = sanitize(URIUtils.getSuffix(object.uri))
+        name = sanitize(URIUtils.getSuffix(object.subject.value))
 
         if(name && name !== '') {
             return name

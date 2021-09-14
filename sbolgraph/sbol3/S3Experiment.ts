@@ -1,7 +1,7 @@
 
 import S3Identified from './S3Identified'
 import SBOL3GraphView from '../SBOL3GraphView';
-import { node } from 'rdfoo'
+import { node, Node } from 'rdfoo'
 import S3ExperimentalData from './S3ExperimentalData';
 import { Activity, ProvView }  from 'rdfoo-prov';
 import { Predicates, Types } from 'bioterms';
@@ -10,9 +10,9 @@ import S3Implementation from './S3Implementation';
 
 export default class S3Experiment extends S3Identified {
 
-    constructor(view:SBOL3GraphView, uri:string) {
+    constructor(view:SBOL3GraphView, subject:Node) {
 
-        super(view, uri)
+        super(view, subject)
     }
 
     get facadeType():string {
@@ -25,20 +25,20 @@ export default class S3Experiment extends S3Identified {
         let expDataURIs = this.getUriProperties(Predicates.SBOL3.experimentalData)
 
         for (let uri of expDataURIs){
-            result.push(new S3ExperimentalData(this.view, uri))
+            result.push(new S3ExperimentalData(this.view, subject))
         }
 
         return result
 
         // return this.getUriProperties('https://github.com/SynBioDex/SEPs/blob/sep21/sep_021.md#experimentalData')
-        //            .map((uri:string) => this.view.uriToFacade(uri))
+        //            .map((subject:Node) => this.view.subjectToFacade(subject))
         //            .filter((r:SEP21ExperimentalData) => r !== undefined) as Array<SEP21ExperimentalData>
 
     }
 
     addExperimentalData(member:S3ExperimentalData):void {
 
-        this.insertProperty(Predicates.SBOL3.experimentalData, node.createUriNode(member.uri))
+        this.insertProperty(Predicates.SBOL3.experimentalData, member.subject)
 
     }
 
@@ -58,7 +58,7 @@ export default class S3Experiment extends S3Identified {
         if(activity === undefined) {
             this.deleteProperty(Predicates.Prov.wasGeneratedBy)
         } else {
-            this.setUriProperty(Predicates.Prov.wasGeneratedBy, activity.uri)
+            this.setUriProperty(Predicates.Prov.wasGeneratedBy, activity.subject)
         }
     }
 
@@ -67,11 +67,11 @@ export default class S3Experiment extends S3Identified {
 
         let construct_uri = this.getUriProperty(Predicates.Prov.wasDerivedFrom)
 
-        if(!construct_uri){
+        if(!construct_subject){
             return undefined
         }
 
-        return new S3Implementation(this.view, construct_uri)
+        return new S3Implementation(this.view, construct_subject)
 
     }
 
@@ -80,14 +80,14 @@ export default class S3Experiment extends S3Identified {
     //     if(construct === undefined) {
     //         this.deleteProperty(Predicates.Prov.wasDerivedFrom)
     //     } else {
-    //         this.setUriProperty(Predicates.Prov.wasDerivedFrom, construct.uri)
+    //         this.setUriProperty(Predicates.Prov.wasDerivedFrom, construct.subject)
     //     }
     // }
 
 
     addConstruct(construct:S3Implementation):void {
 
-        this.insertProperty(Predicates.Prov.wasDerivedFrom, node.createUriNode(construct.uri))
+        this.insertProperty(Predicates.Prov.wasDerivedFrom, node.createUriNode(construct.subject))
 
     }
 

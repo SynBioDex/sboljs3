@@ -2,12 +2,13 @@
 import { Types, Predicates, Specifiers } from 'bioterms'
 import SBOL2GraphView from "../SBOL2GraphView";
 import S2Location from "./S2Location";
+import { Node } from 'rdfoo'
 
 export default abstract class S2OrientedLocation extends S2Location {
 
-    constructor(view:SBOL2GraphView, uri:string) {
+    constructor(view:SBOL2GraphView, subject:Node) {
 
-        super(view, uri)
+        super(view, subject)
 
     }
 

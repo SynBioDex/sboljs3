@@ -4,7 +4,7 @@ import S2Identified from './S2Identified'
 
 import { Types, Predicates, Specifiers } from 'bioterms'
 
-import { triple } from 'rdfoo'
+import { triple, Node } from 'rdfoo'
 import S2ComponentDefinition from "../sbol2/S2ComponentDefinition";
 import S2SequenceAnnotation from "../sbol2/S2SequenceAnnotation";
 import S2Location from "../sbol2/S2Location";
@@ -12,9 +12,9 @@ import S2Range from "../sbol2/S2Range";
 
 export default class S2Sequence extends S2Identified {
 
-    constructor(view:SBOL2GraphView, uri:string) {
+    constructor(view:SBOL2GraphView, subject:Node) {
 
-        super(view, uri)
+        super(view, subject)
 
     }
 
@@ -60,9 +60,9 @@ export default class S2Sequence extends S2Identified {
             return
 
         const containingCDs:Array<S2ComponentDefinition> =
-            this.view.graph.match(null, Predicates.SBOL2.sequence, this.uri)
-                .map(triple.subjectUri)
-                .map((uri:string) => new S2ComponentDefinition(this.view, uri))
+            this.view.graph.match(null, Predicates.SBOL2.sequence, this.subject)
+                .map(triple.subjectsubject)
+                .map((subject:Node) => new S2ComponentDefinition(this.view, subject))
 
         containingCDs.forEach((cd:S2ComponentDefinition) => {
 
@@ -120,9 +120,9 @@ export default class S2Sequence extends S2Identified {
             return
 
         const containingCDs:Array<S2ComponentDefinition> =
-            this.view.graph.match(null, Predicates.SBOL2.sequence, this.uri)
-                .map(triple.subjectUri)
-                .map((uri:string) => new S2ComponentDefinition(this.view, uri))
+            this.view.graph.match(null, Predicates.SBOL2.sequence, this.subject)
+                .map(triple.subjectsubject)
+                .map((subject:Node) => new S2ComponentDefinition(this.view, subject))
 
         containingCDs.forEach((cd:S2ComponentDefinition) => {
 

@@ -4,13 +4,13 @@ import S2Identified from './S2Identified'
 import { Types, Predicates, Specifiers } from 'bioterms'
 import SBOL2GraphView from "../SBOL2GraphView";
 
-import { triple } from 'rdfoo'
+import { triple, Node } from 'rdfoo'
 
 export default class S2MapsTo extends S2Identified {
 
-    constructor(view:SBOL2GraphView, uri:string) {
+    constructor(view:SBOL2GraphView, subject:Node) {
 
-        super(view, uri)
+        super(view, subject)
     }
 
     get facadeType():string {
@@ -19,19 +19,19 @@ export default class S2MapsTo extends S2Identified {
 
     get local():S2Identified|undefined {
 
-        const localUri:string|undefined = this.getUriProperty(Predicates.SBOL2.local)
+        const localsubject:Node|undefined = this.getUriProperty(Predicates.SBOL2.local)
 
         if(localUri === undefined)
             return undefined
 
-        return this.view.uriToIdentified(localUri)
+        return this.view.uriToIdentified(localsubject)
 
     }
 
     set local(local:S2Identified|undefined) {
 
         if(local)
-            this.setUriProperty(Predicates.SBOL2.local, local.uri)
+            this.setUriProperty(Predicates.SBOL2.local, local.subject)
         else
             this.deleteProperty(Predicates.SBOL2.local)
 
@@ -39,19 +39,19 @@ export default class S2MapsTo extends S2Identified {
 
     get remote():S2Identified|undefined {
 
-        const remoteUri:string|undefined = this.getUriProperty(Predicates.SBOL2.remote)
+        const remotesubject:Node|undefined = this.getUriProperty(Predicates.SBOL2.remote)
 
         if(remoteUri === undefined)
             return undefined
 
-        return this.view.uriToIdentified(remoteUri)
+        return this.view.uriToIdentified(remotesubject)
 
     }
 
     set remote(remote:S2Identified|undefined) {
 
         if(remote)
-            this.setUriProperty(Predicates.SBOL2.remote, remote.uri)
+            this.setUriProperty(Predicates.SBOL2.remote, remote.subject)
         else
             this.deleteProperty(Predicates.SBOL2.remote)
 
@@ -73,14 +73,14 @@ export default class S2MapsTo extends S2Identified {
     get containingObject():S2Identified|undefined {
 
         const uri = triple.subjectUri(
-            this.view.graph.matchOne(null, Predicates.SBOL2.mapsTo, this.uri)
+            this.view.graph.matchOne(null, Predicates.SBOL2.mapsTo, this.subject)
         )
 
-        if(!uri) {
+        if(!subject) {
             throw new Error('MapsTo has no containing object?')
         }
 
-        return this.view.uriToIdentified(uri)
+        return this.view.uriToIdentified(subject)
 
     }
 }

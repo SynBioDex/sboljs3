@@ -11,12 +11,13 @@ import { Predicates, Types, uriToName } from 'bioterms'
 import S2IdentifiedFactory from '../sbol2/S2IdentifiedFactory';
 import { S2ComponentDefinition } from '..';
 import S2Model from './S2Model';
+import { Node } from 'rdfoo'
 
 export default class S2ModuleDefinition extends S2Identified {
 
-    constructor(view:SBOL2GraphView, uri:string) {
+    constructor(view:SBOL2GraphView, subject:Node) {
 
-        super(view, uri)
+        super(view, subject)
 
     }
 
@@ -29,7 +30,7 @@ export default class S2ModuleDefinition extends S2Identified {
     }
 
     hasRole(role:string):boolean {
-        return this.view.graph.hasMatch(this.uri, Predicates.SBOL2.role, role)
+        return this.view.graph.hasMatch(this.subject, Predicates.SBOL2.role, node.createUriNode(role))
     }
 
     addRole(role:string):void {
@@ -37,7 +38,7 @@ export default class S2ModuleDefinition extends S2Identified {
     }
 
     removeRole(role:string):void {
-        this.view.graph.removeMatches(this.uri, Predicates.SBOL2.role, role)
+        this.view.graph.removeMatches(this.subject, Predicates.SBOL2.role, node.createUriNode(role))
     }
 
     get containedObjects():Array<S2Identified> {
@@ -50,29 +51,29 @@ export default class S2ModuleDefinition extends S2Identified {
 
     get modules():Array<S2ModuleInstance> {
 
-        return this.getUriProperties(Predicates.SBOL2.module)
-                   .map((uri:string) => new S2ModuleInstance(this.view, uri))
+        return this.getProperties(Predicates.SBOL2.module)
+                   .map((subject:Node) => new S2ModuleInstance(this.view, subject))
 
     }
 
     get functionalComponents():Array<S2FunctionalComponent> {
 
-        return this.getUriProperties(Predicates.SBOL2.functionalComponent)
-                   .map((uri:string) => new S2FunctionalComponent(this.view, uri))
+        return this.getProperties(Predicates.SBOL2.functionalComponent)
+                   .map((subject:Node) => new S2FunctionalComponent(this.view, subject))
 
     }
 
     get interactions():Array<S2Interaction> {
 
-        return this.getUriProperties(Predicates.SBOL2.interaction)
-                    .map((uri:string) => new S2Interaction(this.view, uri))
+        return this.getProperties(Predicates.SBOL2.interaction)
+                    .map((subject:Node) => new S2Interaction(this.view, subject))
 
     }
 
     get models():Array<S2Model> {
 
-        return this.getUriProperties(Predicates.SBOL2.model)
-                    .map((uri:string) => new S2Model(this.view, uri))
+        return this.getProperties(Predicates.SBOL2.model)
+                    .map((subject:Node) => new S2Model(this.view, subject))
 
     }
 
@@ -82,13 +83,13 @@ export default class S2ModuleDefinition extends S2Identified {
 
     addInteraction(interaction:S2Interaction) {
         this.insertProperties({
-            [Predicates.SBOL2.interaction]: node.createUriNode(interaction.uri)
+            [Predicates.SBOL2.interaction]: interaction.subject
         })
     }
 
     addFunctionalComponent(fc:S2FunctionalComponent) {
         this.insertProperties({
-            [Predicates.SBOL2.functionalComponent]: node.createUriNode(fc.uri)
+            [Predicates.SBOL2.functionalComponent]: fc.subject
         })
     }
 
@@ -97,7 +98,7 @@ export default class S2ModuleDefinition extends S2Identified {
         const identified:S2Identified =
             S2IdentifiedFactory.createChild(this.view, Types.SBOL2.Interaction, this, Predicates.SBOL2.interaction, id, undefined, version)
 
-        const interaction:S2Interaction = new S2Interaction(this.view, identified.uri)
+        const interaction:S2Interaction = new S2Interaction(this.view, identified.subject)
 
         return interaction
     }
@@ -109,7 +110,7 @@ export default class S2ModuleDefinition extends S2Identified {
         const identified:S2Identified =
             S2IdentifiedFactory.createChild(this.view, Types.SBOL2.FunctionalComponent, this, Predicates.SBOL2.functionalComponent, actualId, name, version || this.version)
 
-        const fc:S2FunctionalComponent = new S2FunctionalComponent(this.view, identified.uri)
+        const fc:S2FunctionalComponent = new S2FunctionalComponent(this.view, identified.subject)
 
         fc.definition = definition
 
@@ -123,7 +124,7 @@ export default class S2ModuleDefinition extends S2Identified {
         const identified:S2Identified =
             S2IdentifiedFactory.createChild(this.view, Types.SBOL2.Module, this, Predicates.SBOL2.module, actualId, name, version || this.version)
 
-        const m:S2ModuleInstance = new S2ModuleInstance(this.view, identified.uri)
+        const m:S2ModuleInstance = new S2ModuleInstance(this.view, identified.subject)
 
         m.definition = definition
 
@@ -145,9 +146,9 @@ export default class S2ModuleDefinition extends S2Identified {
 
     destroy() {
 
-        let instantiations = this.graph.match(null, Predicates.SBOL2.definition, this.uri)
-                .map(triple.subjectUri)
-                .map(uri => new S2ModuleInstance(this.view, uri as string))
+        let instantiations = this.graph.match(null, Predicates.SBOL2.definition, this.subject)
+                .map(t => t.subject)
+                .map(uri => new S2ModuleInstance(this.view, uri))
 
         super.destroy()
 

@@ -4,13 +4,13 @@ import S2Identified from './S2Identified'
 import { Types, Predicates, Specifiers } from 'bioterms'
 import SBOL2GraphView from "../SBOL2GraphView";
 
-import { triple } from 'rdfoo'
+import { Node, triple } from 'rdfoo'
 
 export default class S2Attachment extends S2Identified {
 
-    constructor(view:SBOL2GraphView, uri:string) {
+    constructor(view:SBOL2GraphView, subject:Node) {
 
-        super(view, uri)
+        super(view, subject)
     }
 
     get facadeType():string {

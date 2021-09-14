@@ -4,12 +4,13 @@ import SBOL2GraphView from "../SBOL2GraphView";
 import { Types, Predicates } from "bioterms";
 import { S2ComponentDefinition, S2ModuleDefinition } from "..";
 import { Activity, ProvView } from 'rdfoo-prov'
+import { Node } from 'rdfoo'
 
 export default class S2Implementation extends S2Identified {
 
-    constructor(view:SBOL2GraphView, uri:string) {
+    constructor(view:SBOL2GraphView, subject:Node) {
 
-        super(view, uri)
+        super(view, subject)
 
     }
 
@@ -20,13 +21,13 @@ export default class S2Implementation extends S2Identified {
 
     get built():S2ComponentDefinition|S2ModuleDefinition|undefined {
 
-        let built = this.getUriProperty(Predicates.SBOL2.built)
+        let built = this.getProperty(Predicates.SBOL2.built)
 
         if(!built) {
             return undefined
         }
 
-        let builtObj = this.view.uriToFacade(built)
+        let builtObj = this.view.subjectToFacade(built)
 
         if(builtObj instanceof S2ComponentDefinition)
             return builtObj as S2ComponentDefinition
@@ -42,7 +43,7 @@ export default class S2Implementation extends S2Identified {
         if(built === undefined) {
             this.deleteProperty(Predicates.SBOL2.built)
         } else {
-            this.setUriProperty(Predicates.SBOL2.built, built.uri)
+            this.setProperty(Predicates.SBOL2.built, built.subject)
         }
     }
 
@@ -62,23 +63,23 @@ export default class S2Implementation extends S2Identified {
         if(activity === undefined) {
             this.deleteProperty(Predicates.Prov.wasGeneratedBy)
         } else {
-            this.setUriProperty(Predicates.Prov.wasGeneratedBy, activity.uri)
+            this.setProperty(Predicates.Prov.wasGeneratedBy, activity.subject)
         }
     }
 
     get design():S2Identified|undefined{
 
-        let design_uri = this.getUriProperty(Predicates.Prov.wasDerivedFrom)
+        let design_subject = this.getProperty(Predicates.Prov.wasDerivedFrom)
 
-        if(!design_uri){
+        if(!design_subject){
             return undefined
         }
 
-        return new S2Identified(this.view, design_uri)
+        return new S2Identified(this.view, design_subject)
 
-        // console.log(this.view.getTopLevelsWithPrefix(design_uri))
+        // console.log(this.view.getTopLevelsWithPrefix(design_subject))
 
-        // let design = this.view.uriToFacade(design_uri)
+        // let design = this.view.subjectToFacade(design_subject)
 
         // console.log(design)
 
@@ -96,7 +97,7 @@ export default class S2Implementation extends S2Identified {
         if(design === undefined) {
             this.deleteProperty(Predicates.Prov.wasDerivedFrom)
         } else {
-            this.setUriProperty(Predicates.Prov.wasDerivedFrom, design.uri)
+            this.setProperty(Predicates.Prov.wasDerivedFrom, design.subject)
         }
     }
     

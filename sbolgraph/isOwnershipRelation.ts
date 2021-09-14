@@ -1,5 +1,5 @@
 import { Predicates, Types } from "bioterms"
-import { Graph } from "rdfoo"
+import { Graph, node } from "rdfoo"
 
 let ownershipPredicates = [
     Predicates.SBOL1.annotation,
@@ -41,7 +41,7 @@ export default function isOwnershipRelation(g:Graph, triple:any):boolean {
 
         let s = nodeToURI(triple.subject)
 
-        if(g.hasMatch(s, Predicates.a, Types.SBOL2.SequenceAnnotation))
+        if(g.hasMatch(node.createUriNode(s), Predicates.a, node.createUriNode(Types.SBOL2.SequenceAnnotation)))
             return false
 
         return true
@@ -51,7 +51,7 @@ export default function isOwnershipRelation(g:Graph, triple:any):boolean {
 
         let s = nodeToURI(triple.subject)
 
-        if(g.hasMatch(s, Predicates.a, Types.SBOL1.SequenceAnnotation))
+        if(g.hasMatch(node.createUriNode(s), Predicates.a,node.createUriNode( Types.SBOL1.SequenceAnnotation)))
             return false
 
         return true

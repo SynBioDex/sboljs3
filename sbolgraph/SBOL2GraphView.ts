@@ -65,7 +65,7 @@ export default class SBOL2GraphView extends GraphViewHybrid {
         const identified:S2Identified =
             S2IdentifiedFactory.createTopLevel(this, Types.SBOL2.ComponentDefinition, uriPrefix, id, undefined, version)
 
-        return new S2ComponentDefinition(this, identified.uri)
+        return new S2ComponentDefinition(this, identified.subject)
 
     }
 
@@ -77,7 +77,7 @@ export default class SBOL2GraphView extends GraphViewHybrid {
         const identified:S2Identified =
             S2IdentifiedFactory.createTopLevel(this, Types.SBOL2.ModuleDefinition, uriPrefix, id, undefined, version)
 
-        return new S2ModuleDefinition(this, identified.uri)
+        return new S2ModuleDefinition(this, identified.subject)
 
     }
 
@@ -90,7 +90,7 @@ export default class SBOL2GraphView extends GraphViewHybrid {
         const identified:S2Identified =
             S2IdentifiedFactory.createTopLevel(this, Types.SBOL2.Collection, uriPrefix, id, undefined, version)
 
-        return new S2Collection(this, identified.uri)
+        return new S2Collection(this, identified.subject)
 
     }
 
@@ -102,7 +102,7 @@ export default class SBOL2GraphView extends GraphViewHybrid {
         const identified:S2Identified =
             S2IdentifiedFactory.createTopLevel(this, Types.SBOL2.Sequence, uriPrefix, id, undefined, version)
 
-        const seq:S2Sequence = new S2Sequence(this, identified.uri)
+        const seq:S2Sequence = new S2Sequence(this, identified.subject)
 
         seq.encoding = Specifiers.SBOL2.SequenceEncoding.NucleicAcid
         seq.elements = ''
@@ -118,7 +118,7 @@ export default class SBOL2GraphView extends GraphViewHybrid {
         const identified:S2Identified =
             S2IdentifiedFactory.createTopLevel(this, Types.SBOL2.Model, uriPrefix, id, undefined, version)
 
-        const model:S2Model = new S2Model(this, identified.uri)
+        const model:S2Model = new S2Model(this, identified.subject)
 
         return model
     }
@@ -132,7 +132,7 @@ export default class SBOL2GraphView extends GraphViewHybrid {
         const identified:S2Identified =
             S2IdentifiedFactory.createTopLevel(this, Types.SBOL2.Implementation, uriPrefix, id, undefined, version)
 
-        return new S2Implementation(this, identified.uri)
+        return new S2Implementation(this, identified.subject)
 
     }
 
@@ -144,7 +144,7 @@ export default class SBOL2GraphView extends GraphViewHybrid {
         const identified:S2Identified =
             S2IdentifiedFactory.createTopLevel(this, Types.SBOL2.Experiment, uriPrefix, id, undefined, version)
 
-        return new S2Experiment(this, identified.uri)
+        return new S2Experiment(this, identified.subject)
 
     }
 
@@ -156,151 +156,151 @@ export default class SBOL2GraphView extends GraphViewHybrid {
         const identified:S2Identified =
             S2IdentifiedFactory.createTopLevel(this, Types.SBOL2.ExperimentalData, uriPrefix, id, undefined, version)
 
-        return new S2ExperimentalData(this, identified.uri)
+        return new S2ExperimentalData(this, identified.subject)
 
     }
 
     get sequences():Array<S2Sequence> {
 
         return this.instancesOfType(Types.SBOL2.Sequence)
-                    .map((uri) => new S2Sequence(this, uri))
+                    .map((subject) => new S2Sequence(this, subject))
 
     }
 
     get componentDefinitions():Array<S2ComponentDefinition> {
 
         return this.instancesOfType(Types.SBOL2.ComponentDefinition)
-                    .map((uri) => new S2ComponentDefinition(this, uri))
+                    .map((subject) => new S2ComponentDefinition(this, subject))
 
     }
 
     get collections():Array<S2Collection> {
 
         return this.instancesOfType(Types.SBOL2.Collection)
-                    .map((uri) => new S2Collection(this, uri))
+                    .map((subject) => new S2Collection(this, subject))
 
     }
 
     get models():Array<S2Model> {
 
         return this.instancesOfType(Types.SBOL2.Model)
-                    .map((uri) => new S2Model(this, uri))
+                    .map((subject) => new S2Model(this, subject))
 
     }
 
-    componentDefinition(uri):S2ComponentDefinition  {
-        return new S2ComponentDefinition(this, uri)
+    componentDefinition(subject):S2ComponentDefinition  {
+        return new S2ComponentDefinition(this, subject)
     }
 
-    getComponentDefinition(uri):S2ComponentDefinition|null {
+    getComponentDefinition(subject):S2ComponentDefinition|null {
 
-        if(this.getType(uri) !== Types.SBOL2.ComponentDefinition)
+        if(this.getType(subject) !== Types.SBOL2.ComponentDefinition)
             return null
 
-        return new S2ComponentDefinition(this, uri)
+        return new S2ComponentDefinition(this, subject)
     }
 
     get componentInstances():Array<S2ComponentInstance> {
 
         return this.instancesOfType(Types.SBOL2.Component)
-                    .map((uri) => new S2ComponentInstance(this, uri))
+                    .map((subject) => new S2ComponentInstance(this, subject))
 
     }
 
-    moduleDefinition(uri):S2ModuleDefinition {
-        return new S2ModuleDefinition(this, uri)
+    moduleDefinition(subject):S2ModuleDefinition {
+        return new S2ModuleDefinition(this, subject)
     }
 
     get moduleDefinitions():Array<S2ModuleDefinition> {
 
         return this.instancesOfType(Types.SBOL2.ModuleDefinition)
-                    .map((uri) => new S2ModuleDefinition(this, uri))
+                    .map((subject) => new S2ModuleDefinition(this, subject))
 
     }
 
-    getModuleDefinition(uri):S2ModuleDefinition|null {
+    getModuleDefinition(subject):S2ModuleDefinition|null {
 
-        if(this.getType(uri) !== Types.SBOL2.ModuleDefinition)
+        if(this.getType(subject) !== Types.SBOL2.ModuleDefinition)
             return null
 
-        return new S2ModuleDefinition(this, uri)
+        return new S2ModuleDefinition(this, subject)
 
     }
 
-    getActivity(uri):Activity|null {
+    getActivity(subject):Activity|null {
 
-        if(this.getType(uri) !== Types.Prov.Activity)
+        if(this.getType(subject) !== Types.Prov.Activity)
             return null
 
-        return new Activity(new ProvView(this.graph), uri)
+        return new Activity(new ProvView(this.graph), subject)
 
     }
 
-    getExperiment(uri):S2Experiment|null {
+    getExperiment(subject):S2Experiment|null {
 
-        if(this.getType(uri) !== Types.SBOL2.Experiment)
+        if(this.getType(subject) !== Types.SBOL2.Experiment)
             return null
 
-        return new S2Experiment(this, uri)
+        return new S2Experiment(this, subject)
 
     }
 
     get experiments():Array<S2Experiment> {
 
         return this.instancesOfType(Types.SBOL2.Experiment)
-                    .map((uri) => new S2Experiment(this, uri))
+                    .map((subject) => new S2Experiment(this, subject))
 
     }
 
     get attachments():Array<S2Attachment> {
 
         return this.instancesOfType(Types.SBOL2.Attachment)
-                    .map((uri) => new S2Attachment(this, uri))
+                    .map((subject) => new S2Attachment(this, subject))
 
     }
 
-    getExperimentalData(uri):S2ExperimentalData|null {
+    getExperimentalData(subject):S2ExperimentalData|null {
 
-        if(this.getType(uri) !== Types.SBOL2.ExperimentalData)
+        if(this.getType(subject) !== Types.SBOL2.ExperimentalData)
             return null
 
-        return new S2ExperimentalData(this, uri)
+        return new S2ExperimentalData(this, subject)
 
     }
 
     get experimentalData():Array<S2ExperimentalData> {
 
         return this.instancesOfType(Types.SBOL2.ExperimentalData)
-                    .map((uri) => new S2ExperimentalData(this, uri))
+                    .map((subject) => new S2ExperimentalData(this, subject))
 
     }
     
     get implementations():Array<S2Implementation> {
 
         return this.instancesOfType(Types.SBOL2.Implementation)
-                    .map((uri) => new S2Implementation(this, uri))
+                    .map((subject) => new S2Implementation(this, subject))
 
     }
 
     get rootComponentDefinitions():Array<S2ComponentDefinition> {
 
-        return this.instancesOfType(Types.SBOL2.ComponentDefinition).filter((uri) => {
-            return !this.graph.hasMatch(null, Predicates.SBOL2.definition, uri)
-        }).map((uri) => new S2ComponentDefinition(this, uri))
+        return this.instancesOfType(Types.SBOL2.ComponentDefinition).filter((subject) => {
+            return !this.graph.hasMatch(null, Predicates.SBOL2.definition, subject)
+        }).map((subject) => new S2ComponentDefinition(this, subject))
 
     }
 
     get structurallyRootComponentDefinitions():Array<S2ComponentDefinition> {
 
-        return this.instancesOfType(Types.SBOL2.ComponentDefinition).filter((uri) => {
+        return this.instancesOfType(Types.SBOL2.ComponentDefinition).filter((subject) => {
 
             const instantiations:Array<string|undefined>
-                    = this.graph.match(null, Predicates.SBOL2.definition, uri)
-                          .map(triple.subjectUri)
+                    = this.graph.match(null, Predicates.SBOL2.definition, subject)
+                          .map(triple.subjectsubject)
 
             for(var i = 0; i < instantiations.length; ++ i) {
 
-                const instantiationUri:string|undefined = instantiations[i]
+                const instantiationsubject:Node|undefined = instantiations[i]
 
                 if(instantiationUri !== undefined) {
 
@@ -316,15 +316,15 @@ export default class SBOL2GraphView extends GraphViewHybrid {
 
             return true
 
-        }).map((uri) => new S2ComponentDefinition(this, uri))
+        }).map((subject) => new S2ComponentDefinition(this, subject))
 
     }
 
     get rootModuleDefinitions():Array<S2ModuleDefinition> {
 
-        return this.instancesOfType(Types.SBOL2.ModuleDefinition).filter((uri) => {
-            return !this.graph.hasMatch(null, Predicates.SBOL2.definition, uri)
-        }).map((uri) => new S2ModuleDefinition(this, uri))
+        return this.instancesOfType(Types.SBOL2.ModuleDefinition).filter((subject) => {
+            return !this.graph.hasMatch(null, Predicates.SBOL2.definition, subject)
+        }).map((subject) => new S2ModuleDefinition(this, subject))
 
     }
 
@@ -332,14 +332,14 @@ export default class SBOL2GraphView extends GraphViewHybrid {
     get provPlans():Array<Plan> {
 
         return this.instancesOfType(Types.Prov.Plan)
-                    .map((uri) => new Plan(new ProvView(this.graph), uri))
+                    .map((subject) => new Plan(new ProvView(this.graph), subject))
 
     }
 
     get measures():Array<S2Measure> {
 
         return this.instancesOfType(Types.Measure.Measure)
-                    .map((uri) => new S2Measure(this, uri))
+                    .map((subject) => new S2Measure(this, subject))
 
     }
 
@@ -409,7 +409,7 @@ export default class SBOL2GraphView extends GraphViewHybrid {
         Array.prototype.push.apply(topLevels, this.instancesOfType(Types.SBOL2.Collection))
         Array.prototype.push.apply(topLevels, this.instancesOfType(Types.SBOL2.Implementation))
 
-        return topLevels.map((topLevel) => this.uriToFacade(topLevel) as S2Identified)
+        return topLevels.map((topLevel) => this.subjectToFacade(topLevel) as S2Identified)
     }
 
 
@@ -447,9 +447,9 @@ export default class SBOL2GraphView extends GraphViewHybrid {
         })
     }
 
-    uriToIdentified(uri:string):S2Identified|undefined {
+    uriToIdentified(subject:Node):S2Identified|undefined {
 
-        let f = this.uriToFacade(uri)
+        let f = this.subjectToFacade(subject)
 
         if(f instanceof S2Identified)
             return f
@@ -522,18 +522,18 @@ export default class SBOL2GraphView extends GraphViewHybrid {
 
     printTree() {
         for(let cd of this.componentDefinitions) {
-            console.log('component:' + cd.uri)
+            console.log('component:' + cd.subject)
             for(let c of cd.components) {
-                console.log(indent(1) + 'c-> ' + c.definition.uri)
+                console.log(indent(1) + 'c-> ' + c.definition.subject)
             }
         }
         for(let md of this.moduleDefinitions) {
-            console.log('module:' + md.uri)
+            console.log('module:' + md.subject)
             for(let c of md.functionalComponents) {
-                console.log(indent(1) + 'c-> ' + c.definition.uri)
+                console.log(indent(1) + 'c-> ' + c.definition.subject)
             }
             for(let m of md.modules) {
-                console.log(indent(1) + 'm-> ' + m.definition.uri)
+                console.log(indent(1) + 'm-> ' + m.definition.subject)
             }
         }
         function indent(n) {
@@ -556,85 +556,85 @@ class SBOL2 extends GraphViewBasic {
         this.view = view
     }
 
-    uriToFacade(uri:string):Facade|undefined {
+    subjectToFacade(subject:Node):Facade|undefined {
 
-        if(!uri)
+        if(!subject)
             return undefined
 
-        const types = this.getTypes(uri)
+        const types = this.getTypes(subject)
 
         for(var i = 0; i < types.length; ++ i) {
 
             let type = types[i]
 
             if(type === Types.SBOL2.ComponentDefinition)
-                return new S2ComponentDefinition(this.view, uri)
+                return new S2ComponentDefinition(this.view, subject)
 
             if(type === Types.SBOL2.Component)
-                return new S2ComponentInstance(this.view, uri)
+                return new S2ComponentInstance(this.view, subject)
 
             if(type === Types.SBOL2.FunctionalComponent)
-                return new S2FunctionalComponent(this.view, uri)
+                return new S2FunctionalComponent(this.view, subject)
 
             if(type === Types.SBOL2.Implementation)
-                return new S2Implementation(this.view, uri)
+                return new S2Implementation(this.view, subject)
 
             if(type === Types.SBOL2.Experiment)
-                return new S2Experiment(this.view, uri)
+                return new S2Experiment(this.view, subject)
 
             if(type === Types.SBOL2.ExperimentalData)
-                return new S2ExperimentalData(this.view, uri)
+                return new S2ExperimentalData(this.view, subject)
 
             if(type === Types.SBOL2.Attachment)
-                return new S2Attachment(this.view, uri)
+                return new S2Attachment(this.view, subject)
 
             if(type === Types.SBOL2.Interaction)
-                return new S2Interaction(this.view, uri)
+                return new S2Interaction(this.view, subject)
 
             if(type === Types.SBOL2.MapsTo)
-                return new S2MapsTo(this.view, uri)
+                return new S2MapsTo(this.view, subject)
 
             if(type === Types.SBOL2.ModuleDefinition)
-                return new S2ModuleDefinition(this.view, uri)
+                return new S2ModuleDefinition(this.view, subject)
 
             if(type === Types.SBOL2.Module)
-                return new S2ModuleInstance(this.view, uri)
+                return new S2ModuleInstance(this.view, subject)
 
             if(type === Types.SBOL2.Participation)
-                return new S2Participation(this.view, uri)
+                return new S2Participation(this.view, subject)
 
             if(type === Types.SBOL2.Range)
-                return new S2Range(this.view, uri)
+                return new S2Range(this.view, subject)
 
             if(type === Types.SBOL2.Cut)
-                return new S2Cut(this.view, uri)
+                return new S2Cut(this.view, subject)
 
             if(type === Types.SBOL2.GenericLocation)
-                return new S2GenericLocation(this.view, uri)
+                return new S2GenericLocation(this.view, subject)
 
             if(type === Types.SBOL2.SequenceAnnotation)
-                return new S2SequenceAnnotation(this.view, uri)
+                return new S2SequenceAnnotation(this.view, subject)
 
             if(type === Types.SBOL2.SequenceConstraint)
-                return new S2SequenceConstraint(this.view, uri)
+                return new S2SequenceConstraint(this.view, subject)
 
             if(type === Types.SBOL2.Sequence)
-                return new S2Sequence(this.view, uri)
+                return new S2Sequence(this.view, subject)
 
             if(type === Types.SBOL2.Collection)
-                return new S2Collection(this.view, uri)
+                return new S2Collection(this.view, subject)
 
             if(type === Types.SBOL2.Model)
-                return new S2Model(this.view, uri)
+                return new S2Model(this.view, subject)
 
             if(type === Types.SBOL2.Attachment)
-                return new S2Attachment(this.view, uri)
+                return new S2Attachment(this.view, subject)
 
             if(type === Types.Measure.Measure)
-                return new S2Measure(this.view, uri)
+                return new S2Measure(this.view, subject)
         }
 
-        return super.uriToFacade(uri)
+        return super.subjectToFacade(subject)
     }
 }
 

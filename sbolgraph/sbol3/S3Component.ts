@@ -5,7 +5,7 @@ import S3Interaction from './S3Interaction'
 
 import SBOL3GraphView from '../SBOL3GraphView'
 
-import { triple, node } from 'rdfoo'
+import { triple, node, Node } from 'rdfoo'
 import { Predicates, Types, Specifiers, Prefixes } from 'bioterms'
 import S3Sequence from './S3Sequence';
 import S3Constraint from './S3Constraint';
@@ -20,9 +20,9 @@ import extractTerm from '../extractTerm'
 
 export default class S3Component extends S3Identified {
 
-    constructor(view:SBOL3GraphView, uri:string) {
+    constructor(view:SBOL3GraphView, subject:Node) {
 
-        super(view, uri)
+        super(view, subject)
 
     }
 
@@ -35,15 +35,15 @@ export default class S3Component extends S3Identified {
     }
 
     hasType(type:string):boolean {
-        return this.view.graph.hasMatch(this.uri, Predicates.SBOL3.type, type)
+        return this.view.graph.hasMatch(this.subject, Predicates.SBOL3.type, type)
     }
 
     addType(type:string):void {
-        this.view.graph.insert(this.uri, Predicates.SBOL3.type, node.createUriNode(type))
+        this.view.graph.insert(this.subject, Predicates.SBOL3.type, node.createUriNode(type))
     }
 
     removeType(type:string):void {
-        this.view.graph.removeMatches(this.uri, Predicates.SBOL3.type, type)
+        this.view.graph.removeMatches(this.subject, Predicates.SBOL3.type, type)
     }
 
     get roles():Array<string> {
@@ -51,15 +51,15 @@ export default class S3Component extends S3Identified {
     }
 
     hasRole(role:string):boolean {
-        return this.view.graph.hasMatch(this.uri, Predicates.SBOL3.role, role)
+        return this.view.graph.hasMatch(this.subject, Predicates.SBOL3.role, role)
     }
 
     addRole(role:string):void {
-        this.view.graph.insert(this.uri, Predicates.SBOL3.role, node.createUriNode(role))
+        this.view.graph.insert(this.subject, Predicates.SBOL3.role, node.createUriNode(role))
     }
 
     removeRole(role:string):void {
-        this.view.graph.removeMatches(this.uri, Predicates.SBOL3.role, role)
+        this.view.graph.removeMatches(this.subject, Predicates.SBOL3.role, role)
     }
 
     get soTerms():string[] {
@@ -79,22 +79,22 @@ export default class S3Component extends S3Identified {
     get sequences():Array<S3Sequence> {
 
         return this.getUriProperties(Predicates.SBOL3.hasSequence)
-                   .map((uri:string) => new S3Sequence(this.view, uri))
+                   .map((subject:Node) => new S3Sequence(this.view, subject))
 
     }
 
     get subComponents():Array<S3SubComponent> {
 
         return this.getUriProperties(Predicates.SBOL3.hasFeature)
-                   .filter((uri:string) => this.graph.hasMatch(uri, Predicates.a, Types.SBOL3.SubComponent))
-                   .map((uri:string) => new S3SubComponent(this.view, uri))
+                   .filter((subject:Node) => this.graph.hasMatch(uri, Predicates.a, Types.SBOL3.SubComponent))
+                   .map((subject:Node) => new S3SubComponent(this.view, subject))
 
     }
 
     get interactions():Array<S3Interaction> {
 
         return this.getUriProperties(Predicates.SBOL3.hasInteraction)
-                    .map((uri:string) => new S3Interaction(this.view, uri))
+                    .map((subject:Node) => new S3Interaction(this.view, subject))
 
     }
 
@@ -105,15 +105,15 @@ export default class S3Component extends S3Identified {
     get sequenceConstraints():Array<S3Constraint> {
 
         return this.getUriProperties(Predicates.SBOL3.hasConstraint)
-                   .map((uri:string) => new S3Constraint(this.view, uri))
+                   .map((subject:Node) => new S3Constraint(this.view, subject))
 
     }
 
     get sequenceFeatures():Array<S3SequenceFeature> {
 
         return this.getUriProperties(Predicates.SBOL3.hasFeature)
-                   .filter((uri:string) => this.graph.hasMatch(uri, Predicates.a, Types.SBOL3.SequenceFeature))
-                   .map((uri:string) => new S3SequenceFeature(this.view, uri))
+                   .filter((subject:Node) => this.graph.hasMatch(uri, Predicates.a, Types.SBOL3.SequenceFeature))
+                   .map((subject:Node) => new S3SequenceFeature(this.view, subject))
 
     }
 
@@ -159,7 +159,7 @@ export default class S3Component extends S3Identified {
         const identified:S3Identified =
             S3IdentifiedFactory.createChild(this.view, Types.SBOL3.SubComponent, this, Predicates.SBOL3.hasFeature, id, undefined)
 
-        const module:S3SubComponent = new S3SubComponent(this.view, identified.uri)
+        const module:S3SubComponent = new S3SubComponent(this.view, identified.subject)
 
         module.instanceOf = definition
 
@@ -173,7 +173,7 @@ export default class S3Component extends S3Identified {
         const identified:S3Identified =
             S3IdentifiedFactory.createChild(this.view, Types.SBOL3.SequenceFeature, this, Predicates.SBOL3.hasFeature, id, undefined)
 
-        return new S3SequenceFeature(this.view, identified.uri)
+        return new S3SequenceFeature(this.view, identified.subject)
 
     }
 
@@ -205,7 +205,7 @@ export default class S3Component extends S3Identified {
             S3IdentifiedFactory.createChild(
                 this.view, Types.SBOL3.Constraint, this, Predicates.SBOL3.hasConstraint, 'constraint_' + subject.displayId + '_' + object.displayId, undefined)
 
-        const constraint:S3Constraint = new S3Constraint(this.view, identified.uri)
+        const constraint:S3Constraint = new S3Constraint(this.view, identified.subject)
 
         constraint.subject = subject
         constraint.restriction = restriction
@@ -225,8 +225,8 @@ export default class S3Component extends S3Identified {
 
     addSequence(seq:S3Sequence):void {
 
-        this.view.graph.insertProperties(this.uri, {
-            [Predicates.SBOL3.hasSequence]: node.createUriNode(seq.uri)
+        this.view.graph.insertProperties(this.subject, {
+            [Predicates.SBOL3.hasSequence]: seq.subject
         })
 
     }
@@ -236,13 +236,13 @@ export default class S3Component extends S3Identified {
         const identified:S3Identified =
             S3IdentifiedFactory.createChild(this.view, Types.SBOL3.Interaction, this,  Predicates.SBOL3.hasInteraction, id, undefined)
 
-        const interaction:S3Interaction = new S3Interaction(this.view, identified.uri)
+        const interaction:S3Interaction = new S3Interaction(this.view, identified.subject)
 
         return interaction
     }
 
     addModel(model:S3Model) {
-        this.insertProperty(Predicates.SBOL3.hasModel, node.createUriNode(model.uri))
+        this.insertProperty(Predicates.SBOL3.hasModel, node.createUriNode(model.subject))
     }
 
 

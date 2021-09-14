@@ -33,7 +33,7 @@ export default function convert1to2(graph:Graph) {
 
     for(let sequence of graph1.dnaSequences) {
 
-        let sequence2 = new S2Sequence(graph2, sequence.uri)
+        let sequence2 = new S2Sequence(graph2, sequence.subject)
         sequence2.setUriProperty(Predicates.a, Types.SBOL2.Sequence)
 
         copyNonSBOLProperties(sequence, sequence2)
@@ -44,7 +44,7 @@ export default function convert1to2(graph:Graph) {
 
     for(let dnaComponent of graph1.dnaComponents) {
 
-        let component2 = new S2ComponentDefinition(graph2, dnaComponent.uri)
+        let component2 = new S2ComponentDefinition(graph2, dnaComponent.subject)
         component2.setUriProperty(Predicates.a, Types.SBOL2.ComponentDefinition)
 
         copyNonSBOLProperties(dnaComponent, component2)
@@ -55,7 +55,7 @@ export default function convert1to2(graph:Graph) {
         copyDisplayId(dnaComponent, component2)
 
         if(dnaComponent.dnaSequence) {
-            component2.insertProperty(Predicates.SBOL2.sequence, node.createUriNode(dnaComponent.dnaSequence.uri))
+            component2.insertProperty(Predicates.SBOL2.sequence, dnaComponent.dnaSequence.subject)
         }
 
         for(let type of dnaComponent.getUriProperties(Predicates.a)) {
@@ -73,11 +73,11 @@ export default function convert1to2(graph:Graph) {
 
         for(let anno of dnaComponent.annotations) {
 
-            let anno2 = new S2SequenceAnnotation(graph2, anno.uri)
+            let anno2 = new S2SequenceAnnotation(graph2, anno.subject)
             anno2.setUriProperty(Predicates.a, Types.SBOL2.SequenceAnnotation)
             /// HAS to have locations
 
-            component2.insertUriProperty(Predicates.SBOL2.sequenceAnnotation, anno2.uri)
+            component2.insertProperty(Predicates.SBOL2.sequenceAnnotation, anno2.subject)
 
             copyNonSBOLProperties(anno, anno2)
 
@@ -86,28 +86,28 @@ export default function convert1to2(graph:Graph) {
             if(subComponent
                 // any precedes relation requires a subcomponent in SBOL2
                 //
-                || graph.hasMatch(null, Predicates.SBOL1.precedes, anno.uri)
-                || graph.hasMatch(anno.uri, Predicates.SBOL1.precedes, null)
+                || graph.hasMatch(null, Predicates.SBOL1.precedes, anno.subject)
+                || graph.hasMatch(anno.subject, Predicates.SBOL1.precedes, null)
             ) {
-                let subComponent2 = new S2ComponentInstance(graph2, URIUtils.addSuffix(anno.uri, '/component'))
+                let subComponent2 = new S2ComponentInstance(graph2, node.createUriNode(URIUtils.addSuffix(anno.subject.value, '/component')))
                 subComponent2.setUriProperty(Predicates.a, Types.SBOL2.Component)
 
                 if(subComponent !== undefined) {
                     // an actual SBOL1 composition
-                    subComponent2.setUriProperty(Predicates.SBOL2.definition, subComponent.uri)
+                    subComponent2.setProperty(Predicates.SBOL2.definition, subComponent.subject)
                 } else {
                     // forced subcomponent creation for precedes
                     subComponent2.setUriProperty(Predicates.SBOL2.definition, 'http://sboltools.org/terms/stub')
                 }
 
-                anno2.insertUriProperty(Predicates.SBOL2.component, subComponent2.uri)
-                component2.insertUriProperty(Predicates.SBOL2.component, subComponent2.uri)
+                anno2.insertProperty(Predicates.SBOL2.component, subComponent2.subject)
+                component2.insertProperty(Predicates.SBOL2.component, subComponent2.subject)
             }
         }
 
         for(let anno of dnaComponent.annotations) {
 
-            let anno2 = new S2SequenceAnnotation(graph2, anno.uri)
+            let anno2 = new S2SequenceAnnotation(graph2, anno.subject)
             anno2.setUriProperty(Predicates.a, Types.SBOL2.SequenceAnnotation)
 
             copyNonSBOLProperties(anno, anno2)
@@ -125,52 +125,52 @@ export default function convert1to2(graph:Graph) {
 
             if(start !== undefined || end !== undefined) {
 
-                let range = new S2Range(graph2, URIUtils.addSuffix(anno.uri, '/location'))
+                let range = new S2Range(graph2, node.createUriNode(URIUtils.addSuffix(anno.subject.value, '/location')))
                 range.setUriProperty(Predicates.a, Types.SBOL2.Range)
 
                 range.start = start
                 range.end = end
                 range.orientation = strand
 
-                anno2.insertUriProperty(Predicates.SBOL2.location, range.uri)
+                anno2.insertProperty(Predicates.SBOL2.location, range.subject)
 
             } else {
-                let genericLocation = new S2GenericLocation(graph2, URIUtils.addSuffix(anno.uri, '/location'))
+                let genericLocation = new S2GenericLocation(graph2, node.createUriNode(URIUtils.addSuffix(anno.subject.value, '/location')))
                 genericLocation.setUriProperty(Predicates.a, Types.SBOL2.GenericLocation)
 
                 if(strand !== undefined)
                     genericLocation.orientation = strand
 
-                anno2.insertUriProperty(Predicates.SBOL2.location, genericLocation.uri)
+                anno2.insertProperty(Predicates.SBOL2.location, genericLocation.subject)
             }
 
             for(let precedes of anno.precedes) {
                 
-                let constraint = new S2SequenceConstraint(graph2, URIUtils.addSuffix(dnaComponent.uri, '/precedes' + (++ precedesN)))
+                let constraint = new S2SequenceConstraint(graph2, node.createUriNode(URIUtils.addSuffix(dnaComponent.subject.value, '/precedes' + (++ precedesN))))
                 constraint.setUriProperty(Predicates.a, Types.SBOL2.SequenceConstraint)
 
-                component2.insertUriProperty(Predicates.SBOL2.sequenceConstraint, constraint.uri)
+                component2.insertProperty(Predicates.SBOL2.sequenceConstraint, constraint.subject.subject)
 
 
-                let obj = new S2SequenceAnnotation(graph2, anno.uri)
+                let obj = new S2SequenceAnnotation(graph2, anno.subject)
                 let c2 = obj.component
                 assert(c2)
 
                 
 
-                let precedes2 = new S2SequenceAnnotation(graph2, precedes.uri)
+                let precedes2 = new S2SequenceAnnotation(graph2, precedes.subject)
                 assert(precedes2.component) // no
 
-                constraint.setProperty(Predicates.SBOL2.subject, node.createUriNode(c2.uri))
+                constraint.setProperty(Predicates.SBOL2.subject, c2.subject)
                 constraint.setProperty(Predicates.SBOL2.restriction, node.createUriNode(Specifiers.SBOL2.SequenceConstraint.Precedes))
-                constraint.setProperty(Predicates.SBOL2.object, node.createUriNode(precedes2.component?.uri as string))
+                constraint.setProperty(Predicates.SBOL2.object, precedes2.component?.subject)
             }
         }
     }
 
     for(let collection of graph1.collections) {
 
-        let collection2 = new S2Collection(graph2, collection.uri)
+        let collection2 = new S2Collection(graph2, collection.subject)
         collection2.setUriProperty(Predicates.a, Types.SBOL2.Collection)
 
         collection2.name = collection.name
@@ -178,7 +178,7 @@ export default function convert1to2(graph:Graph) {
         copyDisplayId(collection, collection2)
 
         for(let component of collection.components) {
-            collection2.addMember(new S2ComponentDefinition(graph2, component.uri))
+            collection2.addMember(new S2ComponentDefinition(graph2, component.subject))
         }
     }
 
@@ -216,13 +216,13 @@ export default function convert1to2(graph:Graph) {
 
     function copyNonSBOLProperties(a:Facade, b:Facade) {
 
-        for(let t of graph.match(a.uri, null, null)) {
+        for(let t of graph.match(a.subject, null, null)) {
 
-            if(t.subject.indexOf(Prefixes.sbol1) == 0) {
+            if(t.subject.value.indexOf(Prefixes.sbol1) == 0) {
                 continue
             }
 
-            b.insertProperty(t.predicate, t.object)
+            b.insertProperty(t.predicate.value, t.object)
 
         }
 

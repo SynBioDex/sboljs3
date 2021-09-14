@@ -1,5 +1,8 @@
+import { Node } from "rdfoo"
 
-export default function extractTerm(uri:string):string|undefined {
+export default function extractTerm(subject:Node):string|undefined {
+
+	let uri = subject.value
 
     let purl1 = 'http://purl.org/obo/owl/SO#'
     let purl2 = 'http://purl.obolibrary.org/obo/'

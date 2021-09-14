@@ -4,15 +4,15 @@ import S2Identified from './S2Identified'
 import S2FunctionalComponent from './S2FunctionalComponent'
 import S2Interaction from './S2Interaction'
 
-import { triple, node } from 'rdfoo'
+import { triple, node, Node } from 'rdfoo'
 import { Types, Predicates, Specifiers } from 'bioterms'
 import S2Measure from './S2Measure';
 
 export default class S2Participation extends S2Identified {
 
-    constructor(view:SBOL2GraphView, uri:string) {
+    constructor(view:SBOL2GraphView, subject:Node) {
 
-        super(view, uri)
+        super(view, subject)
 
     }
 
@@ -22,17 +22,17 @@ export default class S2Participation extends S2Identified {
 
     get participant():S2FunctionalComponent|undefined {
 
-        const uri:string|undefined = this.getUriProperty(Predicates.SBOL2.participant)
+        const subject:Node|undefined = this.getUriProperty(Predicates.SBOL2.participant)
 
-        if(uri) {
-            return new S2FunctionalComponent(this.view, uri)
+        if(subject) {
+            return new S2FunctionalComponent(this.view, subject)
         }
     }
 
     set participant(participant:S2FunctionalComponent|undefined) {
 
         if(participant !== undefined) {
-            this.setUriProperty(Predicates.SBOL2.participant, participant.uri)
+            this.setUriProperty(Predicates.SBOL2.participant, participant.subject)
         } else {
             this.deleteProperty(Predicates.SBOL2.participant)
         }
@@ -41,12 +41,12 @@ export default class S2Participation extends S2Identified {
 
     get interaction():S2Interaction|undefined {
 
-        const uri:string|undefined = triple.subjectUri(
-            this.view.graph.matchOne(null, Predicates.SBOL2.participation, this.uri)
+        const subject:Node|undefined = triple.subjectUri(
+            this.view.graph.matchOne(null, Predicates.SBOL2.participation, this.subject)
         )
 
-        if(uri) {
-            return new S2Interaction(this.view, uri)
+        if(subject) {
+            return new S2Interaction(this.view, subject)
         }
 
     }
@@ -54,20 +54,20 @@ export default class S2Participation extends S2Identified {
     get containingObject():S2Identified|undefined {
 
         const uri = triple.subjectUri(
-            this.view.graph.matchOne(null, Predicates.SBOL2.participation, this.uri)
+            this.view.graph.matchOne(null, Predicates.SBOL2.participation, this.subject)
         )
 
-        if(!uri) {
+        if(!subject) {
             throw new Error('Participation has no containing object?')
         }
 
-        return this.view.uriToIdentified(uri)
+        return this.view.uriToIdentified(subject)
 
     }
 
-    hasRole(uri:string):boolean {
+    hasRole(subject:Node):boolean {
 
-        return this.view.graph.hasMatch(this.uri, Predicates.SBOL2.role, uri)
+        return this.view.graph.hasMatch(this.subject, Predicates.SBOL2.role, subject)
     
     }
 
@@ -80,7 +80,7 @@ export default class S2Participation extends S2Identified {
     }
 
     setParticipant(participant:S2FunctionalComponent):void {
-        this.setUriProperty(Predicates.SBOL2.participant, participant.uri)
+        this.setUriProperty(Predicates.SBOL2.participant, participant.subject)
     }
 
     get measure():S2Measure|undefined {
@@ -97,7 +97,7 @@ export default class S2Participation extends S2Identified {
         if(measure === undefined)
             this.deleteProperty(Predicates.SBOL2.measure)
         else
-            this.setUriProperty(Predicates.SBOL2.measure, measure.uri)
+            this.setUriProperty(Predicates.SBOL2.measure, measure.subject)
 
     }
 

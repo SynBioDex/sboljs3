@@ -4,14 +4,14 @@ import SBOL2GraphView from '../SBOL2GraphView';
 import S2Identified from './S2Identified'
 import S2ComponentInstance from './S2ComponentInstance'
 
-import { triple, node } from 'rdfoo'
+import { triple, node, Node } from 'rdfoo'
 import { Types, Predicates, Specifiers } from 'bioterms'
 
 export default class S2SequenceConstraint extends S2Identified {
 
-    constructor(view:SBOL2GraphView, uri:string) {
+    constructor(view:SBOL2GraphView, subject:Node) {
 
-        super(view, uri)
+        super(view, subject)
 
     }
 
@@ -22,14 +22,14 @@ export default class S2SequenceConstraint extends S2Identified {
     get containingObject():S2Identified|undefined {
 
         const uri = triple.subjectUri(
-            this.view.graph.matchOne(null, Predicates.SBOL2.sequenceConstraint, this.uri)
+            this.view.graph.matchOne(null, Predicates.SBOL2.sequenceConstraint, this.subject)
         )
 
-        if(!uri) {
+        if(!subject) {
             throw new Error('SeqCons has no containing object?')
         }
 
-        return this.view.uriToIdentified(uri)
+        return this.view.uriToIdentified(subject)
 
     }
 

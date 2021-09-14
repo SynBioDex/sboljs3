@@ -6,7 +6,7 @@ import S3Constraint from './S3Constraint'
 import S3OrientedLocation from './S3OrientedLocation'
 import S3IdentifiedFactory from './S3IdentifiedFactory'
 
-import { triple, node } from 'rdfoo'
+import { triple, node, Node } from 'rdfoo'
 import { Types, Predicates, Specifiers, Prefixes } from 'bioterms'
 import SBOL3GraphView from "../SBOL3GraphView";
 import S3MapsTo from './S3MapsTo';
@@ -16,9 +16,9 @@ import S3Measure from './S3Measure';
 
 export default class S3SubComponent extends S3Feature {
 
-    constructor(view:SBOL3GraphView, uri:string) {
+    constructor(view:SBOL3GraphView, subject:Node) {
 
-        super(view, uri)
+        super(view, subject)
     }
 
     get facadeType():string {
@@ -48,55 +48,55 @@ export default class S3SubComponent extends S3Feature {
 
     get instanceOf():S3Component {
 
-        const uri:string|undefined = this.getUriProperty(Predicates.SBOL3.instanceOf)
+        const subject:Node|undefined = this.getUriProperty(Predicates.SBOL3.instanceOf)
 
         if(uri === undefined) {
             throw new Error('subcomponent has no instanceOf?')
         }
 
-        return new S3Component(this.view, uri)
+        return new S3Component(this.view, subject)
     }
 
     set instanceOf(def:S3Component) {
 
-        this.setUriProperty(Predicates.SBOL3.instanceOf, def.uri)
+        this.setUriProperty(Predicates.SBOL3.instanceOf, def.subject)
 
     }
 
     get containingObject():S3Identified|undefined {
 
         const uri = triple.subjectUri(
-            this.view.graph.matchOne(null, Predicates.SBOL3.hasFeature, this.uri)
+            this.view.graph.matchOne(null, Predicates.SBOL3.hasFeature, this.subject)
         )
 
-        if(!uri) {
+        if(!subject) {
             throw new Error('subcomponent has no containing object?')
         }
 
-        return this.view.uriToIdentified(uri)
+        return this.view.uriToIdentified(subject)
 
     }
 
     get containingComponent():S3Component {
 
         const uri = triple.subjectUri(
-            this.view.graph.matchOne(null, Predicates.SBOL3.hasFeature, this.uri)
+            this.view.graph.matchOne(null, Predicates.SBOL3.hasFeature, this.subject)
         )
 
-        if(!uri) {
+        if(!subject) {
             throw new Error('subcomponent has no containing object?')
         }
 
-        return this.view.uriToFacade(uri) as S3Component
+        return this.view.subjectToFacade(subject) as S3Component
 
     }
 
     get sequenceConstraints():Array<S3Constraint> {
 
-        return this.view.graph.match(null, Predicates.SBOL3.subject, this.uri)
-                   .map(triple.subjectUri)
-                   //.filter((uri:string) => this.view.getType(uri) === Types.SBOL3.SequenceConstraint)
-                   .map((uri:string) => new S3Constraint(this.view, uri))
+        return this.view.graph.match(null, Predicates.SBOL3.subject, this.subject)
+                   .map(triple.subjectsubject)
+                   //.filter((subject:Node) => this.view.getType(subject) === Types.SBOL3.SequenceConstraint)
+                   .map((subject:Node) => new S3Constraint(this.view, subject))
 
     }
 
@@ -141,16 +141,16 @@ export default class S3SubComponent extends S3Feature {
 
     getConstraintsWithThisSubject():Array<S3Constraint> {
 
-        return this.view.graph.match(null, Predicates.SBOL3.subject, this.uri)
-                    .map(triple.subjectUri)
-                    .map((uri:string) => new S3Constraint(this.view, uri))
+        return this.view.graph.match(null, Predicates.SBOL3.subject, this.subject)
+                    .map(triple.subjectsubject)
+                    .map((subject:Node) => new S3Constraint(this.view, subject))
     }
 
     getConstraintsWithThisObject():Array<S3Constraint> {
 
-        return this.view.graph.match(null, Predicates.SBOL3.object, this.uri)
-                    .map(triple.subjectUri)
-                    .map((uri:string) => new S3Constraint(this.view, uri))
+        return this.view.graph.match(null, Predicates.SBOL3.object, this.subject)
+                    .map(triple.subjectsubject)
+                    .map((subject:Node) => new S3Constraint(this.view, subject))
     }
 
     getConstraints():Array<S3Constraint> {
@@ -161,18 +161,18 @@ export default class S3SubComponent extends S3Feature {
 
     get mappings():Array<S3MapsTo> {
 
-        return this.view.graph.match(null, Predicates.SBOL2.local, this.uri).map(triple.subjectUri)
+        return this.view.graph.match(null, Predicates.SBOL2.local, this.subject).map(triple.subjectsubject)
                 .concat(
-                    this.view.graph.match(null, Predicates.SBOL2.remote, this.uri).map(triple.subjectUri)
+                    this.view.graph.match(null, Predicates.SBOL2.remote, this.subject).map(triple.subjectsubject)
                 )
                 .filter((el) => !!el)
-                .map((mapsToUri) => new S3MapsTo(this.view, mapsToUri as string))
+                .map((mapsTosubject) => new S3MapsTo(this.view, mapsToUri as string))
     }
 
     addMapping(mapping:S3MapsTo) {
 
         this.insertProperties({
-            [Predicates.SBOL2.mapsTo]: node.createUriNode(mapping.uri)
+            [Predicates.SBOL2.mapsTo]: mapping.subject
         })
 
     }
@@ -182,7 +182,7 @@ export default class S3SubComponent extends S3Feature {
         const identified:S3Identified =
             S3IdentifiedFactory.createChild(this.view, Types.SBOL2.MapsTo, this, Predicates.SBOL2.mapsTo, 'mapping_' + local.displayId + '_' + remote.displayId, undefined)
 
-        const mapping:S3MapsTo = new S3MapsTo(this.view, identified.uri)
+        const mapping:S3MapsTo = new S3MapsTo(this.view, identified.subject)
 
         mapping.local = local
         mapping.remote = remote
@@ -307,7 +307,7 @@ export default class S3SubComponent extends S3Feature {
         if(uri === undefined)
             return undefined
         
-        let obj = this.view.uriToFacade(uri)
+        let obj = this.view.subjectToFacade(subject)
 
         if(! (obj instanceof S3Location)) {
             throw new Error('sourceLocation was not a location')
@@ -319,7 +319,7 @@ export default class S3SubComponent extends S3Feature {
     set sourceLocation(location:S3Location|undefined) {
 
         if(location !== undefined)
-            this.setUriProperty(Predicates.SBOL3.sourceLocation, location.uri)
+            this.setUriProperty(Predicates.SBOL3.sourceLocation, location.subject)
         else
             this.deleteProperty(Predicates.SBOL3.sourceLocation)
 
@@ -339,7 +339,7 @@ export default class S3SubComponent extends S3Feature {
         if(measure === undefined)
             this.deleteProperty(Predicates.SBOL3.hasMeasure)
         else
-            this.setUriProperty(Predicates.SBOL3.hasMeasure, measure.uri)
+            this.setUriProperty(Predicates.SBOL3.hasMeasure, measure.subject)
 
     }
 

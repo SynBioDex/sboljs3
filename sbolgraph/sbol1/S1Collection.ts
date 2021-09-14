@@ -1,5 +1,5 @@
 
-import { triple } from 'rdfoo'
+import { Node, triple } from 'rdfoo'
 import { Types, Predicates, Specifiers } from 'bioterms'
 
 import S1Facade from './S1Facade'
@@ -10,8 +10,8 @@ import SBOL1GraphView from '../SBOL1GraphView'
 
 export default class S1Collection extends S1Facade {
 
-    constructor(view:SBOL1GraphView, uri:string) {
-        super(view, uri)
+    constructor(view:SBOL1GraphView, subject:Node) {
+        super(view, subject)
     }
 
     get facadeType():string {
@@ -31,8 +31,8 @@ export default class S1Collection extends S1Facade {
     }
 
     get components():S1DnaComponent[] {
-        return this.getUriProperties(Predicates.SBOL1.component)
-                   .map((uri) => new S1DnaComponent(this.view, uri))
+        return this.getProperties(Predicates.SBOL1.component)
+                   .map((subject) => new S1DnaComponent(this.view, subject))
     }
 
 }

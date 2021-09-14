@@ -53,7 +53,7 @@ sbolgraph avoids this by maintaining the graph and using accessors to query it, 
 		string uri
 
 		get subcomponents {
-			return match(this.uri, sbol:component, ?)
+			return match(this.subject, sbol:component, ?)
 		}
 	}
 
@@ -62,7 +62,7 @@ sbolgraph avoids this by maintaining the graph and using accessors to query it, 
 		string uri
 
 		get containingComponentDefinition {
-			return match(?, sbol:component, this.uri)
+			return match(?, sbol:component, this.subject)
 		}
 	}
 

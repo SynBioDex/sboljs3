@@ -5,11 +5,12 @@ import { Types, Predicates, Specifiers } from 'bioterms'
 import SBOL2GraphView from '../SBOL2GraphView'
 import URIUtils from '../URIUtils'
 import S2Facade from './S2Facade'
+import { Node } from 'rdfoo'
 
 export default class S2Identified extends S2Facade {
 
-    constructor(view:SBOL2GraphView, uri:string) {
-        super(view, uri)
+    constructor(view:SBOL2GraphView, subject:Node) {
+        super(view, subject)
     }
     
     get facadeType():string {
@@ -68,24 +69,24 @@ export default class S2Identified extends S2Facade {
         return this.getUriProperty(Predicates.SBOL2.persistentIdentity)
     }
 
-    set persistentIdentity(uri:string|undefined) {
-        this.setUriProperty(Predicates.SBOL2.persistentIdentity, uri)
+    set persistentIdentity(subject:string|undefined) {
+        this.setUriProperty(Predicates.SBOL2.persistentIdentity, subject)
     }
 
     get uriPrefix():string {
-        return URIUtils.getPrefix(this.uri)
+        return URIUtils.getPrefix(this.subject.value)
     }
 
     get attachments():Array<S2Attachment> {
 
-        return this.getUriProperties(Predicates.SBOL2.attachment)
+        return this.getProperties(Predicates.SBOL2.attachment)
             .map((attachment) => new S2Attachment(this.view, attachment))
 
     }
 
     get measures():Array<S2Measure> {
 
-        return this.getUriProperties(Predicates.SBOL2.measure)
+        return this.getProperties(Predicates.SBOL2.measure)
             .map((measure) => new S2Measure(this.view, measure))
 
     }
@@ -103,9 +104,8 @@ export default class S2Identified extends S2Facade {
 
     get containingCollections():Array<S2Collection> {
 
-        return this.view.graph.match(null, Predicates.SBOL2.member, this.uri)
-                    .map(triple.subjectUri)
-                    .map((uri) => new S2Collection(this.view, uri as string))
+        return this.view.graph.match(null, Predicates.SBOL2.member, this.subject)
+                    .map((t) => new S2Collection(this.view, t.subject))
     }
 
 
@@ -114,9 +114,9 @@ export default class S2Identified extends S2Facade {
         const containingObject:S2Identified|undefined = this.containingObject
 
         if(containingObject !== undefined) {
-            return containingObject.uriChain + ';' + this.uri
+            return containingObject.uriChain + ';' + this.subject.value
         } else {
-            return this.uri
+            return this.subject.value
         }
 
     }
@@ -133,7 +133,7 @@ export default class S2Identified extends S2Facade {
                 return false
             }
         } else {
-            if(theirContainer && theirContainer.uri === ourContainer.uri) {
+            if(theirContainer && theirContainer.subject.value === ourContainer.subject.value) {
                 return true
             } else {
                 return false
@@ -154,7 +154,7 @@ export default class S2Identified extends S2Facade {
         // remove us from the list
         //
         for(let i = 0; i < containedObjects.length; ++ i) {
-            if(containedObjects[i].uri === this.uri) {
+            if(containedObjects[i].subject.value === this.subject.value) {
                 containedObjects.splice(i, 1)
                 break
             }

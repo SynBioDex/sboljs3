@@ -48,7 +48,7 @@ export default class SBOL3GraphView extends GraphViewHybrid {
         const identified:S3Identified =
             S3IdentifiedFactory.createTopLevel(this, Types.SBOL3.Component, uriPrefix, id, undefined)
 
-        return new S3Component(this, identified.uri)
+        return new S3Component(this, identified.subject)
 
     }
 
@@ -57,7 +57,7 @@ export default class SBOL3GraphView extends GraphViewHybrid {
         const identified:S3Identified =
             S3IdentifiedFactory.createTopLevel(this, Types.SBOL3.Collection, uriPrefix, id, undefined)
 
-        return new S3Collection(this, identified.uri)
+        return new S3Collection(this, identified.subject)
 
     }
 
@@ -66,7 +66,7 @@ export default class SBOL3GraphView extends GraphViewHybrid {
         const identified:S3Identified =
             S3IdentifiedFactory.createTopLevel(this, Types.SBOL3.Sequence, uriPrefix, id, undefined)
 
-        const seq:S3Sequence = new S3Sequence(this, identified.uri)
+        const seq:S3Sequence = new S3Sequence(this, identified.subject)
 
         seq.encoding = Specifiers.SBOL3.SequenceEncoding.NucleicAcid
         seq.elements = ''
@@ -79,7 +79,7 @@ export default class SBOL3GraphView extends GraphViewHybrid {
         const identified:S3Identified =
             S3IdentifiedFactory.createTopLevel(this, Types.SBOL2.Model, uriPrefix, id, undefined)
 
-        const model:S3Model = new S3Model(this, identified.uri)
+        const model:S3Model = new S3Model(this, identified.subject)
 
         return model
     }
@@ -87,90 +87,90 @@ export default class SBOL3GraphView extends GraphViewHybrid {
     get sequences():Array<S3Sequence> {
 
         return this.instancesOfType(Types.SBOL3.Sequence)
-                    .map((uri) => new S3Sequence(this, uri))
+                    .map((subject) => new S3Sequence(this, subject))
 
     }
 
     get components():Array<S3Component> {
 
         return this.instancesOfType(Types.SBOL3.Component)
-                    .map((uri) => new S3Component(this, uri))
+                    .map((subject) => new S3Component(this, subject))
 
     }
 
     get collections():Array<S3Collection> {
 
         return this.instancesOfType(Types.SBOL3.Collection)
-                    .map((uri) => new S3Collection(this, uri))
+                    .map((subject) => new S3Collection(this, subject))
 
     }
 
     get rootComponents():Array<S3Component> {
 
-        return this.instancesOfType(Types.SBOL3.Component).filter((uri) => {
-            return !this.graph.hasMatch(null, Predicates.SBOL3.instanceOf, uri)
-        }).map((uri) => new S3Component(this, uri))
+        return this.instancesOfType(Types.SBOL3.Component).filter((subject) => {
+            return !this.graph.hasMatch(null, Predicates.SBOL3.instanceOf, subject)
+        }).map((subject) => new S3Component(this, subject))
 
     }
 
     getInstancesOfComponent(component:S3Component):S3SubComponent[] {
 
-        return this.graph.match(null, Predicates.SBOL3.instanceOf, component.uri)
-                   .map(triple.subjectUri)
-                   .map((uri) => new S3SubComponent(this, uri as string))
+        return this.graph.match(null, Predicates.SBOL3.instanceOf, component.subject)
+                   .map(triple.subjectsubject)
+                   .map((subject) => new S3SubComponent(this, uri as string))
 
     }
 
-    getExperiment(uri):S3Experiment|null {
+    getExperiment(subject):S3Experiment|null {
 
-        if(this.getType(uri) !== Types.SBOL3.Experiment)
+        if(this.getType(subject) !== Types.SBOL3.Experiment)
             return null
 
-        return new S3Experiment(this, uri)
+        return new S3Experiment(this, subject)
 
     }
 
     get experiments():Array<S3Experiment> {
 
         return this.instancesOfType(Types.SBOL3.Experiment)
-                    .map((uri) => new S3Experiment(this, uri))
+                    .map((subject) => new S3Experiment(this, subject))
 
     }
 
-    getExperimentalData(uri):S3ExperimentalData|null {
+    getExperimentalData(subject):S3ExperimentalData|null {
 
-        if(this.getType(uri) !== Types.SBOL3.ExperimentalData)
+        if(this.getType(subject) !== Types.SBOL3.ExperimentalData)
             return null
 
-        return new S3ExperimentalData(this, uri)
+        return new S3ExperimentalData(this, subject)
 
     }
 
     get experimentalData():Array<S3ExperimentalData> {
 
         return this.instancesOfType(Types.SBOL3.ExperimentalData)
-                    .map((uri) => new S3ExperimentalData(this, uri))
+                    .map((subject) => new S3ExperimentalData(this, subject))
 
     }
 
     get implementations():Array<S3Implementation> {
 
         return this.instancesOfType(Types.SBOL3.Implementation)
-                    .map((uri) => new S3Implementation(this, uri))
+                    .map((subject) => new S3Implementation(this, subject))
 
     }
 
     get attachments():Array<S3Attachment> {
 
         return this.instancesOfType(Types.SBOL3.Attachment)
-                    .map((uri) => new S3Attachment(this, uri))
+                    .map((subject) => new S3Attachment(this, subject))
 
     }
 
     get measures():Array<S3Measure> {
 
         return this.instancesOfType(Types.Measure.Measure)
-                    .map((uri) => new S3Measure(this, uri))
+                    .map((subject) => new S3Measure(this, subject))
 
     }
 
@@ -234,7 +234,7 @@ export default class SBOL3GraphView extends GraphViewHybrid {
         Array.prototype.push.apply(topLevels, this.instancesOfType(Types.SBOL3.Sequence))
         Array.prototype.push.apply(topLevels, this.instancesOfType(Types.SBOL3.Collection))
 
-        return topLevels.map((topLevel) => this.uriToFacade(topLevel) as S3Identified)
+        return topLevels.map((topLevel) => this.subjectToFacade(topLevel) as S3Identified)
     }
 
 
@@ -277,9 +277,9 @@ export default class SBOL3GraphView extends GraphViewHybrid {
         })
     }
 
-    uriToIdentified(uri:string):S3Identified|undefined {
+    uriToIdentified(subject:Node):S3Identified|undefined {
 
-        let f = this.uriToFacade(uri)
+        let f = this.subjectToFacade(subject)
 
         if(f instanceof S3Identified)
             return f
@@ -352,7 +352,7 @@ export default class SBOL3GraphView extends GraphViewHybrid {
         for(let cd of this.components) {
             console.log('component:' + cd.uri + ' (' + cd.displayId + ')')
             for(let c of cd.subComponents) {
-                console.log(indent(1) + 'sc-> ' + c.instanceOf.uri)
+                console.log(indent(1) + 'sc-> ' + c.instanceOf.subject)
             }
         }
 
@@ -371,64 +371,64 @@ class SBOL3 extends GraphViewBasic {
         this.view = view
     }
 
-    uriToFacade(uri:string):Facade|undefined {
+    subjectToFacade(subject:Node):Facade|undefined {
 
-        if(!uri)
+        if(!subject)
             return undefined
 
-        const types = this.getTypes(uri)
+        const types = this.getTypes(subject)
 
         for(var i = 0; i < types.length; ++ i) {
 
             let type = types[i]
 
             if(type === Types.SBOL3.Component)
-                return new S3Component(this.view, uri)
+                return new S3Component(this.view, subject)
 
             if(type === Types.SBOL3.SubComponent)
-                return new S3SubComponent(this.view, uri)
+                return new S3SubComponent(this.view, subject)
 
             if(type === Types.SBOL3.Interaction)
-                return new S3Interaction(this.view, uri)
+                return new S3Interaction(this.view, subject)
 
             if(type === Types.SBOL3.Participation)
-                return new S3Participation(this.view, uri)
+                return new S3Participation(this.view, subject)
 
             if(type === Types.SBOL3.Range)
-                return new S3Range(this.view, uri)
+                return new S3Range(this.view, subject)
 
             if(type === Types.SBOL3.Cut)
-                return new S3Cut(this.view, uri)
+                return new S3Cut(this.view, subject)
 
             if(type === Types.SBOL3.EntireSequence)
-                return new S3EntireSequence(this.view, uri)
+                return new S3EntireSequence(this.view, subject)
 
             if(type === Types.SBOL3.OrientedLocation)
-                return new S3OrientedLocation(this.view, uri)
+                return new S3OrientedLocation(this.view, subject)
 
             if(type === Types.SBOL3.SequenceFeature)
-                return new S3SequenceFeature(this.view, uri)
+                return new S3SequenceFeature(this.view, subject)
 
             if(type === Types.SBOL3.Sequence)
-                return new S3Sequence(this.view, uri)
+                return new S3Sequence(this.view, subject)
 
             if(type === Types.SBOL3.Collection)
-                return new S3Collection(this.view, uri)
+                return new S3Collection(this.view, subject)
 
             if(type === Types.SBOL3.Model)
-                return new S3Model(this.view, uri)
+                return new S3Model(this.view, subject)
 
             if(type === Types.SBOL3.Implementation)
-                return new S3Implementation(this.view, uri)
+                return new S3Implementation(this.view, subject)
 
             if(type === Types.SBOL3.Experiment)
-                return new S3Experiment(this.view, uri)
+                return new S3Experiment(this.view, subject)
 
             if(type === Types.SBOL3.ExperimentalData)
-                return new S3ExperimentalData(this.view, uri)
+                return new S3ExperimentalData(this.view, subject)
 
             if(type === Types.SBOL3.Attachment)
-                return new S3Attachment(this.view, uri)
+                return new S3Attachment(this.view, subject)
 
             throw new Error('unknown type: ' + uri + ' a ' + type)
         }

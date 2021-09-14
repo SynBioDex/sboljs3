@@ -1,30 +1,30 @@
 
 import S3Identified from './S3Identified'
 
-import { triple } from 'rdfoo'
+import { triple, Node } from 'rdfoo'
 import { Types, Predicates, Specifiers } from 'bioterms'
 import SBOL3GraphView from "../SBOL3GraphView";
 import S3Sequence from "./S3Sequence";
 
 export default abstract class S3Location extends S3Identified {
 
-    constructor(view:SBOL3GraphView, uri:string) {
+    constructor(view:SBOL3GraphView, subject:Node) {
 
-        super(view, uri)
+        super(view, subject)
 
     }
 
     get containingObject():S3Identified|undefined {
 
         const uri = triple.subjectUri(
-            this.view.graph.matchOne(null, Predicates.SBOL3.hasLocation, this.uri)
+            this.view.graph.matchOne(null, Predicates.SBOL3.hasLocation, this.subject)
         )
 
-        if(!uri) {
+        if(!subject) {
             throw new Error('Location has no containing object?')
         }
 
-        return this.view.uriToIdentified(uri)
+        return this.view.uriToIdentified(subject)
 
     }
 
@@ -59,7 +59,7 @@ export default abstract class S3Location extends S3Identified {
         if(uri === undefined)
             return undefined
         
-        let obj = this.view.uriToFacade(uri)
+        let obj = this.view.subjectToFacade(subject)
 
         if(! (obj instanceof S3Sequence)) {
             throw new Error('sequence was not a sequence')
@@ -71,7 +71,7 @@ export default abstract class S3Location extends S3Identified {
     set sequence(sequence:S3Sequence|undefined) {
 
         if(sequence !== undefined)
-            this.setUriProperty(Predicates.SBOL2.sequence, sequence.uri)
+            this.setUriProperty(Predicates.SBOL2.sequence, sequence.subject)
         else
             this.deleteProperty(Predicates.SBOL2.sequence)
 

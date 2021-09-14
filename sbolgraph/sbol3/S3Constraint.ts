@@ -3,16 +3,16 @@ import S3Identified from './S3Identified'
 import S3SubComponent from './S3SubComponent'
 import S3Range from './S3Range'
 
-import { triple, node } from 'rdfoo'
+import { triple, node, Node } from 'rdfoo'
 import { Types, Predicates, Specifiers } from 'bioterms'
 import SBOL3GraphView from '../SBOL3GraphView'
 import S3Component from './S3Component'
 
 export default class S3Constraint extends S3Identified {
 
-    constructor(view:SBOL3GraphView, uri:string) {
+    constructor(view:SBOL3GraphView, subject:Node) {
 
-        super(view, uri)
+        super(view, subject)
 
     }
 
@@ -23,14 +23,14 @@ export default class S3Constraint extends S3Identified {
     get containingObject():S3Identified|undefined {
 
         const uri = triple.subjectUri(
-            this.view.graph.matchOne(null, Predicates.SBOL3.hasConstraint, this.uri)
+            this.view.graph.matchOne(null, Predicates.SBOL3.hasConstraint, this.subject)
         )
 
-        if(!uri) {
+        if(!subject) {
             throw new Error('SeqCons has no containing object?')
         }
 
-        return this.view.uriToIdentified(uri)
+        return this.view.uriToIdentified(subject)
 
     }
 
@@ -51,8 +51,8 @@ export default class S3Constraint extends S3Identified {
         return restriction
     }
 
-    set restriction(uri:string) {
-        this.setUriProperty(Predicates.SBOL3.restriction, uri)
+    set restriction(subject:Node) {
+        this.setUriProperty(Predicates.SBOL3.restriction, subject)
     }
 
     get subject():S3SubComponent {
@@ -67,7 +67,7 @@ export default class S3Constraint extends S3Identified {
     }
 
     set subject(sc:S3SubComponent) {
-        this.setUriProperty(Predicates.SBOL3.subject, sc.uri)
+        this.setUriProperty(Predicates.SBOL3.subject, sc.subject)
     }
 
     get object():S3SubComponent {
@@ -82,7 +82,7 @@ export default class S3Constraint extends S3Identified {
     }
 
     set object(sc:S3SubComponent) {
-        this.setUriProperty(Predicates.SBOL3.object, sc.uri)
+        this.setUriProperty(Predicates.SBOL3.object, sc.subject)
     }
 
 }

@@ -18,7 +18,7 @@ import S3ExperimentalData from '../../sbol3/S3ExperimentalData'
 import S2Range from '../../sbol2/S2Range'
 import S3Identified from '../../sbol3/S3Identified'
 import S2Identified from '../../sbol2/S2Identified'
-import { Graph, node } from 'rdfoo'
+import { Graph, node, Node } from 'rdfoo'
 
 import { Types, Predicates, Prefixes, Specifiers } from 'bioterms'
 
@@ -42,22 +42,22 @@ export default function convert3to2(graph:Graph) {
 
 
     for(let ed of sbol3View.experimentalData) {
-        let ed2 = new S2ExperimentalData(sbol2View, ed.uri)
+        let ed2 = new S2ExperimentalData(sbol2View, ed.subject)
         ed2.setUriProperty(Predicates.a, Types.SBOL2.ExperimentalData)
         copyIdentifiedProperties(ed, ed2)
     }
 
     for(let ex of sbol3View.experiments) {
-        let ex2 = new S2Experiment(sbol2View, ex.uri)
+        let ex2 = new S2Experiment(sbol2View, ex.subject)
         ex2.setUriProperty(Predicates.a, Types.SBOL2.Experiment)
         copyIdentifiedProperties(ex, ex2)
         for(let ed of ex.experimentalData) {
-            ex2.insertUriProperty(Predicates.SBOL3.experimentalData, ed.uri)
+            ex2.insertProperty(Predicates.SBOL3.experimentalData, ed.subject)
         }
     }
 
     for(let seq of sbol3View.sequences) {
-        let seq2 = new S2Sequence(sbol2View, seq.uri)
+        let seq2 = new S2Sequence(sbol2View, seq.subject)
         seq2.setUriProperty(Predicates.a, Types.SBOL2.Sequence)
         copyIdentifiedProperties(seq, seq2)
         seq2.elements = seq.elements
@@ -65,7 +65,7 @@ export default function convert3to2(graph:Graph) {
     }
 
     for(let att of sbol3View.attachments) {
-        let att2 = new S2Attachment(sbol2View, att.uri)
+        let att2 = new S2Attachment(sbol2View, att.subject)
         att2.setUriProperty(Predicates.a, Types.SBOL2.Attachment)
         copyIdentifiedProperties(att, att2)
         att2.source = att.source
@@ -87,10 +87,10 @@ export default function convert3to2(graph:Graph) {
     let componentToCDandMD:Map<string, Mapping> = new Map()
     let subcomponentToFC:Map<string, S2FunctionalComponent> = new Map()
 
-    function getCDandMD(componentURI:string):Mapping|undefined {
-        let mapping = componentToCDandMD.get(componentURI)
+    function getCDandMD(componentsubject:Node):Mapping|undefined {
+        let mapping = componentToCDandMD.get(componentsubject.value)
         if(!mapping) {
-            console.warn(componentURI + ' has no cd/md mapping?')
+            console.warn(componentsubject.value + ' has no cd/md mapping?')
         }
         return mapping
     }
@@ -99,12 +99,12 @@ export default function convert3to2(graph:Graph) {
     //
     for(let component of sbol3View.components) {
 
-        let cdUri = component.uri
-        let mdUri = component.uri
+        let cdUri = component.subject.value
+        let mdUri = component.subject.value
 
 	// whichever SBOL2 object (CD or MD) gets the URI of the SBOL3 component, it will have a predicate telling us it was the original
 	// so that if we roundtrip back to SBOL3 the URIs will match up
-	// newGraph.insertProperties(component.uri, {
+	// newGraph.insertProperties(component.subject, {
 	// 	['http://sboltools.org/backport#sbol3type']: node.createUriNode(Types.SBOL3.Component)
 	// })
 
@@ -155,19 +155,19 @@ export default function convert3to2(graph:Graph) {
                 break
         }
 
-        let cd = new S2ComponentDefinition(sbol2View, cdUri)
+        let cd = new S2ComponentDefinition(sbol2View, node.createUriNode(cdUri))
         cd.setUriProperty(Predicates.a, Types.SBOL2.ComponentDefinition)
         copyIdentifiedProperties(component, cd)
         cd.displayId = displayId(component) + cdSuffix
 
 
-        let md = new S2ModuleDefinition(sbol2View, mdUri)
+        let md = new S2ModuleDefinition(sbol2View, node.createUriNode(mdUri))
         md.setUriProperty(Predicates.a, Types.SBOL2.ModuleDefinition)
         copyIdentifiedProperties(component, md)
         md.displayId = displayId(component) + mdSuffix
 
-	md.setUriProperty('http://sboltools.org/backport#sbol3identity', component.uri)
-	cd.setUriProperty('http://sboltools.org/backport#sbol3identity', component.uri)
+	md.setProperty('http://sboltools.org/backport#sbol3identity', component.subject)
+	cd.setProperty('http://sboltools.org/backport#sbol3identity', component.subject)
 
         if(md.persistentIdentity && mdSuffix)
             md.persistentIdentity = URIUtils.addSuffix(md.persistentIdentity, mdSuffix)
@@ -175,12 +175,12 @@ export default function convert3to2(graph:Graph) {
         if(cd.persistentIdentity && cdSuffix)
             cd.persistentIdentity = URIUtils.addSuffix(cd.persistentIdentity, cdSuffix)
 
-        let fcUri = (md.persistentIdentity || md.uri) + '/' + displayId(component)
+        let fcUri = (md.persistentIdentity || md.subject) + '/' + displayId(component)
 
-        let fc = new S2FunctionalComponent(sbol2View, fcUri)
+        let fc = new S2FunctionalComponent(sbol2View, node.createUriNode(fcUri))
         fc.insertUriProperty(Predicates.a, Types.SBOL2.FunctionalComponent)
         fc.setStringProperty(Predicates.SBOL2.displayId, displayId(component))
-        fc.setUriProperty(Predicates.SBOL2.definition, cd.uri)
+        fc.setProperty(Predicates.SBOL2.definition, cd.subject)
 	fc.insertUriProperty('http://sboltools.org/backport#type', 'http://sboltools.org/backport#SplitComponentComposition')
 
         md.addFunctionalComponent(fc)
@@ -194,16 +194,16 @@ export default function convert3to2(graph:Graph) {
         }
 
         for(let seq of component.sequences) {
-            cd.insertUriProperty(Predicates.SBOL2.sequence, seq.uri)
+            cd.insertProperty(Predicates.SBOL2.sequence, seq.subject)
         }
 
         for(let feature of component.sequenceFeatures) {
 
-            let sa = new S2SequenceAnnotation(sbol2View, feature.uri)
+            let sa = new S2SequenceAnnotation(sbol2View, feature.subject)
             sa.setUriProperty(Predicates.a, Types.SBOL2.SequenceAnnotation)
             copyIdentifiedProperties(feature, sa)
 
-            cd.insertUriProperty(Predicates.SBOL2.sequenceAnnotation, sa.uri)
+            cd.insertProperty(Predicates.SBOL2.sequenceAnnotation, sa.subject)
 
             for(let role of feature.roles) {
                 sa.addRole(role)
@@ -212,7 +212,7 @@ export default function convert3to2(graph:Graph) {
             copyLocations(sbol2View, feature, sa)
         }
 
-        componentToCDandMD.set(component.uri, { cd, md, fc, mdSuffix, cdSuffix })
+        componentToCDandMD.set(component.subject.value, { cd, md, fc, mdSuffix, cdSuffix })
     }
 
     // Make subcomponents into ALL of:
@@ -222,7 +222,7 @@ export default function convert3to2(graph:Graph) {
 
     for(let component of sbol3View.components) {
 
-        let mapping = getCDandMD(component.uri)
+        let mapping = getCDandMD(component.subject)
 
         if(!mapping) {
             throw new Error('???')
@@ -232,9 +232,9 @@ export default function convert3to2(graph:Graph) {
 
         for(let subcomponent of component.subComponents) {
 
-            let defUri = subcomponent.getRequiredUriProperty(Predicates.SBOL3.instanceOf)
+            let instanceOf = subcomponent.instanceOf
             
-            let newDefOfSubcomponent = getCDandMD(defUri)
+            let newDefOfSubcomponent = getCDandMD(instanceOf.subject)
 
             if(newDefOfSubcomponent === undefined) {
                 throw new Error('???')
@@ -245,20 +245,20 @@ export default function convert3to2(graph:Graph) {
 
             switch (subcomponent.getUriProperty('http://sboltools.org/backport#sbol2type')) {
                 case Types.SBOL2.Module:
-                    mdSubmoduleURI = subcomponent.uri
-                    cdSubcomponentURI = URIUtils.addSuffix(subcomponent.uri, '_c')
-                    mdSubcomponentURI = URIUtils.addSuffix(subcomponent.uri, '_fc')
+                    mdSubmoduleURI = subcomponent.subject.value
+                    cdSubcomponentURI = URIUtils.addSuffix(subcomponent.subject.value, '_c')
+                    mdSubcomponentURI = URIUtils.addSuffix(subcomponent.subject.value, '_fc')
                     break
                 case Types.SBOL2.FunctionalComponent:
-                    mdSubcomponentURI = subcomponent.uri
-                    cdSubcomponentURI = URIUtils.addSuffix(subcomponent.uri, '_c')
-                    mdSubmoduleURI = URIUtils.addSuffix(subcomponent.uri, '_m')
+                    mdSubcomponentURI = subcomponent.subject.value
+                    cdSubcomponentURI = URIUtils.addSuffix(subcomponent.subject.value, '_c')
+                    mdSubmoduleURI = URIUtils.addSuffix(subcomponent.subject.value, '_m')
                     break
                 case Types.SBOL2.Component:
                 default:
-                    cdSubcomponentURI = subcomponent.uri
-                    mdSubcomponentURI = URIUtils.addSuffix(subcomponent.uri, '_fc')
-                    mdSubmoduleURI = URIUtils.addSuffix(subcomponent.uri, '_m')
+                    cdSubcomponentURI = subcomponent.subject.value
+                    mdSubcomponentURI = URIUtils.addSuffix(subcomponent.subject.value, '_fc')
+                    mdSubmoduleURI = URIUtils.addSuffix(subcomponent.subject.value, '_m')
                     break
             }
 
@@ -267,26 +267,26 @@ export default function convert3to2(graph:Graph) {
             let cdSubcomponent = new S2ComponentInstance(sbol2View, cdSubcomponentURI)
             cdSubcomponent.setUriProperty(Predicates.a, Types.SBOL2.Component)
             cdSubcomponent.definition = newDefOfSubcomponent.cd
-	    cdSubcomponent.setUriProperty('http://sboltools.org/backport#sbol3identity', subcomponent.uri)
+	    cdSubcomponent.setProperty('http://sboltools.org/backport#sbol3identity', subcomponent.subject)
 
-            cd.insertUriProperty(Predicates.SBOL2.component, cdSubcomponent.uri)
+            cd.insertProperty(Predicates.SBOL2.component, cdSubcomponent.subject)
 
 
             let mdSubcomponent = new S2FunctionalComponent(sbol2View, mdSubcomponentURI)
             mdSubcomponent.setUriProperty(Predicates.a, Types.SBOL2.FunctionalComponent)
             mdSubcomponent.definition = newDefOfSubcomponent.cd
-	    mdSubcomponent.setUriProperty('http://sboltools.org/backport#sbol3identity', subcomponent.uri)
+	    mdSubcomponent.setProperty('http://sboltools.org/backport#sbol3identity', subcomponent.subject)
 
-            md.insertUriProperty(Predicates.SBOL2.functionalComponent, mdSubcomponent.uri)
+            md.insertProperty(Predicates.SBOL2.functionalComponent, mdSubcomponent.subject)
 
 
 
             let mdSubmodule = new S2ModuleInstance(sbol2View, mdSubmoduleURI)
             mdSubmodule.setUriProperty(Predicates.a, Types.SBOL2.Module)
             mdSubmodule.definition = newDefOfSubcomponent.md
-	    mdSubmodule.setUriProperty('http://sboltools.org/backport#sbol3identity', subcomponent.uri)
+	    mdSubmodule.setProperty('http://sboltools.org/backport#sbol3identity', subcomponent.subject)
 
-            md.insertUriProperty(Predicates.SBOL2.module, mdSubmodule.uri)
+            md.insertProperty(Predicates.SBOL2.module, mdSubmodule.subject)
             
 
 
@@ -307,14 +307,14 @@ export default function convert3to2(graph:Graph) {
 
             }
 
-            subcomponentToFC.set(subcomponent.uri, mdSubcomponent)
+            subcomponentToFC.set(subcomponent.subject.value, mdSubcomponent)
 
             if(subcomponent.measure)
-                mdSubcomponent.setUriProperty(Predicates.SBOL2.measure, subcomponent.measure.uri)
+                mdSubcomponent.setProperty(Predicates.SBOL2.measure, subcomponent.measure.subject)
 
 
             if(subcomponent.sourceLocation) {
-                cdSubcomponent.setUriProperty(Predicates.SBOL3.sourceLocation, subcomponent.sourceLocation.uri)
+                cdSubcomponent.setProperty(Predicates.SBOL3.sourceLocation, subcomponent.sourceLocation.subject)
             }
 
             if(subcomponent.locations.length > 0 || subcomponent.orientation) {
@@ -328,8 +328,8 @@ export default function convert3to2(graph:Graph) {
                 }
 
                 let saIdent = S2IdentifiedFactory.createChild(sbol2View, Types.SBOL2.SequenceAnnotation, cd, Predicates.SBOL2.sequenceAnnotation, saDisplayId, subcomponent.getStringProperty(Predicates.SBOL2.version))
-                let sa = new S2SequenceAnnotation(sbol2View, saIdent.uri)
-                sa.setUriProperty(Predicates.SBOL2.component, subcomponent.uri)
+                let sa = new S2SequenceAnnotation(sbol2View, saIdent.subject)
+                sa.setProperty(Predicates.SBOL2.component, subcomponent.subject)
 
 		let orientLoc = sa.addLocationGeneric(subcomponent.orientation!)
 		orientLoc.setUriProperty('http://sboltools.org/backport#type', 'http://sboltools.org/backport#FeatureOrientation')
@@ -343,7 +343,7 @@ export default function convert3to2(graph:Graph) {
     // Port interactions
     for(let component of sbol3View.components) {
 
-        let mapping = getCDandMD(component.uri)
+        let mapping = getCDandMD(component.subject)
 
         if(!mapping) {
             throw new Error('???')
@@ -357,7 +357,7 @@ export default function convert3to2(graph:Graph) {
             copyIdentifiedProperties(interaction, newInteraction)
 
             if (interaction.measure) {
-                newInteraction.setUriProperty(Predicates.SBOL2.measure, interaction.measure.uri)
+                newInteraction.setProperty(Predicates.SBOL2.measure, interaction.measure.subject)
             }
 
             for(let type of interaction.types) {
@@ -370,7 +370,7 @@ export default function convert3to2(graph:Graph) {
                 copyIdentifiedProperties(participation, newParticipation)
 
                 if (participation.measure) {
-                    newParticipation.setUriProperty(Predicates.SBOL2.measure, participation.measure.uri)
+                    newParticipation.setProperty(Predicates.SBOL2.measure, participation.measure.subject)
                 }
 
                 for(let role of participation.roles) {
@@ -381,7 +381,7 @@ export default function convert3to2(graph:Graph) {
 
                 if(participant) {
 
-                    let newParticipant = subcomponentToFC.get(participant.uri)
+                    let newParticipant = subcomponentToFC.get(participant.subject.value)
 
                     newParticipation.participant = newParticipant
 
@@ -392,7 +392,7 @@ export default function convert3to2(graph:Graph) {
 
 
     for(let impl of sbol3View.implementations) {
-        const impl2:S2Implementation = new S2Implementation(sbol2View, impl.uri)
+        const impl2:S2Implementation = new S2Implementation(sbol2View, impl.subject)
         impl2.setUriProperty(Predicates.a, Types.SBOL2.Implementation)
         copyIdentifiedProperties(impl, impl2)
 
@@ -401,22 +401,22 @@ export default function convert3to2(graph:Graph) {
 
 
     for(let coll of sbol3View.collections) {
-        let coll2:S2Collection = new S2Collection(sbol2View, coll.uri)
+        let coll2:S2Collection = new S2Collection(sbol2View, coll.subject)
         coll2.setUriProperty(Predicates.a, Types.SBOL2.Collection)
         copyIdentifiedProperties(coll, coll2)
 
         for(let member of coll.members) {
-            coll2.insertUriProperty(Predicates.SBOL2.member, member.uri)
+            coll2.insertProperty(Predicates.SBOL2.member, member.subject)
 
 
             // if it's a component that has been mapped to an SBOL2 CD and MD,
             // add both to the SBOL2 collection.
             //
-            let cdAndMdMapping = componentToCDandMD.get(member.uri)
+            let cdAndMdMapping = componentToCDandMD.get(member.subject.value)
 
             if(cdAndMdMapping) {
-                coll2.insertUriProperty(Predicates.SBOL2.member, cdAndMdMapping.cd.uri)
-                coll2.insertUriProperty(Predicates.SBOL2.member, cdAndMdMapping.md.uri)
+                coll2.insertProperty(Predicates.SBOL2.member, cdAndMdMapping.cd.subject)
+                coll2.insertProperty(Predicates.SBOL2.member, cdAndMdMapping.md.subject)
             }
         }
 
@@ -445,14 +445,14 @@ export default function convert3to2(graph:Graph) {
 
         let mdPruned = false, cdPruned = false
 
-        if(!dontPrune.has(md.uri)) {
+        if(!dontPrune.has(md.subject.value)) {
             if (md.interactions.length === 0 && md.models.length === 0 && md.measures.length === 0) {
                 md.destroy()
                 mdPruned = true
             }
         }
 
-        if(!mdPruned && !dontPrune.has(cd.uri)) {
+        if(!mdPruned && !dontPrune.has(cd.subject.value)) {
             if(cd.containedObjects.length === 0) {
                 cd.destroy()
                 cdPruned = true
@@ -465,15 +465,15 @@ export default function convert3to2(graph:Graph) {
 
             if(cdSuffix.length > 0) {
 
-                console.assert(cd.uri.endsWith(cdSuffix))
+                console.assert(cd.subject.value.endsWith(cdSuffix))
                 console.assert(cd.displayId!.endsWith(cdSuffix))
 
                 let newDisplayid = cd.displayId!.substr(0, cd.displayId!.length - cdSuffix.length)
                 cd.displayId = newDisplayid
 
-                let newUri = cd.uri.substr(0, cd.uri.length - cdSuffix.length)
+                let newUri = cd.subject.value.substr(0, cd.subject.value.length - cdSuffix.length)
 
-                newGraph.replaceURI(cd.uri, newUri)
+                newGraph.replaceSubject(cd.subject, node.createUriNode(newUri))
             }
 
         } else if(cdPruned && !mdPruned) {
@@ -482,15 +482,15 @@ export default function convert3to2(graph:Graph) {
 
             if(mdSuffix.length > 0) {
 
-                console.assert(md.uri.endsWith(mdSuffix))
+                console.assert(md.subject.value.endsWith(mdSuffix))
                 console.assert(md.displayId!.endsWith(mdSuffix))
 
                 let newDisplayid = md.displayId!.substr(0, md.displayId!.length - mdSuffix.length)
                 md.displayId = newDisplayid
 
-                let newUri = md.uri.substr(0, md.uri.length - mdSuffix.length)
+                let newUri = md.subject.value.substr(0, md.subject.value.length - mdSuffix.length)
 
-                newGraph.replaceURI(md.uri, newUri)
+                newGraph.replaceSubject(md.subject, node.createUriNode(newUri))
             }
         }
        
@@ -510,9 +510,9 @@ export default function convert3to2(graph:Graph) {
 
     // For "generic top levels"
 
-    graph.replaceURI(Predicates.SBOL3.persistentIdentity, Predicates.SBOL2.persistentIdentity)
-    graph.replaceURI(Predicates.SBOL3.displayId, Predicates.SBOL2.displayId)
-    graph.replaceURI('http://sboltools.org/backport#sbol2version', Predicates.SBOL2.version)
+    graph.replaceSubject(node.createUriNode(Predicates.SBOL3.persistentIdentity), node.createUriNode(Predicates.SBOL2.persistentIdentity))
+    graph.replaceSubject(node.createUriNode(Predicates.SBOL3.displayId), node.createUriNode(Predicates.SBOL2.displayId))
+    graph.replaceSubject(node.createUriNode('http://sboltools.org/backport#sbol2version'), node.createUriNode(Predicates.SBOL2.version))
 
 
     graph.addAll(newGraph)
@@ -521,44 +521,44 @@ export default function convert3to2(graph:Graph) {
 
 
 
-        a.setUriProperty(Predicates.SBOL2.persistentIdentity, a.uri)
+        a.setUriProperty(Predicates.SBOL2.persistentIdentity, a.subject.value)
 
 	if(a.namespace)
 		b.setUriProperty('http://sboltools.org/backport#sbol3namespace', a.namespace)
 
-        let aTriples = graph.match(a.uri, null, null)
+        let aTriples = graph.match(a.subject, null, null)
 
 
         for(let triple of aTriples) {
             
-            let p = triple.predicate.nominalValue
+            let p = triple.predicate.value
 
             if(p === Predicates.a) {
                 continue
             }
 
             if(p === Predicates.SBOL3.displayId) {
-                b.graph.insert(b.uri, Predicates.SBOL2.displayId, triple.object)
+                b.graph.insertTriple(b.subject, Predicates.SBOL2.displayId, triple.object)
                 continue
             }
 
             if(p === Predicates.SBOL3.name) {
-                b.graph.insert(b.uri, Predicates.Dcterms.title, triple.object)
+                b.graph.insertTriple(b.subject, Predicates.Dcterms.title, triple.object)
                 continue
             }
 
             if(p === Predicates.SBOL3.description) {
-                b.graph.insert(b.uri, Predicates.Dcterms.description, triple.object)
+                b.graph.insertTriple(b.subject, Predicates.Dcterms.description, triple.object)
                 continue
             }
 
             if(p === Predicates.SBOL3.hasMeasure) {
-                b.graph.insert(b.uri, Predicates.SBOL2.measure, triple.object)
+                b.graph.insertTriple(b.subject, Predicates.SBOL2.measure, triple.object)
                 continue
             }
 
             if(p === 'http://sboltools.org/backport#sbol2version') {
-                b.graph.insert(b.uri, Predicates.SBOL2.version, triple.object)
+                b.graph.insertTriple(b.subject, Predicates.SBOL2.version, triple.object)
                 continue
             }
 
@@ -568,7 +568,7 @@ export default function convert3to2(graph:Graph) {
             }
 
             if(p.indexOf(Prefixes.sbol3) !== 0) {
-                b.graph.insert(b.uri, triple.predicate.nominalValue, triple.object)
+                b.graph.insertTriple(b.subject, triple.predicate, triple.object)
             }
         }
     }
@@ -579,14 +579,14 @@ export default function convert3to2(graph:Graph) {
         for(let location of oldThing.locations) {
             if(location instanceof S3Range) {
 
-                let newLoc = new S2Range(sbol2View, location.uri)
+                let newLoc = new S2Range(sbol2View, location.subject)
                 newLoc.insertUriProperty(Predicates.a, Types.SBOL2.Range)
                 copyIdentifiedProperties(location, newLoc)
 
-                newThing.insertUriProperty(Predicates.SBOL2.location, newLoc.uri)
+                newThing.insertProperty(Predicates.SBOL2.location, newLoc.subject)
 
                 if(location.sequence) {
-                    newLoc.setUriProperty(Predicates.SBOL2.sequence, location.sequence.uri)
+                    newLoc.setProperty(Predicates.SBOL2.sequence, location.sequence.subject)
                 }
 
                 newLoc.start = location.start
@@ -596,14 +596,14 @@ export default function convert3to2(graph:Graph) {
 
             } else if(location instanceof S3Cut) {
 
-                let newLoc = new S2Cut(sbol2View, location.uri)
+                let newLoc = new S2Cut(sbol2View, location.subject)
                 newLoc.insertUriProperty(Predicates.a, Types.SBOL2.Cut)
                 copyIdentifiedProperties(location, newLoc)
 
-                newThing.insertUriProperty(Predicates.SBOL2.location, newLoc.uri)
+                newThing.insertProperty(Predicates.SBOL2.location, newLoc.subject)
 
                 if(location.sequence) {
-                    newLoc.setUriProperty(Predicates.SBOL2.sequence, location.sequence.uri)
+                    newLoc.setProperty(Predicates.SBOL2.sequence, location.sequence.subject)
                 }
 
                 newLoc.at = location.at
@@ -615,14 +615,14 @@ export default function convert3to2(graph:Graph) {
 
             } else if(location instanceof S3OrientedLocation) {
 
-                let newLoc = new S2GenericLocation(sbol2View, location.uri)
+                let newLoc = new S2GenericLocation(sbol2View, location.subject)
                 newLoc.insertUriProperty(Predicates.a, Types.SBOL2.GenericLocation)
                 copyIdentifiedProperties(location, newLoc)
 
-                newThing.insertUriProperty(Predicates.SBOL2.location, newLoc.uri)
+                newThing.insertProperty(Predicates.SBOL2.location, newLoc.subject)
 
                 if(location.sequence) {
-                    newLoc.setUriProperty(Predicates.SBOL2.sequence, location.sequence.uri)
+                    newLoc.setProperty(Predicates.SBOL2.sequence, location.sequence.subject)
                 }
 
                 copyOrientation(location, newLoc)
@@ -662,8 +662,8 @@ function displayId(obj:S3Identified) {
     if(displayId)
         return displayId
 
-    let slash = obj.uri.split('/').pop() || ''
-    let hash = obj.uri.split('#').pop() || ''
+    let slash = obj.subject.value.split('/').pop() || ''
+    let hash = obj.subject.value.split('#').pop() || ''
 
     return slash.length > hash.length ? slash : hash
 }

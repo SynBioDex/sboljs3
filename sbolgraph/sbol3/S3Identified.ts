@@ -1,5 +1,5 @@
 
-import { triple } from 'rdfoo'
+import { triple, Node } from 'rdfoo'
 import { Types, Predicates, Specifiers } from 'bioterms'
 
 import S3Facade from './S3Facade'
@@ -9,8 +9,8 @@ import SBOL3GraphView from '../SBOL3GraphView';
 
 export default class S3Identified extends S3Facade {
 
-    constructor(view:SBOL3GraphView, uri:string) {
-        super(view, uri)
+    constructor(view:SBOL3GraphView, subject:Node) {
+        super(view, subject)
     }
 
     get facadeType():string {
@@ -51,7 +51,7 @@ export default class S3Identified extends S3Facade {
     }
 
     get uriPrefix():string {
-        return URIUtils.getPrefix(this.uri)
+        return URIUtils.getPrefix(this.subject)
     }
 
     get namespace():string|undefined {

@@ -5,16 +5,16 @@ import S2ComponentDefinition from './S2ComponentDefinition'
 import S2SequenceAnnotation from './S2SequenceAnnotation'
 import S2SequenceConstraint from './S2SequenceConstraint'
 
-import { triple } from 'rdfoo'
+import { Node } from 'rdfoo'
 import { Types, Predicates, Specifiers } from 'bioterms'
 import S2Location from './S2Location';
 import { Level } from 'chalk';
 
 export default class S2ComponentInstance extends S2Identified {
 
-    constructor(view:SBOL2GraphView, uri:string) {
+    constructor(view:SBOL2GraphView, subject:Node) {
 
-        super(view, uri)
+        super(view, subject)
 
         this.access = Specifiers.SBOL2.Access.PublicAccess
 
@@ -43,18 +43,18 @@ export default class S2ComponentInstance extends S2Identified {
 
     get definition():S2ComponentDefinition {
 
-        const uri = this.getUriProperty(Predicates.SBOL2.definition)
+        const subject = this.getProperty(Predicates.SBOL2.definition)
 
-        if(!uri) {
-            throw new Error('Component ' + this.uri + ' has no definition')
+        if(!subject) {
+            throw new Error('Component ' + this.subject.value + ' has no definition')
         }
 
-        return new S2ComponentDefinition(this.view, uri)
+        return new S2ComponentDefinition(this.view, subject)
     }
 
     set definition(def:S2ComponentDefinition) {
 
-        this.setUriProperty(Predicates.SBOL2.definition, def.uri)
+        this.setProperty(Predicates.SBOL2.definition, def.subject)
 
     }
 
@@ -73,19 +73,19 @@ export default class S2ComponentInstance extends S2Identified {
 
     get sequenceAnnotations():Array<S2SequenceAnnotation> {
 
-        return this.view.graph.match(null, Predicates.SBOL2.component, this.uri)
-                   .map(triple.subjectUri)
-                   .filter((uri:string) => this.view.getType(uri) === Types.SBOL2.SequenceAnnotation)
-                   .map((uri:string) => new S2SequenceAnnotation(this.view, uri))
+        return this.view.graph.match(null, Predicates.SBOL2.component, this.subject)
+                   .map(t => t.subject)
+                   .filter((subject:Node) => this.view.getType(subject) === Types.SBOL2.SequenceAnnotation)
+                   .map((subject:Node) => new S2SequenceAnnotation(this.view, subject))
 
     }
 
     get sequenceConstraints():Array<S2SequenceConstraint> {
 
-        return this.view.graph.match(null, Predicates.SBOL2.subject, this.uri)
-                   .map(triple.subjectUri)
-                   .filter((uri:string) => this.view.getType(uri) === Types.SBOL2.SequenceConstraint)
-                   .map((uri:string) => new S2SequenceConstraint(this.view, uri))
+        return this.view.graph.match(null, Predicates.SBOL2.subject, this.subject)
+                   .map(t => t.subject)
+                   .filter((subject:Node) => this.view.getType(subject) === Types.SBOL2.SequenceConstraint)
+                   .map((subject:Node) => new S2SequenceConstraint(this.view, subject))
 
     }
 
@@ -95,17 +95,17 @@ export default class S2ComponentInstance extends S2Identified {
 
     get containingComponentDefinition():S2ComponentDefinition {
             
-        const uri:string|undefined = this.view.graph.match(
-            null, Predicates.SBOL2.component, this.uri
-        ).map(triple.subjectUri).filter((s: string) => {
+        const subject:Node|undefined = this.view.graph.match(
+            null, Predicates.SBOL2.component, this.subject
+        ).map(t => t.subject).filter((s: Node) => {
             return this.view.hasType(s, Types.SBOL2.ComponentDefinition)
         })[0]
 
-        if(uri === undefined) {
+        if(subject === undefined) {
             throw new Error('component not contained by definition?')
         }
 
-        return new S2ComponentDefinition(this.view, uri)
+        return new S2ComponentDefinition(this.view, subject)
     }
 
     get containingObject():S2Identified|undefined {
@@ -138,12 +138,12 @@ export default class S2ComponentInstance extends S2Identified {
 
     get sourceLocation():S2Location|undefined {
 
-        let uri = this.getUriProperty(Predicates.SBOL2.sourceLocation)
+        let uri = this.getProperty(Predicates.SBOL2.sourceLocation)
 
         if(uri === undefined)
             return undefined
         
-        let obj = this.view.uriToFacade(uri)
+        let obj = this.view.subjectToFacade(uri)
 
         if(! (obj instanceof S2Location)) {
             throw new Error('sourceLocation was not a location')
@@ -155,7 +155,7 @@ export default class S2ComponentInstance extends S2Identified {
     set sourceLocation(location:S2Location|undefined) {
 
         if(location !== undefined)
-            this.setUriProperty(Predicates.SBOL2.sourceLocation, location.uri)
+            this.setProperty(Predicates.SBOL2.sourceLocation, location.subject)
         else
             this.deleteProperty(Predicates.SBOL2.sourceLocation)
 

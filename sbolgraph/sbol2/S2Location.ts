@@ -1,7 +1,7 @@
 
 import S2Identified from './S2Identified'
 
-import { triple } from 'rdfoo'
+import { triple, Node } from 'rdfoo'
 import { Types, Predicates, Specifiers } from 'bioterms'
 import SBOL2GraphView from "../SBOL2GraphView";
 import S2SequenceAnnotation from "./S2SequenceAnnotation";
@@ -11,23 +11,23 @@ import S2Sequence from './S2Sequence';
 
 export default abstract class S2Location extends S2Identified {
 
-    constructor(view:SBOL2GraphView, uri:string) {
+    constructor(view:SBOL2GraphView, subject:Node) {
 
-        super(view, uri)
+        super(view, subject)
 
     }
 
     get containingObject():S2Identified|undefined {
 
         const uri = triple.subjectUri(
-            this.view.graph.matchOne(null, Predicates.SBOL2.location, this.uri)
+            this.view.graph.matchOne(null, Predicates.SBOL2.location, this.subject)
         )
 
-        if(!uri) {
+        if(!subject) {
             throw new Error('Location has no containing object?')
         }
 
-        return this.view.uriToIdentified(uri)
+        return this.view.uriToIdentified(subject)
     }
 
     get containingSequenceAnnotation():S2SequenceAnnotation {
@@ -66,7 +66,7 @@ export default abstract class S2Location extends S2Identified {
         if(uri === undefined)
             return undefined
         
-        let obj = this.view.uriToFacade(uri)
+        let obj = this.view.subjectToFacade(subject)
 
         if(! (obj instanceof S2Sequence)) {
             throw new Error('sequence was not a sequence')
@@ -78,7 +78,7 @@ export default abstract class S2Location extends S2Identified {
     set sequence(sequence:S2Sequence|undefined) {
 
         if(sequence !== undefined)
-            this.setUriProperty(Predicates.SBOL2.sequence, sequence.uri)
+            this.setUriProperty(Predicates.SBOL2.sequence, sequence.subject)
         else
             this.deleteProperty(Predicates.SBOL2.sequence)
 

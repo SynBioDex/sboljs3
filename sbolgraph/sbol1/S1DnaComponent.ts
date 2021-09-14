@@ -1,5 +1,5 @@
 
-import { triple } from 'rdfoo'
+import { Node, triple } from 'rdfoo'
 import { Types, Predicates, Specifiers } from 'bioterms'
 
 import S1Facade from './S1Facade'
@@ -11,8 +11,8 @@ import S1DnaSequence from './S1DnaSequence'
 
 export default class S1DnaComponent extends S1Facade {
 
-    constructor(view:SBOL1GraphView, uri:string) {
-        super(view, uri)
+    constructor(view:SBOL1GraphView, subject:Node) {
+        super(view, subject)
     }
 
     get facadeType():string {
@@ -20,8 +20,8 @@ export default class S1DnaComponent extends S1Facade {
     }
 
     get annotations():S1SequenceAnnotation[] {
-        return this.getUriProperties(Predicates.SBOL1.annotation)
-                   .map((uri) => new S1SequenceAnnotation(this.view, uri))
+        return this.getProperties(Predicates.SBOL1.annotation)
+                   .map((subject) => new S1SequenceAnnotation(this.view, subject))
     }
 
     get displayId():string|undefined {
@@ -37,26 +37,28 @@ export default class S1DnaComponent extends S1Facade {
     }
 
     get dnaSequence():S1DnaSequence|undefined {
-        let uri = this.getUriProperty(Predicates.SBOL1.dnaSequence)
-        if(uri) {
-            return new S1DnaSequence(this.view, uri)
+        let subject = this.getProperty(Predicates.SBOL1.dnaSequence)
+        if(subject) {
+            return new S1DnaSequence(this.view, subject)
         }
     }
 
     get subComponents():S1DnaComponent[] {
 
-        let scs:string[] = []
+	let visited = new Set()
+        let scs:Node[] = []
 
         for (let anno of this.annotations) {
 
             let sc = anno.subComponent
 
-            if(sc && scs.indexOf(sc.uri) === -1) {
-                scs.push(sc.uri)
+            if(sc && !visited.has(sc.subject.value)) {
+                scs.push(sc.subject)
+		visited.add(sc.subject.value)
             }
         }
 
-        return scs.map(uri => new S1DnaComponent(this.view, uri))
+        return scs.map(subject => new S1DnaComponent(this.view, subject))
     }
 
 
