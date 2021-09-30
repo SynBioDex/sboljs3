@@ -1,6 +1,6 @@
 
 
-import { Graph, GraphViewBasic, triple, node, changeURIPrefix, serialize, Facade, GraphViewHybrid, parseRDF } from 'rdfoo'
+import { Graph, GraphViewBasic, triple, node, changeURIPrefix, serialize, Facade, GraphViewHybrid, parseRDF, Node } from 'rdfoo'
 import { Types, Predicates, Specifiers, Prefixes } from 'bioterms'
 
 import S3Identified from './sbol3/S3Identified'
@@ -116,8 +116,8 @@ export default class SBOL3GraphView extends GraphViewHybrid {
     getInstancesOfComponent(component:S3Component):S3SubComponent[] {
 
         return this.graph.match(null, Predicates.SBOL3.instanceOf, component.subject)
-                   .map(triple.subjectsubject)
-                   .map((subject) => new S3SubComponent(this, uri as string))
+                   .map(t => t.subject)
+                   .map((subject) => new S3SubComponent(this, subject))
 
     }
 
@@ -272,7 +272,7 @@ export default class SBOL3GraphView extends GraphViewHybrid {
 
         return this.topLevels.filter((topLevel) => {
 
-            return topLevel.uri.indexOf(prefix) === 0
+            return topLevel.subject.value.indexOf(prefix) === 0
 
         })
     }
@@ -287,17 +287,15 @@ export default class SBOL3GraphView extends GraphViewHybrid {
             return undefined
     }
 
-    findClosestTopLevel(_subject:string):string|undefined {
+    findClosestTopLevel(_subject:Node):Node|undefined {
 
-        var subject:string|undefined = _subject
-
-        const origSubject:string = subject
+        var subject:Node|undefined = _subject
 
         var subjectTypes:string[] = this.getTypes(subject)
 
         while(!isTopLevel()) {
 
-            let identified:S3Identified|undefined = this.uriToIdentified(subject)
+            let identified:S3Identified|undefined = subject && this.uriToIdentified(subject)
 
             if(identified === undefined)
                 throw new Error('???')
@@ -308,7 +306,7 @@ export default class SBOL3GraphView extends GraphViewHybrid {
                 return undefined
             }
 
-            subject = identified.uri
+            subject = identified.subject
 
             subjectTypes = this.getTypes(subject)
         }
@@ -350,7 +348,7 @@ export default class SBOL3GraphView extends GraphViewHybrid {
 
     printTree() {
         for(let cd of this.components) {
-            console.log('component:' + cd.uri + ' (' + cd.displayId + ')')
+            console.log('component:' + cd.subject + ' (' + cd.displayId + ')')
             for(let c of cd.subComponents) {
                 console.log(indent(1) + 'sc-> ' + c.instanceOf.subject)
             }
@@ -430,7 +428,7 @@ class SBOL3 extends GraphViewBasic {
             if(type === Types.SBOL3.Attachment)
                 return new S3Attachment(this.view, subject)
 
-            throw new Error('unknown type: ' + uri + ' a ' + type)
+            throw new Error('unknown type: ' + subject.value + ' a ' + type)
         }
     }
 

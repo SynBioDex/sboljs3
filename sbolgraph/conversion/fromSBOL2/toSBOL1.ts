@@ -108,10 +108,10 @@ export default function convert2to1(graph:Graph) {
         }
 
         for(let sc of cd.sequenceConstraints) {
-            if(sc.restriction === Specifiers.SBOL2.SequenceConstraint.Precedes) {
+            if(sc.constraintRestriction === Specifiers.SBOL2.SequenceConstraint.Precedes) {
 
-                let subjSA = sc.subject.sequenceAnnotations.length > 0 ? sc.subject.sequenceAnnotations[0] : sc.subject
-                let objSA = sc.object.sequenceAnnotations.length > 0 ? sc.object.sequenceAnnotations[0] : sc.object
+                let subjSA = sc.constraintSubject.sequenceAnnotations.length > 0 ? sc.constraintSubject.sequenceAnnotations[0] : sc.constraintSubject
+                let objSA = sc.constraintObject.sequenceAnnotations.length > 0 ? sc.constraintObject.sequenceAnnotations[0] : sc.constraintObject
 
                 newGraph.insertProperties(subjSA.subject, {
                     [Predicates.SBOL1.precedes]: objSA.subject

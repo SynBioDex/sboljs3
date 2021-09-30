@@ -22,9 +22,7 @@ export default class S3Constraint extends S3Identified {
 
     get containingObject():S3Identified|undefined {
 
-        const uri = triple.subjectUri(
-            this.view.graph.matchOne(null, Predicates.SBOL3.hasConstraint, this.subject)
-        )
+        const subject = this.view.graph.matchOne(null, Predicates.SBOL3.hasConstraint, this.subject)?.subject
 
         if(!subject) {
             throw new Error('SeqCons has no containing object?')
@@ -40,7 +38,7 @@ export default class S3Constraint extends S3Identified {
 
     }
 
-    get restriction():string {
+    get constraintRestriction():string {
 
         const restriction:string|undefined = this.getUriProperty(Predicates.SBOL3.restriction)
 
@@ -51,13 +49,13 @@ export default class S3Constraint extends S3Identified {
         return restriction
     }
 
-    set restriction(subject:Node) {
+    set constraintRestriction(subject:string) {
         this.setUriProperty(Predicates.SBOL3.restriction, subject)
     }
 
-    get subject():S3SubComponent {
+    get constraintSubject():S3SubComponent {
 
-        const subject:string|undefined = this.getUriProperty(Predicates.SBOL3.subject)
+        const subject:Node|undefined = this.getProperty(Predicates.SBOL3.subject)
 
         if(subject === undefined) {
             throw new Error('SeqCons has no subject?')
@@ -66,13 +64,13 @@ export default class S3Constraint extends S3Identified {
         return new S3SubComponent(this.view, subject)
     }
 
-    set subject(sc:S3SubComponent) {
-        this.setUriProperty(Predicates.SBOL3.subject, sc.subject)
+    set constraintSubject(sc:S3SubComponent) {
+        this.setProperty(Predicates.SBOL3.subject, sc.subject)
     }
 
-    get object():S3SubComponent {
+    get constraintObject():S3SubComponent {
 
-        const object:string|undefined = this.getUriProperty(Predicates.SBOL3.object)
+        const object:Node|undefined = this.getProperty(Predicates.SBOL3.object)
 
         if(object === undefined) {
             throw new Error('SeqCons has no object?')
@@ -81,8 +79,8 @@ export default class S3Constraint extends S3Identified {
         return new S3SubComponent(this.view, object)
     }
 
-    set object(sc:S3SubComponent) {
-        this.setUriProperty(Predicates.SBOL3.object, sc.subject)
+    set constraintObject(sc:S3SubComponent) {
+        this.setProperty(Predicates.SBOL3.object, sc.subject)
     }
 
 }

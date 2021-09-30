@@ -4,7 +4,7 @@ import S3Location from './S3Location'
 import S3Range from './S3Range'
 import S3IdentifiedFactory from './S3IdentifiedFactory'
 
-import { node, triple } from 'rdfoo'
+import { node, triple, Node } from 'rdfoo'
 
 import { Predicates, Types } from 'bioterms'
 import S3OrientedLocation from './S3OrientedLocation';
@@ -18,7 +18,7 @@ export default class S3Feature extends S3Identified {
     }
 
     hasRole(role:string):boolean {
-        return this.view.graph.hasMatch(this.subject, Predicates.SBOL3.role, role)
+        return this.view.graph.hasMatch(this.subject, Predicates.SBOL3.role, node.createUriNode(role))
     }
 
     addRole(role:string):void {
@@ -26,7 +26,7 @@ export default class S3Feature extends S3Identified {
     }
 
     removeRole(role:string):void {
-        this.view.graph.removeMatches(this.subject, Predicates.SBOL3.role, role)
+        this.view.graph.removeMatches(this.subject, Predicates.SBOL3.role, node.createUriNode(role))
     }
 
     get soTerms():string[] {
@@ -34,7 +34,7 @@ export default class S3Feature extends S3Identified {
         let terms:string[] = []
 
         for(let role of this.roles) {
-            let term = extractTerm(role)
+            let term = extractTerm(node.createUriNode(role))
 
             if(term)
                 terms.push(term)
@@ -45,9 +45,7 @@ export default class S3Feature extends S3Identified {
 
     get containingObject():S3Identified|undefined {
 
-        const uri = triple.subjectUri(
-            this.view.graph.matchOne(null, Predicates.SBOL3.hasFeature, this.subject)
-        )
+        const subject = this.view.graph.matchOne(null, Predicates.SBOL3.hasFeature, this.subject)?.subject
 
         if(!subject) {
             throw new Error('has no containing object?')
@@ -65,7 +63,7 @@ export default class S3Feature extends S3Identified {
 
     get locations():Array<S3Location> {
 
-        return this.getUriProperties(Predicates.SBOL3.hasLocation)
+        return this.getProperties(Predicates.SBOL3.hasLocation)
                    .map((subject:Node) => this.view.subjectToFacade(subject) as S3Location)
     }
 

@@ -21,7 +21,7 @@ export default abstract class SBOLFacade extends Facade {
                     .filter(t => isOwnershipRelation(this.graph, t))
 
         if(ownageTriples.length === 1) {
-            return this.view.subjectToFacade(ownageTriples[0].subject)
+            return this.view.subjectToFacade(ownageTriples[0].subject) as SBOLFacade|undefined
         }
     }
 
@@ -31,7 +31,7 @@ export default abstract class SBOLFacade extends Facade {
                     .filter(t => isOwnershipRelation(this.graph, t))
 
         return ownageTriples.map(t => t.object)
-            .map(uri => this.view.subjectToFacade(uri as string))
+            .map(uri => this.view.subjectToFacade(uri))
             .filter(o => o !== undefined) as SBOLFacade[]
     }
 

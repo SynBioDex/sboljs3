@@ -61,7 +61,7 @@ export default class S2Sequence extends S2Identified {
 
         const containingCDs:Array<S2ComponentDefinition> =
             this.view.graph.match(null, Predicates.SBOL2.sequence, this.subject)
-                .map(triple.subjectsubject)
+                .map(t => t.subject)
                 .map((subject:Node) => new S2ComponentDefinition(this.view, subject))
 
         containingCDs.forEach((cd:S2ComponentDefinition) => {
@@ -121,7 +121,7 @@ export default class S2Sequence extends S2Identified {
 
         const containingCDs:Array<S2ComponentDefinition> =
             this.view.graph.match(null, Predicates.SBOL2.sequence, this.subject)
-                .map(triple.subjectsubject)
+                .map(t => t.subject)
                 .map((subject:Node) => new S2ComponentDefinition(this.view, subject))
 
         containingCDs.forEach((cd:S2ComponentDefinition) => {

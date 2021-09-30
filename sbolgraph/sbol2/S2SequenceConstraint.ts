@@ -21,9 +21,7 @@ export default class S2SequenceConstraint extends S2Identified {
 
     get containingObject():S2Identified|undefined {
 
-        const uri = triple.subjectUri(
-            this.view.graph.matchOne(null, Predicates.SBOL2.sequenceConstraint, this.subject)
-        )
+        const subject = this.view.graph.matchOne(null, Predicates.SBOL2.sequenceConstraint, this.subject)?.subject
 
         if(!subject) {
             throw new Error('SeqCons has no containing object?')
@@ -33,7 +31,7 @@ export default class S2SequenceConstraint extends S2Identified {
 
     }
 
-    get restriction():string {
+    get constraintRestriction():string {
 
         const restriction:string|undefined = this.getUriProperty(Predicates.SBOL2.restriction)
 
@@ -44,9 +42,9 @@ export default class S2SequenceConstraint extends S2Identified {
         return restriction
     }
 
-    get subject():S2ComponentInstance {
+    get constraintSubject():S2ComponentInstance {
 
-        const subject:string|undefined = this.getUriProperty(Predicates.SBOL2.subject)
+        const subject:Node|undefined = this.getProperty(Predicates.SBOL2.subject)
 
         if(subject === undefined) {
             throw new Error('SeqCons has no subject?')
@@ -55,9 +53,9 @@ export default class S2SequenceConstraint extends S2Identified {
         return new S2ComponentInstance(this.view, subject)
     }
 
-    get object():S2ComponentInstance {
+    get constraintObject():S2ComponentInstance {
 
-        const object:string|undefined = this.getUriProperty(Predicates.SBOL2.object)
+        const object:Node|undefined = this.getProperty(Predicates.SBOL2.object)
 
         if(object === undefined) {
             throw new Error('SeqCons has no object?')

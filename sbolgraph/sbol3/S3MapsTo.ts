@@ -3,7 +3,7 @@ import S3Identified from './S3Identified'
 
 import { Types, Predicates, Specifiers } from 'bioterms'
 
-import { triple, Node } from 'rdfoo'
+import { triple, Node, node } from 'rdfoo'
 import SBOL3GraphView from '../SBOL3GraphView';
 
 export default class S3MapsTo extends S3Identified {
@@ -19,9 +19,9 @@ export default class S3MapsTo extends S3Identified {
 
     get local():S3Identified|undefined {
 
-        const localsubject:Node|undefined = this.getUriProperty(Predicates.SBOL3.local)
+        const localsubject:Node|undefined = this.getProperty(Predicates.SBOL3.local)
 
-        if(localUri === undefined)
+        if(localsubject === undefined)
             return undefined
 
         return this.view.uriToIdentified(localsubject)
@@ -31,7 +31,7 @@ export default class S3MapsTo extends S3Identified {
     set local(local:S3Identified|undefined) {
 
         if(local)
-            this.setUriProperty(Predicates.SBOL3.local, local.subject)
+            this.setProperty(Predicates.SBOL3.local, local.subject)
         else
             this.deleteProperty(Predicates.SBOL3.local)
 
@@ -39,9 +39,9 @@ export default class S3MapsTo extends S3Identified {
 
     get remote():S3Identified|undefined {
 
-        const remotesubject:Node|undefined = this.getUriProperty(Predicates.SBOL3.remote)
+        const remotesubject:Node|undefined = this.getProperty(Predicates.SBOL3.remote)
 
-        if(remoteUri === undefined)
+        if(remotesubject === undefined)
             return undefined
 
         return this.view.uriToIdentified(remotesubject)
@@ -51,7 +51,7 @@ export default class S3MapsTo extends S3Identified {
     set remote(remote:S3Identified|undefined) {
 
         if(remote)
-            this.setUriProperty(Predicates.SBOL3.remote, remote.subject)
+            this.setProperty(Predicates.SBOL3.remote, remote.subject)
         else
             this.deleteProperty(Predicates.SBOL3.remote)
 
@@ -60,7 +60,7 @@ export default class S3MapsTo extends S3Identified {
     set refinement(refinement:string|undefined) {
 
         if(refinement)
-            this.setUriProperty(Predicates.SBOL3.refinement, refinement)
+            this.setProperty(Predicates.SBOL3.refinement, node.createUriNode(refinement))
         else
             this.deleteProperty(Predicates.SBOL3.refinement)
 
@@ -72,9 +72,7 @@ export default class S3MapsTo extends S3Identified {
 
     get containingObject():S3Identified|undefined {
 
-        const uri = triple.subjectUri(
-            this.view.graph.matchOne(null, Predicates.SBOL3.mapsTo, this.subject)
-        )
+        const subject = this.view.graph.matchOne(null, Predicates.SBOL3.mapsTo, this.subject)?.subject
 
         if(!subject) {
             throw new Error('MapsTo has no containing object?')

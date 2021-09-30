@@ -35,15 +35,15 @@ export default class S3Component extends S3Identified {
     }
 
     hasType(type:string):boolean {
-        return this.view.graph.hasMatch(this.subject, Predicates.SBOL3.type, type)
+        return this.view.graph.hasMatch(this.subject, Predicates.SBOL3.type, node.createUriNode(type))
     }
 
     addType(type:string):void {
-        this.view.graph.insert(this.subject, Predicates.SBOL3.type, node.createUriNode(type))
+        this.view.graph.insertTriple(this.subject, Predicates.SBOL3.type, node.createUriNode(type))
     }
 
     removeType(type:string):void {
-        this.view.graph.removeMatches(this.subject, Predicates.SBOL3.type, type)
+        this.view.graph.removeMatches(this.subject, Predicates.SBOL3.type, node.createUriNode(type))
     }
 
     get roles():Array<string> {
@@ -51,15 +51,15 @@ export default class S3Component extends S3Identified {
     }
 
     hasRole(role:string):boolean {
-        return this.view.graph.hasMatch(this.subject, Predicates.SBOL3.role, role)
+        return this.view.graph.hasMatch(this.subject, Predicates.SBOL3.role, node.createUriNode(role))
     }
 
     addRole(role:string):void {
-        this.view.graph.insert(this.subject, Predicates.SBOL3.role, node.createUriNode(role))
+        this.view.graph.insertTriple(this.subject, Predicates.SBOL3.role, node.createUriNode(role))
     }
 
     removeRole(role:string):void {
-        this.view.graph.removeMatches(this.subject, Predicates.SBOL3.role, role)
+        this.view.graph.removeMatches(this.subject, Predicates.SBOL3.role, node.createUriNode(role))
     }
 
     get soTerms():string[] {
@@ -67,7 +67,7 @@ export default class S3Component extends S3Identified {
         let terms:string[] = []
 
         for(let role of this.roles) {
-            let term = extractTerm(role)
+            let term = extractTerm(node.createUriNode(role))
 
             if(term)
                 terms.push(term)
@@ -78,22 +78,22 @@ export default class S3Component extends S3Identified {
 
     get sequences():Array<S3Sequence> {
 
-        return this.getUriProperties(Predicates.SBOL3.hasSequence)
+        return this.getProperties(Predicates.SBOL3.hasSequence)
                    .map((subject:Node) => new S3Sequence(this.view, subject))
 
     }
 
     get subComponents():Array<S3SubComponent> {
 
-        return this.getUriProperties(Predicates.SBOL3.hasFeature)
-                   .filter((subject:Node) => this.graph.hasMatch(uri, Predicates.a, Types.SBOL3.SubComponent))
+        return this.getProperties(Predicates.SBOL3.hasFeature)
+                   .filter((subject:Node) => this.graph.hasMatch(subject, Predicates.a, node.createUriNode(Types.SBOL3.SubComponent)))
                    .map((subject:Node) => new S3SubComponent(this.view, subject))
 
     }
 
     get interactions():Array<S3Interaction> {
 
-        return this.getUriProperties(Predicates.SBOL3.hasInteraction)
+        return this.getProperties(Predicates.SBOL3.hasInteraction)
                     .map((subject:Node) => new S3Interaction(this.view, subject))
 
     }
@@ -104,15 +104,15 @@ export default class S3Component extends S3Identified {
 
     get sequenceConstraints():Array<S3Constraint> {
 
-        return this.getUriProperties(Predicates.SBOL3.hasConstraint)
+        return this.getProperties(Predicates.SBOL3.hasConstraint)
                    .map((subject:Node) => new S3Constraint(this.view, subject))
 
     }
 
     get sequenceFeatures():Array<S3SequenceFeature> {
 
-        return this.getUriProperties(Predicates.SBOL3.hasFeature)
-                   .filter((subject:Node) => this.graph.hasMatch(uri, Predicates.a, Types.SBOL3.SequenceFeature))
+        return this.getProperties(Predicates.SBOL3.hasFeature)
+                   .filter((subject:Node) => this.graph.hasMatch(subject, Predicates.a, node.createUriNode(Types.SBOL3.SequenceFeature)))
                    .map((subject:Node) => new S3SequenceFeature(this.view, subject))
 
     }
@@ -207,9 +207,9 @@ export default class S3Component extends S3Identified {
 
         const constraint:S3Constraint = new S3Constraint(this.view, identified.subject)
 
-        constraint.subject = subject
-        constraint.restriction = restriction
-        constraint.object = object
+        constraint.constraintSubject = subject
+        constraint.constraintRestriction = restriction
+        constraint.constraintObject = object
 
         return constraint
     }
@@ -242,7 +242,7 @@ export default class S3Component extends S3Identified {
     }
 
     addModel(model:S3Model) {
-        this.insertProperty(Predicates.SBOL3.hasModel, node.createUriNode(model.subject))
+        this.insertProperty(Predicates.SBOL3.hasModel, model.subject)
     }
 
 

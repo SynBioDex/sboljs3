@@ -1,8 +1,6 @@
 
-import { Graph, Facade, GraphViewBasic, triple, node, changeURIPrefix, serialize, GraphViewHybrid } from 'rdfoo'
+import { Graph, Facade, GraphViewBasic, triple, node, changeURIPrefix, serialize, GraphViewHybrid, Node } from 'rdfoo'
 import { Types, Predicates, Specifiers, Prefixes } from 'bioterms'
-
-import rdf = require('rdf-ext')
 
 import S2ComponentDefinition from './sbol2/S2ComponentDefinition'
 import S2ComponentInstance from './sbol2/S2ComponentInstance'
@@ -294,23 +292,17 @@ export default class SBOL2GraphView extends GraphViewHybrid {
 
         return this.instancesOfType(Types.SBOL2.ComponentDefinition).filter((subject) => {
 
-            const instantiations:Array<string|undefined>
+            const instantiations:Array<Node>
                     = this.graph.match(null, Predicates.SBOL2.definition, subject)
-                          .map(triple.subjectsubject)
+                          .map(t => t.subject)
 
             for(var i = 0; i < instantiations.length; ++ i) {
 
-                const instantiationsubject:Node|undefined = instantiations[i]
+                const instantiation:Node|undefined = instantiations[i]
 
-                if(instantiationUri !== undefined) {
-
-                    if(this.hasType(instantiationUri, Types.SBOL2.Component)) {
-
-                        return false
-
-                    }
-
-                }
+		if (this.hasType(instantiation, Types.SBOL2.Component)) {
+			return false
+		}
 
             }
 
@@ -442,7 +434,7 @@ export default class SBOL2GraphView extends GraphViewHybrid {
 
         return this.topLevels.filter((topLevel) => {
 
-            return topLevel.uri.indexOf(prefix) === 0
+            return topLevel.subject.value.indexOf(prefix) === 0
 
         })
     }
@@ -457,11 +449,11 @@ export default class SBOL2GraphView extends GraphViewHybrid {
             return undefined
     }
 
-    findClosestTopLevel(_subject:string):string|undefined {
+    findClosestTopLevel(_subject:Node):Node|undefined {
 
-        var subject:string|undefined = _subject
+        var subject:Node|undefined = _subject
 
-        const origSubject:string = subject
+        const origSubject:Node = subject
 
         var subjectTypes:string[] = this.getTypes(subject)
 
@@ -478,7 +470,7 @@ export default class SBOL2GraphView extends GraphViewHybrid {
                 return undefined
             }
 
-            subject = identified.uri
+            subject = identified.subject
 
             subjectTypes = this.getTypes(subject)
         }

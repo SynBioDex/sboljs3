@@ -22,7 +22,7 @@ export default class S2Participation extends S2Identified {
 
     get participant():S2FunctionalComponent|undefined {
 
-        const subject:Node|undefined = this.getUriProperty(Predicates.SBOL2.participant)
+        const subject:Node|undefined = this.getProperty(Predicates.SBOL2.participant)
 
         if(subject) {
             return new S2FunctionalComponent(this.view, subject)
@@ -32,7 +32,7 @@ export default class S2Participation extends S2Identified {
     set participant(participant:S2FunctionalComponent|undefined) {
 
         if(participant !== undefined) {
-            this.setUriProperty(Predicates.SBOL2.participant, participant.subject)
+            this.setProperty(Predicates.SBOL2.participant, participant.subject)
         } else {
             this.deleteProperty(Predicates.SBOL2.participant)
         }
@@ -41,9 +41,7 @@ export default class S2Participation extends S2Identified {
 
     get interaction():S2Interaction|undefined {
 
-        const subject:Node|undefined = triple.subjectUri(
-            this.view.graph.matchOne(null, Predicates.SBOL2.participation, this.subject)
-        )
+        const subject:Node|undefined = this.view.graph.matchOne(null, Predicates.SBOL2.participation, this.subject)?.subject
 
         if(subject) {
             return new S2Interaction(this.view, subject)
@@ -53,9 +51,7 @@ export default class S2Participation extends S2Identified {
 
     get containingObject():S2Identified|undefined {
 
-        const uri = triple.subjectUri(
-            this.view.graph.matchOne(null, Predicates.SBOL2.participation, this.subject)
-        )
+        const subject = this.view.graph.matchOne(null, Predicates.SBOL2.participation, this.subject)?.subject
 
         if(!subject) {
             throw new Error('Participation has no containing object?')
@@ -80,11 +76,11 @@ export default class S2Participation extends S2Identified {
     }
 
     setParticipant(participant:S2FunctionalComponent):void {
-        this.setUriProperty(Predicates.SBOL2.participant, participant.subject)
+        this.setProperty(Predicates.SBOL2.participant, participant.subject)
     }
 
     get measure():S2Measure|undefined {
-        let measure = this.getUriProperty(Predicates.SBOL2.measure)
+        let measure = this.getProperty(Predicates.SBOL2.measure)
 
         if(measure === undefined)
             return
@@ -97,7 +93,7 @@ export default class S2Participation extends S2Identified {
         if(measure === undefined)
             this.deleteProperty(Predicates.SBOL2.measure)
         else
-            this.setUriProperty(Predicates.SBOL2.measure, measure.subject)
+            this.setProperty(Predicates.SBOL2.measure, measure.subject)
 
     }
 

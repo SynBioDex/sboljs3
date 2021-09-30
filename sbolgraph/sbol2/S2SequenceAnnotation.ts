@@ -94,11 +94,9 @@ export default class S2SequenceAnnotation extends S2Identified {
 
     get containingComponentDefinition():S2ComponentDefinition {
 
-        const subject:Node|undefined = triple.subjectUri(
-            this.view.graph.matchOne(null, Predicates.SBOL2.sequenceAnnotation, this.subject)
-        )
+        const subject:Node|undefined = this.view.graph.matchOne(null, Predicates.SBOL2.sequenceAnnotation, this.subject)?.subject
 
-        if(uri === undefined) {
+        if(subject === undefined) {
             throw new Error('SA not contained by a CD??')
         }
 
@@ -107,7 +105,7 @@ export default class S2SequenceAnnotation extends S2Identified {
 
     get component():S2ComponentInstance|undefined {
 
-        const uri = this.getUriProperty(Predicates.SBOL2.component)
+        const subject = this.getProperty(Predicates.SBOL2.component)
 
         if(subject)
             return new S2ComponentInstance(this.view, subject)
@@ -116,7 +114,7 @@ export default class S2SequenceAnnotation extends S2Identified {
     set component(component:S2ComponentInstance|undefined) {
 
         if(component !== undefined) {
-            this.setUriProperty(Predicates.SBOL2.component, component.subject)
+            this.setProperty(Predicates.SBOL2.component, component.subject)
         } else {
             this.deleteProperty(Predicates.SBOL2.component)
         }
@@ -142,7 +140,7 @@ export default class S2SequenceAnnotation extends S2Identified {
     }
 
     hasRole(role:string):boolean {
-        return this.view.graph.hasMatch(this.subject, Predicates.SBOL2.role, role)
+        return this.view.graph.hasMatch(this.subject, Predicates.SBOL2.role, node.createUriNode( role))
     }
 
     addRole(role:string):void {
@@ -173,9 +171,7 @@ export default class S2SequenceAnnotation extends S2Identified {
 
     get containingObject():S2Identified|undefined {
 
-        const uri = triple.subjectUri(
-            this.view.graph.matchOne(null, Predicates.SBOL2.sequenceAnnotation, this.subject)
-        )
+        const subject = this.view.graph.matchOne(null, Predicates.SBOL2.sequenceAnnotation, this.subject)?.subject
 
         if(!subject) {
             throw new Error('SA has no containing object?')

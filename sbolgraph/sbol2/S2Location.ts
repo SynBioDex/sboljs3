@@ -19,9 +19,7 @@ export default abstract class S2Location extends S2Identified {
 
     get containingObject():S2Identified|undefined {
 
-        const uri = triple.subjectUri(
-            this.view.graph.matchOne(null, Predicates.SBOL2.location, this.subject)
-        )
+        const subject = this.view.graph.matchOne(null, Predicates.SBOL2.location, this.subject)?.subject
 
         if(!subject) {
             throw new Error('Location has no containing object?')
@@ -61,12 +59,12 @@ export default abstract class S2Location extends S2Identified {
 
     get sequence():S2Sequence|undefined {
 
-        let uri = this.getUriProperty(Predicates.SBOL2.sequence)
+        let uri = this.getProperty(Predicates.SBOL2.sequence)
 
         if(uri === undefined)
             return undefined
         
-        let obj = this.view.subjectToFacade(subject)
+        let obj = this.view.subjectToFacade(uri)
 
         if(! (obj instanceof S2Sequence)) {
             throw new Error('sequence was not a sequence')
@@ -78,7 +76,7 @@ export default abstract class S2Location extends S2Identified {
     set sequence(sequence:S2Sequence|undefined) {
 
         if(sequence !== undefined)
-            this.setUriProperty(Predicates.SBOL2.sequence, sequence.subject)
+            this.setProperty(Predicates.SBOL2.sequence, sequence.subject)
         else
             this.deleteProperty(Predicates.SBOL2.sequence)
 

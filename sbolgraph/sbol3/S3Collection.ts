@@ -19,7 +19,7 @@ export default class S3Collection extends S3Identified {
 
     get members():Array<S3Identified> {
 
-        return this.getUriProperties(Predicates.SBOL3.member)
+        return this.getProperties(Predicates.SBOL3.member)
                    .map((subject:Node) => this.view.subjectToFacade(subject))
                    .filter((r:S3Identified) => r !== undefined) as Array<S3Identified>
 
@@ -28,7 +28,7 @@ export default class S3Collection extends S3Identified {
     addMember(member:S3Identified):void {
 
         this.insertProperties({
-            [Predicates.SBOL3.member]: node.createUriNode(member.subject)
+            [Predicates.SBOL3.member]: member.subject
         })
 
     }

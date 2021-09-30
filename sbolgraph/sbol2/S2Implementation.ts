@@ -49,7 +49,7 @@ export default class S2Implementation extends S2Identified {
 
     get activity():Activity|undefined {
 
-        let activity = this.getUriProperty(Predicates.Prov.wasGeneratedBy)
+        let activity = this.getProperty(Predicates.Prov.wasGeneratedBy)
 
         if(!activity) {
             return undefined

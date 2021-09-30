@@ -19,9 +19,9 @@ export default class S2MapsTo extends S2Identified {
 
     get local():S2Identified|undefined {
 
-        const localsubject:Node|undefined = this.getUriProperty(Predicates.SBOL2.local)
+        const localsubject:Node|undefined = this.getProperty(Predicates.SBOL2.local)
 
-        if(localUri === undefined)
+        if(localsubject === undefined)
             return undefined
 
         return this.view.uriToIdentified(localsubject)
@@ -31,7 +31,7 @@ export default class S2MapsTo extends S2Identified {
     set local(local:S2Identified|undefined) {
 
         if(local)
-            this.setUriProperty(Predicates.SBOL2.local, local.subject)
+            this.setProperty(Predicates.SBOL2.local, local.subject)
         else
             this.deleteProperty(Predicates.SBOL2.local)
 
@@ -39,9 +39,9 @@ export default class S2MapsTo extends S2Identified {
 
     get remote():S2Identified|undefined {
 
-        const remotesubject:Node|undefined = this.getUriProperty(Predicates.SBOL2.remote)
+        const remotesubject:Node|undefined = this.getProperty(Predicates.SBOL2.remote)
 
-        if(remoteUri === undefined)
+        if(remotesubject === undefined)
             return undefined
 
         return this.view.uriToIdentified(remotesubject)
@@ -51,7 +51,7 @@ export default class S2MapsTo extends S2Identified {
     set remote(remote:S2Identified|undefined) {
 
         if(remote)
-            this.setUriProperty(Predicates.SBOL2.remote, remote.subject)
+            this.setProperty(Predicates.SBOL2.remote, remote.subject)
         else
             this.deleteProperty(Predicates.SBOL2.remote)
 
@@ -72,9 +72,7 @@ export default class S2MapsTo extends S2Identified {
 
     get containingObject():S2Identified|undefined {
 
-        const uri = triple.subjectUri(
-            this.view.graph.matchOne(null, Predicates.SBOL2.mapsTo, this.subject)
-        )
+        const subject = this.view.graph.matchOne(null, Predicates.SBOL2.mapsTo, this.subject)?.subject
 
         if(!subject) {
             throw new Error('MapsTo has no containing object?')

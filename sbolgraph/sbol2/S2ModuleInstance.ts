@@ -23,9 +23,9 @@ export default class S2ModuleInstance extends S2Identified {
 
     get definition():S2ModuleDefinition {
 
-        const subject:Node|undefined = this.getUriProperty(Predicates.SBOL2.definition)
+        const subject:Node|undefined = this.getProperty(Predicates.SBOL2.definition)
 
-        if(uri === undefined) {
+        if(subject === undefined) {
             throw new Error('module has no definition?')
         }
 
@@ -34,15 +34,13 @@ export default class S2ModuleInstance extends S2Identified {
 
     set definition(def:S2ModuleDefinition) {
 
-        this.setUriProperty(Predicates.SBOL2.definition, def.subject)
+        this.setProperty(Predicates.SBOL2.definition, def.subject)
 
     }
 
     get containingObject():S2Identified|undefined {
 
-        const uri = triple.subjectUri(
-            this.view.graph.matchOne(null, Predicates.SBOL2.module, this.subject)
-        )
+        const subject = this.view.graph.matchOne(null, Predicates.SBOL2.module, this.subject)?.subject
 
         if(!subject) {
             throw new Error('ModuleInstance has no containing object?')
@@ -55,7 +53,7 @@ export default class S2ModuleInstance extends S2Identified {
 
     get mappings():S2MapsTo[] {
 
-        return this.getUriProperties(Predicates.SBOL2.mapsTo).map((mapsTo) => new S2MapsTo(this.view, mapsTo))
+        return this.getProperties(Predicates.SBOL2.mapsTo).map((mapsTo) => new S2MapsTo(this.view, mapsTo))
     }
 
 
@@ -74,7 +72,7 @@ export default class S2ModuleInstance extends S2Identified {
     }
 
     get measure():S2Measure|undefined {
-        let measure = this.getUriProperty(Predicates.SBOL2.measure)
+        let measure = this.getProperty(Predicates.SBOL2.measure)
 
         if(measure === undefined)
             return
@@ -87,7 +85,7 @@ export default class S2ModuleInstance extends S2Identified {
         if(measure === undefined)
             this.deleteProperty(Predicates.SBOL2.measure)
         else
-            this.setUriProperty(Predicates.SBOL2.measure, measure.subject)
+            this.setProperty(Predicates.SBOL2.measure, measure.subject)
 
     }
 

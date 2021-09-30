@@ -16,9 +16,7 @@ export default abstract class S3Location extends S3Identified {
 
     get containingObject():S3Identified|undefined {
 
-        const uri = triple.subjectUri(
-            this.view.graph.matchOne(null, Predicates.SBOL3.hasLocation, this.subject)
-        )
+        const subject = this.view.graph.matchOne(null, Predicates.SBOL3.hasLocation, this.subject)?.subject
 
         if(!subject) {
             throw new Error('Location has no containing object?')
@@ -54,12 +52,12 @@ export default abstract class S3Location extends S3Identified {
 
     get sequence():S3Sequence|undefined {
 
-        let uri = this.getUriProperty(Predicates.SBOL3.hasSequence)
+        let uri = this.getProperty(Predicates.SBOL3.hasSequence)
 
         if(uri === undefined)
             return undefined
         
-        let obj = this.view.subjectToFacade(subject)
+        let obj = this.view.subjectToFacade(uri)
 
         if(! (obj instanceof S3Sequence)) {
             throw new Error('sequence was not a sequence')
@@ -71,7 +69,7 @@ export default abstract class S3Location extends S3Identified {
     set sequence(sequence:S3Sequence|undefined) {
 
         if(sequence !== undefined)
-            this.setUriProperty(Predicates.SBOL2.sequence, sequence.subject)
+            this.setProperty(Predicates.SBOL2.sequence, sequence.subject)
         else
             this.deleteProperty(Predicates.SBOL2.sequence)
 

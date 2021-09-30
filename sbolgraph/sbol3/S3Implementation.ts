@@ -67,7 +67,7 @@ export default class S3Implementation extends S3Identified {
 
     get design():S3Identified|undefined{
 
-        let design_uri = this.getUriProperty(Predicates.Prov.wasDerivedFrom)
+        let design_subject = this.getProperty(Predicates.Prov.wasDerivedFrom)
 
         if(!design_subject){
             return undefined
@@ -95,7 +95,7 @@ export default class S3Implementation extends S3Identified {
         if(design === undefined) {
             this.deleteProperty(Predicates.Prov.wasDerivedFrom)
         } else {
-            this.setUriProperty(Predicates.Prov.wasDerivedFrom, design.subject)
+            this.setProperty(Predicates.Prov.wasDerivedFrom, design.subject)
         }
     }
     

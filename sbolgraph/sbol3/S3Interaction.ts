@@ -25,10 +25,10 @@ export default class S3Interaction extends S3Identified {
 
     get type():string {
 
-        const typeUri:Node|undefined = this.getUriProperty(Predicates.SBOL3.type)
+        const typeUri:string|undefined = this.getUriProperty(Predicates.SBOL3.type)
 
         if(!typeUri)
-            throw new Error(this.uri + ' has no type?')
+            throw new Error(this.subject.value + ' has no type?')
 
         return typeUri
     }
@@ -38,7 +38,7 @@ export default class S3Interaction extends S3Identified {
         return this.getUriProperties(Predicates.SBOL3.type)
     }
 
-    set type(subject:Node) {
+    set type(subject:string) {
 
         this.setUriProperty(Predicates.SBOL3.type, subject)
 
@@ -51,12 +51,12 @@ export default class S3Interaction extends S3Identified {
     }
 
     hasType(type:string):boolean {
-        return this.view.graph.hasMatch(this.subject, Predicates.SBOL3.type, type)
+        return this.view.graph.hasMatch(this.subject, Predicates.SBOL3.type, node.createUriNode( type) )
     }
 
     get participations():Array<S3Participation> {
 
-        return this.getUriProperties(Predicates.SBOL3.hasParticipation)
+        return this.getProperties(Predicates.SBOL3.hasParticipation)
                    .map((subject:Node) => new S3Participation(this.view, subject))
 
     }
@@ -77,12 +77,10 @@ export default class S3Interaction extends S3Identified {
 
     get containingModule():S3Component {
 
-        const uri = triple.subjectUri(
-            this.view.graph.matchOne(null, Predicates.SBOL3.hasInteraction, this.subject)
-        )
+        const subject = this.view.graph.matchOne(null, Predicates.SBOL3.hasInteraction, this.subject)?.subject
 
         if(!subject) {
-            throw new Error('Interaction ' + this.uri + ' not contained by a Module?')
+            throw new Error('Interaction ' + this.subject.value + ' not contained by a Module?')
         }
 
         return new S3Component(this.view, subject)
@@ -115,7 +113,7 @@ export default class S3Interaction extends S3Identified {
     }
 
     get measure():S3Measure|undefined {
-        let measure = this.getUriProperty(Predicates.SBOL3.hasMeasure)
+        let measure = this.getProperty(Predicates.SBOL3.hasMeasure)
 
         if(measure === undefined)
             return
@@ -128,7 +126,7 @@ export default class S3Interaction extends S3Identified {
         if(measure === undefined)
             this.deleteProperty(Predicates.SBOL3.hasMeasure)
         else
-            this.setUriProperty(Predicates.SBOL3.hasMeasure, measure.subject)
+            this.setProperty(Predicates.SBOL3.hasMeasure, measure.subject)
 
     }
 

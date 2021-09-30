@@ -23,7 +23,7 @@ export default class S3Identified extends S3Facade {
 
     // Should never throw; make sure not dependent on any getRequiredProperties
     get displayName():string|undefined {
-        return this.name || this.getStringProperty(Predicates.SBOL3.displayId) || this.uri
+        return this.name || this.getStringProperty(Predicates.SBOL3.displayId) || this.subject.value
     }
 
     set name(name:string|undefined) {
@@ -51,7 +51,7 @@ export default class S3Identified extends S3Facade {
     }
 
     get uriPrefix():string {
-        return URIUtils.getPrefix(this.subject)
+        return URIUtils.getPrefix(this.subject.value)
     }
 
     get namespace():string|undefined {
@@ -64,7 +64,7 @@ export default class S3Identified extends S3Facade {
 
     get measures():Array<S3Measure> {
 
-        return this.getUriProperties(Predicates.SBOL2.measure)
+        return this.getProperties(Predicates.SBOL2.measure)
             .map((measure) => new S3Measure(this.view, measure))
 
     }

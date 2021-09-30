@@ -156,7 +156,7 @@ export default function convert2to3(graph:Graph) {
         impl3.setUriProperty(Predicates.a, Types.SBOL3.Implementation)
         copyIdentifiedProperties(impl, impl3)
 
-        impl3.setUriProperty(Predicates.SBOL3.built, impl.getUriProperty(Predicates.SBOL2.built))
+        impl3.setProperty(Predicates.SBOL3.built, impl.getProperty(Predicates.SBOL2.built))
 
 
     }

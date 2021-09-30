@@ -1,7 +1,7 @@
 
 import S3Identified from "./S3Identified";
 import { Predicates, Types } from 'bioterms'
-import { node } from 'rdfoo'
+import { node, Node } from 'rdfoo'
 import SBOL3GraphView from '../SBOL3GraphView'
 import URIUtils from "../URIUtils";
 
@@ -15,15 +15,15 @@ export default class S3IdentifiedFactory {
 
         displayId = displayId ? nameToID(displayId) : 'anon'
 
-        const subject:Node = view.graph.generateURI(uriPrefix + displayId + '$n?$')
+        const subject:Node = node.createUriNode(view.graph.generateURI(uriPrefix + displayId + '$n?$'))
 
-        view.graph.insertProperties(uri, {
+        view.graph.insertProperties(subject, {
             [Predicates.a]: node.createUriNode(type),
             [Predicates.SBOL3.displayId]: node.createStringNode(displayId)
         })
 
         if(name !== undefined) {
-            view.graph.insertProperties(uri, {
+            view.graph.insertProperties(subject, {
                 [Predicates.Dcterms.title]: node.createStringNode(name)
             })
         }
@@ -41,16 +41,16 @@ export default class S3IdentifiedFactory {
 
         displayId = displayId ? nameToID(displayId) : 'anon'
 
-        const subject:Node = view.graph.generateURI(
-            URIUtils.getPrefix(parent.subject) + displayId + '$n?$')
+        const subject:Node = node.createUriNode( view.graph.generateURI(
+            URIUtils.getPrefix(parent.subject.value) + displayId + '$n?$') )
 
-        view.graph.insertProperties(uri, {
+        view.graph.insertProperties(subject, {
             [Predicates.a]: node.createUriNode(type),
             [Predicates.SBOL3.displayId]: node.createStringNode(displayId)
         })
 
         if(name !== undefined) {
-            view.graph.insertProperties(uri, {
+            view.graph.insertProperties(subject, {
                 [Predicates.Dcterms.title]: node.createStringNode(name)
             })
         }
@@ -71,7 +71,7 @@ function nameToID(name:string):string {
 
 }
 
-function extractPersistentIdentity(subject:Node, version:string|undefined) {
+function extractPersistentIdentity(uri:string, version:string|undefined) {
     if(version !== undefined) {
         return uri.substr(0, uri.length - version.length - 1)
     } else {
@@ -79,7 +79,7 @@ function extractPersistentIdentity(subject:Node, version:string|undefined) {
     }
 }
 
-function extractID(subject:Node, version:string|undefined) {
+function extractID(uri:string, version:string|undefined) {
     let tokens = uri.split('/')
     if(version !== undefined) {
         return tokens[tokens.length - 2]

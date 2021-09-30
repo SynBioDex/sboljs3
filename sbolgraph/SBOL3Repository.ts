@@ -1,4 +1,6 @@
 
+import { Node } from 'rdfoo'
+
 export class SearchQuery {
 
     criteria:any[]
@@ -22,7 +24,7 @@ export class SearchQuery {
 
     addRole(subject:Node) {
 
-        this.add('role', '<' + uri + '>')
+        this.add('role', '<' + subject.value + '>')
 
     }
 

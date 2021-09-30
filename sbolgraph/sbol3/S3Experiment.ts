@@ -25,7 +25,7 @@ export default class S3Experiment extends S3Identified {
         let expDataURIs = this.getUriProperties(Predicates.SBOL3.experimentalData)
 
         for (let uri of expDataURIs){
-            result.push(new S3ExperimentalData(this.view, subject))
+            result.push(new S3ExperimentalData(this.view, node.createUriNode(uri)))
         }
 
         return result
@@ -44,7 +44,7 @@ export default class S3Experiment extends S3Identified {
 
     get activity():Activity|undefined {
 
-        let activity = this.getUriProperty(Predicates.Prov.wasGeneratedBy)
+        let activity = this.getProperty(Predicates.Prov.wasGeneratedBy)
 
         if(!activity) {
             return undefined
@@ -58,14 +58,14 @@ export default class S3Experiment extends S3Identified {
         if(activity === undefined) {
             this.deleteProperty(Predicates.Prov.wasGeneratedBy)
         } else {
-            this.setUriProperty(Predicates.Prov.wasGeneratedBy, activity.subject)
+            this.setProperty(Predicates.Prov.wasGeneratedBy, activity.subject)
         }
     }
 
 
     get construct():S3Implementation|undefined{
 
-        let construct_uri = this.getUriProperty(Predicates.Prov.wasDerivedFrom)
+        let construct_subject = this.getProperty(Predicates.Prov.wasDerivedFrom)
 
         if(!construct_subject){
             return undefined
@@ -87,7 +87,7 @@ export default class S3Experiment extends S3Identified {
 
     addConstruct(construct:S3Implementation):void {
 
-        this.insertProperty(Predicates.Prov.wasDerivedFrom, node.createUriNode(construct.subject))
+        this.insertProperty(Predicates.Prov.wasDerivedFrom, construct.subject)
 
     }
 

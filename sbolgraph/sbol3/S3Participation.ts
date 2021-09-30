@@ -23,7 +23,7 @@ export default class S3Participation extends S3Identified {
 
     get participant():S3SubComponent|undefined {
 
-        const subject:Node|undefined = this.getUriProperty(Predicates.SBOL3.participant)
+        const subject:Node|undefined = this.getProperty(Predicates.SBOL3.participant)
 
         if(subject) {
             return new S3SubComponent(this.view, subject)
@@ -33,7 +33,7 @@ export default class S3Participation extends S3Identified {
     set participant(c:S3SubComponent|undefined) {
 
         if(c) {
-            this.setUriProperty(Predicates.SBOL3.participant, c.subject)
+            this.setProperty(Predicates.SBOL3.participant, c.subject)
         } else {
             this.deleteProperty(Predicates.SBOL3.participant)
         }
@@ -41,9 +41,7 @@ export default class S3Participation extends S3Identified {
 
     get interaction():S3Interaction|undefined {
 
-        const subject:Node|undefined = triple.subjectUri(
-            this.view.graph.matchOne(null, Predicates.SBOL3.hasParticipation, this.subject)
-        )
+        const subject:Node|undefined = this.view.graph.matchOne(null, Predicates.SBOL3.hasParticipation, this.subject)?.subject
 
         if(subject) {
             return new S3Interaction(this.view, subject)
@@ -53,9 +51,7 @@ export default class S3Participation extends S3Identified {
 
     get containingObject():S3Identified|undefined {
 
-        const uri = triple.subjectUri(
-            this.view.graph.matchOne(null, Predicates.SBOL3.hasParticipation, this.subject)
-        )
+        const subject = this.view.graph.matchOne(null, Predicates.SBOL3.hasParticipation, this.subject)?.subject
 
         if(!subject) {
             throw new Error('Participation has no containing object?')
@@ -65,9 +61,9 @@ export default class S3Participation extends S3Identified {
 
     }
 
-    hasRole(subject:Node):boolean {
+    hasRole(subject:string):boolean {
 
-        return this.view.graph.hasMatch(this.subject, Predicates.SBOL3.role, subject)
+        return this.view.graph.hasMatch(this.subject, Predicates.SBOL3.role, node.createUriNode(subject))
     
     }
 
@@ -76,7 +72,7 @@ export default class S3Participation extends S3Identified {
     }
 
     removeRole(role:string):void {
-        this.view.graph.removeMatches(this.subject, Predicates.SBOL3.role, role)
+        this.view.graph.removeMatches(this.subject, Predicates.SBOL3.role, node.createUriNode( role))
     }
 
     get roles():string[] {
@@ -84,11 +80,11 @@ export default class S3Participation extends S3Identified {
     }
 
     setParticipant(participant:S3SubComponent):void {
-        this.setUriProperty(Predicates.SBOL3.participant, participant.subject)
+        this.setProperty(Predicates.SBOL3.participant, participant.subject)
     }
 
     get measure():S3Measure|undefined {
-        let measure = this.getUriProperty(Predicates.SBOL3.hasMeasure)
+        let measure = this.getProperty(Predicates.SBOL3.hasMeasure)
 
         if(measure === undefined)
             return
@@ -101,7 +97,7 @@ export default class S3Participation extends S3Identified {
         if(measure === undefined)
             this.deleteProperty(Predicates.SBOL3.hasMeasure)
         else
-            this.setUriProperty(Predicates.SBOL3.hasMeasure, measure.subject)
+            this.setProperty(Predicates.SBOL3.hasMeasure, measure.subject)
 
     }
 

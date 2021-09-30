@@ -149,7 +149,7 @@ export default function convert1to2(graph:Graph) {
                 let constraint = new S2SequenceConstraint(graph2, node.createUriNode(URIUtils.addSuffix(dnaComponent.subject.value, '/precedes' + (++ precedesN))))
                 constraint.setUriProperty(Predicates.a, Types.SBOL2.SequenceConstraint)
 
-                component2.insertProperty(Predicates.SBOL2.sequenceConstraint, constraint.subject.subject)
+                component2.insertProperty(Predicates.SBOL2.sequenceConstraint, constraint.constraintSubject.subject)
 
 
                 let obj = new S2SequenceAnnotation(graph2, anno.subject)
