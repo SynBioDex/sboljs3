@@ -427,9 +427,9 @@ class SBOL3 extends GraphViewBasic {
 
             if(type === Types.SBOL3.Attachment)
                 return new S3Attachment(this.view, subject)
-
-            throw new Error('unknown type: ' + subject.value + ' a ' + type)
         }
+
+        return super.subjectToFacade(subject)
     }
 
 }

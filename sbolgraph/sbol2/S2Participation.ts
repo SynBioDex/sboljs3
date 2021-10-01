@@ -61,9 +61,9 @@ export default class S2Participation extends S2Identified {
 
     }
 
-    hasRole(subject:Node):boolean {
+    hasRole(subject:string):boolean {
 
-        return this.view.graph.hasMatch(this.subject, Predicates.SBOL2.role, subject)
+        return this.view.graph.hasMatch(this.subject, Predicates.SBOL2.role, node.createUriNode(subject))
     
     }
 

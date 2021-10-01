@@ -62,11 +62,11 @@ export default function isOwnershipRelation(g:Graph, triple:any):boolean {
 
 function nodeToURI(node):string {
 
-    if(node.interfaceName !== 'NamedNode')
+    if(node.termType !== 'NamedNode')
         throw new Error('expected NamedNode but found ' + JSON.stringify(node))
 
-    if(typeof node.nominalValue !== 'string')
+    if(typeof node.value !== 'string')
         throw new Error('nominalValue not a string?')
 
-    return node.nominalValue
+    return node.value
 }

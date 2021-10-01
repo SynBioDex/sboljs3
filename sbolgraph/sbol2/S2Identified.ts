@@ -22,7 +22,7 @@ export default class S2Identified extends S2Facade {
     }
 
     get displayName():string|undefined {
-        return this.name || this.displayId
+        return this.name || this.displayId || this.subject.value
     }
 
     get displayType():string {

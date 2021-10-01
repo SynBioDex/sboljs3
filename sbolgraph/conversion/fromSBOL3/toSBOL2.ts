@@ -501,7 +501,7 @@ export default function convert3to2(graph:Graph) {
     // Delete anything with an SBOL3 type from the graph
 
     for(let typeTriple of graph.match(null, Predicates.a, null)) {
-        if(typeTriple.object.toString().indexOf(Prefixes.sbol3) === 0) {
+        if(typeTriple.object.value.indexOf(Prefixes.sbol3) === 0) {
             graph.removeMatches(typeTriple.subject, null, null)
         }
     }

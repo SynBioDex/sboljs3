@@ -57,7 +57,7 @@ export default class SBOL1GraphView extends GraphViewBasic {
         if(types.indexOf(Types.SBOL1.SequenceAnnotation) !== -1)
             return new S1SequenceAnnotation(this, subject)
 
-        return undefined
+        return super.subjectToFacade(subject)
     }
 
     get topLevels():S1Facade[] {
