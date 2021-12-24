@@ -175,7 +175,7 @@ export default function convert3to2(graph:Graph) {
         if(cd.persistentIdentity && cdSuffix)
             cd.persistentIdentity = URIUtils.addSuffix(cd.persistentIdentity, cdSuffix)
 
-        let fcUri = (md.persistentIdentity || md.subject) + '/' + displayId(component)
+        let fcUri = (md.persistentIdentity || md.subject.value) + '/' + displayId(component)
 
         let fc = new S2FunctionalComponent(sbol2View, node.createUriNode(fcUri))
         fc.insertUriProperty(Predicates.a, Types.SBOL2.FunctionalComponent)
@@ -264,7 +264,7 @@ export default function convert3to2(graph:Graph) {
 
 
 
-            let cdSubcomponent = new S2ComponentInstance(sbol2View, cdSubcomponentURI)
+            let cdSubcomponent = new S2ComponentInstance(sbol2View, node.createUriNode(cdSubcomponentURI))
             cdSubcomponent.setUriProperty(Predicates.a, Types.SBOL2.Component)
             cdSubcomponent.definition = newDefOfSubcomponent.cd
 	    cdSubcomponent.setProperty('http://sboltools.org/backport#sbol3identity', subcomponent.subject)
@@ -272,7 +272,7 @@ export default function convert3to2(graph:Graph) {
             cd.insertProperty(Predicates.SBOL2.component, cdSubcomponent.subject)
 
 
-            let mdSubcomponent = new S2FunctionalComponent(sbol2View, mdSubcomponentURI)
+            let mdSubcomponent = new S2FunctionalComponent(sbol2View, node.createUriNode(mdSubcomponentURI))
             mdSubcomponent.setUriProperty(Predicates.a, Types.SBOL2.FunctionalComponent)
             mdSubcomponent.definition = newDefOfSubcomponent.cd
 	    mdSubcomponent.setProperty('http://sboltools.org/backport#sbol3identity', subcomponent.subject)
@@ -281,7 +281,7 @@ export default function convert3to2(graph:Graph) {
 
 
 
-            let mdSubmodule = new S2ModuleInstance(sbol2View, mdSubmoduleURI)
+            let mdSubmodule = new S2ModuleInstance(sbol2View, node.createUriNode(mdSubmoduleURI))
             mdSubmodule.setUriProperty(Predicates.a, Types.SBOL2.Module)
             mdSubmodule.definition = newDefOfSubcomponent.md
 	    mdSubmodule.setProperty('http://sboltools.org/backport#sbol3identity', subcomponent.subject)
@@ -521,7 +521,9 @@ export default function convert3to2(graph:Graph) {
 
 
 
-        a.setUriProperty(Predicates.SBOL2.persistentIdentity, a.subject.value)
+	// The SBOL2 persistentIdentity is the SBOL3 URI
+	//
+        b.setUriProperty(Predicates.SBOL2.persistentIdentity, a.subject.value)
 
 	if(a.namespace)
 		b.setUriProperty('http://sboltools.org/backport#sbol3namespace', a.namespace)
@@ -567,6 +569,8 @@ export default function convert3to2(graph:Graph) {
                 continue
             }
 
+	    // if not an SBOL3 predicate (= an annotation), copy directly
+	    //
             if(p.indexOf(Prefixes.sbol3) !== 0) {
                 b.graph.insertTriple(b.subject, triple.predicate, triple.object)
             }
@@ -659,11 +663,16 @@ function displayId(obj:S3Identified) {
 
     let displayId = obj.displayId
 
-    if(displayId)
+    if(displayId) {
         return displayId
+    }
 
-    let slash = obj.subject.value.split('/').pop() || ''
-    let hash = obj.subject.value.split('#').pop() || ''
+    let hasSlash = obj.subject.value.indexOf('/') !== -1
+    let hasHash = obj.subject.value.indexOf('#') !== -1
+
+    let slash = (hasSlash && obj.subject.value.split('/').pop()) || ''
+    let hash = (hasHash && obj.subject.value.split('#').pop()) || ''
+
 
     return slash.length > hash.length ? slash : hash
 }
