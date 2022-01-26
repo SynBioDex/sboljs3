@@ -43,6 +43,10 @@ import S3Attachment from '../../sbol3/S3Attachment'
 import S3Implementation from '../../sbol3/S3Implementation'
 import S2Facade from '../../sbol2/S2Facade'
 import S3Facade from '../../sbol3/S3Facade'
+import S2CombinatorialDerivation from '../../sbol2/S2CombinatorialDerivation'
+import S3CombinatorialDerivation from '../../sbol3/S3CombinatorialDerivation'
+import S2VariableComponent from '../../sbol2/S2VariableComponent'
+import S3VariableFeature from '../../sbol3/S3VariableFeature'
 
 export default function convert2to3(graph:Graph) {
 
@@ -79,6 +83,10 @@ export default function convert2to3(graph:Graph) {
 
     for(let att of sbol2View.attachments) {
         convertAttachment(att)
+    }
+
+    for(let cd of sbol2View.combinatorialDerivations) {
+	convertCombinatorialDerivation(cd)
     }
 
     for(let sm of sbol2View.instancesOfType(Types.SBOL2.Module).map((subject) => sbol2View.subjectToFacade(subject))) {
@@ -256,6 +264,68 @@ export default function convert2to3(graph:Graph) {
         map.set(obj.subject.value, objx)
 
         return objx
+    }
+
+    function convertCombinatorialDerivation(obj:S2CombinatorialDerivation):S3CombinatorialDerivation {
+
+        const existing = map.get(obj.subject.value)
+
+        if(existing)
+            return existing as S3CombinatorialDerivation
+    
+        const objx:S3CombinatorialDerivation = new S3CombinatorialDerivation(sbol3View, obj.subject)
+        objx.setUriProperty(Predicates.a, Types.SBOL3.CombinatorialDerivation)
+        copyIdentifiedProperties(obj, objx)
+
+	if(obj.strategy) {
+		objx.strategy = obj.strategy.split(Prefixes.sbol2).join(Prefixes.sbol3)
+	}
+
+	objx.insertProperty(Predicates.SBOL3.template, obj.template.subject)
+
+        for(let ed of obj.variableComponents) {
+            objx.insertUriProperty(Predicates.SBOL3.hasVariableFeature, ed.subject.value)
+	    convertVariableComponent(new S2VariableComponent(sbol2View, ed.subject))
+        }
+
+        map.set(obj.subject.value, objx)
+
+        return objx
+    }
+
+    function convertVariableComponent(obj:S2VariableComponent) {
+
+        const existing = map.get(obj.subject.value)
+
+        if(existing)
+            return existing as S3VariableFeature
+
+
+        const objx:S3VariableFeature = new S3VariableFeature(sbol3View, obj.subject)
+        objx.setUriProperty(Predicates.a, Types.SBOL3.VariableFeature)
+        copyIdentifiedProperties(obj, objx)
+
+	objx.operator = obj.operator.split(Prefixes.sbol2).join(Prefixes.sbol3)
+
+	for(let variant of obj.variants) {
+		objx.insertProperty(Predicates.SBOL3.variant, variant.subject)
+	}
+
+	for(let coll of obj.variantCollections) {
+		objx.insertProperty(Predicates.SBOL3.variantCollection, coll.subject)
+	}
+
+	for(let d of obj.variantDerivations) {
+		objx.insertProperty(Predicates.SBOL3.variantDerivation, d.subject)
+	}
+
+	objx.setProperty(Predicates.SBOL3.variable, obj.variable.subject)
+
+        map.set(obj.subject.value, objx)
+
+        return objx
+	
+
     }
 
     function cdTo3Component(cd:S2ComponentDefinition):S3Component {
@@ -591,7 +661,9 @@ export default function convert2to3(graph:Graph) {
                 newGraph.insertTriple(b.subject, triple.predicate, triple.object)
             }
 
-            if(p == Predicates.SBOL2.displayId) {
+	    if(p === Predicates.SBOL2.persistentIdentity) {
+                newGraph.insertTriple(b.subject, 'http://sboltools.org/backport#sbol2persistentIdentity', triple.object)
+	    } else if(p == Predicates.SBOL2.displayId) {
                 newGraph.insertTriple(b.subject, Predicates.SBOL3.displayId, triple.object)
             } else if(p == Predicates.SBOL2.version) {
                 newGraph.insertTriple(b.subject, 'http://sboltools.org/backport#sbol2version', triple.object)

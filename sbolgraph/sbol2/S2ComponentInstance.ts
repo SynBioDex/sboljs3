@@ -13,11 +13,7 @@ import { Level } from 'chalk';
 export default class S2ComponentInstance extends S2Identified {
 
     constructor(view:SBOL2GraphView, subject:Node) {
-
         super(view, subject)
-
-        this.access = Specifiers.SBOL2.Access.PublicAccess
-
     }
 
     get facadeType():string {

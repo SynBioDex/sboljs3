@@ -18,9 +18,6 @@ export default class S2FunctionalComponent extends S2Identified {
     constructor(view:SBOL2GraphView, subject:Node) {
 
         super(view, subject)
-
-        this.direction = Specifiers.SBOL2.Direction.InputAndOutput
-        this.access = Specifiers.SBOL2.Access.PublicAccess
     }
 
     get facadeType():string {

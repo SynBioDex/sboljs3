@@ -38,6 +38,8 @@ import enforceURICompliance from './conversion/enforceURICompliance';
 import { Activity, Association, Agent, Plan, Usage, ProvView } from 'rdfoo-prov'
 import isOwnershipRelation from './isOwnershipRelation'
 import S2SequenceConstraint from './sbol2/S2SequenceConstraint'
+import S2VariableComponent from './sbol2/S2VariableComponent'
+import S2CombinatorialDerivation from './sbol2/S2CombinatorialDerivation'
 
 export default class SBOL2GraphView extends GraphViewHybrid {
 
@@ -277,6 +279,13 @@ export default class SBOL2GraphView extends GraphViewHybrid {
 
         return this.instancesOfType(Types.SBOL2.Implementation)
                     .map((subject) => new S2Implementation(this, subject))
+
+    }
+    
+    get combinatorialDerivations():Array<S2CombinatorialDerivation> {
+
+        return this.instancesOfType(Types.SBOL2.CombinatorialDerivation)
+                    .map((subject) => new S2CombinatorialDerivation(this, subject))
 
     }
 
@@ -621,6 +630,12 @@ class SBOL2 extends GraphViewBasic {
 
             if(type === Types.SBOL2.Attachment)
                 return new S2Attachment(this.view, subject)
+
+            if(type === Types.SBOL2.CombinatorialDerivation)
+                return new S2CombinatorialDerivation(this.view, subject)
+
+            if(type === Types.SBOL2.VariableComponent)
+                return new S2VariableComponent(this.view, subject)
 
             if(type === Types.Measure.Measure)
                 return new S2Measure(this.view, subject)

@@ -29,6 +29,8 @@ import { S2Attachment, S2Implementation, S2Cut, S2Collection, S2ModuleInstance, 
 import S3Cut from '../../sbol3/S3Cut'
 import S3Facade from '../../sbol3/S3Facade'
 import S2Facade from '../../sbol2/S2Facade'
+import S2CombinatorialDerivation from '../../sbol2/S2CombinatorialDerivation'
+import S2VariableComponent from '../../sbol2/S2VariableComponent'
 
 export default function convert3to2(graph:Graph) {
 
@@ -52,7 +54,7 @@ export default function convert3to2(graph:Graph) {
         ex2.setUriProperty(Predicates.a, Types.SBOL2.Experiment)
         copyIdentifiedProperties(ex, ex2)
         for(let ed of ex.experimentalData) {
-            ex2.insertProperty(Predicates.SBOL3.experimentalData, ed.subject)
+            ex2.insertProperty(Predicates.SBOL2.experimentalData, ed.subject)
         }
     }
 
@@ -72,6 +74,43 @@ export default function convert3to2(graph:Graph) {
         att2.format = att.format
         att2.hash = att.hash
         att2.size = att.size
+    }
+
+    for(let cd of sbol3View.combinatorialDerivations) {
+
+        let cd2 = new S2CombinatorialDerivation(sbol2View, cd.subject)
+        cd2.setUriProperty(Predicates.a, Types.SBOL2.CombinatorialDerivation)
+        copyIdentifiedProperties(cd, cd2)
+
+	if(cd.strategy)
+		cd2.strategy = cd.strategy.split(Prefixes.sbol3).join(Prefixes.sbol2)
+
+	cd2.insertProperty(Predicates.SBOL2.template, cd.template.subject)
+
+        for(let vc of cd.variableFeatures) {
+            cd2.insertProperty(Predicates.SBOL2.variableComponent, vc.subject)
+
+	    let vc2 = new S2VariableComponent(sbol2View, vc.subject)
+	    vc2.insertUriProperty(Predicates.a, Types.SBOL2.VariableComponent)
+	    copyIdentifiedProperties(vc, vc2)
+
+	    vc2.operator = vc.operator.split(Prefixes.sbol3).join(Prefixes.sbol2)
+
+
+	    for(let variant of vc.variants) {
+		    vc2.insertProperty(Predicates.SBOL2.variant, variant.subject)
+	    }
+
+	    for(let coll of vc.variantCollections) {
+		    vc2.insertProperty(Predicates.SBOL2.variantCollection, coll.subject)
+	    }
+
+	    for(let d of vc.variantDerivations) {
+		    vc2.insertProperty(Predicates.SBOL2.variantCollection, d.subject)
+	    }
+
+	    vc2.setProperty(Predicates.SBOL2.variable, vc.variable.subject)
+        }
     }
 
 
@@ -521,9 +560,14 @@ export default function convert3to2(graph:Graph) {
 
 
 
-	// The SBOL2 persistentIdentity is the SBOL3 URI
-	//
-        b.setUriProperty(Predicates.SBOL2.persistentIdentity, a.subject.value)
+	if(a.hasProperty('http://sboltools.org/backport#sbol2persistentIdentity')) {
+		b.setUriProperty(Predicates.SBOL2.persistentIdentity, a.getUriProperty('http://sboltools.org/backport#sbol2persistentIdentity'))
+	} else {
+		// Otherwise, the SBOL2 persistentIdentity is the SBOL3 URI
+		//
+		b.setUriProperty(Predicates.SBOL2.persistentIdentity, a.subject.value)
+	}
+
 
 	if(a.namespace)
 		b.setUriProperty('http://sboltools.org/backport#sbol3namespace', a.namespace)

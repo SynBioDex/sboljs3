@@ -32,6 +32,8 @@ import isOwnershipRelation from './isOwnershipRelation'
 import S3Attachment from './sbol3/S3Attachment'
 import S3EntireSequence from './sbol3/S3EntireSequence'
 import S3Cut from './sbol3/S3Cut'
+import S3CombinatorialDerivation from './sbol3/S3CombinatorialDerivation'
+import S3VariableFeature from './sbol3/S3VariableFeature'
 
 export default class SBOL3GraphView extends GraphViewHybrid {
 
@@ -171,6 +173,13 @@ export default class SBOL3GraphView extends GraphViewHybrid {
 
         return this.instancesOfType(Types.Measure.Measure)
                     .map((subject) => new S3Measure(this, subject))
+
+    }
+
+    get combinatorialDerivations():Array<S3CombinatorialDerivation> {
+
+        return this.instancesOfType(Types.SBOL3.CombinatorialDerivation)
+                    .map((subject) => new S3CombinatorialDerivation(this, subject))
 
     }
 
@@ -331,6 +340,7 @@ export default class SBOL3GraphView extends GraphViewHybrid {
             Types.SBOL3.Component,
             Types.SBOL3.Sequence,
             Types.SBOL3.Model,
+	    Types.SBOL3.CombinatorialDerivation,
             Types.Prov.Plan,
             Types.Prov.Agent,
             Types.Prov.Activity
@@ -427,6 +437,12 @@ class SBOL3 extends GraphViewBasic {
 
             if(type === Types.SBOL3.Attachment)
                 return new S3Attachment(this.view, subject)
+
+            if(type === Types.SBOL3.CombinatorialDerivation)
+                return new S3CombinatorialDerivation(this.view, subject)
+
+            if(type === Types.SBOL3.VariableFeature)
+                return new S3VariableFeature(this.view, subject)
         }
 
         return super.subjectToFacade(subject)
