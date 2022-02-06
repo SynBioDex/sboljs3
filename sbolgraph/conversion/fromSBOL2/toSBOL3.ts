@@ -305,7 +305,7 @@ export default function convert2to3(graph:Graph) {
         objx.setUriProperty(Predicates.a, Types.SBOL3.VariableFeature)
         copyIdentifiedProperties(obj, objx)
 
-	objx.operator = obj.operator.split(Prefixes.sbol2).join(Prefixes.sbol3)
+	objx.cardinality = obj.operator.split(Prefixes.sbol2).join(Prefixes.sbol3)
 
 	for(let variant of obj.variants) {
 		objx.insertProperty(Predicates.SBOL3.variant, variant.subject)

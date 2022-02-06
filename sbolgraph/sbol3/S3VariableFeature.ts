@@ -23,12 +23,12 @@ export default class S3VariableFeature extends S3Identified {
         return Types.SBOL3.VariableFeature
     }
 
-    get operator():string {
-        return this.getRequiredUriProperty('http://sbols.org/v3#operator')
+    get cardinality():string {
+        return this.getRequiredUriProperty('http://sbols.org/v3#cardinality')
     }
 
-    set operator(operator:string) {
-            this.setUriProperty('http://sbols.org/v3#operator', operator)
+    set cardinality(cardinality:string) {
+            this.setUriProperty('http://sbols.org/v3#cardinality', cardinality)
     }
 
     get variants():Array<S3Component> {

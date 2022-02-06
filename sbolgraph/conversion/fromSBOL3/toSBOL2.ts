@@ -94,7 +94,7 @@ export default function convert3to2(graph:Graph) {
 	    vc2.insertUriProperty(Predicates.a, Types.SBOL2.VariableComponent)
 	    copyIdentifiedProperties(vc, vc2)
 
-	    vc2.operator = vc.operator.split(Prefixes.sbol3).join(Prefixes.sbol2)
+	    vc2.operator = vc.cardinality.split(Prefixes.sbol3).join(Prefixes.sbol2)
 
 
 	    for(let variant of vc.variants) {
