@@ -47,6 +47,7 @@ import S2CombinatorialDerivation from '../../sbol2/S2CombinatorialDerivation'
 import S3CombinatorialDerivation from '../../sbol3/S3CombinatorialDerivation'
 import S2VariableComponent from '../../sbol2/S2VariableComponent'
 import S3VariableFeature from '../../sbol3/S3VariableFeature'
+import S3Interface from '../../sbol3/S3Interface'
 
 export default function convert2to3(graph:Graph) {
 
@@ -374,6 +375,8 @@ export default function convert2to3(graph:Graph) {
 
             // TODO check sc roles match the def roles
 
+
+
         }
 
         for(let sa of cd.sequenceAnnotations) {
@@ -565,6 +568,37 @@ export default function convert2to3(graph:Graph) {
         for(let model of md.models) {
             component3.addModel(modelToModel(model))
         }
+
+	let interfaceRequired = md.functionalComponents.filter(fc => fc.direction !== Specifiers.SBOL2.Direction.InputAndOutput).length > 0
+
+	if(interfaceRequired) {
+		let iface = new S3Interface(sbol3View, node.createUriNode(component3.subject.value + '/interface'))
+		iface.setUriProperty(Predicates.a, Types.SBOL3.Interface)
+
+		component3.insertProperty(Predicates.SBOL3.hasInterface, iface.subject)
+
+		for(let fc of md.functionalComponents) {
+			switch(fc.direction) {
+				case Specifiers.SBOL2.Direction.Input:
+					iface.insertProperty(Predicates.SBOL3.input, fc.subject)
+					break
+				case Specifiers.SBOL2.Direction.Output:
+					iface.insertProperty(Predicates.SBOL3.output, fc.subject)
+					break
+				case Specifiers.SBOL2.Direction.InputAndOutput:
+					iface.insertProperty(Predicates.SBOL3.input, fc.subject)
+					iface.insertProperty(Predicates.SBOL3.output, fc.subject)
+					break
+				case Specifiers.SBOL2.Direction.None:
+					// I guess this is the same as the absence of the feature in the interface?
+					break
+				default:
+					// not sure nondirectional can actually be represented in sbol2
+					//iface.insertProperty(Predicates.SBOL3.nondirectional, fc.subject)
+					break
+			}
+		}
+	}
 
         return component3
 

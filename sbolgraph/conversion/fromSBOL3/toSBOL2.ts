@@ -305,6 +305,7 @@ export default function convert3to2(graph:Graph) {
 
             let cdSubcomponent = new S2ComponentInstance(sbol2View, node.createUriNode(cdSubcomponentURI))
             cdSubcomponent.setUriProperty(Predicates.a, Types.SBOL2.Component)
+            cdSubcomponent.setUriProperty(Predicates.SBOL2.access, Specifiers.SBOL2.Access.PublicAccess)
             cdSubcomponent.definition = newDefOfSubcomponent.cd
 	    cdSubcomponent.setProperty('http://sboltools.org/backport#sbol3identity', subcomponent.subject)
 
@@ -313,6 +314,7 @@ export default function convert3to2(graph:Graph) {
 
             let mdSubcomponent = new S2FunctionalComponent(sbol2View, node.createUriNode(mdSubcomponentURI))
             mdSubcomponent.setUriProperty(Predicates.a, Types.SBOL2.FunctionalComponent)
+            mdSubcomponent.setUriProperty(Predicates.SBOL2.access, Specifiers.SBOL2.Access.PublicAccess)
             mdSubcomponent.definition = newDefOfSubcomponent.cd
 	    mdSubcomponent.setProperty('http://sboltools.org/backport#sbol3identity', subcomponent.subject)
 
@@ -460,6 +462,39 @@ export default function convert3to2(graph:Graph) {
         }
 
     }
+
+
+    // Interfaces
+
+	for (let c of sbol3View.components) {
+		let hadInterface = false
+		for (let iface of c.interfaces) {
+			hadInterface = true
+			for (let input of iface.inputs) {
+				let fc = subcomponentToFC.get(input.subject.value)!
+				fc.direction = Specifiers.SBOL2.Direction.Input
+			}
+			for (let output of iface.outputs) {
+				let fc = subcomponentToFC.get(output.subject.value)!
+
+				if(fc.direction === Specifiers.SBOL2.Direction.Input) {
+					fc.direction = Specifiers.SBOL2.Direction.InputAndOutput
+				} else if(fc.direction != Specifiers.SBOL2.Direction.InputAndOutput) {
+					fc.direction = Specifiers.SBOL2.Direction.Output
+				}
+			}
+			for (let nd of iface.nondirectionals) {
+				let fc = subcomponentToFC.get(nd.subject.value)!
+				fc.direction = Specifiers.SBOL2.Direction.None
+			}
+		}
+		if(!hadInterface) {
+			for(let sc of c.subComponents) {
+				let fc = subcomponentToFC.get(sc.subject.value)!
+				fc.setUriProperty('http://sbols.org/v2#direction', Specifiers.SBOL2.Direction.InputAndOutput)
+			}
+		}
+	}
 
 
     // We can do some pruning now.

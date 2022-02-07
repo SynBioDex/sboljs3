@@ -17,6 +17,7 @@ import S3OrientedLocation from './S3OrientedLocation'
 import S3MapsTo from './S3MapsTo';
 import { S3Model } from '..';
 import extractTerm from '../extractTerm'
+import S3Interface from './S3Interface'
 
 export default class S3Component extends S3Identified {
 
@@ -95,6 +96,13 @@ export default class S3Component extends S3Identified {
 
         return this.getProperties(Predicates.SBOL3.hasInteraction)
                     .map((subject:Node) => new S3Interaction(this.view, subject))
+
+    }
+
+    get interfaces():Array<S3Interface> {
+
+        return this.getProperties(Predicates.SBOL3.hasInterface)
+                    .map((subject:Node) => new S3Interface(this.view, subject))
 
     }
 

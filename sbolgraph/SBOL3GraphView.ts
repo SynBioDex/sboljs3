@@ -34,6 +34,7 @@ import S3EntireSequence from './sbol3/S3EntireSequence'
 import S3Cut from './sbol3/S3Cut'
 import S3CombinatorialDerivation from './sbol3/S3CombinatorialDerivation'
 import S3VariableFeature from './sbol3/S3VariableFeature'
+import S3Interface from './sbol3/S3Interface'
 
 export default class SBOL3GraphView extends GraphViewHybrid {
 
@@ -443,6 +444,9 @@ class SBOL3 extends GraphViewBasic {
 
             if(type === Types.SBOL3.VariableFeature)
                 return new S3VariableFeature(this.view, subject)
+
+            if(type === Types.SBOL3.Interface)
+                return new S3Interface(this.view, subject)
         }
 
         return super.subjectToFacade(subject)
