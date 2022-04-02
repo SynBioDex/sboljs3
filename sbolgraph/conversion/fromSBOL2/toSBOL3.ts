@@ -22,7 +22,7 @@ import S3Interaction from '../../sbol3/S3Interaction'
 import S3Participation from '../../sbol3/S3Participation'
 import S2ModuleInstance from '../../sbol2/S2ModuleInstance'
 import S3Model from '../../sbol3/S3Model'
-import S3MapsTo from '../../sbol3/S3MapsTo'
+import S3MapsTo from '../../sbol3/S3ComponentReference'
 
 import S2Experiment from '../../sbol2/S2Experiment'
 import S2ExperimentalData from '../../sbol2/S2ExperimentalData'
@@ -38,7 +38,7 @@ import { Graph, node, Node, triple } from 'rdfoo'
 import S3Measure from '../../sbol3/S3Measure';
 import SBOL3GraphView from '../../SBOL3GraphView'
 import SBOL2GraphView from '../../SBOL2GraphView'
-import { S2Attachment, S3OrientedLocation, S2Cut, S3Location, S2OrientedLocation } from '../..'
+import { S2Attachment, S3OrientedLocation, S2Cut, S3Location, S2OrientedLocation, S3Constraint } from '../..'
 import S3Attachment from '../../sbol3/S3Attachment'
 import S3Implementation from '../../sbol3/S3Implementation'
 import S2Facade from '../../sbol2/S2Facade'
@@ -48,6 +48,7 @@ import S3CombinatorialDerivation from '../../sbol3/S3CombinatorialDerivation'
 import S2VariableComponent from '../../sbol2/S2VariableComponent'
 import S3VariableFeature from '../../sbol3/S3VariableFeature'
 import S3Interface from '../../sbol3/S3Interface'
+import S3ComponentReference from '../../sbol3/S3ComponentReference'
 
 export default function convert2to3(graph:Graph) {
 
@@ -127,17 +128,37 @@ export default function convert2to3(graph:Graph) {
                 b = new S3SubComponent(sbol3View, mapsTo.remote.subject)
             }
 
-            let newMapsTo = new S3MapsTo(sbol3View, mapsTo.subject)
-            newMapsTo.setUriProperty(Predicates.a, Types.SBOL3.MapsTo)
+	    /// Each MapsTo turns into a ComponentReference and a Constraint
 
-            newMapsTo.local = a
-            newMapsTo.remote = b
-            newMapsTo.refinement = mapsTo.refinement
-            
-            subModule.addMapping(newMapsTo)
+	    let constraint = new S3Constraint(sbol3View, mapsTo.subject)
 
-            //subModule.createMapping(a as S3SubComponent, b as S3SubComponent)
+            let cR = new S3ComponentReference(sbol3View, node.createUriNode(mapsTo.subject + '_reference'))
+            cR.setUriProperty(Predicates.a, Prefixes.sbol3 + 'ComponentReference')
 
+	    subModule.insertProperty(Predicates.SBOL3.hasFeature, cR.subject)
+
+            cR.setProperty(Predicates.SBOL3 + 'inChildOf', sm.subject)
+            cR.setProperty(Predicates.SBOL3 + 'remote', b.subject)
+
+	    switch(mapsTo.refinement) {
+
+		case Specifiers.SBOL2.MapsToRefinement.UseRemote:
+		default:
+			// restriction is replaces, subject is the CR, object is the SC
+			break
+
+		case Specifiers.SBOL2.MapsToRefinement.UseLocal:
+			// restriction is replaces, subject is the SC, object is the CR
+			break
+
+		case Prefixes.sbol2 + 'verifyIdentical':
+			// restriction is vI, subject is the CR, object is the SC
+			break
+
+
+
+
+	    }
         }
     }
 
@@ -435,6 +456,20 @@ export default function convert2to3(graph:Graph) {
 
         }
 
+
+	let interfaceRequired = cd.components.filter(fc => fc.access !== Specifiers.SBOL2.Access.PrivateAccess).length > 0
+
+	if(interfaceRequired) {
+		let iface = new S3Interface(sbol3View, node.createUriNode(component3.subject.value + '/interface'))
+		iface.setUriProperty(Predicates.a, Types.SBOL3.Interface)
+
+		component3.insertProperty(Predicates.SBOL3.hasInterface, iface.subject)
+
+		for(let c of cd.components) {
+			iface.insertProperty(Predicates.SBOL3.nondirectional, c.subject)
+		}
+	}
+
         return component3
 
     }
@@ -569,7 +604,7 @@ export default function convert2to3(graph:Graph) {
             component3.addModel(modelToModel(model))
         }
 
-	let interfaceRequired = md.functionalComponents.filter(fc => fc.direction !== Specifiers.SBOL2.Direction.InputAndOutput).length > 0
+	let interfaceRequired = md.functionalComponents.filter(fc => fc.direction !== Specifiers.SBOL2.Direction.None).length > 0
 
 	if(interfaceRequired) {
 		let iface = new S3Interface(sbol3View, node.createUriNode(component3.subject.value + '/interface'))
@@ -586,15 +621,10 @@ export default function convert2to3(graph:Graph) {
 					iface.insertProperty(Predicates.SBOL3.output, fc.subject)
 					break
 				case Specifiers.SBOL2.Direction.InputAndOutput:
-					iface.insertProperty(Predicates.SBOL3.input, fc.subject)
-					iface.insertProperty(Predicates.SBOL3.output, fc.subject)
+					iface.insertProperty(Predicates.SBOL3.nondirectional, fc.subject)
 					break
 				case Specifiers.SBOL2.Direction.None:
-					// I guess this is the same as the absence of the feature in the interface?
-					break
-				default:
-					// not sure nondirectional can actually be represented in sbol2
-					//iface.insertProperty(Predicates.SBOL3.nondirectional, fc.subject)
+					// this is the same as the absence of the feature in the interface
 					break
 			}
 		}

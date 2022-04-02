@@ -4,7 +4,6 @@ import { Predicates } from 'bioterms'
 import { node } from 'rdfoo'
 import SBOL2GraphView from '../SBOL2GraphView'
 import { Node } from 'rdfoo'
-import { assert } from "console";
 
 export default class S3IdentifiedFactory {
     
@@ -16,8 +15,6 @@ export default class S3IdentifiedFactory {
                           version?:string|undefined):S2Identified {
 
         id = id ? nameToID(id) : 'anon'
-
-	assert(id.indexOf('://') === -1)
 
         let versionSuffix = version !== undefined ? '/' + version : ''
 
@@ -55,14 +52,9 @@ export default class S3IdentifiedFactory {
 
         id = id ? nameToID(id) : 'anon'
 
-	assert(id.indexOf('://') === -1)
-		
-
         let versionSuffix = version !== undefined ? '/' + version : ''
 
 	let parentPersistentIdentity = parent.persistentIdentity
-
-	assert(parentPersistentIdentity !== undefined)
 
         const subject:string = view.graph.generateURI(
             parentPersistentIdentity + '/' + id + '$n?$' + versionSuffix)

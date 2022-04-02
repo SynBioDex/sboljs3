@@ -3,6 +3,7 @@
 import { Graph, GraphViewBasic, triple, node, changeURIPrefix, serialize, Facade, GraphViewHybrid, parseRDF, Node } from 'rdfoo'
 import { Types, Predicates, Specifiers, Prefixes } from 'bioterms'
 
+import S3Interface from './sbol3/S3Interface'
 import S3Identified from './sbol3/S3Identified'
 import S3Sequence from './sbol3/S3Sequence'
 import S3Component from './sbol3/S3Component'
@@ -34,7 +35,10 @@ import S3EntireSequence from './sbol3/S3EntireSequence'
 import S3Cut from './sbol3/S3Cut'
 import S3CombinatorialDerivation from './sbol3/S3CombinatorialDerivation'
 import S3VariableFeature from './sbol3/S3VariableFeature'
-import S3Interface from './sbol3/S3Interface'
+import S3LocalSubComponent from './sbol3/S3LocalSubComponent'
+import S3ExternallyDefined from './sbol3/S3ExternallyDefined'
+import S3ComponentReference from './sbol3/S3ComponentReference'
+import { setServers } from 'dns'
 
 export default class SBOL3GraphView extends GraphViewHybrid {
 
@@ -369,6 +373,16 @@ export default class SBOL3GraphView extends GraphViewHybrid {
             return '        '.slice(8 - n)
         }
     }
+
+    get namespaces():Set<string> {
+
+        return new Set(
+            this.graph.match(null, Predicates.SBOL3.hasNamespace, null)
+                .map(t => t.object)
+                .map(n => n.value)
+        )
+
+    }
 }
 
 class SBOL3 extends GraphViewBasic {
@@ -447,6 +461,15 @@ class SBOL3 extends GraphViewBasic {
 
             if(type === Types.SBOL3.Interface)
                 return new S3Interface(this.view, subject)
+
+            if(type === Types.SBOL3.LocalSubComponent)
+                return new S3LocalSubComponent(this.view, subject)
+
+            if(type === Types.SBOL3.ExternallyDefined)
+                return new S3ExternallyDefined(this.view, subject)
+
+            if(type === Prefixes.sbol3 + 'ComponentReference')
+                return new S3ComponentReference(this.view, subject)
         }
 
         return super.subjectToFacade(subject)

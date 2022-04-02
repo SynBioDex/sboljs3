@@ -305,16 +305,15 @@ export default function convert3to2(graph:Graph) {
 
             let cdSubcomponent = new S2ComponentInstance(sbol2View, node.createUriNode(cdSubcomponentURI))
             cdSubcomponent.setUriProperty(Predicates.a, Types.SBOL2.Component)
-            cdSubcomponent.setUriProperty(Predicates.SBOL2.access, Specifiers.SBOL2.Access.PublicAccess)
             cdSubcomponent.definition = newDefOfSubcomponent.cd
 	    cdSubcomponent.setProperty('http://sboltools.org/backport#sbol3identity', subcomponent.subject)
 
             cd.insertProperty(Predicates.SBOL2.component, cdSubcomponent.subject)
 
 
+
             let mdSubcomponent = new S2FunctionalComponent(sbol2View, node.createUriNode(mdSubcomponentURI))
             mdSubcomponent.setUriProperty(Predicates.a, Types.SBOL2.FunctionalComponent)
-            mdSubcomponent.setUriProperty(Predicates.SBOL2.access, Specifiers.SBOL2.Access.PublicAccess)
             mdSubcomponent.definition = newDefOfSubcomponent.cd
 	    mdSubcomponent.setProperty('http://sboltools.org/backport#sbol3identity', subcomponent.subject)
 
@@ -329,6 +328,39 @@ export default function convert3to2(graph:Graph) {
 
             md.insertProperty(Predicates.SBOL2.module, mdSubmodule.subject)
             
+
+
+
+	    let iface = subcomponent.containingInterface
+
+	    if(!iface) {
+
+		/// Any Feature not in an Interface becomes a ComponentInstance with access=private. Further, if it becomes a FunctionalComponent, then it gets direction=none
+
+		cdSubcomponent.setUriProperty(Predicates.SBOL2.access, Specifiers.SBOL2.Access.PrivateAccess)
+		mdSubcomponent.setUriProperty(Prefixes.sbol2 + 'direction', Specifiers.SBOL2.Direction.None)
+
+	    } else {
+
+		/// Any Feature in an Interface gets access=public, and if it becomes a FunctionalComponent gets the corresponding direction.
+
+		cdSubcomponent.setUriProperty(Predicates.SBOL2.access, Specifiers.SBOL2.Access.PublicAccess)
+
+		let isInput = graph.hasMatch(iface.subject, Predicates.SBOL3.input, subcomponent.subject)
+		let isOutput = graph.hasMatch(iface.subject, Predicates.SBOL3.output, subcomponent.subject)
+		let isNondir = graph.hasMatch(iface.subject, Predicates.SBOL3.nondirectional, subcomponent.subject)
+
+		if(isInput) {
+			mdSubcomponent.setUriProperty(Prefixes.sbol2 + 'direction', Specifiers.SBOL2.Direction.Input)
+		} else if(isOutput) {
+			mdSubcomponent.setUriProperty(Prefixes.sbol2 + 'direction', Specifiers.SBOL2.Direction.Output)
+		} else {
+			mdSubcomponent.setUriProperty(Prefixes.sbol2 + 'direction', Specifiers.SBOL2.Direction.InputAndOutput)
+		}
+
+	    }
+
+
 
 
             switch (subcomponent.getUriProperty('http://sboltools.org/backport#sbol2type')) {
@@ -379,6 +411,26 @@ export default function convert3to2(graph:Graph) {
 
             }
         }
+
+	for(let localSc of component.localSubComponents) {
+		// Jake says: they should be changed into a Component or FunctionalComponent that links to a new ComponentDefinition.
+		// so let's change them into both, and let the pruning remove one of them.
+		
+		// first we need a ComponentDefinition
+		let localCd = sbol2View.createComponentDefinition(cd.uriPrefix, localSc.displayName || 'local', '1')
+		localCd.setUriProperty('http://sboltools.org/backport#type', 'http://sboltools.org/backport#LocalSubComponentDefinition')
+
+		for(let type of localSc.types) {
+			localCd.addType(type)
+		}
+
+		// then add to the CD and MD a C and a FC pointing to it
+		cd.addComponentByDefinition(localCd)
+		md.createFunctionalComponent(localCd)
+	}
+
+	for(let extDef of component.externalDefinitions) {
+	}
     }
 
     // Port interactions
@@ -484,6 +536,7 @@ export default function convert3to2(graph:Graph) {
 				}
 			}
 			for (let nd of iface.nondirectionals) {
+				console.log('sc to fc get ' + nd.subject.value)
 				let fc = subcomponentToFC.get(nd.subject.value)!
 				fc.direction = Specifiers.SBOL2.Direction.None
 			}
@@ -539,8 +592,13 @@ export default function convert3to2(graph:Graph) {
 
             if(cdSuffix.length > 0) {
 
-                console.assert(cd.subject.value.endsWith(cdSuffix))
-                console.assert(cd.displayId!.endsWith(cdSuffix))
+                if(!cd.subject.value.endsWith(cdSuffix)) {
+                    throw new Error('wrong suffix')
+                }
+
+                if(!cd.displayId!.endsWith(cdSuffix)) {
+                    throw new Error('wrong suffix')
+                }
 
                 let newDisplayid = cd.displayId!.substr(0, cd.displayId!.length - cdSuffix.length)
                 cd.displayId = newDisplayid
@@ -556,8 +614,14 @@ export default function convert3to2(graph:Graph) {
 
             if(mdSuffix.length > 0) {
 
-                console.assert(md.subject.value.endsWith(mdSuffix))
-                console.assert(md.displayId!.endsWith(mdSuffix))
+                if(!md.subject.value.endsWith(mdSuffix)) {
+                    throw new Error('wrong suffix')
+                }
+
+                if(!md.displayId!.endsWith(mdSuffix)) {
+                    throw new Error('wrong suffix')
+                }
+
 
                 let newDisplayid = md.displayId!.substr(0, md.displayId!.length - mdSuffix.length)
                 md.displayId = newDisplayid

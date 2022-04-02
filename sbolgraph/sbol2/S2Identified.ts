@@ -50,9 +50,6 @@ export default class S2Identified extends S2Facade {
     }
 
     set displayId(displayId:string|undefined) {
-
-	assert(!displayId || displayId.indexOf('://') === -1)
-
         this.setStringProperty(Predicates.SBOL2.displayId, displayId)
     }
 
@@ -172,5 +169,4 @@ export default class S2Identified extends S2Facade {
 import S2Attachment from './S2Attachment'
 import S2Collection from './S2Collection'
 import S2Measure from './S2Measure'
-import { assert } from 'console'
 

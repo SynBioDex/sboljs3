@@ -9,7 +9,6 @@ import S3IdentifiedFactory from './S3IdentifiedFactory'
 import { triple, node, Node } from 'rdfoo'
 import { Types, Predicates, Specifiers, Prefixes } from 'bioterms'
 import SBOL3GraphView from "../SBOL3GraphView";
-import S3MapsTo from './S3MapsTo';
 import S3Interaction from './S3Interaction'
 import S3Location from './S3Location'
 import S3Measure from './S3Measure';
@@ -155,37 +154,37 @@ export default class S3SubComponent extends S3Feature {
 
     }
 
-    get mappings():Array<S3MapsTo> {
+    // get mappings():Array<S3MapsTo> {
 
-        return this.view.graph.match(null, Predicates.SBOL2.local, this.subject).map(t => t.subject)
-                .concat(
-                    this.view.graph.match(null, Predicates.SBOL2.remote, this.subject).map(t => t.subject)
-                )
-                .filter((el) => !!el)
-                .map((mapsTosubject) => new S3MapsTo(this.view, mapsTosubject))
-    }
+    //     return this.view.graph.match(null, Predicates.SBOL2.local, this.subject).map(t => t.subject)
+    //             .concat(
+    //                 this.view.graph.match(null, Predicates.SBOL2.remote, this.subject).map(t => t.subject)
+    //             )
+    //             .filter((el) => !!el)
+    //             .map((mapsTosubject) => new S3MapsTo(this.view, mapsTosubject))
+    // }
 
-    addMapping(mapping:S3MapsTo) {
+    // addMapping(mapping:S3MapsTo) {
 
-        this.insertProperties({
-            [Predicates.SBOL2.mapsTo]: mapping.subject
-        })
+    //     this.insertProperties({
+    //         [Predicates.SBOL2.mapsTo]: mapping.subject
+    //     })
 
-    }
+    // }
 
-    createMapping(local:S3SubComponent, remote:S3SubComponent)  {
+    // createMapping(local:S3SubComponent, remote:S3SubComponent)  {
 
-        const identified:S3Identified =
-            S3IdentifiedFactory.createChild(this.view, Types.SBOL2.MapsTo, this, Predicates.SBOL2.mapsTo, 'mapping_' + local.displayId + '_' + remote.displayId, undefined)
+    //     const identified:S3Identified =
+    //         S3IdentifiedFactory.createChild(this.view, Types.SBOL2.MapsTo, this, Predicates.SBOL2.mapsTo, 'mapping_' + local.displayId + '_' + remote.displayId, undefined)
 
-        const mapping:S3MapsTo = new S3MapsTo(this.view, identified.subject)
+    //     const mapping:S3MapsTo = new S3MapsTo(this.view, identified.subject)
 
-        mapping.local = local
-        mapping.remote = remote
+    //     mapping.local = local
+    //     mapping.remote = remote
 
-        return mapping
+    //     return mapping
 
-    }
+    // }
 
     swapWith(otherSubComponent:S3SubComponent) {
 

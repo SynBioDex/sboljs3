@@ -18,6 +18,7 @@ let ownershipPredicates = [
     Predicates.Prov.qualifiedUsage,
     Predicates.SBOL2.measure,
     Predicates.SBOL2.variableComponent,
+    Predicates.SBOL2.mapsTo,
 
     Predicates.SBOL3.hasConstraint,
     Predicates.SBOL3.hasFeature,

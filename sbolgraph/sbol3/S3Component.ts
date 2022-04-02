@@ -14,10 +14,12 @@ import S3IdentifiedFactory from './S3IdentifiedFactory';
 import S3Feature from './S3Feature';
 import S3Location from './S3Location'
 import S3OrientedLocation from './S3OrientedLocation'
-import S3MapsTo from './S3MapsTo';
+import S3MapsTo from './S3ComponentReference';
 import { S3Model } from '..';
 import extractTerm from '../extractTerm'
 import S3Interface from './S3Interface'
+import S3LocalSubComponent from './S3LocalSubComponent'
+import S3ExternallyDefined from './S3ExternallyDefined'
 
 export default class S3Component extends S3Identified {
 
@@ -89,6 +91,22 @@ export default class S3Component extends S3Identified {
         return this.getProperties(Predicates.SBOL3.hasFeature)
                    .filter((subject:Node) => this.graph.hasMatch(subject, Predicates.a, node.createUriNode(Types.SBOL3.SubComponent)))
                    .map((subject:Node) => new S3SubComponent(this.view, subject))
+
+    }
+
+    get localSubComponents():Array<S3LocalSubComponent> {
+
+        return this.getProperties(Predicates.SBOL3.hasFeature)
+                   .filter((subject:Node) => this.graph.hasMatch(subject, Predicates.a, node.createUriNode(Types.SBOL3.LocalSubComponent)))
+                   .map((subject:Node) => new S3LocalSubComponent(this.view, subject))
+
+    }
+
+    get externalDefinitions():Array<S3ExternallyDefined> {
+
+        return this.getProperties(Predicates.SBOL3.hasFeature)
+                   .filter((subject:Node) => this.graph.hasMatch(subject, Predicates.a, node.createUriNode(Types.SBOL3.ExternallyDefined)))
+                   .map((subject:Node) => new S3ExternallyDefined(this.view, subject))
 
     }
 
@@ -251,6 +269,27 @@ export default class S3Component extends S3Identified {
 
     addModel(model:S3Model) {
         this.insertProperty(Predicates.SBOL3.hasModel, model.subject)
+    }
+
+    get instances():S3SubComponent[] {
+
+        return this.graph.match(null, Predicates.SBOL3.instanceOf, this.subject)
+                .map(t => this.view.subjectToFacade(t.subject))
+                .map(f => f! as S3SubComponent)
+    
+    }
+
+
+    dissolve() {
+
+        let instances = this.instances
+
+        for(let inst of instances) {
+            inst.dissolve()
+        }
+
+        this.destroy()
+
     }
 
 

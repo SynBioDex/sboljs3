@@ -9,7 +9,11 @@
 		"strictNullChecks": true,
 		"module": "commonjs",
 		"paths": {
-		}
+		},
+		"lib": [
+			"ES6",
+			"DOM"
+		]
 	},
 	"exclude": [
 		"node_modules",

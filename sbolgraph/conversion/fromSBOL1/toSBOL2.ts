@@ -18,7 +18,6 @@ import S2GenericLocation from '../../sbol2/S2GenericLocation';
 import S2Collection from '../../sbol2/S2Collection';
 
 import URIUtils from '../../URIUtils'
-import { strict as assert } from 'assert'
 import { S2Location } from '../..'
 
 export default function convert1to2(graph:Graph) {
@@ -154,12 +153,17 @@ export default function convert1to2(graph:Graph) {
 
                 let obj = new S2SequenceAnnotation(graph2, anno.subject)
                 let c2 = obj.component
-                assert(c2)
+                if(!c2) {
+                    throw new Error('???')
+                }
 
                 
 
                 let precedes2 = new S2SequenceAnnotation(graph2, precedes.subject)
-                assert(precedes2.component) // no
+
+                if(!precedes2.component) { // no
+                    throw new Error('???')
+                }
 
                 constraint.setProperty(Predicates.SBOL2.subject, c2.subject)
                 constraint.setProperty(Predicates.SBOL2.restriction, node.createUriNode(Specifiers.SBOL2.SequenceConstraint.Precedes))

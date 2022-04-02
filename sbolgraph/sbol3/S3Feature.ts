@@ -1,15 +1,5 @@
 
 import S3Identified from './S3Identified'
-import S3Location from './S3Location'
-import S3Range from './S3Range'
-import S3IdentifiedFactory from './S3IdentifiedFactory'
-
-import { node, triple, Node } from 'rdfoo'
-
-import { Predicates, Types } from 'bioterms'
-import S3OrientedLocation from './S3OrientedLocation';
-import S3Component from './S3Component'
-import extractTerm from '../extractTerm'
 
 export default class S3Feature extends S3Identified {
 
@@ -194,4 +184,38 @@ export default class S3Feature extends S3Identified {
 
 	}
 
+
+
+	get containingInterface():S3Interface|undefined {
+
+		let ifaces = this.graph.match(null, Predicates.SBOL3.input, this.subject)
+			.concat( this.graph.match(null, Predicates.SBOL3.output, this.subject))
+			.concat( this.graph.match(null, Predicates.SBOL3.nondirectional, this.subject)
+			).map(t => t.subject)
+
+		if(ifaces.length === 0) {
+			return undefined
+		}
+
+		if(ifaces.length !== 1) {
+			throw new Error('??')
+		}
+
+		return new S3Interface(this.view, ifaces[0])
+	}
+
 }
+
+import S3Interface from './S3Interface'
+
+import S3Location from './S3Location'
+import S3Range from './S3Range'
+import S3IdentifiedFactory from './S3IdentifiedFactory'
+
+import { node, triple, Node } from 'rdfoo'
+
+import { Predicates, Types } from 'bioterms'
+import S3OrientedLocation from './S3OrientedLocation';
+import S3Component from './S3Component'
+import extractTerm from '../extractTerm'
+
