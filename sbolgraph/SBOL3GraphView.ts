@@ -38,7 +38,6 @@ import S3VariableFeature from './sbol3/S3VariableFeature'
 import S3LocalSubComponent from './sbol3/S3LocalSubComponent'
 import S3ExternallyDefined from './sbol3/S3ExternallyDefined'
 import S3ComponentReference from './sbol3/S3ComponentReference'
-import { setServers } from 'dns'
 
 export default class SBOL3GraphView extends GraphViewHybrid {
 
