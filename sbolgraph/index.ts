@@ -55,7 +55,7 @@ import S3ExperimentalData from './sbol3/S3ExperimentalData'
 import Repository from './SBOL2Repository'
 import { SearchQuery, SearchResult } from './SBOL2Repository'
 
-import { Graph, Watcher, node, triple, serialize, Facade } from 'rdfoo'
+import { Graph, Watcher, node, triple, serialize, Facade, rdf } from 'rdfoo'
 import SBOLConverter from './SBOLConverter'
 
 import fastaToSBOL2 from "./conversion/fastaToSBOL2";
@@ -118,6 +118,7 @@ export {
     S3ExperimentalData,
 
     // etc
+    rdf,
     Graph,
     Watcher,
     node,

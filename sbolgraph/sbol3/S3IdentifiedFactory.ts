@@ -19,7 +19,8 @@ export default class S3IdentifiedFactory {
 
         view.graph.insertProperties(subject, {
             [Predicates.a]: node.createUriNode(type),
-            [Predicates.SBOL3.displayId]: node.createStringNode(displayId)
+            [Predicates.SBOL3.displayId]: node.createStringNode(displayId),
+            [Predicates.SBOL3.hasNamespace]: node.createUriNode(uriPrefix)
         })
 
         if(name !== undefined) {
@@ -42,11 +43,12 @@ export default class S3IdentifiedFactory {
         displayId = displayId ? nameToID(displayId) : 'anon'
 
         const subject:Node = node.createUriNode( view.graph.generateURI(
-            URIUtils.getPrefix(parent.subject.value) + displayId + '$n?$') )
+            parent.namespace + displayId + '$n?$') )
 
         view.graph.insertProperties(subject, {
             [Predicates.a]: node.createUriNode(type),
-            [Predicates.SBOL3.displayId]: node.createStringNode(displayId)
+            [Predicates.SBOL3.displayId]: node.createStringNode(displayId),
+            [Predicates.SBOL3.hasNamespace]: node.createUriNode(parent.namespace)
         })
 
         if(name !== undefined) {
@@ -70,23 +72,4 @@ function nameToID(name:string):string {
     return name.replace(/\s/, '_')
 
 }
-
-function extractPersistentIdentity(uri:string, version:string|undefined) {
-    if(version !== undefined) {
-        return uri.substr(0, uri.length - version.length - 1)
-    } else {
-        return uri
-    }
-}
-
-function extractID(uri:string, version:string|undefined) {
-    let tokens = uri.split('/')
-    if(version !== undefined) {
-        return tokens[tokens.length - 2]
-    } else {
-        return tokens[tokens.length - 1]
-    }
-}
-
-
 
