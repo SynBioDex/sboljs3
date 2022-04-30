@@ -735,6 +735,19 @@ export default function convert2to3(graph:Graph) {
 		    b.namespace = triple.object.value
 	    }
         }
+
+	if(!b.namespace) {
+		let pid = a.persistentIdentity
+		let did = a.displayId
+
+		if(pid && did) {
+			b.namespace = pid.split(did).join('')
+		}
+	}
+
+	if(!b.namespace) {
+		throw new Error('could not work out namespace for ' + b.subject.value)
+	}
     }
 
     function copyNonSBOLProperties(a:S2Identified, b:S3Identified) {

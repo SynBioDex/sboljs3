@@ -43,7 +43,7 @@ export default class S3IdentifiedFactory {
         displayId = displayId ? nameToID(displayId) : 'anon'
 
         const subject:Node = node.createUriNode( view.graph.generateURI(
-            parent.namespace + displayId + '$n?$') )
+            parent.namespace + parent.displayId + '/' + displayId + '$n?$') )
 
         view.graph.insertProperties(subject, {
             [Predicates.a]: node.createUriNode(type),

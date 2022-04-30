@@ -232,6 +232,9 @@ export default class SBOL3GraphView extends GraphViewHybrid {
             [ 'sbol3', Prefixes.sbol3 ],
             [ 'backport', 'http://sboltools.org/backport#' ],
             [ 'om', Prefixes.measure ],
+            [ 'synbiohub', 'http://wiki.synbiohub.org/wiki/Terms/synbiohub#' ],
+            [ 'igem', 'http://wiki.synbiohub.org/wiki/Terms/igem#' ],
+            [ 'dc', 'http://purl.org/dc/elements/1.1/' ]
         ]
 
         return serialize(this.graph, new Map(defaultPrefixes), t => isOwnershipRelation(this.graph, t), Prefixes.sbol3)
