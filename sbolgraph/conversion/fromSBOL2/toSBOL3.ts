@@ -49,6 +49,7 @@ import S2VariableComponent from '../../sbol2/S2VariableComponent'
 import S3VariableFeature from '../../sbol3/S3VariableFeature'
 import S3Interface from '../../sbol3/S3Interface'
 import S3ComponentReference from '../../sbol3/S3ComponentReference'
+import { predicateUri } from 'rdfoo/dist/rdfoo/triple'
 
 export default function convert2to3(graph:Graph) {
 
@@ -736,7 +737,7 @@ export default function convert2to3(graph:Graph) {
 	    }
         }
 
-	if(!b.namespace) {
+	if(!b.hasProperty(Predicates.SBOL3.hasNamespace)) {
 		let pid = a.persistentIdentity
 		let did = a.displayId
 
@@ -745,7 +746,16 @@ export default function convert2to3(graph:Graph) {
 		}
 	}
 
-	if(!b.namespace) {
+	if(!b.hasProperty(Predicates.SBOL3.hasNamespace)) {
+		let did = a.displayId
+
+		if(did) {
+			let lio = a.uri.lastIndexOf(did)
+			b.namespace = a.uri.slice(0, lio)
+		}
+	}
+
+	if(!b.hasProperty(Predicates.SBOL3.hasNamespace)) {
 		throw new Error('could not work out namespace for ' + b.subject.value)
 	}
     }
