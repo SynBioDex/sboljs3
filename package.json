@@ -1,6 +1,6 @@
 {
-  "name": "sbolgraph",
-  "version": "0.53.0",
+  "name": "sboljs3",
+  "version": "0.1.0",
   "description": "A library for the Synthetic Biology Open Language (SBOL) written in TypeScript, for JavaScript/TypeScript applications in the browser or node.js.",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -9,14 +9,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/udp/sbolgraph.git"
+    "url": "git+https://github.com/synbiodex/sboljs3.git"
   },
   "author": "James Alastair McLaughlin",
   "license": "BSD-2-Clause",
   "bugs": {
-    "url": "https://github.com/udp/sbolgraph/issues"
+    "url": "https://github.com/synbiodex/sboljs3/issues"
   },
-  "homepage": "https://github.com/udp/sbolgraph#readme",
+  "homepage": "https://github.com/synbiodex/sboljs3#readme",
   "dependencies": {
     "@types/mz": "0.0.32",
     "@types/node": "^14.6.0",
