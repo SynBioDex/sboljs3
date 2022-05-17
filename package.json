@@ -1,6 +1,6 @@
 {
   "name": "sboljs",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "description": "A library for the Synthetic Biology Open Language (SBOL) written in TypeScript, for JavaScript/TypeScript applications in the browser or node.js.",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -32,8 +32,8 @@
     "rdf-graph-array-sboljs": "^0.3.1",
     "rdf-parser-n3": "^0.3.0",
     "rdf-parser-rdfxml": "^0.3.1",
-    "rdfoo": "=0.17.0",
-    "rdfoo-prov": "=0.18.0",
+    "rdfoo": "=0.18.0",
+    "rdfoo-prov": "=0.19.0",
     "shortid": "^2.2.8",
     "uuid": "^3.3.2"
   },
